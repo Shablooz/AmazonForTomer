@@ -5,8 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3436d65a-5e76-4e77-818d-f39d961d7bb1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,6 +20,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -38,7 +42,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/Users/liory/Scripts/sadna/trading-system",
+    "last_opened_file_path": "C:/Users/Shust/OneDrive/Documents/First Degree/Semester6/Sadna/trading-system",
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
@@ -55,6 +59,7 @@
       <updated>1679744156433</updated>
       <workItem from="1679744157803" duration="222000" />
       <workItem from="1679745042519" duration="232000" />
+      <workItem from="1679745836554" duration="107000" />
     </task>
     <servers />
   </component>
