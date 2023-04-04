@@ -4,8 +4,42 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3436d65a-5e76-4e77-818d-f39d961d7bb1" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/Main.java" afterDir="false" />
+    <list default="true" id="3436d65a-5e76-4e77-818d-f39d961d7bb1" name="Changes" comment="Done changes">
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/MessageRepositoryImpl/MessageRepositoryAsJPA.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/MessageRepositoryImpl/MessageRepositoryAsList.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductRepositoryImpl/ProductRepositoryAsJPA.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductRepositoryImpl/ProductRepositoryAsList.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/PurchaseHistoryRepositoryImpl/PurchaseHistoryRepositoryAsJPA.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/PurchaseHistoryRepositoryImpl/PurchaseHistoryRepositoryAsList.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/StoreRepositoryImpl/StoreRepositoryAsJPA.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/StoreRepositoryImpl/StoreRepositoryAsList.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/UserRepositoryImpl/UserRepositoryAsJpa.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/UserRepositoryImpl/UserRepositoryAsList.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IMessageRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IProductRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IPurchaseHistoryRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IStoreRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IUserRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/Message.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/PurchaseHistory.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/User.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/UserPermissions.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/security/SecurityAdapter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/AlertManger.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/DiscountPolicy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/IRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Market.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Product.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/PurchasePolicy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Store.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/StorePermission.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/delivery/DeliveryAdapter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/payment/PaymentAdapter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/ISession.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/Session.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,6 +49,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
@@ -26,6 +61,13 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GithubProjectSettings">
+    <option name="branchProtectionPatterns">
+      <list>
+        <option value="master" />
+      </list>
+    </option>
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -42,13 +84,29 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/Users/Shust/OneDrive/Documents/First Degree/Semester6/Sadna/trading-system",
+    "last_opened_file_path": "C:/Users/Shust/OneDrive/Documents/First Degree/Semester6/Sadna/trading-system/src/main/java/BGU/Group13B/backend/Repositories/Implementations/StoreRepositoryImpl",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="BGU.Group13B.backend.storePackage" />
+      <recent name="BGU.Group13B.backend.Repositories.Interfaces" />
+      <recent name="BGU.Group13B.backend.User" />
+      <recent name="BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl" />
+      <recent name="BGU.Group13B.backend.Store" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Shust\OneDrive\Documents\First Degree\Semester6\Sadna\trading-system\src\main\java\BGU\Group13B\backend\Repositories\Implementations\StoreRepositoryImpl" />
+    </key>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -60,6 +118,7 @@
       <workItem from="1679744157803" duration="222000" />
       <workItem from="1679745042519" duration="232000" />
       <workItem from="1679745836554" duration="107000" />
+      <workItem from="1680599750928" duration="13707000" />
     </task>
     <servers />
   </component>
@@ -71,7 +130,19 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="create_system_infrastructure" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
