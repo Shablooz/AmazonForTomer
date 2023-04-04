@@ -44,10 +44,6 @@ public class StorePermission {
             return userStoreFunctionPermissions.get(userId).contains(storeFunction);
         }
         return false;
-<<<<<<< HEAD
 
-
-=======
->>>>>>> origin/create_system_infrastructure
     }
 }
