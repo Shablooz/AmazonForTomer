@@ -7,7 +7,12 @@ import java.util.List;
 
 public class ProductRepositoryAsList implements IProductRepository {
 
-    List<Product> list;
+    private final List<Product> list;
+
+    public ProductRepositoryAsList(List<Product> list) {
+        this.list = list;
+    }
+
     @Override
     public void specialFunction() {
 
@@ -15,7 +20,7 @@ public class ProductRepositoryAsList implements IProductRepository {
 
     @Override
     public void add(Product item) {
-
+        list.add(item);
     }
 
     @Override

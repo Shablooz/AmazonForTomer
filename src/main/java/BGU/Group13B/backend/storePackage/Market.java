@@ -10,4 +10,7 @@ public class Market {
         this.storeRepository = storeRepository;
     }
 
+    public void addProduct(int userId, String productName, int quantity, double price, int storeId) {
+        storeRepository.getStore(storeId).addProduct(userId, productName, quantity, price);
+    }
 }
