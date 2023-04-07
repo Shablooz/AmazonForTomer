@@ -1,4 +1,16 @@
 package BGU.Group13B.backend.Repositories.Interfaces;
 
+import BGU.Group13B.backend.User.Message;
+
+
+import java.util.List;
+
 public interface IStoreMessagesRepository {
+
+    List<Message> unreadMassages(int storeId);
+    void markAsCompleted(Message message);
+
+    void addMessage(int storeId,Message message);
+    void removeMassage(int storeId,int senderId,int massageId);
+    void modifyMassage(int storeId,int senderId,int massageId);
 }

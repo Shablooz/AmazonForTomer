@@ -22,4 +22,19 @@ public class ReviewRepositoryAsList implements IRepositoryReview {
     public Review getReview(int storeId, int productId, int userId) {
         return null;
     }
+
+    @Override
+    public int getProductScore(int storeId, int productId) {
+        return 0;
+    }
+
+    @Override
+    public int addAndSetScore(int storeId, int productId, int userId) {
+        return 0;
+    }
+
+    @Override
+    public int removeScore(int storeId, int productId, int userId) {
+        return 0;
+    }
 }
