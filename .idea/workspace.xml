@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3436d65a-5e76-4e77-818d-f39d961d7bb1" name="Changes" comment="please review :)">
+    <list default="true" id="3436d65a-5e76-4e77-818d-f39d961d7bb1" name="Changes" comment="adding Discount.java for the use of calculating the price.">
       <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/CartRepositoryImpl/CartRepositoryAsList.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/ICartRepository.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/Basket.java" afterDir="false" />
@@ -107,7 +107,7 @@
       <workItem from="1679745042519" duration="232000" />
       <workItem from="1679745836554" duration="107000" />
       <workItem from="1680599750928" duration="13707000" />
-      <workItem from="1680681882942" duration="16040000" />
+      <workItem from="1680681882942" duration="16736000" />
     </task>
     <task id="LOCAL-00001" summary="save work">
       <created>1680688726166</created>
@@ -130,7 +130,14 @@
       <option name="project" value="LOCAL" />
       <updated>1680813374544</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="adding Discount.java for the use of calculating the price.">
+      <created>1680879711169</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1680879711169</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -147,7 +154,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="master" />
+                        <option value="interfaces_for_discount" />
                       </list>
                     </value>
                   </entry>
@@ -163,7 +170,8 @@
     <MESSAGE value="save work" />
     <MESSAGE value="updating  interfaces in order to create the tests infrastructure" />
     <MESSAGE value="please review :)" />
-    <option name="LAST_COMMIT_MESSAGE" value="please review :)" />
+    <MESSAGE value="adding Discount.java for the use of calculating the price." />
+    <option name="LAST_COMMIT_MESSAGE" value="adding Discount.java for the use of calculating the price." />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
