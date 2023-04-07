@@ -2,6 +2,7 @@ package BGU.Group13B.service;
 
 import BGU.Group13B.backend.SystemInfo;
 import BGU.Group13B.backend.storePackage.Market;
+import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 
 class Session implements ISession {
     private final Market market;
@@ -11,8 +12,13 @@ class Session implements ISession {
     }
 
     @Override
-    public void addProduct(int userId, String productName, int quantity, double price, int storeId) {
+    public void addProduct(int userId, String productName, int quantity, double price, int storeId) throws NoPermissionException {
         market.addProduct(userId, productName, quantity, price, storeId);
+    }
+
+    @Override
+    public void addToCart(int userId, int storeId, int productId, int quantity) {
+
     }
 
     @Override
