@@ -1,18 +1,19 @@
 package BGU.Group13B.service;
 
 import BGU.Group13B.backend.SystemInfo;
-import BGU.Group13B.backend.storePackage.Market;
 
-class Session implements ISession {
-    private final Market market;
+public class ProxySession implements ISession {
+    private ISession realSession;
 
-    public Session(Market market) {
-        this.market = market;
+    public void setRealSession(ISession realSession) {
+        if (realSession == null)
+            this.realSession = realSession;
     }
 
     @Override
     public void addProduct(int userId, String productName, int quantity, double price, int storeId) {
-        market.addProduct(userId, productName, quantity, price, storeId);
+        if (realSession != null)
+            realSession.addProduct(userId, productName, quantity, price, storeId);
     }
 
     @Override

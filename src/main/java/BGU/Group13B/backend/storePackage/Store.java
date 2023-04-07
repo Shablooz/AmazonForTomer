@@ -26,12 +26,18 @@ public class Store {
     //todo: complete the function
     public void addProduct(Product product, int userId) {
 
-        /*
-        * check if the user has permission to add product
-        * */
-        boolean a = this.storePermission.checkAddProductPermission(userId);
 
-        productRepository.add(product);
     }
 
+    public void addProduct(int userId, String productName, int quantity, double price) {
+        /*
+         * check if the user has permission to add product
+         * */
+        boolean a = this.storePermission.checkAddProductPermission(userId);
+        if (!a) {
+            return;
+        }
+        Product product = new Product(productName, -1, price, quantity);
+        productRepository.add(product);
+    }
 }
