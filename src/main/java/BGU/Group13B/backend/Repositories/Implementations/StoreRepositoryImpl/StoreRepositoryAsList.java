@@ -11,4 +11,9 @@ public class StoreRepositoryAsList implements IStoreRepository {
     public StoreRepositoryAsList(List<Store> stores) {
         this.stores = stores;
     }
+
+    @Override
+    public Store getStore(int storeId) {
+        return null;
+    }
 }

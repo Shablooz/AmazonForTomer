@@ -12,4 +12,8 @@ public class StoreRepositoryAsJPA implements IStoreRepository {
     }
 
 
+    @Override
+    public Store getStore(int storeId) {
+        return null;
+    }
 }
