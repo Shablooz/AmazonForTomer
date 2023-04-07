@@ -4,10 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3436d65a-5e76-4e77-818d-f39d961d7bb1" name="Changes" comment="updating  interfaces in order to create the tests infrastructure">
+    <list default="true" id="3436d65a-5e76-4e77-818d-f39d961d7bb1" name="Changes" comment="please review :)">
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/CartRepositoryImpl/CartRepositoryAsList.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/ICartRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/Basket.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Discounts/ConditionalDiscount.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Discounts/Discount.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Discounts/HiddenDiscount.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Discounts/VisibleDiscount.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/service/ProjectTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/service/ProjectTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/service/SessionTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/service/SessionTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/User.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,16 +70,16 @@
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "settings.editor.selected.configurable": "editor.preferences.fonts.default",
     "spring.configuration.checksum": "0bff9c3a4f5bac17f71b3dede1d050f7",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
+      <recent name="BGU.Group13B.backend.Repositories.Interfaces" />
       <recent name="BGU.Group13B.backend" />
       <recent name="BGU.Group13B.backend.storePackage" />
-      <recent name="BGU.Group13B.backend.Repositories.Interfaces" />
       <recent name="BGU.Group13B.backend.User" />
       <recent name="BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl" />
     </key>
@@ -101,7 +107,7 @@
       <workItem from="1679745042519" duration="232000" />
       <workItem from="1679745836554" duration="107000" />
       <workItem from="1680599750928" duration="13707000" />
-      <workItem from="1680681882942" duration="12577000" />
+      <workItem from="1680681882942" duration="16040000" />
     </task>
     <task id="LOCAL-00001" summary="save work">
       <created>1680688726166</created>
@@ -117,7 +123,14 @@
       <option name="project" value="LOCAL" />
       <updated>1680812708684</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="please review :)">
+      <created>1680813374544</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1680813374544</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -149,7 +162,12 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="save work" />
     <MESSAGE value="updating  interfaces in order to create the tests infrastructure" />
-    <option name="LAST_COMMIT_MESSAGE" value="updating  interfaces in order to create the tests infrastructure" />
+    <MESSAGE value="please review :)" />
+    <option name="LAST_COMMIT_MESSAGE" value="please review :)" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/trading_system$Main.ic" NAME="Main Coverage Results" MODIFIED="1680682126010" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
