@@ -1,5 +1,8 @@
 package BGU.Group13B.backend.storePackage;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -53,5 +56,18 @@ public class BID {
 
     public synchronized boolean approvedByAll(Set<Integer> managers) {
         return approvedBy.containsAll(managers);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BID bid = (BID) o;
+        return bidId == bid.bidId && userId == bid.userId && productId == bid.productId && Double.compare(bid.newProductPrice, newProductPrice) == 0 && amount == bid.amount && rejected == bid.rejected && approvedBy.equals(bid.approvedBy);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(bidId, userId, productId, newProductPrice, amount, approvedBy, rejected);
     }
 }

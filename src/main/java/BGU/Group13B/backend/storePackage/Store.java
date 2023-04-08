@@ -10,7 +10,9 @@ import BGU.Group13B.backend.storePackage.permissions.DefaultOwnerFunctionality;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.permissions.StorePermission;
 import BGU.Group13B.service.callbacks.AddToUserCart;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Optional;
 import java.util.Set;
 
 public class Store {
@@ -77,44 +79,42 @@ public class Store {
          * */
         Set<Integer> userIds = this.storePermission.getAllUsersWithPermission(Store.getCurrentMethodName());
         for (Integer id : userIds) {//wait for the interface in AlertManager.java to finish
-           // alertManger.sendAlert(id, "User " + userId + " has submitted a purchase proposal for product " + productId + " in store " + this.storeId);
+            // alertManger.sendAlert(id, "User " + userId + " has submitted a purchase proposal for product " + productId + " in store " + this.storeId);
             //fixme!!!!!!!!!
         }
     }
 
     @DefaultManagerFunctionality
     @DefaultOwnerFunctionality
-    public void purchaseProposalApprove(int managerId, int productId) throws NoPermissionException {
+    public void purchaseProposalApprove(int managerId, int bidId) throws NoPermissionException {
         /*
          * check if the user has permission to purchase proposal
          * */
         if (!this.storePermission.checkPermission(managerId))//the user should be loggedIn with permissions
             throw new NoPermissionException("User " + managerId + " has no permission to add product to store " + this.storeId);
-        BID currentBid = bidRepository.getBID(managerId, productId);
-        if (currentBid == null)
-            throw new IllegalArgumentException("There is no bid for product " + productId + " in store " + this.storeId);
+        BID currentBid = bidRepository.getBID(bidId).
+                orElseThrow(() -> new IllegalArgumentException("There is no such bid for store " + this.storeId));
+
         if (currentBid.isRejected())
-            throw new IllegalArgumentException("The bid for product " + productId + " in store " + this.storeId + " has been rejected already");
+            throw new IllegalArgumentException("The bid for product " + currentBid.getProductId() + " in store " + this.storeId + " has been rejected already");
         currentBid.approve(managerId);
         Set<Integer> managers = storePermission.getAllUsersWithPermission("purchaseProposalSubmit");
 
         if (currentBid.approvedByAll(managers)) {
-            addToUserCart.apply(currentBid.getUserId(), storeId, productId, currentBid.getAmount());
+            addToUserCart.apply(currentBid.getUserId(), storeId, currentBid.getProductId(), currentBid.getAmount());
         }
     }
 
     @DefaultManagerFunctionality
     @DefaultOwnerFunctionality
-    public void purchaseProposalReject(int managerId, int productId) throws NoPermissionException {
+    public void purchaseProposalReject(int managerId, int bidId) throws NoPermissionException {
         /*
          * check if the user has permission to purchase proposal
          * */
         if (!this.storePermission.checkPermission(managerId))//the user should be loggedIn with permissions
-            throw new NoPermissionException("User " + managerId + " has no permission to add product to store " + this.storeId);
-        BID currentBid = bidRepository.getBID(managerId, productId);
-        if (currentBid == null)
-            throw new IllegalArgumentException("There is no bid for product " + productId + " in store " + this.storeId);
-        currentBid.reject();
-        bidRepository.removeBID(managerId, productId);
+            throw new NoPermissionException("User " + managerId + " has no permission to reject a purchase proposal in the store: " + this.storeId);
+        BID currentBid = bidRepository.getBID(bidId).orElseThrow(() -> new IllegalArgumentException("There is no such bid for store " + this.storeId));
+        currentBid.reject();//good for concurrency edge cases
+        bidRepository.removeBID(bidId);
     }
 }
