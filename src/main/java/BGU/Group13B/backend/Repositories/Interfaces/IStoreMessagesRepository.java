@@ -7,10 +7,9 @@ import java.util.List;
 
 public interface IStoreMessagesRepository {
 
-    List<Message> unreadMassages(int storeId);
+    List<Message> unreadMassages(int storeId,int numOfMessages);
     void markAsCompleted(Message message);
 
     void addMessage(int storeId,Message message);
     void removeMassage(int storeId,int senderId,int massageId);
-    void modifyMassage(int storeId,int senderId,int massageId);
 }
