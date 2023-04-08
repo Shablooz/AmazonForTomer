@@ -11,5 +11,5 @@ public interface IStoreMessagesRepository {
     void markAsCompleted(Message message);
 
     void addMessage(int storeId,Message message);
-    void removeMassage(int storeId,int senderId,int massageId);
+    void removeMassage(int storeId,String senderId,int massageId);
 }

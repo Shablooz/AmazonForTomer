@@ -40,8 +40,8 @@ public class StoreMessageRepositoryNonPersist implements IStoreMessagesRepositor
     }
 
     @Override
-    public void removeMassage(int storeId, int senderId, int massageId) {
-        if(!unreadMessages.removeIf(m->m.getSenderId()==senderId&&m.getMassageId()==massageId))
+    public void removeMassage(int storeId, String senderId, int massageId) {
+        if(!unreadMessages.removeIf(m->m.getSenderId().equals(senderId)&&m.getMassageId()==massageId))
             throw new IllegalArgumentException("message not exist or already read");
     }
 

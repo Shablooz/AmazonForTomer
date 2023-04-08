@@ -4,11 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3436d65a-5e76-4e77-818d-f39d961d7bb1" name="Changes" comment="adding Discount.java for the use of calculating the price.">
-      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/StoreMessageRepositoyImpl/StoreMessageRepositoryNonPersist.java" afterDir="false" />
+    <list default="true" id="3436d65a-5e76-4e77-818d-f39d961d7bb1" name="Changes" comment="adding delegation function in Store">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/MessageRepositoryImpl/MessageRepositoryAsList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/MessageRepositoryImpl/MessageRepositoryAsList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/StoreMessageRepositoyImpl/StoreMessageRepositoryNonPersist.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/StoreMessageRepositoyImpl/StoreMessageRepositoryNonPersist.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IMessageRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IMessageRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IStoreMessagesRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IStoreMessagesRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/Message.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/Message.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Store.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Store.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,7 +31,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="complaint#27" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -57,7 +61,7 @@
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
     "create.test.in.the.same.root": "true",
-    "git-widget-placeholder": "master",
+    "git-widget-placeholder": "StoreMassage#27",
     "last_opened_file_path": "C:/Users/Shust/OneDrive/Documents/First Degree/Semester 5/Fundamentals of software engineering/Assignment2",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -68,7 +72,7 @@
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
     "settings.editor.selected.configurable": "editor.preferences.fonts.default",
-    "spring.configuration.checksum": "0bff9c3a4f5bac17f71b3dede1d050f7",
+    "spring.configuration.checksum": "2eea27aecebaecc0287d463dc0733f7d",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -105,7 +109,7 @@
       <workItem from="1679745836554" duration="107000" />
       <workItem from="1680599750928" duration="13707000" />
       <workItem from="1680681882942" duration="16736000" />
-      <workItem from="1680958293549" duration="10000" />
+      <workItem from="1680958293549" duration="10555000" />
     </task>
     <task id="LOCAL-00001" summary="save work">
       <created>1680688726166</created>
@@ -135,7 +139,21 @@
       <option name="project" value="LOCAL" />
       <updated>1680879711169</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="adding store message">
+      <created>1680958425410</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1680958425410</updated>
+    </task>
+    <task id="LOCAL-00006" summary="adding delegation function in Store">
+      <created>1680958985674</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1680958985674</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -152,7 +170,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="interfaces_for_discount" />
+                        <option value="StoreMassage#27" />
                       </list>
                     </value>
                   </entry>
@@ -169,7 +187,9 @@
     <MESSAGE value="updating  interfaces in order to create the tests infrastructure" />
     <MESSAGE value="please review :)" />
     <MESSAGE value="adding Discount.java for the use of calculating the price." />
-    <option name="LAST_COMMIT_MESSAGE" value="adding Discount.java for the use of calculating the price." />
+    <MESSAGE value="adding store message" />
+    <MESSAGE value="adding delegation function in Store" />
+    <option name="LAST_COMMIT_MESSAGE" value="adding delegation function in Store" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

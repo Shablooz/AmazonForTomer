@@ -60,7 +60,7 @@ public class Store {
     public void addMessage(Message message) {
         storeMessagesRepository.addMessage(this.storeId,message);
     }
-    public void removeMassage(int senderId,int massageId) {
+    public void removeMassage(String senderId,int massageId) {
         storeMessagesRepository.removeMassage(this.storeId,senderId,massageId);
     }
 
