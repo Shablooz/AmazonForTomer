@@ -2,8 +2,11 @@ package BGU.Group13B.backend.storePackage;
 
 
 import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
+import BGU.Group13B.backend.storePackage.Discounts.Discount;
 import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
+
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Store {
     private final IProductRepository productRepository;
@@ -13,6 +16,7 @@ public class Store {
     private final PaymentAdapter paymentAdapter;
     private final AlertManger alertManger;
     private final StorePermission storePermission;
+    private final ConcurrentLinkedQueue<Discount> discounts;
 
     public Store(IProductRepository productRepository, PurchasePolicy purchasePolicy, DiscountPolicy discountPolicy, DeliveryAdapter deliveryAdapter, PaymentAdapter paymentAdapter, AlertManger alertManger, StorePermission storePermission) {
         this.productRepository = productRepository;
@@ -22,7 +26,14 @@ public class Store {
         this.paymentAdapter = paymentAdapter;
         this.alertManger = alertManger;
         this.storePermission = storePermission;
+        discounts = new ConcurrentLinkedQueue<>();
+        initDefaultDiscounts(discounts);
     }
+
+    private void initDefaultDiscounts(ConcurrentLinkedQueue<Discount> discounts) {
+
+    }
+
     //todo: complete the function
     public void addProduct(Product product, int userId) {
 
@@ -37,7 +48,7 @@ public class Store {
         if (!a) {
             return;
         }
-        Product product = new Product(productName, -1, price, quantity);
+       /* Product product = new Product(productName, -1, storeId, price, quantity);
         productRepository.add(product);
-    }
+    */}
 }

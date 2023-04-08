@@ -3,16 +3,19 @@ package BGU.Group13B.backend.storePackage;
 public class Product {
 
     private String name;
-    private int productId;
+    private final int productId;
+
+    private final int storeId;
     private double price;
     private int amount;
 
     private final PurchasePolicy purchasePolicy;
     private final DiscountPolicy discountPolicy;
 
-    public Product(String name, int productId, double price, int amount) {
+    public Product(String name, int productId, int storeId, double price, int amount) {
         this.name = name;
         this.productId = productId;
+        this.storeId = storeId;
         this.price = price;
         this.amount = amount;
 
@@ -24,7 +27,7 @@ public class Product {
         return name;
     }
 
-    public synchronized void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -32,35 +35,39 @@ public class Product {
         return productId;
     }
 
-    public void setProductId(int productId) {
-        this.productId = productId;
-    }
 
-    public synchronized double getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public synchronized void setPrice(double price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
-    public synchronized int getAmount() {
+    public int getAmount() {
         return amount;
     }
 
-    public synchronized void setAmount(int amount) {
+    public void setAmount(int amount) {
         this.amount = amount;
     }
 
-    public synchronized PurchasePolicy getPurchasePolicy() {
-        if(purchasePolicy == null)
+    public PurchasePolicy getPurchasePolicy() {
+        if (purchasePolicy == null)
             throw new NullPointerException("Purchase policy is null");
         return purchasePolicy;
     }
 
-    public synchronized DiscountPolicy getDiscountPolicy() {
-        if(discountPolicy == null)
+    public DiscountPolicy getDiscountPolicy() {
+        if (discountPolicy == null)
             throw new NullPointerException("Discount policy is null");
         return discountPolicy;
+    }
+
+    public boolean tryDecreaseQuantity(int quantity) {
+        if (amount < quantity)
+            return false;
+        amount -= quantity;
+        return true;
     }
 }

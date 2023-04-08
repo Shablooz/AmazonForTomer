@@ -1,13 +1,15 @@
 package BGU.Group13B.service;
 
+import BGU.Group13B.backend.Repositories.Interfaces.ICartRepository;
 import BGU.Group13B.backend.SystemInfo;
 import BGU.Group13B.backend.storePackage.Market;
 
 class Session implements ISession {
     private final Market market;
-
-    public Session(Market market) {
+    private final ICartRepository cartRepository;
+    public Session(Market market, ICartRepository cartRepository) {
         this.market = market;
+        this.cartRepository = cartRepository;
     }
 
     @Override
