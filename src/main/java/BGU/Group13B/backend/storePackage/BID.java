@@ -6,7 +6,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
-public class BID {
+public class BID implements Comparable<BID>{
     private final int bidId;
     private final int userId;
     private final int productId;
@@ -69,5 +69,10 @@ public class BID {
     @Override
     public int hashCode() {
         return Objects.hash(bidId, userId, productId, newProductPrice, amount, approvedBy, rejected);
+    }
+
+    @Override
+    public int compareTo(BID o) {
+        return Integer.compare(this.bidId, o.bidId);
     }
 }

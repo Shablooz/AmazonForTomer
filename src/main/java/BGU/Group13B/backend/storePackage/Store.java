@@ -10,9 +10,7 @@ import BGU.Group13B.backend.storePackage.permissions.DefaultOwnerFunctionality;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.permissions.StorePermission;
 import BGU.Group13B.service.callbacks.AddToUserCart;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Optional;
 import java.util.Set;
 
 public class Store {
@@ -21,19 +19,19 @@ public class Store {
     private final DiscountPolicy discountPolicy;
     private final DeliveryAdapter deliveryAdapter;
     private final PaymentAdapter paymentAdapter;
-    private final AlertManger alertManger;
+    private final AlertManager alertManager;
     private final StorePermission storePermission;
     private final AddToUserCart addToUserCart;
     private final IBIDRepository bidRepository;
     private final int storeId;
 
-    public Store(IProductRepository productRepository, PurchasePolicy purchasePolicy, DiscountPolicy discountPolicy, DeliveryAdapter deliveryAdapter, PaymentAdapter paymentAdapter, AlertManger alertManger, StorePermission storePermission, AddToUserCart addToUserCart, IBIDRepository bidRepository, int storeId) {
+    public Store(IProductRepository productRepository, PurchasePolicy purchasePolicy, DiscountPolicy discountPolicy, DeliveryAdapter deliveryAdapter, PaymentAdapter paymentAdapter, AlertManager alertManager, StorePermission storePermission, AddToUserCart addToUserCart, IBIDRepository bidRepository, int storeId) {
         this.productRepository = productRepository;
         this.purchasePolicy = purchasePolicy;
         this.discountPolicy = discountPolicy;
         this.deliveryAdapter = deliveryAdapter;
         this.paymentAdapter = paymentAdapter;
-        this.alertManger = alertManger;
+        this.alertManager = alertManager;
         this.storePermission = storePermission;
         this.addToUserCart = addToUserCart;
         this.bidRepository = bidRepository;
@@ -72,6 +70,12 @@ public class Store {
          * */
         if (!this.storePermission.checkPermission(userId))//the user should be loggedIn with permissions
             throw new NoPermissionException("User " + userId + " has no permission to add product to store " + this.storeId);
+
+        if (amount <= 0)
+            throw new IllegalArgumentException("Amount must be positive");
+        if (proposedPrice <= 0)
+            throw new IllegalArgumentException("Price must be positive");
+
         bidRepository.addBID(userId, productId, proposedPrice, amount);
 
         /*
@@ -79,7 +83,7 @@ public class Store {
          * */
         Set<Integer> userIds = this.storePermission.getAllUsersWithPermission(Store.getCurrentMethodName());
         for (Integer id : userIds) {//wait for the interface in AlertManager.java to finish
-            // alertManger.sendAlert(id, "User " + userId + " has submitted a purchase proposal for product " + productId + " in store " + this.storeId);
+             alertManager.sendAlert(id, "User " + userId + " has submitted a purchase proposal for product " + productId + " in store " + this.storeId);
             //fixme!!!!!!!!!
         }
     }
@@ -96,7 +100,8 @@ public class Store {
                 orElseThrow(() -> new IllegalArgumentException("There is no such bid for store " + this.storeId));
 
         if (currentBid.isRejected())
-            throw new IllegalArgumentException("The bid for product " + currentBid.getProductId() + " in store " + this.storeId + " has been rejected already");
+            alertManager.sendAlert(managerId, "The bid for product " + currentBid.getProductId() + " in store " + this.storeId + " has been rejected already");
+            //throw new IllegalArgumentException("The bid for product " + currentBid.getProductId() + " in store " + this.storeId + " has been rejected already");
         currentBid.approve(managerId);
         Set<Integer> managers = storePermission.getAllUsersWithPermission("purchaseProposalSubmit");
 

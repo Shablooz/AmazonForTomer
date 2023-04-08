@@ -6,15 +6,17 @@ import BGU.Group13B.backend.storePackage.BID;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class BIDRepositoryAsList implements IBIDRepository {
-    private final List<BID> bids;
+    private final Set<BID> bids;
     private AtomicInteger maxBidId;
 
     public BIDRepositoryAsList() {
 
-        this.bids = new ArrayList<>();
+        this.bids = new ConcurrentSkipListSet<>();
         this.maxBidId = new AtomicInteger(0);
     }
 
@@ -32,7 +34,7 @@ public class BIDRepositoryAsList implements IBIDRepository {
     }
 
     @Override
-    public Optional<BID> getBID(int bidId) {
+    public synchronized Optional<BID> getBID(int bidId) {
         var _bid = this.bids.stream().
                 filter(bid -> bid.getBidId() == bidId).toList();
         if (_bid.isEmpty()) return Optional.empty();
