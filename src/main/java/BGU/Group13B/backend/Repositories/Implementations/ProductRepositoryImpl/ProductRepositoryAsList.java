@@ -27,4 +27,9 @@ public class ProductRepositoryAsList implements IProductRepository {
     public void remove() {
 
     }
+
+    @Override
+    public Product get(int productId) {
+        return list.stream().filter(product -> product.getProductId() == productId).findFirst().orElse(null);
+    }
 }
