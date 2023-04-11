@@ -1,8 +1,9 @@
 package BGU.Group13B.backend.Repositories.Interfaces;
 
-import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.Store;
 
+import java.util.Optional;
+
 public interface IStoreRepository {
-    Store getStore(int storeId);
+    Optional<Store> getStore(int storeId);
 }

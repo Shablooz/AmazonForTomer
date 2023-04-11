@@ -1,14 +1,22 @@
 package BGU.Group13B.backend.storePackage.Discounts;
 
-public class ConditionalDiscount extends Discount{
+import java.time.LocalDateTime;
 
+public class ConditionalDiscount extends Discount {
 
-    public ConditionalDiscount(Integer priority) {
-        super(priority);
+    private final double minPriceForDiscount;
+    private final int quantityForDiscount;
+    public ConditionalDiscount(Integer priority, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount) {
+        super(priority, discountPercentage, discountLastDate);
+        this.minPriceForDiscount = minPriceForDiscount;
+        this.quantityForDiscount = quantityForDiscount;
     }
 
     @Override
-    double apply(double currentPrice) {
-        return 0;
+    public double apply(double currentPrice, int quantity) {
+        double priceFromSuper = super.apply(currentPrice, quantity);
+        if (currentPrice >= minPriceForDiscount || quantity >= quantityForDiscount)
+            return priceFromSuper * (1 - discountPercentage);
+        return priceFromSuper;
     }
 }

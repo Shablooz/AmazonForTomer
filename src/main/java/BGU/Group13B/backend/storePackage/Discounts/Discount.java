@@ -12,9 +12,10 @@ public abstract class Discount {
         this.discountPercentage = discountPercentage;
         this.discountLastDate = discountLastDate;
     }
-    double apply(double currentPrice){
+    public double apply(double currentPrice, int quantity){
         if(LocalDateTime.now().isBefore(discountLastDate))
             return currentPrice * (1 - discountPercentage);
         return currentPrice;
     }
+    //todo apply for store
 }

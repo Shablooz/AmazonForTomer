@@ -1,15 +1,16 @@
 package BGU.Group13B.service;
 
-import BGU.Group13B.backend.Repositories.Interfaces.ICartRepository;
 import BGU.Group13B.backend.SystemInfo;
+import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.storePackage.Market;
+
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 class Session implements ISession {
     private final Market market;
-    private final ICartRepository cartRepository;
-    public Session(Market market, ICartRepository cartRepository) {
+    private final CalculatePriceOfBasket calculatePriceOfBasket = this::calculatePriceOfBasket;//inject to add user
+    public Session(Market market) {
         this.market = market;
-        this.cartRepository = cartRepository;
     }
 
     @Override
@@ -51,4 +52,11 @@ class Session implements ISession {
     public SystemInfo getSystemInformation(int adminId) {
         return null;
     }
+
+    private double calculatePriceOfBasket(double totalAmountBeforeStoreDiscountPolicy,
+                                         ConcurrentLinkedQueue<BasketProduct> successfulProducts,
+                                         int storeId) {
+        return market.calculatePriceOfBasket(totalAmountBeforeStoreDiscountPolicy, successfulProducts, storeId);
+    }
+
 }

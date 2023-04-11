@@ -1,6 +1,5 @@
 package BGU.Group13B.backend.Repositories.Interfaces;
 
-import BGU.Group13B.backend.User.Basket;
 import BGU.Group13B.backend.storePackage.Product;
 
 import java.util.Optional;
@@ -11,5 +10,6 @@ public interface IProductRepository {
 
     public void removeStoreProduct(int productId, int storeId);
 
-    public void addProduct(int productId, int StoreId /*to complete*/) ;
+    public void addProduct(int StoreId /*to complete*/) ;//generate unique productId thanks:)
+    double calculatePrice(int storeId, int productId, int productQuantity);
 }

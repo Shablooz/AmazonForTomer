@@ -1,8 +1,9 @@
 package BGU.Group13B.backend.Repositories.Interfaces;
 
 import BGU.Group13B.backend.User.Basket;
+import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
+import BGU.Group13B.service.CalculatePriceOfBasket;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 
@@ -11,5 +12,7 @@ public interface IBasketRepository {
 
     public void removeUserBasket(int userId, int storeId);
 
-    public void addUserBasket(int userId, Basket basket) ;
+    void addUserBasket(int userId, int storeId, IBasketProductRepository productRepository,
+                       PaymentAdapter paymentAdapter, IProductHistoryRepository productHistoryRepository,
+                       CalculatePriceOfBasket calculatePriceOfBasket);
 }

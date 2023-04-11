@@ -3,7 +3,6 @@ package BGU.Group13B.backend.Repositories.Implementations.BasketProductRepositor
 import BGU.Group13B.backend.Repositories.Interfaces.IBasketProductRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
 import BGU.Group13B.backend.User.BasketProduct;
-import BGU.Group13B.backend.storePackage.Product;
 import org.springframework.data.util.Pair;
 
 import java.util.Optional;
@@ -28,7 +27,7 @@ public class BasketProductRepositoryAsHashMap implements IBasketProductRepositor
     @Override
     public void removeStoreProduct(int productId, int storeId, int userId) {
         basketProducts.remove(Pair.of(storeId, userId)).orElseThrow(
-                () -> new IllegalArgumentException("Product with id: " + productId + " does not exist in the basket");
+                () -> new IllegalArgumentException("Product with id: " + productId + " does not exist in the basket"));
     }
 
     //1 - get the products of the store
@@ -57,6 +56,6 @@ public class BasketProductRepositoryAsHashMap implements IBasketProductRepositor
         basketProducts.stream().filter(basketProduct -> basketProduct.getProductId() == productId).findFirst().
                 orElseThrow(
                         () -> new IllegalArgumentException("Product with id: " + productId + " does not exist in this basket")
-                ).setAmount(newQuantity);
+                ).setQuantity(newQuantity);
     }
 }
