@@ -1,6 +1,7 @@
 package BGU.Group13B.backend.storePackage;
 
 
+import BGU.Group13B.backend.Repositories.Interfaces.IAuctionRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IBIDRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
 import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
@@ -11,6 +12,7 @@ import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.permissions.StorePermission;
 import BGU.Group13B.service.callbacks.AddToUserCart;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 public class Store {
@@ -23,9 +25,13 @@ public class Store {
     private final StorePermission storePermission;
     private final AddToUserCart addToUserCart;
     private final IBIDRepository bidRepository;
+    private final IAuctionRepository auctionRepository;
     private final int storeId;
 
-    public Store(IProductRepository productRepository, PurchasePolicy purchasePolicy, DiscountPolicy discountPolicy, DeliveryAdapter deliveryAdapter, PaymentAdapter paymentAdapter, AlertManager alertManager, StorePermission storePermission, AddToUserCart addToUserCart, IBIDRepository bidRepository, int storeId) {
+    public Store(IProductRepository productRepository, PurchasePolicy purchasePolicy, DiscountPolicy discountPolicy,
+                 DeliveryAdapter deliveryAdapter, PaymentAdapter paymentAdapter,
+                 AlertManager alertManager, StorePermission storePermission, AddToUserCart addToUserCart,
+                 IBIDRepository bidRepository, IAuctionRepository auctionRepository, int storeId) {
         this.productRepository = productRepository;
         this.purchasePolicy = purchasePolicy;
         this.discountPolicy = discountPolicy;
@@ -35,6 +41,7 @@ public class Store {
         this.storePermission = storePermission;
         this.addToUserCart = addToUserCart;
         this.bidRepository = bidRepository;
+        this.auctionRepository = auctionRepository;
         this.storeId = storeId;
     }
 
@@ -83,7 +90,7 @@ public class Store {
          * */
         Set<Integer> userIds = this.storePermission.getAllUsersWithPermission(Store.getCurrentMethodName());
         for (Integer id : userIds) {//wait for the interface in AlertManager.java to finish
-             alertManager.sendAlert(id, "User " + userId + " has submitted a purchase proposal for product " + productId + " in store " + this.storeId);
+            alertManager.sendAlert(id, "User " + userId + " has submitted a purchase proposal for product " + productId + " in store " + this.storeId);
             //fixme!!!!!!!!!
         }
     }
@@ -101,7 +108,7 @@ public class Store {
 
         if (currentBid.isRejected())
             alertManager.sendAlert(managerId, "The bid for product " + currentBid.getProductId() + " in store " + this.storeId + " has been rejected already");
-            //throw new IllegalArgumentException("The bid for product " + currentBid.getProductId() + " in store " + this.storeId + " has been rejected already");
+        //throw new IllegalArgumentException("The bid for product " + currentBid.getProductId() + " in store " + this.storeId + " has been rejected already");
         currentBid.approve(managerId);
         Set<Integer> managers = storePermission.getAllUsersWithPermission("purchaseProposalSubmit");
 
@@ -121,5 +128,31 @@ public class Store {
         BID currentBid = bidRepository.getBID(bidId).orElseThrow(() -> new IllegalArgumentException("There is no such bid for store " + this.storeId));
         currentBid.reject();//good for concurrency edge cases
         bidRepository.removeBID(bidId);
+    }
+
+    //only members of the store can create an auction purchase
+    @DefaultManagerFunctionality
+    @DefaultOwnerFunctionality
+    public void auctionPurchase(int userId, int productId, double newPrice) throws NoPermissionException {
+        if (!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userId + " has no permission to create an auction purchase in the store: " + this.storeId);
+        auctionRepository.updateAuction(productId, this.storeId, newPrice, userId);
+    }
+
+    @DefaultManagerFunctionality
+    @DefaultOwnerFunctionality
+    public PublicAuctionInfo getAuctionInfo(int userId, int productId) throws NoPermissionException {
+        if (!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userId + " has no permission to get auction info in the store: " + this.storeId);
+        return auctionRepository.getAuctionInfo(productId, this.storeId).orElseThrow(() ->
+                new IllegalArgumentException("There is no such auction for product " + productId + " in store " + this.storeId));
+    }
+
+    @DefaultManagerFunctionality
+    @DefaultOwnerFunctionality
+    public void createAuctionForProduct(int storeManagerId, int productId, double startingPrice, LocalDateTime lastDate) throws NoPermissionException {
+        if (!this.storePermission.checkPermission(storeManagerId))
+            throw new NoPermissionException("User " + storeManagerId + " has no permission to create an auction in the store: " + this.storeId);
+        auctionRepository.addNewAuctionForAProduct(productId, startingPrice, this.storeId, lastDate);
     }
 }
