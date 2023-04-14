@@ -1,8 +1,10 @@
 package BGU.Group13B.service;
 
 import BGU.Group13B.backend.SystemInfo;
+import BGU.Group13B.backend.User.User;
 import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
+import jdk.jshell.spi.ExecutionControl;
 
 class Session implements ISession {
     private final Market market;
@@ -55,4 +57,11 @@ class Session implements ISession {
     public SystemInfo getSystemInformation(int adminId) {
         return null;
     }
+
+    @Override
+    public void register(int userId,String username, String password, String email) {
+
+    }
+
+
 }
