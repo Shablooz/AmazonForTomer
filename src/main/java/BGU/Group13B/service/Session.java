@@ -1,15 +1,14 @@
 package BGU.Group13B.service;
 
+import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepositoryAsHashmap;
 import BGU.Group13B.backend.SystemInfo;
 import BGU.Group13B.backend.User.User;
-import BGU.Group13B.backend.storePackage.IRepository;
 import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
-import jdk.jshell.spi.ExecutionControl;
 
 class Session implements ISession {
     private final Market market;
-    IRepository<User,Integer> userIntegerIRepository;
+    UserRepositoryAsHashmap userRepositoryAsHashmap;
     public Session(Market market) {
         this.market = market;
     }
@@ -61,9 +60,10 @@ class Session implements ISession {
 
     @Override
     public void register(int userId,String username, String password, String email) {
-        User user = userIntegerIRepository.get(userId);
-        user.register(username,password,email);
+        User user = userRepositoryAsHashmap.getUser(userId);
+        synchronized (user) {
+            user.register(username, password, email);
+        }
     }
-
 
 }
