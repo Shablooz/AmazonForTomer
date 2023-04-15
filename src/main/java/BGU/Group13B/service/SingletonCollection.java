@@ -30,7 +30,7 @@ public class SingletonCollection {
 
 
     //callbacks
-    private static final AddToUserCart addToUserCart;
+    private static AddToUserCart addToUserCart;
 
 
     //adapters
@@ -124,6 +124,12 @@ public class SingletonCollection {
 
     public static PaymentAdapter getPaymentAdapter() {
         return paymentAdapter;
+    }
+
+
+    //setters (for callbacks)
+    public static void setAddToUserCart(AddToUserCart addToUserCart) {
+        SingletonCollection.addToUserCart = addToUserCart;
     }
 }
 
