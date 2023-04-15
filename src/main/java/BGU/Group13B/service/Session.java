@@ -82,12 +82,18 @@ class Session implements ISession {
 
 
     @Override
-    public void login(String username, String password) {
+    public int login(int userID,String username, String password) {
         try{
-            userRepositoryAsHashmap.checkIfUserExists(username).login(username,password);
-
+            //gets the user that we want to log into
+            User user = userRepositoryAsHashmap.checkIfUserExists(username);
+            user.login(username,password);
+            //removes the current guest profile to swap to the existing member one
+            userRepositoryAsHashmap.removeUser(userID);
+            //gets the new id - of the user we logging into
+            return userRepositoryAsHashmap.getUserId(user);
         }catch (Exception e){
             System.out.println(e.getMessage());
+            return 0;
         }
     }
 }
