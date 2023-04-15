@@ -96,4 +96,15 @@ public interface ISession {
      * @param adminId the id of an admin
      * */
     SystemInfo getSystemInformation(int adminId);
+
+
+    /**
+     * #15
+     * require 2.1.3
+     * @param userId
+     * @param username
+     * @param password
+     * @param email
+     * */
+    void register(int userId,String username,String password,String email);
 }
