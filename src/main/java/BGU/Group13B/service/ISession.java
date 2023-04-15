@@ -107,4 +107,13 @@ public interface ISession {
      * @param email
      * */
     void register(int userId,String username,String password,String email);
+
+
+    /**
+     * #16
+     * require 1.4
+     * @param username
+     * @param password
+     * */
+    void login(String username,String password);
 }

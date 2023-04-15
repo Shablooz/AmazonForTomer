@@ -7,4 +7,7 @@ public interface IUserRepository {
     User getUser(int userId);
 
     void addUser(int userId,User user);
+
+    //checks if user with the following username exists if it does - returns the user
+    User checkIfUserExists(String username) throws ClassNotFoundException;
 }

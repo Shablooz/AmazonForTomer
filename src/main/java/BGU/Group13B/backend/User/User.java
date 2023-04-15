@@ -17,20 +17,28 @@ public class User {
     private final IMessageRepository messageRepository;
     private final UserPermissions userPermissions;
     private final Market market;
-
+    private final String userName;
+    private final String password;
     //eyal addition
     private boolean isLoggedIn;
 
 
-    public User(IPurchaseHistoryRepository purchaseHistoryRepository, ICartRepository cartRepository, IMessageRepository messageRepository, UserPermissions userPermissions, Market market) {
+    //creation of a new user
+    public User(IPurchaseHistoryRepository purchaseHistoryRepository, ICartRepository cartRepository, IMessageRepository messageRepository, UserPermissions userPermissions, Market market,String userName,String password) {
         this.purchaseHistoryRepository = purchaseHistoryRepository;
         this.cartRepository = cartRepository;
         this.messageRepository = messageRepository;
         this.userPermissions = userPermissions;
         this.market = market;
+        this.userName = userName;
+        this.password = password;
+        this.isLoggedIn = false;
     }
 
 
+    public boolean isLoggedIn() {
+        return isLoggedIn;
+    }
 
     public boolean isRegistered(){
         return this.userPermissions.getUserPermissionStatus() == UserPermissions.UserPermissionStatus.MEMBER ||
@@ -56,7 +64,18 @@ public class User {
         return this;
     }
 
+    public void login(String userName,String password){
+        //second username check for security
+        if (this.password.equals(password) && this.password.equals(password)){
+            this.isLoggedIn = true;
+            return;
+        }
+        throw new IllegalArgumentException("incorrect username or password");
+    }
 
+    public String getUserName() {
+        return userName;
+    }
 }
 
 
