@@ -4,16 +4,27 @@ import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
 import BGU.Group13B.backend.storePackage.Store;
 
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class StoreRepositoryAsList implements IStoreRepository {
-    private final List<Store> stores;
+    private final Set<Store> stores;
+    private final AtomicInteger storeIdCounter = new AtomicInteger(0);
 
-    public StoreRepositoryAsList(List<Store> stores) {
-        this.stores = stores;
+
+    public StoreRepositoryAsList() {
+        this.stores = new ConcurrentSkipListSet<>();
     }
 
     @Override
     public Store getStore(int storeId) {
         return null;
+    }
+
+    //(#24) open store - requirement 3.2
+    @Override
+    public void addStore(int founderId, String storeName, String category) {
+        this.stores.add(new Store(storeIdCounter.getAndIncrement(), founderId, storeName, category));
     }
 }

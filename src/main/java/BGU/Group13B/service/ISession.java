@@ -107,4 +107,15 @@ public interface ISession {
      * @param email
      * */
     void register(int userId,String username,String password,String email);
+
+
+
+    /**
+     * #24
+     * require 3.2
+     * @param userId    this user will become the founder of the store
+     * @param storeName doesn't have to be unique
+     * @param category  the store category, currently a free text
+     * */
+    void addStore(int userId, String storeName, String category);
 }

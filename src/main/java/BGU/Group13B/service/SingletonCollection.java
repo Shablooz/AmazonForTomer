@@ -52,7 +52,7 @@ public class SingletonCollection {
         purchaseHistoryRepository = new PurchaseHistoryRepositoryAsList();  //TODO
         reviewRepository = new ReviewRepositoryAsList();
         storeMessagesRepository = null;                                     //TODO
-        storeRepository = new StoreRepositoryAsList();                      //TODO
+        storeRepository = new StoreRepositoryAsList();
         userRepository = new UserRepositoryAsHashmap();
 
 

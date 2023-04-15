@@ -10,18 +10,19 @@ import java.util.Set;
 
 public class StorePermission {
 
-    private final Set<String> storeFunctions = new HashSet<>();
-
     private final HashMap<Integer/*userID*/, Set<String>> userStoreFunctionPermissions;
 
     private final HashMap<StoreRole, Set<String>> defaultStoreRoleFunctionalities;
-    private final HashMap<Integer/*storeId*/, StoreRole> userToStoreRole;
+    private final HashMap<Integer/*userId*/, StoreRole> userToStoreRole;
 
-    public StorePermission() {
+    public StorePermission(int founderId) {
         userStoreFunctionPermissions = new HashMap<>();
         defaultStoreRoleFunctionalities = new HashMap<>();
         initDefaultStoreRoleFunctionalities();
         userToStoreRole = new HashMap<>();
+
+        userToStoreRole.put(founderId, StoreRole.FOUNDER);
+        userStoreFunctionPermissions.put(founderId, defaultStoreRoleFunctionalities.get(StoreRole.FOUNDER));
     }
 
     private void initDefaultStoreRoleFunctionalities() {
@@ -30,17 +31,21 @@ public class StorePermission {
          * */
         HashSet<String> storeManagerFunctions = new HashSet<>();
         HashSet<String> storeOwnerFunctions = new HashSet<>();
+        HashSet<String> storeFounderFunctions = new HashSet<>();
         var storeClass = Store.class;
         for (Method method : storeClass.getMethods()) {
-            if (method.isAnnotationPresent(DefaultManagerFunctionality.class)) {
+            if (method.isAnnotationPresent(DefaultManagerFunctionality.class))
                 storeManagerFunctions.add(getFunctionName(method));
-            } else if (method.isAnnotationPresent(DefaultOwnerFunctionality.class)) {
+
+            if (method.isAnnotationPresent(DefaultOwnerFunctionality.class))
                 storeOwnerFunctions.add(method.getName());
-                storeFunctions.add(getFunctionName(method));//think about it
-            }
+
+            //the founder can do every function
+            storeFounderFunctions.add(method.getName());
         }
         defaultStoreRoleFunctionalities.put(StoreRole.MANAGER, storeManagerFunctions);
         defaultStoreRoleFunctionalities.put(StoreRole.OWNER, storeOwnerFunctions);
+        defaultStoreRoleFunctionalities.put(StoreRole.FOUNDER, storeFounderFunctions);
 
     }
 

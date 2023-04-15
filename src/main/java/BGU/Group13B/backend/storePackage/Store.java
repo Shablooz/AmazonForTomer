@@ -5,15 +5,13 @@ import BGU.Group13B.backend.Repositories.Interfaces.IBIDRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
 import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
-import BGU.Group13B.backend.storePackage.permissions.DefaultManagerFunctionality;
-import BGU.Group13B.backend.storePackage.permissions.DefaultOwnerFunctionality;
-import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
-import BGU.Group13B.backend.storePackage.permissions.StorePermission;
+import BGU.Group13B.backend.storePackage.permissions.*;
+import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.AddToUserCart;
 
 import java.util.Set;
 
-public class Store {
+public class Store implements Comparable<Store> {
     private final IProductRepository productRepository;
     private final PurchasePolicy purchasePolicy;
     private final DiscountPolicy discountPolicy;
@@ -24,18 +22,41 @@ public class Store {
     private final AddToUserCart addToUserCart;
     private final IBIDRepository bidRepository;
     private final int storeId;
+    private String storeName;
+    private String category;
 
-    public Store(IProductRepository productRepository, PurchasePolicy purchasePolicy, DiscountPolicy discountPolicy, DeliveryAdapter deliveryAdapter, PaymentAdapter paymentAdapter, AlertManager alertManager, StorePermission storePermission, AddToUserCart addToUserCart, IBIDRepository bidRepository, int storeId) {
+    public Store(int storeId, int founderId, String storeName, String category) {
+        this.productRepository = SingletonCollection.getProductRepository();
+        this.bidRepository = SingletonCollection.getBidRepository();
+        this.deliveryAdapter = SingletonCollection.getDeliveryAdapter();
+        this.paymentAdapter = SingletonCollection.getPaymentAdapter();
+        this.alertManager = SingletonCollection.getAlertManager();
+        this.addToUserCart = SingletonCollection.getAddToUserCart();
+        this.discountPolicy = new DiscountPolicy();
+        this.purchasePolicy = new PurchasePolicy();
+        this.storeId = storeId;
+        this.storeName = storeName;
+        this.category = category;
+        this.storePermission = new StorePermission(founderId);
+    }
+
+    //used only for testing
+    public Store(int storeId, String storeName, String category, StorePermission storePermission,
+                 IProductRepository productRepository, IBIDRepository bidRepository, DeliveryAdapter deliveryAdapter,
+                 PaymentAdapter paymentAdapter, AlertManager alertManager, AddToUserCart addToUserCart,
+                 DiscountPolicy discountPolicy, PurchasePolicy purchasePolicy){
         this.productRepository = productRepository;
-        this.purchasePolicy = purchasePolicy;
-        this.discountPolicy = discountPolicy;
+        this.bidRepository = bidRepository;
         this.deliveryAdapter = deliveryAdapter;
         this.paymentAdapter = paymentAdapter;
         this.alertManager = alertManager;
-        this.storePermission = storePermission;
         this.addToUserCart = addToUserCart;
-        this.bidRepository = bidRepository;
+        this.discountPolicy = discountPolicy;
+        this.purchasePolicy = purchasePolicy;
         this.storeId = storeId;
+        this.storeName = storeName;
+        this.category = category;
+        this.storePermission = storePermission;
     }
 
     //todo: complete the function
@@ -121,5 +142,10 @@ public class Store {
         BID currentBid = bidRepository.getBID(bidId).orElseThrow(() -> new IllegalArgumentException("There is no such bid for store " + this.storeId));
         currentBid.reject();//good for concurrency edge cases
         bidRepository.removeBID(bidId);
+    }
+
+    @Override
+    public int compareTo(Store o) {
+        return Integer.compare(this.storeId, o.storeId);
     }
 }

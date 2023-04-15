@@ -73,4 +73,19 @@ class Session implements ISession {
         }
     }
 
+    @Override
+    public void addStore(int userId, String storeName, String category) {
+        User user = userRepositoryAsHashmap.getUser(userId);
+        synchronized (user){
+            if(user.isRegistered()){
+                try{
+                    market.addStore(userId, storeName, category);
+                }
+                catch(Exception e){
+                    //TODO: handle exception
+                }
+            }
+        }
+    }
+
 }
