@@ -66,7 +66,7 @@ public class User {
 
     public void login(String userName,String password){
         //second username check for security
-        if (this.password.equals(password) && this.password.equals(password)){
+        if (this.userName.equals(userName) && this.password.equals(password)){
             this.isLoggedIn = true;
             return;
         }
