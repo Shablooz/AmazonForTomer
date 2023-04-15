@@ -12,6 +12,9 @@ class Session implements ISession {
     UserRepositoryAsHashmap userRepositoryAsHashmap;
     public Session(Market market) {
         this.market = market;
+
+        //callbacks initialization
+        SingletonCollection.setAddToUserCart(this::addToCart);
     }
 
     @Override
