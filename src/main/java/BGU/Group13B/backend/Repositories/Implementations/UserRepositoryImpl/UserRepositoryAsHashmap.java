@@ -5,12 +5,13 @@ import BGU.Group13B.backend.User.User;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class UserRepositoryAsHashmap implements IUserRepository {
-    private final HashMap<Integer,User> integerUserHashMap;
+    private final ConcurrentHashMap<Integer,User> integerUserHashMap;
 
-    public UserRepositoryAsHashmap(HashMap<Integer,User> integerUserHashMap) {
-        this.integerUserHashMap = integerUserHashMap;
+    public UserRepositoryAsHashmap() {
+        this.integerUserHashMap = new ConcurrentHashMap<>();
     }
 
 

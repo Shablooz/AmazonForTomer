@@ -31,6 +31,12 @@ public class User {
     }
 
 
+
+    public boolean isRegistered(){
+        return this.userPermissions.getUserPermissionStatus() == UserPermissions.UserPermissionStatus.MEMBER ||
+                this.userPermissions.getUserPermissionStatus() == UserPermissions.UserPermissionStatus.ADMIN;
+    }
+
     //#15
     //returns User on success (for future functionalities)
     public User register(String userName, String password, String email) {
