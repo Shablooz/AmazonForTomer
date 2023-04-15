@@ -1,11 +1,12 @@
 package BGU.Group13B.service;
 
 import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepositoryAsHashmap;
-import BGU.Group13B.backend.SystemInfo;
+import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.User.User;
-import BGU.Group13B.backend.User.UserPermissions;
 import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
+
+import java.util.List;
 
 class Session implements ISession {
     private final Market market;
@@ -72,5 +73,42 @@ class Session implements ISession {
             }
         }
     }
+
+    @Override
+    public void searchProductByName(String productName) {
+        market.searchProductByName(productName);
+    }
+
+    @Override
+    public void searchProductByCategory(String category) {
+        market.searchProductByCategory(category);
+    }
+
+    @Override
+    public void searchProductByKeywords(List<String> keywords) {
+        market.searchProductByKeywords(keywords);
+    }
+
+    @Override
+    public void filterByPriceRange(int minPrice, int maxPrice) {
+        market.filterByPriceRange(minPrice, maxPrice);
+    }
+
+    @Override
+    public void filterByProductRank(int minRating, int maxRating) {
+        market.filterByProductRank(minRating, maxRating);
+    }
+
+    @Override
+    public void filterByCategory(String category) {
+        market.filterByCategory(category);
+    }
+
+    @Override
+    public void filterByStoreRank(int minRating, int maxRating) {
+        market.filterByStoreRank(minRating, maxRating);
+    }
+
+
 
 }
