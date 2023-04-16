@@ -11,6 +11,7 @@ public class UserPermissions {
     }
 
     public enum StoreRole {
+        FOUNDER,
         OWNER,
         MANAGER
     }
