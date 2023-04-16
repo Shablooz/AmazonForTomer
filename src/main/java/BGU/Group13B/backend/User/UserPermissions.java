@@ -14,7 +14,6 @@ public class UserPermissions {
         FOUNDER,
         OWNER,
         MANAGER,
-        FOUNDER
     }
 
     private UserPermissionStatus userPermissionStatus;

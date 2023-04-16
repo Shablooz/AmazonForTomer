@@ -3,12 +3,13 @@ package BGU.Group13B.service;
 import BGU.Group13B.backend.Repositories.Implementations.AcutionRepositoryImpl.AuctionRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.BIDRepositoryImpl.BIDRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.BasketReposistoryImpl.BasketRepositoryAsHashMap;
+import BGU.Group13B.backend.Repositories.Implementations.MessageRepositoryImpl.MessageRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl.ProductRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.PurchaseHistoryRepositoryImpl.PurchaseHistoryRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.StoreDiscountsRepositoryImpl.StoreDiscountsRepositoryAsHashMap;
+import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyImpl.StoreMessageRepositoryNonPersist;
 import BGU.Group13B.backend.Repositories.Implementations.StoreRepositoryImpl.StoreRepositoryAsList;
-import BGU.Group13B.backend.Repositories.Implementations.StoreDiscountsRepositoryImpl.StoreDiscountsRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepositoryAsHashmap;
 import BGU.Group13B.backend.Repositories.Interfaces.*;
 import BGU.Group13B.backend.System.Searcher;
@@ -17,6 +18,7 @@ import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
 import BGU.Group13B.service.callbacks.AddToUserCart;
+import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
 
 //(#61)
 public class SingletonCollection {
@@ -34,6 +36,7 @@ public class SingletonCollection {
     private static final IUserRepository userRepository;
     private static final IBasketRepository basketRepository;
     private static final IStoreDiscountsRepository storeDiscountsRepository;
+    private static final IAuctionRepository auctionRepository;
 
 
     /**
@@ -54,10 +57,6 @@ public class SingletonCollection {
      * <h1>additional classes</h1>
      */
     private static final AlertManager alertManager;
-    private static Searcher searcher;
-    private static Market market;
-    private static IStoreDiscountsRepository storeDiscountsRepository;
-    private static IAuctionRepository auctionRepository;
     private static final Searcher searcher;
     private static final Market market;
 
@@ -66,11 +65,11 @@ public class SingletonCollection {
     static {
         //repositories
         bidRepository = new BIDRepositoryAsList();
-        messageRepository = null;                                           //TODO
+        messageRepository = new MessageRepositoryAsList();
         productRepository = new ProductRepositoryAsHashMap();
         purchaseHistoryRepository = new PurchaseHistoryRepositoryAsList();
         reviewRepository = new ReviewRepositoryAsList();
-        storeMessagesRepository = null;                                     //TODO
+        storeMessagesRepository = new StoreMessageRepositoryNonPersist();
         storeRepository = new StoreRepositoryAsList();
         userRepository = new UserRepositoryAsHashmap();
         basketRepository = new BasketRepositoryAsHashMap();
@@ -163,6 +162,10 @@ public class SingletonCollection {
 
     public static IStoreDiscountsRepository getStoreDiscountsRepository() {
         return storeDiscountsRepository;
+    }
+
+    public static IAuctionRepository getAuctionRepository() {
+        return auctionRepository;
     }
 
     /**

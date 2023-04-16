@@ -44,23 +44,7 @@ public class Store implements Comparable<Store> {
     private String category;
     private final IAuctionRepository auctionRepository;
 
-    public Store(int storeId, int founderId, String storeName, String category) {
-        this.productRepository = SingletonCollection.getProductRepository();
-        this.bidRepository = SingletonCollection.getBidRepository();
-        this.deliveryAdapter = SingletonCollection.getDeliveryAdapter();
-        this.paymentAdapter = SingletonCollection.getPaymentAdapter();
-        this.alertManager = SingletonCollection.getAlertManager();
-        this.addToUserCart = SingletonCollection.getAddToUserCart();
-        this.storeMessagesRepository = SingletonCollection.getStoreMessagesRepository();
-        this.storeDiscounts = SingletonCollection.getStoreDiscountsRepository();
-        this.discountPolicy = new DiscountPolicy();
-        this.purchasePolicy = new PurchasePolicy();
-        this.storeId = storeId;
-        this.storeName = storeName;
-        this.category = category;
-        this.storePermission = new StorePermission(founderId);
-        this.rank = 0;
-    }
+
 
     public Store(int storeId, int founderId, String storeName, String category) {
         this.auctionRepository = SingletonCollection.getAuctionRepository();
