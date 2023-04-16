@@ -116,7 +116,6 @@ public class User {
         this.isLoggedIn = false;
     }
 
-}
 
     public void sendMassageStore(String header,String massage,int storeId) {
         market.sendMassage(Message.constractMessage(this.userName,getAndIncrementMessageId(), header,massage , String.valueOf(storeId)),this.userName,storeId);
