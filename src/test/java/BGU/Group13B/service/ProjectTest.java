@@ -1,6 +1,6 @@
 package BGU.Group13B.service;
 
-import BGU.Group13B.backend.SystemInfo;
+import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 
 public abstract class ProjectTest {

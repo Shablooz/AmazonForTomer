@@ -1,10 +1,12 @@
 package BGU.Group13B.service;
 
-import BGU.Group13B.backend.SystemInfo;
+import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 
 import java.time.LocalDateTime;
+
+import java.util.List;
 
 public interface ISession {
     void addProduct(int userId, String productName, int quantity, double price, int storeId) throws NoPermissionException;
@@ -118,4 +120,48 @@ public interface ISession {
      * @param adminId the id of an admin
      */
     SystemInfo getSystemInformation(int adminId);
+
+
+    /**
+     * #15
+     * require 2.1.3
+     * @param userId
+     * @param username
+     * @param password
+     * @param email
+     * */
+    void register(int userId,String username,String password,String email);
+
+    void searchProductByName(String productName);
+
+    void searchProductByCategory(String category);
+
+    void searchProductByKeywords(List<String> keywords);
+
+    void filterByPriceRange(int minPrice, int maxPrice);
+
+    void filterByProductRank(int minRating, int maxRating);
+
+    void filterByCategory(String category);
+
+    void filterByStoreRank(int minRating, int maxRating);
+
+    /**
+     * #16
+     * require 1.4
+     * @param userID - current userID - of the visitor
+     * @param username
+     * @param password
+     * returns the new user id - of the already existing user - need to make a uniq generator if failed returns 0
+     * */
+    int login(int userID,String username,String password);
+
+
+    /**
+     * #16
+     * require 3.1
+     * @param userID - current userID - of the visitor
+     * logout as a user
+     * */
+    void logout(int userID);
 }

@@ -2,9 +2,12 @@ package BGU.Group13B.service;
 
 import BGU.Group13B.backend.SystemInfo;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
+import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 
 import java.time.LocalDateTime;
+
+import java.util.List;
 
 public class ProxySession implements ISession {
     private ISession realSession;
@@ -69,5 +72,55 @@ public class ProxySession implements ISession {
     @Override
     public SystemInfo getSystemInformation(int adminId) {
         return null;
+    }
+
+    @Override
+    public void register(int userId, String username, String password, String email) {
+
+    }
+
+    @Override
+    public void searchProductByName(String productName) {
+        realSession.searchProductByName(productName);
+    }
+
+    @Override
+    public void searchProductByCategory(String category) {
+        realSession.searchProductByCategory(category);
+    }
+
+    @Override
+    public void searchProductByKeywords(List<String> keywords) {
+        realSession.searchProductByKeywords(keywords);
+    }
+
+    @Override
+    public void filterByPriceRange(int minPrice, int maxPrice) {
+        realSession.filterByPriceRange(minPrice, maxPrice);
+    }
+
+    @Override
+    public void filterByProductRank(int minRating, int maxRating) {
+        realSession.filterByProductRank(minRating, maxRating);
+    }
+
+    @Override
+    public void filterByCategory(String category) {
+        realSession.filterByCategory(category);
+    }
+
+    @Override
+    public void filterByStoreRank(int minRating, int maxRating) {
+        realSession.filterByStoreRank(minRating, maxRating);
+    }
+
+    @Override
+    public int login(int userID, String username, String password) {
+        return realSession.login(userID, username, password);
+    }
+
+    @Override
+    public void logout(int userID) {
+        realSession.logout(userID);
     }
 }

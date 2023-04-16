@@ -2,8 +2,14 @@ package BGU.Group13B.backend.storePackage;
 
 
 import BGU.Group13B.backend.Repositories.Interfaces.IAuctionRepository;
+import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyImpl.StoreMessageRepositoryNonPersist;
 import BGU.Group13B.backend.Repositories.Interfaces.IBIDRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
+import BGU.Group13B.backend.Repositories.Interfaces.IStoreMessagesRepository;
+import BGU.Group13B.backend.User.Message;
+import BGU.Group13B.backend.Repositories.Interfaces.IStoreDiscountsRepository;
+import BGU.Group13B.backend.User.BasketProduct;
+import BGU.Group13B.backend.storePackage.Discounts.Discount;
 import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
 import BGU.Group13B.backend.storePackage.permissions.DefaultManagerFunctionality;
@@ -15,6 +21,8 @@ import BGU.Group13B.service.callbacks.AddToUserCart;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 public class Store {
     private final IProductRepository productRepository;
     private final PurchasePolicy purchasePolicy;
@@ -23,15 +31,16 @@ public class Store {
     private final PaymentAdapter paymentAdapter;
     private final AlertManager alertManager;
     private final StorePermission storePermission;
+    private final IStoreDiscountsRepository storeDiscounts;
+    private final IStoreMessagesRepository storeMessagesRepository;
     private final AddToUserCart addToUserCart;
     private final IBIDRepository bidRepository;
     private final IAuctionRepository auctionRepository;
     private final int storeId;
 
-    public Store(IProductRepository productRepository, PurchasePolicy purchasePolicy, DiscountPolicy discountPolicy,
-                 DeliveryAdapter deliveryAdapter, PaymentAdapter paymentAdapter,
-                 AlertManager alertManager, StorePermission storePermission, AddToUserCart addToUserCart,
-                 IBIDRepository bidRepository, IAuctionRepository auctionRepository, int storeId) {
+    private int rank;
+
+    public Store(IProductRepository productRepository, PurchasePolicy purchasePolicy, DiscountPolicy discountPolicy, DeliveryAdapter deliveryAdapter, PaymentAdapter paymentAdapter, AlertManager alertManager, StorePermission storePermission, AddToUserCart addToUserCart, IBIDRepository bidRepository, int storeId) {
         this.productRepository = productRepository;
         this.purchasePolicy = purchasePolicy;
         this.discountPolicy = discountPolicy;
@@ -39,11 +48,50 @@ public class Store {
         this.paymentAdapter = paymentAdapter;
         this.alertManager = alertManager;
         this.storePermission = storePermission;
+        this.storeDiscounts = storeDiscounts;
+        this.storeMessagesRepository = storeMessagesRepository;
         this.addToUserCart = addToUserCart;
         this.bidRepository = bidRepository;
         this.auctionRepository = auctionRepository;
         this.storeId = storeId;
+        this.rank=0;
     }
+
+
+
+    public void sendMassage(Message message,String userName,int userId){
+        storeMessagesRepository.sendMassage(message,this.storeId,userName);
+    }
+
+
+
+    @DefaultOwnerFunctionality
+    public Message getUnreadMessages(String userName,int userId)throws NoPermissionException {
+        if (!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userName + " has no permission to read message of store " + this.storeId);
+
+        return storeMessagesRepository.readUnreadMassage(this.storeId,userName);
+    }
+    @DefaultOwnerFunctionality
+    public Message getReadMessages(String userName,int userId) throws NoPermissionException {
+        if (!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userName + " has no permission to read message of store " + this.storeId);
+        return storeMessagesRepository.readReadMassage(this.storeId,userName);
+    }
+    @DefaultOwnerFunctionality
+    public void markAsCompleted(String senderId,int messageId,String userName,int userId) throws NoPermissionException{
+        if (!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userName + " has no permission to mark message as complete of store: " + this.storeId);
+        storeMessagesRepository.markAsRead(senderId,messageId,userName);
+    }
+
+    @DefaultOwnerFunctionality
+    public void refreshMessages(String userName,int userId) throws NoPermissionException{
+        if (!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userName + " has no permission to handle message of store " + this.storeId);
+        storeMessagesRepository.refreshOldMassage(this.storeId,userName);
+    }
+
 
     //todo: complete the function
     public void addProduct(Product product, int userId) {
@@ -60,9 +108,42 @@ public class Store {
         if (!this.storePermission.checkPermission(userId))
             throw new NoPermissionException("User " + userId + " has no permission to add product to store " + this.storeId);
 
-        Product product = new Product(productName, -1/*todo*/, price, quantity);
-        productRepository.add(product);
+        /*Product product = new Product(productName, -1*//*todo*//*, price, quantity);
+        productRepository.add(product);*/
+
     }
+
+    public double calculatePriceOfBasket(double totalAmountBeforeStoreDiscountPolicy,
+                                         ConcurrentLinkedQueue<BasketProduct> successfulProducts,
+                                         String storeCoupon) {
+        double totalAmount = totalAmountBeforeStoreDiscountPolicy;
+        for (Discount discount : storeDiscounts.getStoreDiscounts(storeId).
+                orElseThrow(() -> new RuntimeException("Store with id " + storeId + " does not exist"))) {
+
+            totalAmount = discount.applyStoreDiscount(totalAmount, successfulProducts, storeCoupon);
+        }
+        return totalAmount;
+
+    }
+
+
+    public void sendMassage(Message message,String userName) { //need to check how to send message back to the user
+        //TODO: need to check permission only registered user can send massage
+        storeMessagesRepository.sendMassage(message,this.storeId,userName);
+    }
+    public Message getUnreadMessages(String userName) {
+        //TODO: need to check permission only store owner can read massage
+        return storeMessagesRepository.readUnreadMassage(this.storeId,userName);
+    }
+    public void markAsCompleted(String senderId,int messageId,String userName) {
+        //TODO: need to check permission
+        storeMessagesRepository.markAsRead(senderId,messageId,userName);
+    }
+
+    public void refreshMessages(String userName) {
+        storeMessagesRepository.refreshOldMassage(this.storeId,userName);
+    }
+
 
     public static String getCurrentMethodName() {
         return StorePermission.getFunctionName(
@@ -108,7 +189,6 @@ public class Store {
 
         if (currentBid.isRejected())
             alertManager.sendAlert(managerId, "The bid for product " + currentBid.getProductId() + " in store " + this.storeId + " has been rejected already");
-        //throw new IllegalArgumentException("The bid for product " + currentBid.getProductId() + " in store " + this.storeId + " has been rejected already");
         currentBid.approve(managerId);
         Set<Integer> managers = storePermission.getAllUsersWithPermission("purchaseProposalSubmit");
 
@@ -128,6 +208,10 @@ public class Store {
         BID currentBid = bidRepository.getBID(bidId).orElseThrow(() -> new IllegalArgumentException("There is no such bid for store " + this.storeId));
         currentBid.reject();//good for concurrency edge cases
         bidRepository.removeBID(bidId);
+    }
+
+    public int getRank() {
+        return rank;
     }
 
     //only members of the store can create an auction purchase
