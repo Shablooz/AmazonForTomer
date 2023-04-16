@@ -8,6 +8,7 @@ import BGU.Group13B.backend.storePackage.Discounts.Discount;
 import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Store {
@@ -34,7 +35,6 @@ public class Store {
     }
 
 
-
     //todo: complete the function
     public void addProduct(Product product, int userId) {
 
@@ -51,14 +51,17 @@ public class Store {
         }
        /* Product product = new Product(productName, -1, storeId, price, quantity);
         productRepository.add(product);
-    */}
+    */
+    }
 
     public double calculatePriceOfBasket(double totalAmountBeforeStoreDiscountPolicy,
-                                         ConcurrentLinkedQueue<BasketProduct> successfulProducts) {
+                                         ConcurrentLinkedQueue<BasketProduct> successfulProducts,
+                                         String storeCoupon) {
         double totalAmount = totalAmountBeforeStoreDiscountPolicy;
-        for(Discount discount : storeDiscounts.getStoreDiscounts(storeId).
-                orElseThrow(() -> new RuntimeException("Store with id " + storeId + " does not exist"))){
-            totalAmount = discount.applyStore(totalAmount, successfulProducts);
+        for (Discount discount : storeDiscounts.getStoreDiscounts(storeId).
+                orElseThrow(() -> new RuntimeException("Store with id " + storeId + " does not exist"))) {
+
+            totalAmount = discount.applyStoreDiscount(totalAmount, successfulProducts, storeCoupon);
         }
         return totalAmount;
 

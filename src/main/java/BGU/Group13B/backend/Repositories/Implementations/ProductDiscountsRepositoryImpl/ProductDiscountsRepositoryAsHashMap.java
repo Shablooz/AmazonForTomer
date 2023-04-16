@@ -17,14 +17,30 @@ public class ProductDiscountsRepositoryAsHashMap implements IProductDiscountsRep
 
     @Override
     public Optional<List<Discount>> getProductDiscounts(int productId) {
-        if(!productDiscounts.containsKey(productId))
+        if (!productDiscounts.containsKey(productId))
             return Optional.empty();
         return Optional.of(productDiscounts.get(productId));
     }
 
     @Override
     public void addProductDiscount(int productId, Discount discount) {
-        if(productDiscounts.putIfAbsent(productId, List.of(discount)) != null)
-            productDiscounts.get(productId).add(discount);
+        if (!productDiscounts.containsKey(productId))
+            productDiscounts.put(productId, List.of(discount));
+        else {
+            var discounts = productDiscounts.get(productId);
+            if (discounts.contains(discount))
+                throw new IllegalArgumentException("Discount already exists");
+            discounts.add(discount);
+        }
+    }
+
+    @Override
+    public void removeProductDiscount(int productId, Discount discount) {
+        if (!productDiscounts.containsKey(productId))
+            throw new IllegalArgumentException("Product does not exist");
+        var discounts = productDiscounts.get(productId);
+        if (!discounts.contains(discount))
+            throw new IllegalArgumentException("Discount does not exist");
+        discounts.remove(discount);
     }
 }

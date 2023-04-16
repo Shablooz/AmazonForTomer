@@ -31,14 +31,14 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
 
     }
 
-    @Override
-    public double calculatePrice(int storeId, int productId, int productQuantity) {
+/*    @Override
+    public double calculatePrice(int storeId, int productId, int productQuantity, String couponCode) {
         if (!storeProducts.containsKey(storeId))
             throw new IllegalArgumentException("Store not found");
         return storeProducts.get(storeId)
                 .stream().filter(product -> product.getProductId() == productId).
                 findFirst().orElseThrow(
                         () -> new IllegalArgumentException("Product not found in store")
-                ).calculatePrice(productQuantity);
-    }
+                ).calculatePrice(productQuantity, couponCode);
+    }*/
 }

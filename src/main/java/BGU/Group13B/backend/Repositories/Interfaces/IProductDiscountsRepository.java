@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface IProductDiscountsRepository {
     Optional<List<Discount>> getProductDiscounts(int productId);
     void addProductDiscount(int productId, Discount discount);
+    void removeProductDiscount(int productId, Discount discount);
 }

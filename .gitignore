@@ -11,7 +11,8 @@ target/
 *.iws
 *.iml
 *.ipr
-
+workspace.xml
+misc.xml
 ### Java ###
 # Compiled class file
 *.class

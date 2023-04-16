@@ -28,8 +28,9 @@ public class Cart {
                 new NoSuchElementException("No baskets for user " + userId)
         );
         for (var basket : userBaskets) {
-            basket.purchaseBasket(address, creditCardNumber, creditCardMonth, creditCardYear,
-                    creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType);
+            //basket.purchaseBasket(address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType, calculatePriceOfBasket);
+            throw new RuntimeException("Not implemented");
+            //fixme
         }
 
     }

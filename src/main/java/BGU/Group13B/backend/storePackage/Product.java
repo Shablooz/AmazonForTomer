@@ -12,18 +12,18 @@ public class Product {
 
     private final int storeId;
     private double price;
-    private int amount;
+    private int maxAmount;
 
     private final PurchasePolicy purchasePolicy;
     private final IProductDiscountsRepository productDiscounts;
 
 
-    public Product(String name, int productId, int storeId, double price, int amount, IProductDiscountsRepository productDiscounts) {
+    public Product(String name, int productId, int storeId, double price, int maxAmount, IProductDiscountsRepository productDiscounts) {
         this.name = name;
         this.productId = productId;
         this.storeId = storeId;
         this.price = price;
-        this.amount = amount;
+        this.maxAmount = maxAmount;
         this.productDiscounts = productDiscounts;
 
         purchasePolicy = null;
@@ -41,21 +41,16 @@ public class Product {
         return productId;
     }
 
-
-    public double calculatePrice() {
-        return price;
-    }
-
     public void setPrice(double price) {
         this.price = price;
     }
 
-    public int getAmount() {
-        return amount;
+    public int getMaxAmount() {
+        return maxAmount;
     }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
+    public void setMaxAmount(int maxAmount) {
+        this.maxAmount = maxAmount;
     }
 
     public PurchasePolicy getPurchasePolicy() {
@@ -66,18 +61,21 @@ public class Product {
 
 
     public boolean tryDecreaseQuantity(int quantity) {
-        if (amount < quantity)
+        if (maxAmount < quantity)
             return false;
-        amount -= quantity;
+        maxAmount -= quantity;
         return true;
     }
 
-    public double calculatePrice(int productQuantity) {
+    public synchronized double calculatePrice(int productQuantity, String couponCodes) {
         purchasePolicy.checkPolicy(this, productQuantity);
         double finalPrice = price;
         for (Discount discount :
                 productDiscounts.getProductDiscounts(productId).orElseGet(LinkedList::new))
-            finalPrice = discount.apply(finalPrice, productQuantity);
+            if(discount.isExpired())
+                productDiscounts.removeProductDiscount(productId, discount);
+            else
+                finalPrice = discount.applyProductDiscount(finalPrice, productQuantity, couponCodes);
         return finalPrice;
     }
 }

@@ -4,11 +4,11 @@ import BGU.Group13B.backend.SystemInfo;
 import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.storePackage.Market;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 class Session implements ISession {
     private final Market market;
-    private final CalculatePriceOfBasket calculatePriceOfBasket = this::calculatePriceOfBasket;//inject to add user
     public Session(Market market) {
         this.market = market;
     }
@@ -53,10 +53,6 @@ class Session implements ISession {
         return null;
     }
 
-    private double calculatePriceOfBasket(double totalAmountBeforeStoreDiscountPolicy,
-                                         ConcurrentLinkedQueue<BasketProduct> successfulProducts,
-                                         int storeId) {
-        return market.calculatePriceOfBasket(totalAmountBeforeStoreDiscountPolicy, successfulProducts, storeId);
-    }
+
 
 }

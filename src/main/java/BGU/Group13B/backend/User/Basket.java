@@ -6,6 +6,7 @@ import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
 import BGU.Group13B.service.CalculatePriceOfBasket;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Basket {
@@ -18,6 +19,7 @@ public class Basket {
     private final IProductHistoryRepository productHistoryRepository;
     private final CalculatePriceOfBasket calculatePriceOfBasket;
 
+    //todo: remove all unnecessary fields and move to the singletonCollection class
     public Basket(int userId, int storeId, IBasketProductRepository productRepository,
                   PaymentAdapter paymentAdapter, IProductHistoryRepository productHistoryRepository,
                   CalculatePriceOfBasket calculatePriceOfBasket) {
@@ -43,12 +45,15 @@ public class Basket {
                                String creditCardMonth, String creditCardYear,
                                String creditCardHolderFirstName, String creditCardHolderLastName,
                                String creditCardCVV, String id, String creditCardType,
-                               HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsDiscountCodes
-                               ) throws Exception {
+                               HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                               String/*store coupons*/ storeCoupon
+    ) throws Exception {
+        //todo add timer for 5 minutes and then do roll back that restores the quantity of the products
+
         getSuccessfulProducts();
-        double totalAmount = getTotalAmount();
+        double totalAmount = getTotalAmount(productsCoupons);
         //calculate the total price of the products by the store discount policy
-        totalAmount = calculateStoreDiscount(totalAmount);
+        totalAmount = calculateStoreDiscount(totalAmount, storeCoupon);
         if (paymentAdapter.
                 pay(address, creditCardNumber, creditCardMonth, creditCardYear,
                         creditCardHolderFirstName, creditCardHolderLastName,
@@ -69,8 +74,9 @@ public class Basket {
 
     }
 
-    private double calculateStoreDiscount(double totalAmountAfterProductDiscounts) {
-        return calculatePriceOfBasket.apply(totalAmountAfterProductDiscounts, successfulProducts, storeId);
+    private double calculateStoreDiscount(double totalAmountAfterProductDiscounts, String storeCoupon) {
+        //todo: SingletonCollection.getCalculatePriceOfBasket().apply(totalAmountAfterProductDiscounts, successfulProducts, storeId, storeCoupons);
+        return calculatePriceOfBasket.apply(totalAmountAfterProductDiscounts, successfulProducts, storeId, storeCoupon);
     }
 
 
@@ -93,11 +99,12 @@ public class Basket {
         }
     }
 
-    private double getTotalAmount() {
+    private double getTotalAmount(HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons) {
         double totalAmount = 0.0;//store.calculatePrice(successfulProducts);
         for (BasketProduct basketProduct : successfulProducts) {//Hidden assumption we are first calculating the discount of the products
             //calculate price remembering the discount policies
-            totalAmount += basketProduct.getProduct().calculatePrice(basketProduct.getQuantity());
+            String productDiscountCode = productsCoupons.getOrDefault(basketProduct.getProductId(), null);
+            totalAmount += basketProduct.getProduct().calculatePrice(basketProduct.getQuantity(), productDiscountCode);
         }
         return totalAmount;
     }

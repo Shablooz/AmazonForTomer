@@ -1,7 +1,10 @@
 package BGU.Group13B.backend.storePackage.payment;
 
+import BGU.Group13B.backend.User.BasketProduct;
+
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 public interface PaymentAdapter {
-    boolean pay(String cardNumber, String firstName, String lastName,
-                String expirationDate,String creditCardMonth, String creditCardYear,
-                String cvv, String creditCardType,String id, double amount);
+
+    boolean pay(String address, String creditCardNumber, String creditCardMonth, String creditCardYear, String creditCardHolderFirstName, String creditCardHolderLastName, String creditCardCVV, String id, String creditCardType, ConcurrentLinkedQueue<BasketProduct> successfulProducts, ConcurrentLinkedQueue<BasketProduct> failedProducts);
 }
