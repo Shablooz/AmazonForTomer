@@ -32,25 +32,26 @@ public class UserRepositoryAsHashmap implements IUserRepository {
     }
 
     @Override
-    public User checkIfUserExists(String username) throws ClassNotFoundException {
-        User user = getUserByUsername(username);;
+    public User checkIfUserExists(String username){
+        User user = getUserByUsername(username);
         if(user != null){
             return user;
         }
-        throw new ClassNotFoundException("cannot find user with this username");
+        throw new IllegalArgumentException("cannot find user with this username");
     }
 
 
     @Override
-    public int getUserId(User user) throws ClassNotFoundException {
+    public int getUserId(User user) throws IllegalArgumentException{
         int searchValue = 2;
         String searchKey = null;
         for (Map.Entry<Integer, User> entry : integerUserHashMap.entrySet()){
             if(user.getUserName().equals(entry.getValue().getUserName()))
                 return entry.getKey();
         }
-        throw new ClassNotFoundException("cannot find user with this username");
+        throw new IllegalArgumentException("cannot find user with this username");
     }
+
 
     //TODO in the future this will be replaced with taking a user by username in the database - this is prototype for testing
     private User getUserByUsername(String username){

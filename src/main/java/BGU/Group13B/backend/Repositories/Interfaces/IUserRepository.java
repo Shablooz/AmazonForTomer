@@ -11,8 +11,8 @@ public interface IUserRepository {
     void addUser(int userId,User user);
 
     //checks if user with the following username exists if it does - returns the user
-    User checkIfUserExists(String username) throws ClassNotFoundException;
+    User checkIfUserExists(String username) throws IllegalArgumentException;
 
     //returns the users id
-    int getUserId(User user) throws ClassNotFoundException;
+    int getUserId(User user) throws IllegalArgumentException;
 }
