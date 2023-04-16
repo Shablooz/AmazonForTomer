@@ -2,21 +2,27 @@ package BGU.Group13B.service;
 
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
+import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
+
+import java.time.LocalDateTime;
 
 import java.util.List;
 
 public interface ISession {
     void addProduct(int userId, String productName, int quantity, double price, int storeId) throws NoPermissionException;
     //generate param documentation
+
     /**
      * #19
      * require 2.3
-     * @param userId the user id
-     * @param storeId the store id
+     *
+     * @param userId    the user id
+     * @param storeId   the store id
      * @param productId the product id
-     * @param quantity the quantity
-     * */
+     * @param quantity  the quantity
+     */
     void addToCart(int userId, int storeId, int productId, int quantity);
+
     /**
      * #22
      * require 2.5
@@ -43,7 +49,7 @@ public interface ISession {
      * @param productId     the product id
      * @param proposedPrice the proposed price
      */
-    void purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice);
+    void purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount);
 
 
     /**
@@ -79,6 +85,20 @@ public interface ISession {
      */
     void participateInLotteryPurchase(int userId, int storeId, int productId, double fraction);
 
+
+    /**
+     * #53
+     * require 2.5.4
+     *
+     * @param storeManagerId the store manager id
+     * @param storeId        the store id
+     * @param productId      the product id
+     * @param startingPrice  the starting price of the auction
+     * @param lastDate       the last date for the auction for the product
+     **/
+    void createAuctionForProduct(int storeManagerId, int storeId, int productId,
+                                 double startingPrice, LocalDateTime lastDate);
+
     /**
      * #53
      * require 2.5.4
@@ -86,17 +106,19 @@ public interface ISession {
      * @param userId    the user id
      * @param storeId   the store id
      * @param productId the product id
-     * @param price     the price of the product, assert that the price is higher than the current price
+     * @param newPrice  new price of the product, assert that the price is higher than the current price
      */
-    void auctionPurchase(int userId, int storeId, int productId, double price);
+    void auctionPurchase(int userId, int storeId, int productId, double newPrice);
 
 
+    PublicAuctionInfo getAuctionInfo(int userId, int storeId, int productId);
 
     /**
      * #49
      * require 6.5
+     *
      * @param adminId the id of an admin
-     * */
+     */
     SystemInfo getSystemInformation(int adminId);
 
 

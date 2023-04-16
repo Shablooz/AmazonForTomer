@@ -7,6 +7,9 @@ import BGU.Group13B.backend.User.User;
 import BGU.Group13B.backend.User.UserPermissions;
 import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
+import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
+
+import java.time.LocalDateTime;
 
 import java.util.List;
 
@@ -38,8 +41,12 @@ class Session implements ISession {
     }
 
     @Override
-    public void purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice) {
-
+    public void purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount) {
+        try {
+            market.purchaseProposalSubmit(userId, storeId, productId, proposedPrice, amount);
+        } catch (NoPermissionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -58,9 +65,20 @@ class Session implements ISession {
     }
 
     @Override
-    public void auctionPurchase(int userId, int storeId, int productId, double price) {
+    public void createAuctionForProduct(int storeManagerId, int storeId, int productId,
+                                        double minPrice, LocalDateTime lastDate) {
 
     }
+
+    @Override
+    public void auctionPurchase(int userId, int storeId, int productId, double newPrice) {
+
+    }
+    @Override
+    public PublicAuctionInfo getAuctionInfo(int userId, int storeId, int productId) {
+        return null;
+    }
+
 
     @Override
     public SystemInfo getSystemInformation(int adminId) {
