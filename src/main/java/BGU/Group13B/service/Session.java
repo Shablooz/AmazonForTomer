@@ -1,21 +1,18 @@
 package BGU.Group13B.service;
 
-import BGU.Group13B.backend.SystemInfo;
-import BGU.Group13B.backend.User.BasketProduct;
-import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepositoryAsHashmap;
 import BGU.Group13B.backend.System.SystemInfo;
+import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepositoryAsHashmap;
 import BGU.Group13B.backend.User.User;
 import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 
 import java.util.List;
 
-import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 class Session implements ISession {
     private final Market market;
     UserRepositoryAsHashmap userRepositoryAsHashmap;
+
     public Session(Market market) {
         this.market = market;
 
@@ -69,24 +66,24 @@ class Session implements ISession {
     }
 
     @Override
-    public synchronized void register(int userId,String username, String password, String email) {
+    public synchronized void register(int userId, String username, String password, String email) {
         User user = userRepositoryAsHashmap.getUser(userId);
-                try {
-                    //the first if might not be necessary when we will connect to web
-                    if(!user.isRegistered()) {
-                        if(userRepositoryAsHashmap.checkIfUserExists(username) != null) {
-                            user.register(username, password, email);
-                        }else{
-                            System.out.println("user with this username already exists!");
-                        }
-                    }else{
-                        System.out.println("already registered!");
-                    }
-                }catch(Exception e){
-                    System.out.println(e.getMessage());
+        try {
+            //the first "if" might not be necessary when we will connect to web
+            if (!user.isRegistered()) {
+                if (userRepositoryAsHashmap.checkIfUserExists(username) != null) {
+                    user.register(username, password, email);
+                } else {
+                    System.out.println("user with this username already exists!");
                 }
-
+            } else {
+                System.out.println("already registered!");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
+
+    }
 
     @Override
     public void searchProductByName(String productName) {
@@ -124,7 +121,7 @@ class Session implements ISession {
     }
 
     @Override
-    public int login(int userID,String username, String password) {
+    public int login(int userID, String username, String password) {
         try {
             //gets the user that we want to log into
             User user = userRepositoryAsHashmap.checkIfUserExists(username);
@@ -132,7 +129,7 @@ class Session implements ISession {
                 user.login(username, password);
                 //removes the current guest profile to swap to the existing member one
                 userRepositoryAsHashmap.removeUser(userID);
-                //gets the new id - of the user we logging into
+                //gets the new id - of the user we're logging into
                 return userRepositoryAsHashmap.getUserId(user);
             }
         } catch (Exception e) {
@@ -144,7 +141,7 @@ class Session implements ISession {
 
     @Override
     public void logout(int userID) {
-        synchronized (userRepositoryAsHashmap.getUser(userID)){
+        synchronized (userRepositoryAsHashmap.getUser(userID)) {
             userRepositoryAsHashmap.getUser(userID).logout();
         }
 

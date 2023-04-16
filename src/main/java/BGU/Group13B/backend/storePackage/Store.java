@@ -19,9 +19,6 @@ import BGU.Group13B.service.callbacks.AddToUserCart;
 
 import java.util.Set;
 
-import java.util.List;
-
-import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Store {
@@ -42,7 +39,7 @@ public class Store {
 
 
 
-    public Store(IProductRepository productRepository, PurchasePolicy purchasePolicy, DiscountPolicy discountPolicy, DeliveryAdapter deliveryAdapter, PaymentAdapter paymentAdapter, AlertManager alertManager, StorePermission storePermission, AddToUserCart addToUserCart, IBIDRepository bidRepository, int storeId, StoreMessageRepositoryNonPersist storeMessagesRepository) {
+    public Store(IProductRepository productRepository, PurchasePolicy purchasePolicy, DiscountPolicy discountPolicy, DeliveryAdapter deliveryAdapter, PaymentAdapter paymentAdapter, AlertManager alertManager, StorePermission storePermission, IStoreDiscountsRepository storeDiscounts, AddToUserCart addToUserCart, IBIDRepository bidRepository, int storeId, StoreMessageRepositoryNonPersist storeMessagesRepository) {
         this.productRepository = productRepository;
         this.purchasePolicy = purchasePolicy;
         this.discountPolicy = discountPolicy;
@@ -50,6 +47,7 @@ public class Store {
         this.paymentAdapter = paymentAdapter;
         this.alertManager = alertManager;
         this.storePermission = storePermission;
+        this.storeDiscounts = storeDiscounts;
         this.storeMessagesRepository = storeMessagesRepository;
         this.addToUserCart = addToUserCart;
         this.bidRepository = bidRepository;
@@ -61,7 +59,6 @@ public class Store {
 
     public void sendMassage(Message message,String userName,int userId){
         storeMessagesRepository.sendMassage(message,this.storeId,userName);
-        this.storeDiscounts = storeDiscounts;
     }
 
 
@@ -109,9 +106,9 @@ public class Store {
         if (!this.storePermission.checkPermission(userId))
             throw new NoPermissionException("User " + userId + " has no permission to add product to store " + this.storeId);
 
-        Product product = new Product(productName, -1/*todo*/, price, quantity);
-        productRepository.add(product);
-    */
+        /*Product product = new Product(productName, -1*//*todo*//*, price, quantity);
+        productRepository.add(product);*/
+
     }
 
     public double calculatePriceOfBasket(double totalAmountBeforeStoreDiscountPolicy,
@@ -190,7 +187,6 @@ public class Store {
 
         if (currentBid.isRejected())
             alertManager.sendAlert(managerId, "The bid for product " + currentBid.getProductId() + " in store " + this.storeId + " has been rejected already");
-            //throw new IllegalArgumentException("The bid for product " + currentBid.getProductId() + " in store " + this.storeId + " has been rejected already");
         currentBid.approve(managerId);
         Set<Integer> managers = storePermission.getAllUsersWithPermission("purchaseProposalSubmit");
 

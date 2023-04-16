@@ -89,4 +89,8 @@ public class Product {
                 finalPrice = discount.applyProductDiscount(finalPrice, productQuantity, couponCodes);
         return finalPrice;
     }
+
+    public double getPrice() {
+        return price;
+    }
 }

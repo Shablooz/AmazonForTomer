@@ -3,8 +3,6 @@ package BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl;
 import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
 import BGU.Group13B.backend.User.User;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -43,8 +41,7 @@ public class UserRepositoryAsHashmap implements IUserRepository {
 
     @Override
     public int getUserId(User user) throws IllegalArgumentException{
-        int searchValue = 2;
-        String searchKey = null;
+
         for (Map.Entry<Integer, User> entry : integerUserHashMap.entrySet()){
             if(user.getUserName().equals(entry.getValue().getUserName()))
                 return entry.getKey();

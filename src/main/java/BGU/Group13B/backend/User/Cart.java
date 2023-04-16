@@ -2,6 +2,7 @@ package BGU.Group13B.backend.User;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IBasketRepository;
 import BGU.Group13B.service.CalculatePriceOfBasket;
+import BGU.Group13B.service.SingletonCollection;
 
 import java.util.NoSuchElementException;
 
@@ -12,11 +13,10 @@ public class Cart {
     private final int userId;
     private final CalculatePriceOfBasket calculatePriceOfBasket;
 
-    public Cart(int userId, IBasketRepository basketRepository,
-                CalculatePriceOfBasket calculatePriceOfBasket) {
-        this.basketRepository = basketRepository;
+    public Cart(int userId) {
+        this.basketRepository = SingletonCollection.getBasketRepository();
         this.userId = userId;
-        this.calculatePriceOfBasket = calculatePriceOfBasket;
+        this.calculatePriceOfBasket = SingletonCollection.getCalculatePriceOfBasket();
     }
 
     void purchaseCart(String address, String creditCardNumber,

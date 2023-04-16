@@ -3,6 +3,7 @@ package BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
 import BGU.Group13B.backend.storePackage.Product;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,6 +30,26 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
     @Override
     public void addProduct(int StoreId) {
 
+    }
+
+    @Override
+    public List<Product> getProductByName(String name) {
+        return null;
+    }
+
+    @Override
+    public List<Product> getProductByCategory(String category) {
+        return null;
+    }
+
+    @Override
+    public List<Product> getProductByKeywords(List<String> keywords) {
+        return null;
+    }
+
+    @Override
+    public List<Product> filterByPriceRange(int minPrice, int maxPrice) {
+        return null;
     }
 
 /*    @Override

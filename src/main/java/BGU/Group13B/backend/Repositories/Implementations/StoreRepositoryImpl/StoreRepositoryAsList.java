@@ -14,7 +14,7 @@ public class StoreRepositoryAsList implements IStoreRepository {
     }
 
     @Override
-    public Optional<Store> getStore(int storeId) {
-        return Optional.empty();
+    public Store getStore(int storeId) {
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 }
