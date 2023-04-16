@@ -12,6 +12,8 @@ public class Product {
 
     private final int storeId;
     private double price;
+    private String category;
+    private int rank;
     private int maxAmount;
 
     private final PurchasePolicy purchasePolicy;
@@ -25,7 +27,7 @@ public class Product {
         this.price = price;
         this.maxAmount = maxAmount;
         this.productDiscounts = productDiscounts;
-
+        this.rank=0;
         purchasePolicy = null;
     }
 
@@ -37,6 +39,15 @@ public class Product {
         this.name = name;
     }
 
+    public int getRank() {
+        return this.rank;
+    }
+    public String getCategory() {
+        return category;
+    }
+    public int getStoreId() {
+        return storeId;
+    }
     public int getProductId() {
         return productId;
     }

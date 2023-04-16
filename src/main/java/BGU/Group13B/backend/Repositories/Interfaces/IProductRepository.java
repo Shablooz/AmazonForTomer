@@ -13,5 +13,11 @@ public interface IProductRepository {//deeded because it contains the product qu
 
     public void addProduct(int StoreId /*to complete*/);//generate unique productId thanks:)
 
-    //double calculatePrice(int storeId, int productId, int productQuantity, String couponCode);
+    List<Product> getProductByName(String name);
+
+    List<Product> getProductByCategory(String category);
+
+    List<Product> getProductByKeywords(List<String> keywords);
+
+    List<Product> filterByPriceRange(int minPrice, int maxPrice);
 }

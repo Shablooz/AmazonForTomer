@@ -3,6 +3,7 @@ package BGU.Group13B.backend.User;
 import java.util.HashMap;
 
 public class UserPermissions {
+
     public enum UserPermissionStatus {
         ADMIN,
         MEMBER,
@@ -16,5 +17,18 @@ public class UserPermissions {
 
     private UserPermissionStatus userPermissionStatus;
     private HashMap<Integer/*storeId*/, StoreRole> userStoreRole;
+
+    public UserPermissionStatus getUserPermissionStatus() {
+        return userPermissionStatus;
+    }
+
+    public void setUserPermissionStatus(UserPermissionStatus userPermissionStatus) {
+        this.userPermissionStatus = userPermissionStatus;
+    }
+
+
+    public void register() {
+        this.setUserPermissionStatus(UserPermissionStatus.MEMBER);
+    }
 }
 

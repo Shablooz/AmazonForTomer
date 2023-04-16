@@ -1,6 +1,7 @@
 package BGU.Group13B.service;
 
-import BGU.Group13B.backend.SystemInfo;
+import BGU.Group13B.backend.System.SystemInfo;
+import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 
 public abstract class ProjectTest {
     private ISession session;
@@ -18,7 +19,7 @@ public abstract class ProjectTest {
         setUpProducts();
     }
 
-    protected void addProduct(int userId, String productName, int quantity, double price, int storeId) {
+    protected void addProduct(int userId, String productName, int quantity, double price, int storeId) throws NoPermissionException {
         session.addProduct(userId, productName, quantity, price, storeId);
     }
 
