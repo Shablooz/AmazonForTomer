@@ -30,7 +30,7 @@ public class Store {
     private final IStoreMessagesRepository storeMessagesRepository;
     private final AddToUserCart addToUserCart;
     private final IBIDRepository bidRepository;
-    private final int storeId;
+
     private int rank;
 
 
@@ -49,6 +49,40 @@ public class Store {
         this.storeId = storeId;
         this.rank=0;
     }
+
+
+
+    public void sendMassage(Message message,String userName,int userId){
+        storeMessagesRepository.sendMassage(message,this.storeId,userName);
+    }
+
+    @DefaultOwnerFunctionality
+    public Message getUnreadMessages(String userName,int userId)throws NoPermissionException {
+        if (!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userName + " has no permission to read message of store " + this.storeId);
+
+        return storeMessagesRepository.readUnreadMassage(this.storeId,userName);
+    }
+    @DefaultOwnerFunctionality
+    public Message getReadMessages(String userName,int userId) throws NoPermissionException {
+        if (!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userName + " has no permission to read message of store " + this.storeId);
+        return storeMessagesRepository.readReadMassage(this.storeId,userName);
+    }
+    @DefaultOwnerFunctionality
+    public void markAsCompleted(String senderId,int messageId,String userName,int userId) throws NoPermissionException{
+        if (!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userName + " has no permission to mark message as complete of store: " + this.storeId);
+        storeMessagesRepository.markAsRead(senderId,messageId,userName);
+    }
+
+    @DefaultOwnerFunctionality
+    public void refreshMessages(String userName,int userId) throws NoPermissionException{
+        if (!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userName + " has no permission to handle message of store " + this.storeId);
+        storeMessagesRepository.refreshOldMassage(this.storeId,userName);
+    }
+
 
     //todo: complete the function
     public void addProduct(Product product, int userId) {
@@ -69,23 +103,6 @@ public class Store {
         productRepository.add(product);
     }
 
-
-    public void sendMassage(Message message,String userName) { //need to check how to send message back to the user
-        //TODO: need to check permission only registered user can send massage
-        storeMessagesRepository.sendMassage(message,this.storeId,userName);
-    }
-    public Message getUnreadMessages(String userName) {
-        //TODO: need to check permission only store owner can read massage
-        return storeMessagesRepository.readUnreadMassage(this.storeId,userName);
-    }
-    public void markAsCompleted(String senderId,int messageId,String userName) {
-        //TODO: need to check permission
-        storeMessagesRepository.markAsRead(senderId,messageId,userName);
-    }
-
-    public void refreshMessages(String userName) {
-        storeMessagesRepository.refreshOldMassage(this.storeId,userName);
-    }
 
 
     public static String getCurrentMethodName() {

@@ -13,7 +13,8 @@ import java.util.concurrent.ConcurrentMap;
 public class MessageRepositoryAsList implements IMessageRepository {
     ConcurrentMap<String, ConcurrentLinkedDeque<Message>> unreadMessages;
     ConcurrentMap<String, ConcurrentLinkedQueue<Message>> readMessages;
-    ConcurrentMap<String,Iterator<Message>> unReadMessagesIterator;
+
+
     ConcurrentMap<String, Iterator<Message>> readMessagesIterator;
 
     @Override
@@ -24,40 +25,36 @@ public class MessageRepositoryAsList implements IMessageRepository {
 
     @Override
     public Message readUnreadMassage(String receiverId) {
-        if(!checkIfExist(receiverId))
-            throw new IllegalArgumentException("No messages for receiverId");
-        if(!unreadMessages.containsKey(receiverId))
-            unReadMessagesIterator.put(receiverId,unreadMessages.get(receiverId).iterator());
-        if(!unReadMessagesIterator.get(receiverId).hasNext())
-            throw new IllegalArgumentException("no unread messages");
-        return unReadMessagesIterator.get(receiverId).next();
+       addEntryIfNotExist(receiverId);
+         if(unreadMessages.get(receiverId).isEmpty())
+              throw new IllegalArgumentException("no unread messages");
+        return unreadMessages.get(receiverId).peek();
     }
 
     @Override
     public Message readReadMassage(String receiverId) {
-        if(!checkIfExist(receiverId))
-            throw new IllegalArgumentException("No messages for receiverId");
-        if(!readMessagesIterator.containsKey(receiverId))
-            readMessagesIterator.put(receiverId,readMessages.get(receiverId).iterator());
+        addEntryIfNotExist(receiverId);
+        readMessagesIterator.putIfAbsent(receiverId,readMessages.get(receiverId).iterator());
         if(!readMessagesIterator.get(receiverId).hasNext())
             throw new IllegalArgumentException("no read messages");
         return readMessagesIterator.get(receiverId).next();
     }
 
     @Override
-    public void markAsRead(Message message) {
-        String receiverId = message.getReceiverId();
-        if(!checkIfExist(receiverId))
-            throw new IllegalArgumentException("receiverId not exist");
-        if(!unreadMessages.get(receiverId).remove(message))
+    public void markAsRead(String receiverId,String senderId, int messageId) {
+      addEntryIfNotExist(receiverId);
+
+        Message first = unreadMessages.get(receiverId).peek();
+        if(first==null) throw new IllegalArgumentException("No unread messages");
+        if((!first.getSenderId().equals(senderId) || first.getMessageId()!=messageId)|| !unreadMessages.get(receiverId).remove(first))
             throw new IllegalArgumentException("fail to mark message as read");
-        readMessages.get(receiverId).add(message);
+
+        readMessages.get(receiverId).add(first);
     }
 
     @Override
-    public void pointToNewMessages(String  receiverId) {
-        if(!checkIfExist(receiverId))
-            throw new IllegalArgumentException("receiverId not exist");
+    public void refreshOldMessages(String  receiverId) {
+        addEntryIfNotExist(receiverId);
         readMessagesIterator.put(receiverId,readMessages.get(receiverId).iterator());
     }
 

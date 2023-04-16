@@ -4,11 +4,8 @@ import BGU.Group13B.backend.Repositories.Interfaces.ICartRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IMessageRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
 import BGU.Group13B.backend.storePackage.Market;
-import jdk.jshell.spi.ExecutionControl;
-import java.io.NotActiveException;
+import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 //eyal import
-import java.util.HashMap;
-import java.util.Scanner;
 import java.util.regex.Pattern;
 
 public class User {
@@ -25,6 +22,8 @@ public class User {
     private final String password;
     //eyal addition
     private boolean isLoggedIn;
+
+    private final String adminIdentifier = "admin";
 
 
     //creation of a new user
@@ -47,6 +46,9 @@ public class User {
     public boolean isRegistered(){
         return this.userPermissions.getUserPermissionStatus() == UserPermissions.UserPermissionStatus.MEMBER ||
                 this.userPermissions.getUserPermissionStatus() == UserPermissions.UserPermissionStatus.ADMIN;
+    }
+    public boolean isAdmin(){
+        return this.userPermissions.getUserPermissionStatus() == UserPermissions.UserPermissionStatus.ADMIN;
     }
 
     //#15
@@ -83,55 +85,73 @@ public class User {
 
 
 
-
-    public void openComplaint(String header,String complaint) {
-        //TODO:need to check permission
+    //#28
+    public void openComplaint(String header,String complaint) throws NoPermissionException {
+        if (!isRegistered())
+            throw new NoPermissionException("Only registered users can open complaints");
         messageRepository.sendMassage( Message.constractMessage(this.userName,messageId, header,complaint , "Admin"));
     }
-    public Message getComplaint() {
-        //TODO:need to check permission
-       return messageRepository.readUnreadMassage("Admin");
+
+    //#47
+    public Message getComplaint() throws NoPermissionException{
+        if(!isAdmin())
+            throw new NoPermissionException("Only admin can read complaints");
+       return messageRepository.readUnreadMassage(adminIdentifier);
     }
-    public void markMessageAsRead(Message message) {
-        //TODO:need to check permission
-        messageRepository.markAsRead(message);
+    //#47
+    public void markMessageAsRead(String receiverId,String senderId,int messageId)  throws NoPermissionException{
+        if(!isAdmin())
+            throw new NoPermissionException("Only admin can mark as read complaints");
+
+        messageRepository.markAsRead(receiverId,senderId,messageId);
     }
-    public void sendMassageAdmin(String receiverId,String header,String massage) {
-        //TODO:need to check permission only admin can send massage to user
+    //#47
+    public void sendMassageAdmin(String receiverId,String header,String massage) throws NoPermissionException {
+        if(!isAdmin())
+            throw new NoPermissionException("Only admin can send massages");
         messageRepository.sendMassage(Message.constractMessage(this.userName,messageId, header,massage , receiverId));
     }
-    public void answerComplaint(String answer) {
-        messageRepository.markAsRead(currentMessageToReply);
+    //#47
+    public void answerComplaint(String answer) throws NoPermissionException{
+        if(!isAdmin())
+            throw new NoPermissionException("Only admin can answer complaints");
+        messageRepository.markAsRead(currentMessageToReply.getReceiverId(),currentMessageToReply.getSenderId(),currentMessageToReply.getMessageId());
         messageRepository.sendMassage(Message.constractMessage(this.userName,messageId, "RE: "+ currentMessageToReply.getHeader(),answer , currentMessageToReply.getSenderId()));
     }
-    public Message readMassage(String receiverId) {
-        //TODO:need to check permission registed user can read only his massages
+
+    public Message readMassage(String receiverId) throws NoPermissionException {
+        if(!isRegistered())
+            throw new NoPermissionException("Only registered users can read massages");
+
         Message message=  messageRepository.readReadMassage(receiverId);
-        messageRepository.markAsRead(message);
+        messageRepository.markAsRead(message.getReceiverId(),message.getSenderId(),message.getMessageId());
         currentMessageToReply=message;
         return message;
     }
 
+    //27
     public void sendMassageStore(String header,String massage,int storeId) {
         market.sendMassage(Message.constractMessage(this.userName,getAndIncrementMessageId(), header,massage , String.valueOf(storeId)),this.userName,storeId);
     }
-
-    public Message readUnreadMassageStore(int storeId) {
+    //42
+    public Message readUnreadMassageStore(int storeId) throws NoPermissionException {
         Message message= market.getUnreadMessages(this.userName,storeId);
         currentMessageToReply=message;
         return message;
     }
-    public Message readReadMassageStore(int storeId) {
+    //42
+    public Message readReadMassageStore(int storeId)throws NoPermissionException {
         return market.getUnreadMessages(this.userName,storeId);
     }
-
-    public void answerQuestionStore(String answer)
+    //42
+    public void answerQuestionStore(String answer)throws NoPermissionException
     {
         assert currentMessageToReply.getReceiverId().matches("-?\\d+");
         market.markAsCompleted(currentMessageToReply.getSenderId(), currentMessageToReply.getMessageId(),this.userName,Integer.parseInt(currentMessageToReply.getReceiverId()));
         messageRepository.sendMassage(Message.constractMessage(this.userName,getAndIncrementMessageId(), "RE: "+ currentMessageToReply.getHeader(),answer , currentMessageToReply.getSenderId()));
     }
-    public void refreshOldMessageStore(int storeId) {
+    //42
+    public void refreshOldMessageStore(int storeId)throws NoPermissionException {
         market.refreshMessages(this.userName,storeId);
     }
 
