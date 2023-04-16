@@ -1,32 +1,41 @@
 package BGU.Group13B.backend.storePackage;
 
+import BGU.Group13B.backend.Repositories.Interfaces.IProductDiscountsRepository;
+import BGU.Group13B.backend.storePackage.Discounts.Discount;
+
+import java.util.LinkedList;
+
 public class Product {
 
     private String name;
-    private int productId;
-    private int storeId;
+    private final int productId;
+
+    private final int storeId;
     private double price;
-    private int amount;
     private String category;
     private int rank;
-    private final PurchasePolicy purchasePolicy;
-    private final DiscountPolicy discountPolicy;
+    private int maxAmount;
 
-    public Product(String name, int productId, double price, int amount) {
+    private final PurchasePolicy purchasePolicy;
+    private final IProductDiscountsRepository productDiscounts;
+
+
+    public Product(String name, int productId, int storeId, double price, int maxAmount, IProductDiscountsRepository productDiscounts) {
         this.name = name;
         this.productId = productId;
+        this.storeId = storeId;
         this.price = price;
-        this.amount = amount;
+        this.maxAmount = maxAmount;
+        this.productDiscounts = productDiscounts;
         this.rank=0;
         purchasePolicy = null;
-        discountPolicy = null;
     }
 
     public String getName() {
         return name;
     }
 
-    public synchronized void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -43,37 +52,45 @@ public class Product {
         return productId;
     }
 
-    public void setProductId(int productId) {
-        this.productId = productId;
-    }
-
-    public synchronized double getPrice() {
-        return price;
-    }
-
-    public synchronized void setPrice(double price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
-    public synchronized int getAmount() {
-        return amount;
+    public int getMaxAmount() {
+        return maxAmount;
     }
 
-    public synchronized void setAmount(int amount) {
-        this.amount = amount;
+    public void setMaxAmount(int maxAmount) {
+        this.maxAmount = maxAmount;
     }
 
-    public synchronized PurchasePolicy getPurchasePolicy() {
-        if(purchasePolicy == null)
+    public PurchasePolicy getPurchasePolicy() {
+        if (purchasePolicy == null)
             throw new NullPointerException("Purchase policy is null");
         return purchasePolicy;
     }
 
-    public synchronized DiscountPolicy getDiscountPolicy() {
-        if(discountPolicy == null)
-            throw new NullPointerException("Discount policy is null");
-        return discountPolicy;
+
+    public boolean tryDecreaseQuantity(int quantity) {
+        if (maxAmount < quantity)
+            return false;
+        maxAmount -= quantity;
+        return true;
     }
 
+    public synchronized double calculatePrice(int productQuantity, String couponCodes) {
+        purchasePolicy.checkPolicy(this, productQuantity);
+        double finalPrice = price;
+        for (Discount discount :
+                productDiscounts.getProductDiscounts(productId).orElseGet(LinkedList::new))
+            if(discount.isExpired())
+                productDiscounts.removeProductDiscount(productId, discount);
+            else
+                finalPrice = discount.applyProductDiscount(finalPrice, productQuantity, couponCodes);
+        return finalPrice;
+    }
 
+    public double getPrice() {
+        return price;
+    }
 }

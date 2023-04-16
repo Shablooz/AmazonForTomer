@@ -6,6 +6,9 @@ import BGU.Group13B.backend.Repositories.Interfaces.IBIDRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreMessagesRepository;
 import BGU.Group13B.backend.User.Message;
+import BGU.Group13B.backend.Repositories.Interfaces.IStoreDiscountsRepository;
+import BGU.Group13B.backend.User.BasketProduct;
+import BGU.Group13B.backend.storePackage.Discounts.Discount;
 import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
 import BGU.Group13B.backend.storePackage.permissions.*;
@@ -14,7 +17,7 @@ import BGU.Group13B.service.callbacks.AddToUserCart;
 
 import java.util.Set;
 
-import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Store implements Comparable<Store> {
     private final IProductRepository productRepository;
@@ -24,6 +27,7 @@ public class Store implements Comparable<Store> {
     private final PaymentAdapter paymentAdapter;
     private final AlertManager alertManager;
     private final StorePermission storePermission;
+    private final IStoreDiscountsRepository storeDiscounts;
     private final IStoreMessagesRepository storeMessagesRepository;
     private final AddToUserCart addToUserCart;
     private final IBIDRepository bidRepository;
@@ -55,6 +59,8 @@ public class Store implements Comparable<Store> {
                  IProductRepository productRepository, IBIDRepository bidRepository, DeliveryAdapter deliveryAdapter,
                  PaymentAdapter paymentAdapter, AlertManager alertManager, AddToUserCart addToUserCart,
                  DiscountPolicy discountPolicy, PurchasePolicy purchasePolicy, StoreMessageRepositoryNonPersist storeMessagesRepository){
+
+    public Store(IProductRepository productRepository, PurchasePolicy purchasePolicy, DiscountPolicy discountPolicy, DeliveryAdapter deliveryAdapter, PaymentAdapter paymentAdapter, AlertManager alertManager, StorePermission storePermission, IStoreDiscountsRepository storeDiscounts, AddToUserCart addToUserCart, IBIDRepository bidRepository, int storeId, StoreMessageRepositoryNonPersist storeMessagesRepository) {
         this.productRepository = productRepository;
         this.purchasePolicy = purchasePolicy;
         this.discountPolicy = discountPolicy;
@@ -62,13 +68,13 @@ public class Store implements Comparable<Store> {
         this.paymentAdapter = paymentAdapter;
         this.alertManager = alertManager;
         this.storePermission = storePermission;
+        this.storeDiscounts = storeDiscounts;
+        this.storeMessagesRepository = storeMessagesRepository;
         this.addToUserCart = addToUserCart;
         this.bidRepository = bidRepository;
-        this.storeMessagesRepository = storeMessagesRepository;
         this.storeId = storeId;
         this.storeName = storeName;
         this.category = category;
-        this.rank = 0;
         this.rank=0;
     }
 
@@ -77,6 +83,8 @@ public class Store implements Comparable<Store> {
     public void sendMassage(Message message,String userName,int userId){
         storeMessagesRepository.sendMassage(message,this.storeId,userName);
     }
+
+
 
     @DefaultOwnerFunctionality
     public Message getUnreadMessages(String userName,int userId)throws NoPermissionException {
@@ -121,8 +129,22 @@ public class Store implements Comparable<Store> {
         if (!this.storePermission.checkPermission(userId))
             throw new NoPermissionException("User " + userId + " has no permission to add product to store " + this.storeId);
 
-        Product product = new Product(productName, -1/*todo*/, price, quantity);
-        productRepository.add(product);
+        /*Product product = new Product(productName, -1*//*todo*//*, price, quantity);
+        productRepository.add(product);*/
+
+    }
+
+    public double calculatePriceOfBasket(double totalAmountBeforeStoreDiscountPolicy,
+                                         ConcurrentLinkedQueue<BasketProduct> successfulProducts,
+                                         String storeCoupon) {
+        double totalAmount = totalAmountBeforeStoreDiscountPolicy;
+        for (Discount discount : storeDiscounts.getStoreDiscounts(storeId).
+                orElseThrow(() -> new RuntimeException("Store with id " + storeId + " does not exist"))) {
+
+            totalAmount = discount.applyStoreDiscount(totalAmount, successfulProducts, storeCoupon);
+        }
+        return totalAmount;
+
     }
 
 

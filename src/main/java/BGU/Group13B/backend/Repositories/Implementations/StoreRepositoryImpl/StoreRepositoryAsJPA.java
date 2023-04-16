@@ -6,10 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class StoreRepositoryAsJPA implements IStoreRepository {
-    private final JpaRepository<Store, Integer> repo;
+public class StoreRepositoryAsJPA{
+    /*private final JpaRepository<Store, Integer> repo;
     private final AtomicInteger storeIdCounter = new AtomicInteger(0);
-
 
     public StoreRepositoryAsJPA(JpaRepository<Store, Integer> repo) {
         this.repo = repo;
@@ -17,13 +16,7 @@ public class StoreRepositoryAsJPA implements IStoreRepository {
 
 
     @Override
-    public Store getStore(int storeId) {
+    public Optional<Store> getStore(int storeId) {
         return null;
-    }
-
-    //(#24) open store - requirement 3.2
-    @Override
-    public void addStore(int founderId, String storeName, String category) {
-        repo.save(new Store(storeIdCounter.getAndIncrement(), founderId, storeName, category));
-    }
+    }*/
 }
