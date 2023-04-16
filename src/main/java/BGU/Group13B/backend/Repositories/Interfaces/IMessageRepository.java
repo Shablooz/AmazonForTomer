@@ -7,7 +7,13 @@ import java.util.List;
 *
 * */
 public interface IMessageRepository {
-    void sendMassage(Message message,int receiverId);
-    List<Message> getUnreadMessages(int receiverId);
-    void markUsRead(Message message,int receiverId);
+    void sendMassage(Message message);
+    Message readUnreadMassage(String receiverId);
+    Message readReadMassage(String receiverId);
+
+    void markAsRead(Message message);
+    void pointToNewMessages(String receiverId);
+
+
+
 }
