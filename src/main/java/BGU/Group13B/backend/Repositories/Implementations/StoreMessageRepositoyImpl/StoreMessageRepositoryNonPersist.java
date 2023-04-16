@@ -3,47 +3,64 @@ import BGU.Group13B.backend.Repositories.Interfaces.IStoreMessagesRepository;
 import BGU.Group13B.backend.User.Message;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class StoreMessageRepositoryNonPersist implements IStoreMessagesRepository{
 
     ConcurrentLinkedDeque<Message> unreadMessages = new ConcurrentLinkedDeque<>();
-    ConcurrentSkipListSet<Message> readMessages = new ConcurrentSkipListSet<>((x,y)->x.getMassageId()-y.getMassageId());
+    ConcurrentHashMap<Integer,Message> oldMessages = new ConcurrentHashMap<>();
+    ConcurrentHashMap<String,Integer> placeInOldMessages = new ConcurrentHashMap<>();
+    AtomicInteger counter = new AtomicInteger(1);
+
     @Override
-    public List<Message> unreadMassages(int storeId, int numOfMessages) {
-        if(numOfMessages<0)
-            throw new IllegalArgumentException("numOfMessages must be positive");
-        List<Message> toReturn = new ArrayList<>(numOfMessages);
-        for(Message m:unreadMessages)
-        {
-            if(numOfMessages==0)
-                break;
-            toReturn.add(m);
-            numOfMessages--;
-        }
-        return toReturn;
+    public void sendMassage(Message message, int storeId, String userName) {
+        unreadMessages.add(message);
     }
 
     @Override
-    public void markAsCompleted(Message message) {
-        if(!unreadMessages.remove(message))
-            throw new IllegalArgumentException("message not exist or already read");
-        readMessages.add(message);
+    public Message readUnreadMassage(int storeId, String userName) {
+        if(unreadMessages.isEmpty()) throw new IllegalArgumentException("No unread messages");
+        return unreadMessages.peek();
+    }
+
+
+    /*
+    * This function will return the next unread message Per user If there is no more old messages it will throw an exception
+     */
+    @Override
+    public Message readReadMassage(int storeId, String userName) {
+        placeInOldMessages.putIfAbsent(userName,1);
+        if(counter.get()<=placeInOldMessages.get(userName)) throw new IllegalArgumentException("You have no more old massages to read");
+
+        Message message = oldMessages.get(placeInOldMessages.get(userName));
+        placeInOldMessages.put(userName,placeInOldMessages.get(userName)+1);
+        return message;
     }
 
     @Override
-    public void addMessage(int storeId, Message message) {
-        if(unreadMessages.contains(message)||readMessages.contains(message))
-            throw new IllegalArgumentException("message already exist");
+    public void markAsRead(String senderId, int massageId, String userName) {
+        Message first= unreadMessages.peek();
+
+        if(first==null) throw new IllegalArgumentException("No unread messages");
+        if(!unreadMessages.remove(first)) throw new IllegalArgumentException("message is not in unread messages");
+
+        oldMessages.put(counter.getAndIncrement(),first);
     }
 
     @Override
-    public void removeMassage(int storeId, String senderId, int massageId) {
-        if(!unreadMessages.removeIf(m->m.getSenderId().equals(senderId)&&m.getMassageId()==massageId))
-            throw new IllegalArgumentException("message not exist or already read");
+    public void refreshOldMassage(int storeId, String userName) {
+        placeInOldMessages.put(userName,1);
     }
+
+
+
+
+
+
 
 
 }

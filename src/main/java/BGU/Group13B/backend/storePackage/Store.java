@@ -49,19 +49,22 @@ public class Store {
         productRepository.add(product);
     }
 
-    public List<Message> getUnreadMessages(int numOfMessages) {
+
+    public void sendMassage(Message message,String userName) { //need to check how to send message back to the user
+        //TODO: need to check permission only registered user can send massage
+        storeMessagesRepository.sendMassage(message,this.storeId,userName);
+    }
+    public Message getUnreadMessages(String userName) {
+        //TODO: need to check permission only store owner can read massage
+        return storeMessagesRepository.readUnreadMassage(this.storeId,userName);
+    }
+    public void markAsCompleted(String senderId,int messageId,String userName) {
         //TODO: need to check permission
-        return storeMessagesRepository.unreadMassages(this.storeId,numOfMessages);
+        storeMessagesRepository.markAsRead(senderId,messageId,userName);
     }
-    public void markAsCompleted(Message message) {
-        //TODO: need to check permission
-        storeMessagesRepository.markAsCompleted(message);
-    }
-    public void addMessage(Message message) {
-        storeMessagesRepository.addMessage(this.storeId,message);
-    }
-    public void removeMassage(String senderId,int massageId) {
-        storeMessagesRepository.removeMassage(this.storeId,senderId,massageId);
+
+    public void refreshMessages(String userName) {
+        storeMessagesRepository.refreshOldMassage(this.storeId,userName);
     }
 
 }
