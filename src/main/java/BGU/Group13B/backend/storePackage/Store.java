@@ -45,6 +45,7 @@ public class Store implements Comparable<Store> {
         this.alertManager = SingletonCollection.getAlertManager();
         this.addToUserCart = SingletonCollection.getAddToUserCart();
         this.storeMessagesRepository = SingletonCollection.getStoreMessagesRepository();
+        this.storeDiscounts = SingletonCollection.getStoreDiscountsRepository();
         this.discountPolicy = new DiscountPolicy();
         this.purchasePolicy = new PurchasePolicy();
         this.storeId = storeId;
@@ -55,12 +56,11 @@ public class Store implements Comparable<Store> {
     }
 
     //used only for testing
-    public Store(int storeId, String storeName, String category, StorePermission storePermission,
-                 IProductRepository productRepository, IBIDRepository bidRepository, DeliveryAdapter deliveryAdapter,
-                 PaymentAdapter paymentAdapter, AlertManager alertManager, AddToUserCart addToUserCart,
-                 DiscountPolicy discountPolicy, PurchasePolicy purchasePolicy, StoreMessageRepositoryNonPersist storeMessagesRepository){
-
-    public Store(IProductRepository productRepository, PurchasePolicy purchasePolicy, DiscountPolicy discountPolicy, DeliveryAdapter deliveryAdapter, PaymentAdapter paymentAdapter, AlertManager alertManager, StorePermission storePermission, IStoreDiscountsRepository storeDiscounts, AddToUserCart addToUserCart, IBIDRepository bidRepository, int storeId, StoreMessageRepositoryNonPersist storeMessagesRepository) {
+    public Store(int storeId, String storeName, String category, IProductRepository productRepository,
+                 PurchasePolicy purchasePolicy, DiscountPolicy discountPolicy, DeliveryAdapter deliveryAdapter,
+                 PaymentAdapter paymentAdapter, AlertManager alertManager, StorePermission storePermission,
+                 IStoreDiscountsRepository storeDiscounts, AddToUserCart addToUserCart, IBIDRepository bidRepository,
+                 StoreMessageRepositoryNonPersist storeMessagesRepository) {
         this.productRepository = productRepository;
         this.purchasePolicy = purchasePolicy;
         this.discountPolicy = discountPolicy;
