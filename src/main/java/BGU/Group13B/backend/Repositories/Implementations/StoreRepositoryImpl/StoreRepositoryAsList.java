@@ -4,6 +4,7 @@ import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
 import BGU.Group13B.backend.storePackage.Store;
 
 import java.util.List;
+import java.util.Optional;
 
 public class StoreRepositoryAsList implements IStoreRepository {
     private final List<Store> stores;
@@ -14,6 +15,6 @@ public class StoreRepositoryAsList implements IStoreRepository {
 
     @Override
     public Store getStore(int storeId) {
-        return null;
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 }
