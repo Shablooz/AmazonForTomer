@@ -76,6 +76,11 @@ public class User {
     public String getUserName() {
         return userName;
     }
+
+    public void logout(){
+        this.isLoggedIn = false;
+    }
+
 }
 
 

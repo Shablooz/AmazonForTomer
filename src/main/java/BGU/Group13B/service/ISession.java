@@ -118,4 +118,13 @@ public interface ISession {
      * returns the new user id - of the already existing user - need to make a uniq generator if failed returns 0
      * */
     int login(int userID,String username,String password);
+
+
+    /**
+     * #16
+     * require 3.1
+     * @param userID - current userID - of the visitor
+     * logout as a user
+     * */
+    void logout(int userID);
 }

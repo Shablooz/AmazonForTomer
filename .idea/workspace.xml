@@ -23,10 +23,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3436d65a-5e76-4e77-818d-f39d961d7bb1" name="Changes" comment="adding Discount.java for the use of calculating the price.">
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/UserRepositoryImpl/UserRepositoryAsHashmap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/UserRepositoryImpl/UserRepositoryAsHashmap.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IUserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IUserRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/ISession.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/ISession.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/Session.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/Session.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,15 +77,8 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/Users/eyalz/OneDrive/Desktop/New folder/trading-system",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "spring.configuration.checksum": "0bff9c3a4f5bac17f71b3dede1d050f7",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -122,6 +116,7 @@
       <workItem from="1680599750928" duration="13707000" />
       <workItem from="1680681882942" duration="16736000" />
       <workItem from="1681634067663" duration="1523000" />
+      <workItem from="1681662441723" duration="53000" />
     </task>
     <task id="LOCAL-00001" summary="save work">
       <created>1680688726166</created>
