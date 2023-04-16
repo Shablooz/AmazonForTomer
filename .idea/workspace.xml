@@ -74,6 +74,7 @@
     <option name="generalSettings">
       <MavenGeneralSettings>
         <option name="mavenHome" value="C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2020.2.3\plugins\maven\lib\maven3" />
+        <option name="useMavenConfig" value="true" />
       </MavenGeneralSettings>
     </option>
   </component>
@@ -121,6 +122,7 @@
       <workItem from="1679745836554" duration="107000" />
       <workItem from="1680599750928" duration="13707000" />
       <workItem from="1680681882942" duration="16736000" />
+      <workItem from="1681634067663" duration="1523000" />
     </task>
     <task id="LOCAL-00001" summary="save work">
       <created>1680688726166</created>

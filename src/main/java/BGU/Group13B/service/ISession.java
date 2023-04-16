@@ -123,4 +123,14 @@ public interface ISession {
     void filterByCategory(String category);
 
     void filterByStoreRank(int minRating, int maxRating);
+
+    /**
+     * #16
+     * require 1.4
+     * @param userID - current userID - of the visitor
+     * @param username
+     * @param password
+     * returns the new user id - of the already existing user - need to make a uniq generator if failed returns 0
+     * */
+    int login(int userID,String username,String password);
 }
