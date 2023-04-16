@@ -52,7 +52,7 @@ public class AuctionRepositoryAsHashMap implements IAuctionRepository {
             var auction = getAuction(productId, storeId);
             v.remove(auction);
             auction.acquireLock();
-            if (auction.getCurrentUserId() != -1)
+            if (auction.getCurrentUserId() != -1)//if there exists a user that won the auction
                 addToCart.apply(auction.getCurrentUserId(), storeId, productId, 1/*could be changed by the user*/);
             auction.releaseLock();
             return v.isEmpty() ? null : v;
