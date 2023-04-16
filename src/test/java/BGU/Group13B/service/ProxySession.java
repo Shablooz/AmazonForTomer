@@ -1,6 +1,7 @@
 package BGU.Group13B.service;
 
 import BGU.Group13B.backend.SystemInfo;
+import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 
 public class ProxySession implements ISession {
     private ISession realSession;
@@ -11,9 +12,15 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void addProduct(int userId, String productName, int quantity, double price, int storeId) {
+    public void addProduct(int userId, String productName, int quantity, double price, int storeId) throws NoPermissionException {
         if (realSession != null)
             realSession.addProduct(userId, productName, quantity, price, storeId);
+    }
+
+    @Override
+    public void addToCart(int userId, int storeId, int productId, int quantity) {
+        if (realSession != null)
+            realSession.addToCart(userId, storeId, productId, quantity);
     }
 
     @Override

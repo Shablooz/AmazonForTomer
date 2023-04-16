@@ -26,4 +26,9 @@ public class ProductRepositoryAsJPA implements IProductRepository {
     public void remove() {
 
     }
+
+    @Override
+    public Product get(int productId) {
+        return null;
+    }
 }

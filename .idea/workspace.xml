@@ -3,16 +3,30 @@
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="3436d65a-5e76-4e77-818d-f39d961d7bb1" name="Changes" comment="3.5 sending questions to the store and 6.3 getting info, replying and sending messages">
+    <list default="true" id="3436d65a-5e76-4e77-818d-f39d961d7bb1" name="Changes" comment="adding Discount.java for the use of calculating the price.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/StoreMessageRepositoyImpl/StoreMessageRepositoryNonPersist.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/StoreMessageRepositoyImpl/StoreMessageRepositoryNonPersist.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IStoreMessagesRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IStoreMessagesRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IStoreRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IStoreRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/Message.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/Message.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/UserRepositoryImpl/UserRepositoryAsHashmap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/UserRepositoryImpl/UserRepositoryAsHashmap.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Market.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Market.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Store.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Store.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/Session.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/Session.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,7 +45,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="StoreMassage#27" />
+        <entry key="$PROJECT_DIR$" value="master" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -46,43 +60,32 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2020.2.3\plugins\maven\lib\maven3" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
   <component name="ProjectId" id="2NVL9aAg74nFCBYGHK0CdSKGYHb" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
-    &quot;create.test.in.the.same.root&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;AnswerToStoreQuestions#42&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/tomer/year2/2/desgin/A1/superlee&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;,
-    &quot;spring.configuration.checksum&quot;: &quot;2eea27aecebaecc0287d463dc0733f7d&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
-  }
-}</component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="reference.settings.project.maven.repository.indices" />
+  </component>
   <component name="RecentsManager">
-    <key name="CreateClassDialog.RecentsKey">
-      <recent name="BGU.Group13B.backend.Repositories.Interfaces" />
-      <recent name="BGU.Group13B.backend" />
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="BGU.Group13B.service" />
       <recent name="BGU.Group13B.backend.storePackage" />
-      <recent name="BGU.Group13B.backend.User" />
-      <recent name="BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl" />
+      <recent name="BGU.Group13B" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Shust\OneDrive\Documents\First Degree\Semester6\Sadna\trading-system\src\main\java\BGU\Group13B\backend\Repositories\Implementations\StoreRepositoryImpl" />
@@ -90,10 +93,12 @@
     <key name="CreateTestDialog.Recents.Supers">
       <recent name="" />
     </key>
-    <key name="CreateTestDialog.RecentsKey">
-      <recent name="BGU.Group13B.service" />
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="BGU.Group13B.backend.Repositories.Interfaces" />
+      <recent name="BGU.Group13B.backend" />
       <recent name="BGU.Group13B.backend.storePackage" />
-      <recent name="BGU.Group13B" />
+      <recent name="BGU.Group13B.backend.User" />
+      <recent name="BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl" />
     </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -109,12 +114,6 @@
       <workItem from="1679745836554" duration="107000" />
       <workItem from="1680599750928" duration="13707000" />
       <workItem from="1680681882942" duration="16736000" />
-      <workItem from="1680958293549" duration="13974000" />
-      <workItem from="1681058829735" duration="8000" />
-      <workItem from="1681308177606" duration="2000" />
-      <workItem from="1681308294687" duration="614000" />
-      <workItem from="1681322319160" duration="1262000" />
-      <workItem from="1681646064326" duration="8454000" />
     </task>
     <task id="LOCAL-00001" summary="save work">
       <created>1680688726166</created>
@@ -144,28 +143,7 @@
       <option name="project" value="LOCAL" />
       <updated>1680879711169</updated>
     </task>
-    <task id="LOCAL-00005" summary="adding store message">
-      <created>1680958425410</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1680958425410</updated>
-    </task>
-    <task id="LOCAL-00006" summary="adding delegation function in Store">
-      <created>1680958985674</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1680958985674</updated>
-    </task>
-    <task id="LOCAL-00007" summary="3.5 sending questions to the store and 6.3 getting info, replying and sending messages">
-      <created>1680974336247</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1680974336247</updated>
-    </task>
-    <option name="localTasksCounter" value="8" />
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -182,7 +160,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="StoreMassage#27" />
+                        <option value="interfaces_for_discount" />
                       </list>
                     </value>
                   </entry>
@@ -193,16 +171,44 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="save work" />
     <MESSAGE value="updating  interfaces in order to create the tests infrastructure" />
     <MESSAGE value="please review :)" />
     <MESSAGE value="adding Discount.java for the use of calculating the price." />
-    <MESSAGE value="adding store message" />
-    <MESSAGE value="adding delegation function in Store" />
-    <MESSAGE value="3.5 sending questions to the store and 6.3 getting info, replying and sending messages" />
-    <option name="LAST_COMMIT_MESSAGE" value="3.5 sending questions to the store and 6.3 getting info, replying and sending messages" />
+    <option name="LAST_COMMIT_MESSAGE" value="adding Discount.java for the use of calculating the price." />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="574" y="115" key="#com.intellij.ide.util.MemberChooser" timestamp="1681548050026">
+      <screen x="0" y="0" width="1536" height="816" />
+    </state>
+    <state x="574" y="115" key="#com.intellij.ide.util.MemberChooser/0.0.1536.816@0.0.1536.816" timestamp="1681548050026" />
+    <state x="545" y="277" width="447" height="267" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes" timestamp="1681462912468">
+      <screen x="0" y="0" width="1536" height="816" />
+    </state>
+    <state x="545" y="277" width="447" height="267" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes/0.0.1536.816@0.0.1536.816" timestamp="1681462912468" />
+    <state x="549" y="163" key="FileChooserDialogImpl" timestamp="1681462887672">
+      <screen x="0" y="0" width="1536" height="816" />
+    </state>
+    <state x="549" y="163" key="FileChooserDialogImpl/0.0.1536.816@0.0.1536.816" timestamp="1681462887672" />
+    <state x="299" y="63" key="Maven.ArtifactSearchDialog" timestamp="1681464061501">
+      <screen x="0" y="0" width="1536" height="816" />
+    </state>
+    <state x="299" y="63" key="Maven.ArtifactSearchDialog/0.0.1536.816@0.0.1536.816" timestamp="1681464061501" />
+    <state x="278" y="0" key="SettingsEditor" timestamp="1681463173571">
+      <screen x="0" y="0" width="1536" height="816" />
+    </state>
+    <state x="278" y="0" key="SettingsEditor/0.0.1536.816@0.0.1536.816" timestamp="1681463173571" />
+    <state x="361" y="141" key="Vcs.Push.Dialog.v2" timestamp="1681549337462">
+      <screen x="0" y="0" width="1536" height="816" />
+    </state>
+    <state x="361" y="141" key="Vcs.Push.Dialog.v2/0.0.1536.816@0.0.1536.816" timestamp="1681549337462" />
+    <state x="478" y="141" width="579" height="534" key="find.popup" timestamp="1681463972640">
+      <screen x="0" y="0" width="1536" height="816" />
+    </state>
+    <state x="478" y="141" width="579" height="534" key="find.popup/0.0.1536.816@0.0.1536.816" timestamp="1681463972640" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

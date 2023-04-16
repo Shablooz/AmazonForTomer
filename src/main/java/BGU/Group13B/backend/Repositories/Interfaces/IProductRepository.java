@@ -6,4 +6,5 @@ public interface IProductRepository {
     void specialFunction();
     void add(Product item);
     void remove();
+    Product get(int productId);
 }

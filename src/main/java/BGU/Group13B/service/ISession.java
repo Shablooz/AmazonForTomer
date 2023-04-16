@@ -1,11 +1,20 @@
 package BGU.Group13B.service;
 
 import BGU.Group13B.backend.SystemInfo;
+import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 
 public interface ISession {
-    void addProduct(int userId, String productName, int quantity, double price, int storeId);
-
-
+    void addProduct(int userId, String productName, int quantity, double price, int storeId) throws NoPermissionException;
+    //generate param documentation
+    /**
+     * #19
+     * require 2.3
+     * @param userId the user id
+     * @param storeId the store id
+     * @param productId the product id
+     * @param quantity the quantity
+     * */
+    void addToCart(int userId, int storeId, int productId, int quantity);
     /**
      * #22
      * require 2.5
@@ -79,10 +88,23 @@ public interface ISession {
      */
     void auctionPurchase(int userId, int storeId, int productId, double price);
 
+
+
     /**
      * #49
      * require 6.5
      * @param adminId the id of an admin
      * */
     SystemInfo getSystemInformation(int adminId);
+
+
+    /**
+     * #15
+     * require 2.1.3
+     * @param userId
+     * @param username
+     * @param password
+     * @param email
+     * */
+    void register(int userId,String username,String password,String email);
 }
