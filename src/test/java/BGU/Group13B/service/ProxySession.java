@@ -99,4 +99,14 @@ public class ProxySession implements ISession {
     public void filterByStoreRank(int minRating, int maxRating) {
         realSession.filterByStoreRank(minRating, maxRating);
     }
+
+    @Override
+    public int login(int userID, String username, String password) {
+        return realSession.login(userID, username, password);
+    }
+
+    @Override
+    public void logout(int userID) {
+        realSession.logout(userID);
+    }
 }

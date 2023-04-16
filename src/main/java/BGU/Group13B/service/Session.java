@@ -64,9 +64,8 @@ class Session implements ISession {
     }
 
     @Override
-    public void register(int userId,String username, String password, String email) {
+    public synchronized void register(int userId,String username, String password, String email) {
         User user = userRepositoryAsHashmap.getUser(userId);
-        synchronized (user) {
                 try {
                     //the first if might not be necessary when we will connect to web
                     if(!user.isRegistered()) {
@@ -81,7 +80,7 @@ class Session implements ISession {
                 }catch(Exception e){
                     System.out.println(e.getMessage());
                 }
-            }
+
         }
 
     @Override
@@ -121,17 +120,28 @@ class Session implements ISession {
 
     @Override
     public int login(int userID,String username, String password) {
-        try{
+        try {
             //gets the user that we want to log into
             User user = userRepositoryAsHashmap.checkIfUserExists(username);
-            user.login(username,password);
-            //removes the current guest profile to swap to the existing member one
-            userRepositoryAsHashmap.removeUser(userID);
-            //gets the new id - of the user we logging into
-            return userRepositoryAsHashmap.getUserId(user);
-        }catch (Exception e){
+            synchronized (user) {
+                user.login(username, password);
+                //removes the current guest profile to swap to the existing member one
+                userRepositoryAsHashmap.removeUser(userID);
+                //gets the new id - of the user we logging into
+                return userRepositoryAsHashmap.getUserId(user);
+            }
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             return 0;
         }
+
+    }
+
+    @Override
+    public void logout(int userID) {
+        synchronized (userRepositoryAsHashmap.getUser(userID)){
+            userRepositoryAsHashmap.getUser(userID).logout();
+        }
+        
     }
 }

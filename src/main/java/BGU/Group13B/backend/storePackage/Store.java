@@ -104,6 +104,23 @@ public class Store {
     }
 
 
+    public void sendMassage(Message message,String userName) { //need to check how to send message back to the user
+        //TODO: need to check permission only registered user can send massage
+        storeMessagesRepository.sendMassage(message,this.storeId,userName);
+    }
+    public Message getUnreadMessages(String userName) {
+        //TODO: need to check permission only store owner can read massage
+        return storeMessagesRepository.readUnreadMassage(this.storeId,userName);
+    }
+    public void markAsCompleted(String senderId,int messageId,String userName) {
+        //TODO: need to check permission
+        storeMessagesRepository.markAsRead(senderId,messageId,userName);
+    }
+
+    public void refreshMessages(String userName) {
+        storeMessagesRepository.refreshOldMassage(this.storeId,userName);
+    }
+
 
     public static String getCurrentMethodName() {
         return StorePermission.getFunctionName(

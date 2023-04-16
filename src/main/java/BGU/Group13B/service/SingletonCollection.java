@@ -19,13 +19,13 @@ public class SingletonCollection {
 
     //repositories
     private static final IBIDRepository bidRepository;
-    private static final ICartRepository cartRepository;
+    //private static final ICartRepository cartRepository;
     private static final IMessageRepository messageRepository;
-    private static final IProductRepository productRepository;
-    private static final IPurchaseHistoryRepository purchaseHistoryRepository;
+    //private static final IProductRepository productRepository;
+    //private static final IPurchaseHistoryRepository purchaseHistoryRepository;
     private static final IRepositoryReview reviewRepository;
     private static final IStoreMessagesRepository storeMessagesRepository;
-    private static final IStoreRepository storeRepository;
+    //private static final IStoreRepository storeRepository;
     private static final IUserRepository userRepository;
 
 
@@ -46,13 +46,13 @@ public class SingletonCollection {
     static {
         //repositories
         bidRepository = new BIDRepositoryAsList();
-        cartRepository = new CartRepositoryAsList();                        //TODO
+        //cartRepository = new CartRepositoryAsList();                        //TODO
         messageRepository = null;                                           //TODO
-        productRepository = new ProductRepositoryAsList();                  //TODO
-        purchaseHistoryRepository = new PurchaseHistoryRepositoryAsList();  //TODO
+        //productRepository = new ProductRepositoryAsList();                  //TODO
+        //purchaseHistoryRepository = new PurchaseHistoryRepositoryAsList();  //TODO
         reviewRepository = new ReviewRepositoryAsList();
         storeMessagesRepository = null;                                     //TODO
-        storeRepository = new StoreRepositoryAsList();                      //TODO
+        //storeRepository = new StoreRepositoryAsList();                      //TODO
         userRepository = new UserRepositoryAsHashmap();
 
 
@@ -90,21 +90,23 @@ public class SingletonCollection {
         return bidRepository;
     }
 
-    public static ICartRepository getCartRepository() {
+/*    public static ICartRepository getCartRepository() {
         return cartRepository;
-    }
+    }*/
 
     public static IMessageRepository getMessageRepository() {
         return messageRepository;
     }
 
-    public static IProductRepository getProductRepository() {
+/*    public static IProductRepository getProductRepository() {
         return productRepository;
-    }
+    }*/
 
+/*
     public static IPurchaseHistoryRepository getPurchaseHistoryRepository() {
         return purchaseHistoryRepository;
     }
+*/
 
     public static IRepositoryReview getReviewRepository() {
         return reviewRepository;
@@ -113,10 +115,10 @@ public class SingletonCollection {
     public static IStoreMessagesRepository getStoreMessagesRepository() {
         return storeMessagesRepository;
     }
-
+/*
     public static IStoreRepository getStoreRepository() {
         return storeRepository;
-    }
+    }*/
 
     public static IUserRepository getUserRepository() {
         return userRepository;
