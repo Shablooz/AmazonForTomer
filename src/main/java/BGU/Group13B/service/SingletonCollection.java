@@ -7,6 +7,8 @@ import BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl.P
 import BGU.Group13B.backend.Repositories.Implementations.PurchaseHistoryRepositoryImpl.PurchaseHistoryRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.StoreDiscountsRepositoryImpl.StoreDiscountsRepositoryAsHashMap;
+import BGU.Group13B.backend.Repositories.Implementations.StoreRepositoryImpl.StoreRepositoryAsList;
+import BGU.Group13B.backend.Repositories.Implementations.StoreDiscountsRepositoryImpl.StoreDiscountsRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepositoryAsHashmap;
 import BGU.Group13B.backend.Repositories.Interfaces.*;
 import BGU.Group13B.backend.System.Searcher;
@@ -19,7 +21,9 @@ import BGU.Group13B.service.callbacks.AddToUserCart;
 //(#61)
 public class SingletonCollection {
 
-    //repositories
+    /**
+     * <h1>repositories</h1>
+     */
     private static final IBIDRepository bidRepository;
     private static final IMessageRepository messageRepository;
     private static final IProductRepository productRepository;
@@ -28,27 +32,34 @@ public class SingletonCollection {
     private static final IStoreMessagesRepository storeMessagesRepository;
     private static final IStoreRepository storeRepository;
     private static final IUserRepository userRepository;
-    private static IBasketRepository basketRepository;
+    private static final IBasketRepository basketRepository;
+    private static final IStoreDiscountsRepository storeDiscountsRepository;
+
 
     /**
      * <h1>callbacks</h1>
      */
-
     private static AddToUserCart addToUserCart;
     private static CalculatePriceOfBasket calculatePriceOfBasket;
 
 
-    //adapters
+    /**
+     * <h1>adapters</h1>
+     */
     private static final DeliveryAdapter deliveryAdapter;
     private static final PaymentAdapter paymentAdapter;
 
 
-    //additional classes
+    /**
+     * <h1>additional classes</h1>
+     */
     private static final AlertManager alertManager;
     private static Searcher searcher;
     private static Market market;
     private static IStoreDiscountsRepository storeDiscountsRepository;
     private static IAuctionRepository auctionRepository;
+    private static final Searcher searcher;
+    private static final Market market;
 
 
     //static initializer
@@ -56,17 +67,15 @@ public class SingletonCollection {
         //repositories
         bidRepository = new BIDRepositoryAsList();
         messageRepository = null;                                           //TODO
-        productRepository = new ProductRepositoryAsHashMap();                  //TODO
-        purchaseHistoryRepository = new PurchaseHistoryRepositoryAsList();  //TODO
+        productRepository = new ProductRepositoryAsHashMap();
+        purchaseHistoryRepository = new PurchaseHistoryRepositoryAsList();
         reviewRepository = new ReviewRepositoryAsList();
         storeMessagesRepository = null;                                     //TODO
-        storeRepository = null;                      //TODO
+        storeRepository = new StoreRepositoryAsList();
         userRepository = new UserRepositoryAsHashmap();
         basketRepository = new BasketRepositoryAsHashMap();
         storeDiscountsRepository = new StoreDiscountsRepositoryAsHashMap();
         auctionRepository = new AuctionRepositoryAsHashMap();
-        //callbacks
-        addToUserCart = null;   //TODO
 
 
         //adapters
@@ -84,7 +93,9 @@ public class SingletonCollection {
     }
 
 
-    //getters
+    /**
+     * <h1>getters</h1>
+     */
     public static AddToUserCart getAddToUserCart() {
         return addToUserCart;
     }
@@ -134,8 +145,29 @@ public class SingletonCollection {
         return paymentAdapter;
     }
 
+    public static Searcher getSearcher() {
+        return searcher;
+    }
 
-    //setters (for callbacks)
+    public static CalculatePriceOfBasket getCalculatePriceOfBasket() {
+        return calculatePriceOfBasket;
+    }
+
+    public static IBasketRepository getBasketRepository() {
+        return basketRepository;
+    }
+
+    public static Market getMarket() {
+        return market;
+    }
+
+    public static IStoreDiscountsRepository getStoreDiscountsRepository() {
+        return storeDiscountsRepository;
+    }
+
+    /**
+     * <h1>setters (for callbacks)</h1>
+     */
     public static void setAddToUserCart(AddToUserCart addToUserCart) {
         SingletonCollection.addToUserCart = addToUserCart;
     }
@@ -144,28 +176,6 @@ public class SingletonCollection {
         SingletonCollection.calculatePriceOfBasket = calculatePriceOfBasket;
     }
 
-    public static Searcher getSearcher() {
-        return SingletonCollection.searcher;
-    }
 
-    public static CalculatePriceOfBasket getCalculatePriceOfBasket() {
-        return SingletonCollection.calculatePriceOfBasket;
-    }
-
-    public static IBasketRepository getBasketRepository() {
-        return SingletonCollection.basketRepository;
-    }
-
-    public static Market getMarket() {
-        return SingletonCollection.market;
-    }
-
-    public static IStoreDiscountsRepository getStoreDiscountsRepository() {
-        return SingletonCollection.storeDiscountsRepository;
-    }
-
-    public static IAuctionRepository getAuctionRepository() {
-        return SingletonCollection.auctionRepository;
-    }
 }
 

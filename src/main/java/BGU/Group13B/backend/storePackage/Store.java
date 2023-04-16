@@ -24,7 +24,7 @@ import java.util.Set;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class Store {
+public class Store implements Comparable<Store> {
     private final IProductRepository productRepository;
     private final PurchasePolicy purchasePolicy;
     private final DiscountPolicy discountPolicy;
@@ -37,12 +37,30 @@ public class Store {
     private final AddToUserCart addToUserCart;
     private final IBIDRepository bidRepository;
     private final int storeId;
-    private final String storeName;
-    private final String category;
+
 
     private int rank;
+    private String storeName;
+    private String category;
     private final IAuctionRepository auctionRepository;
 
+    public Store(int storeId, int founderId, String storeName, String category) {
+        this.productRepository = SingletonCollection.getProductRepository();
+        this.bidRepository = SingletonCollection.getBidRepository();
+        this.deliveryAdapter = SingletonCollection.getDeliveryAdapter();
+        this.paymentAdapter = SingletonCollection.getPaymentAdapter();
+        this.alertManager = SingletonCollection.getAlertManager();
+        this.addToUserCart = SingletonCollection.getAddToUserCart();
+        this.storeMessagesRepository = SingletonCollection.getStoreMessagesRepository();
+        this.storeDiscounts = SingletonCollection.getStoreDiscountsRepository();
+        this.discountPolicy = new DiscountPolicy();
+        this.purchasePolicy = new PurchasePolicy();
+        this.storeId = storeId;
+        this.storeName = storeName;
+        this.category = category;
+        this.storePermission = new StorePermission(founderId);
+        this.rank = 0;
+    }
 
     public Store(int storeId, int founderId, String storeName, String category) {
         this.auctionRepository = SingletonCollection.getAuctionRepository();
@@ -240,6 +258,11 @@ public class Store {
         BID currentBid = bidRepository.getBID(bidId).orElseThrow(() -> new IllegalArgumentException("There is no such bid for store " + this.storeId));
         currentBid.reject();//good for concurrency edge cases
         bidRepository.removeBID(bidId);
+    }
+
+    @Override
+    public int compareTo(Store o) {
+        return Integer.compare(this.storeId, o.storeId);
     }
 
     public int getRank() {

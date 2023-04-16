@@ -1,8 +1,10 @@
 package BGU.Group13B.service;
 
+import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepositoryAsHashmap;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepositoryAsHashmap;
 import BGU.Group13B.backend.User.User;
+import BGU.Group13B.backend.User.UserPermissions;
 import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
@@ -162,6 +164,21 @@ class Session implements ISession {
         synchronized (userRepositoryAsHashmap.getUser(userID)) {
             userRepositoryAsHashmap.getUser(userID).logout();
         }
-
     }
+
+    @Override
+    public void addStore(int userId, String storeName, String category) {
+        User user = userRepositoryAsHashmap.getUser(userId);
+        synchronized (user){
+            if(user.isRegistered()){
+                try{
+                    market.addStore(userId, storeName, category);
+                }
+                catch(Exception e){
+                    //TODO: handle exception
+                }
+            }
+        }
+    }
+
 }

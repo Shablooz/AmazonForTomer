@@ -122,4 +122,9 @@ public class ProxySession implements ISession {
     public void logout(int userID) {
         realSession.logout(userID);
     }
+
+    @Override
+    public void addStore(int userId, String storeName, String category) {
+        realSession.addStore(userId, storeName, category);
+    }
 }

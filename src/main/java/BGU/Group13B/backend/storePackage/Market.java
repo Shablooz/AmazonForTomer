@@ -82,6 +82,11 @@ public class Market {
         storeRepository.getStore(storeId).createAuctionForProduct(storeManagerId, productId, minPrice, lastDate);
     }
 
+    //(#24) open store - requirement 3.2
+    public void addStore(int founderId, String storeName, String category){
+        storeRepository.addStore(founderId, storeName, category);
+    }
+
     public void searchProductByName(String productName) {
         searcher.searchByName(productName);
     }
