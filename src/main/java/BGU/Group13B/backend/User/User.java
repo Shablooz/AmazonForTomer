@@ -112,6 +112,11 @@ public class User {
         return message;
     }
 
+    public void logout(){
+        this.isLoggedIn = false;
+    }
+
+
     public void sendMassageStore(String header,String massage,int storeId) {
         market.sendMassage(Message.constractMessage(this.userName,getAndIncrementMessageId(), header,massage , String.valueOf(storeId)),this.userName,storeId);
     }

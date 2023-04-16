@@ -30,7 +30,6 @@ public class Store {
     private final IStoreMessagesRepository storeMessagesRepository;
     private final AddToUserCart addToUserCart;
     private final IBIDRepository bidRepository;
-    private final int storeId;
     private int rank;
 
 
