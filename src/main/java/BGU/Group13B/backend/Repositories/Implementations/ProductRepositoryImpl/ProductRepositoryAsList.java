@@ -32,4 +32,24 @@ public class ProductRepositoryAsList implements IProductRepository {
     public Product get(int productId) {
         return list.stream().filter(product -> product.getProductId() == productId).findFirst().orElse(null);
     }
+
+    @Override
+    public List<Product> getProductByName(String name) {
+        return null;
+    }
+
+    @Override
+    public List<Product> getProductByCategory(String category) {
+        return null;
+    }
+
+    @Override
+    public List<Product> getProductByKeywords(List<String> keywords) {
+        return null;
+    }
+
+    @Override
+    public List<Product> filterByPriceRange(int minPrice, int maxPrice) {
+        return null;
+    }
 }

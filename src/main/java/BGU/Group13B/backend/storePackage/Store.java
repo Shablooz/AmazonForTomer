@@ -30,6 +30,9 @@ public class Store {
     private final IStoreMessagesRepository storeMessagesRepository;
     private final AddToUserCart addToUserCart;
     private final IBIDRepository bidRepository;
+    private final int storeId;
+    private int rank;
+
 
 
     public Store(IProductRepository productRepository, PurchasePolicy purchasePolicy, DiscountPolicy discountPolicy, DeliveryAdapter deliveryAdapter, PaymentAdapter paymentAdapter, AlertManager alertManager, StorePermission storePermission, AddToUserCart addToUserCart, IBIDRepository bidRepository, int storeId, StoreMessageRepositoryNonPersist storeMessagesRepository) {
@@ -44,6 +47,7 @@ public class Store {
         this.addToUserCart = addToUserCart;
         this.bidRepository = bidRepository;
         this.storeId = storeId;
+        this.rank=0;
     }
 
     //todo: complete the function
@@ -148,5 +152,9 @@ public class Store {
         BID currentBid = bidRepository.getBID(bidId).orElseThrow(() -> new IllegalArgumentException("There is no such bid for store " + this.storeId));
         currentBid.reject();//good for concurrency edge cases
         bidRepository.removeBID(bidId);
+    }
+
+    public int getRank() {
+        return rank;
     }
 }

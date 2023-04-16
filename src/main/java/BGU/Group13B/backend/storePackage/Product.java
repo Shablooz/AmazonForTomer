@@ -4,9 +4,11 @@ public class Product {
 
     private String name;
     private int productId;
+    private int storeId;
     private double price;
     private int amount;
-
+    private String category;
+    private int rank;
     private final PurchasePolicy purchasePolicy;
     private final DiscountPolicy discountPolicy;
 
@@ -15,7 +17,7 @@ public class Product {
         this.productId = productId;
         this.price = price;
         this.amount = amount;
-
+        this.rank=0;
         purchasePolicy = null;
         discountPolicy = null;
     }
@@ -28,6 +30,15 @@ public class Product {
         this.name = name;
     }
 
+    public int getRank() {
+        return this.rank;
+    }
+    public String getCategory() {
+        return category;
+    }
+    public int getStoreId() {
+        return storeId;
+    }
     public int getProductId() {
         return productId;
     }
@@ -63,4 +74,6 @@ public class Product {
             throw new NullPointerException("Discount policy is null");
         return discountPolicy;
     }
+
+
 }

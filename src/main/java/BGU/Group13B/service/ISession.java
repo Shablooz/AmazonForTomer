@@ -1,7 +1,9 @@
 package BGU.Group13B.service;
 
-import BGU.Group13B.backend.SystemInfo;
+import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
+
+import java.util.List;
 
 public interface ISession {
     void addProduct(int userId, String productName, int quantity, double price, int storeId) throws NoPermissionException;
@@ -108,6 +110,19 @@ public interface ISession {
      * */
     void register(int userId,String username,String password,String email);
 
+    void searchProductByName(String productName);
+
+    void searchProductByCategory(String category);
+
+    void searchProductByKeywords(List<String> keywords);
+
+    void filterByPriceRange(int minPrice, int maxPrice);
+
+    void filterByProductRank(int minRating, int maxRating);
+
+    void filterByCategory(String category);
+
+    void filterByStoreRank(int minRating, int maxRating);
 
     /**
      * #16
