@@ -1,10 +1,12 @@
 package BGU.Group13B.service;
 
+import BGU.Group13B.backend.Repositories.Implementations.AcutionRepositoryImpl.AuctionRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.BIDRepositoryImpl.BIDRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.BasketReposistoryImpl.BasketRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl.ProductRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.PurchaseHistoryRepositoryImpl.PurchaseHistoryRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepositoryAsList;
+import BGU.Group13B.backend.Repositories.Implementations.StoreDiscountsRepositoryImpl.StoreDiscountsRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepositoryAsHashmap;
 import BGU.Group13B.backend.Repositories.Interfaces.*;
 import BGU.Group13B.backend.System.Searcher;
@@ -45,6 +47,8 @@ public class SingletonCollection {
     private static final AlertManager alertManager;
     private static Searcher searcher;
     private static Market market;
+    private static IStoreDiscountsRepository storeDiscountsRepository;
+    private static IAuctionRepository auctionRepository;
 
 
     //static initializer
@@ -59,7 +63,8 @@ public class SingletonCollection {
         storeRepository = null;                      //TODO
         userRepository = new UserRepositoryAsHashmap();
         basketRepository = new BasketRepositoryAsHashMap();
-
+        storeDiscountsRepository = new StoreDiscountsRepositoryAsHashMap();
+        auctionRepository = new AuctionRepositoryAsHashMap();
         //callbacks
         addToUserCart = null;   //TODO
 
@@ -153,6 +158,14 @@ public class SingletonCollection {
 
     public static Market getMarket() {
         return SingletonCollection.market;
+    }
+
+    public static IStoreDiscountsRepository getStoreDiscountsRepository() {
+        return SingletonCollection.storeDiscountsRepository;
+    }
+
+    public static IAuctionRepository getAuctionRepository() {
+        return SingletonCollection.auctionRepository;
     }
 }
 

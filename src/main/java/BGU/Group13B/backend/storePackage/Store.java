@@ -16,6 +16,7 @@ import BGU.Group13B.backend.storePackage.permissions.DefaultManagerFunctionality
 import BGU.Group13B.backend.storePackage.permissions.DefaultOwnerFunctionality;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.permissions.StorePermission;
+import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.AddToUserCart;
 
 import java.time.LocalDateTime;
@@ -35,12 +36,39 @@ public class Store {
     private final IStoreMessagesRepository storeMessagesRepository;
     private final AddToUserCart addToUserCart;
     private final IBIDRepository bidRepository;
-    private final IAuctionRepository auctionRepository;
     private final int storeId;
+    private final String storeName;
+    private final String category;
 
     private int rank;
+    private final IAuctionRepository auctionRepository;
 
-    public Store(IProductRepository productRepository, PurchasePolicy purchasePolicy, DiscountPolicy discountPolicy, DeliveryAdapter deliveryAdapter, PaymentAdapter paymentAdapter, AlertManager alertManager, StorePermission storePermission, AddToUserCart addToUserCart, IBIDRepository bidRepository, int storeId) {
+
+    public Store(int storeId, int founderId, String storeName, String category) {
+        this.auctionRepository = SingletonCollection.getAuctionRepository();
+        this.productRepository = SingletonCollection.getProductRepository();
+        this.bidRepository = SingletonCollection.getBidRepository();
+        this.deliveryAdapter = SingletonCollection.getDeliveryAdapter();
+        this.paymentAdapter = SingletonCollection.getPaymentAdapter();
+        this.alertManager = SingletonCollection.getAlertManager();
+        this.addToUserCart = SingletonCollection.getAddToUserCart();
+        this.storeMessagesRepository = SingletonCollection.getStoreMessagesRepository();
+        this.storeDiscounts = SingletonCollection.getStoreDiscountsRepository();
+        this.discountPolicy = new DiscountPolicy();
+        this.purchasePolicy = new PurchasePolicy();
+        this.storeId = storeId;
+        this.storeName = storeName;
+        this.category = category;
+        this.storePermission = new StorePermission(founderId);
+        this.rank = 0;
+    }
+
+    //used only for testing
+    public Store(int storeId, String storeName, String category, IProductRepository productRepository,
+                 PurchasePolicy purchasePolicy, DiscountPolicy discountPolicy, DeliveryAdapter deliveryAdapter,
+                 PaymentAdapter paymentAdapter, AlertManager alertManager, StorePermission storePermission,
+                 IStoreDiscountsRepository storeDiscounts, AddToUserCart addToUserCart, IBIDRepository bidRepository,
+                 StoreMessageRepositoryNonPersist storeMessagesRepository, IAuctionRepository auctionRepository) {
         this.productRepository = productRepository;
         this.purchasePolicy = purchasePolicy;
         this.discountPolicy = discountPolicy;
@@ -52,44 +80,46 @@ public class Store {
         this.storeMessagesRepository = storeMessagesRepository;
         this.addToUserCart = addToUserCart;
         this.bidRepository = bidRepository;
-        this.auctionRepository = auctionRepository;
         this.storeId = storeId;
-        this.rank=0;
+        this.storeName = storeName;
+        this.category = category;
+        this.auctionRepository = auctionRepository;
+        this.rank = 0;
     }
 
 
-
-    public void sendMassage(Message message,String userName,int userId){
-        storeMessagesRepository.sendMassage(message,this.storeId,userName);
+    public void sendMassage(Message message, String userName, int userId) {
+        storeMessagesRepository.sendMassage(message, this.storeId, userName);
     }
-
 
 
     @DefaultOwnerFunctionality
-    public Message getUnreadMessages(String userName,int userId)throws NoPermissionException {
+    public Message getUnreadMessages(String userName, int userId) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId))
             throw new NoPermissionException("User " + userName + " has no permission to read message of store " + this.storeId);
 
-        return storeMessagesRepository.readUnreadMassage(this.storeId,userName);
+        return storeMessagesRepository.readUnreadMassage(this.storeId, userName);
     }
+
     @DefaultOwnerFunctionality
-    public Message getReadMessages(String userName,int userId) throws NoPermissionException {
+    public Message getReadMessages(String userName, int userId) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId))
             throw new NoPermissionException("User " + userName + " has no permission to read message of store " + this.storeId);
-        return storeMessagesRepository.readReadMassage(this.storeId,userName);
+        return storeMessagesRepository.readReadMassage(this.storeId, userName);
     }
+
     @DefaultOwnerFunctionality
-    public void markAsCompleted(String senderId,int messageId,String userName,int userId) throws NoPermissionException{
+    public void markAsCompleted(String senderId, int messageId, String userName, int userId) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId))
             throw new NoPermissionException("User " + userName + " has no permission to mark message as complete of store: " + this.storeId);
-        storeMessagesRepository.markAsRead(senderId,messageId,userName);
+        storeMessagesRepository.markAsRead(senderId, messageId, userName);
     }
 
     @DefaultOwnerFunctionality
-    public void refreshMessages(String userName,int userId) throws NoPermissionException{
+    public void refreshMessages(String userName, int userId) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId))
             throw new NoPermissionException("User " + userName + " has no permission to handle message of store " + this.storeId);
-        storeMessagesRepository.refreshOldMassage(this.storeId,userName);
+        storeMessagesRepository.refreshOldMassage(this.storeId, userName);
     }
 
 
@@ -127,21 +157,23 @@ public class Store {
     }
 
 
-    public void sendMassage(Message message,String userName) { //need to check how to send message back to the user
+    public void sendMassage(Message message, String userName) { //need to check how to send message back to the user
         //TODO: need to check permission only registered user can send massage
-        storeMessagesRepository.sendMassage(message,this.storeId,userName);
+        storeMessagesRepository.sendMassage(message, this.storeId, userName);
     }
+
     public Message getUnreadMessages(String userName) {
         //TODO: need to check permission only store owner can read massage
-        return storeMessagesRepository.readUnreadMassage(this.storeId,userName);
+        return storeMessagesRepository.readUnreadMassage(this.storeId, userName);
     }
-    public void markAsCompleted(String senderId,int messageId,String userName) {
+
+    public void markAsCompleted(String senderId, int messageId, String userName) {
         //TODO: need to check permission
-        storeMessagesRepository.markAsRead(senderId,messageId,userName);
+        storeMessagesRepository.markAsRead(senderId, messageId, userName);
     }
 
     public void refreshMessages(String userName) {
-        storeMessagesRepository.refreshOldMassage(this.storeId,userName);
+        storeMessagesRepository.refreshOldMassage(this.storeId, userName);
     }
 
 
