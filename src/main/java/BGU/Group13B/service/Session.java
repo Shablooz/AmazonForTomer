@@ -66,14 +66,37 @@ class Session implements ISession {
     public void register(int userId,String username, String password, String email) {
         User user = userRepositoryAsHashmap.getUser(userId);
         synchronized (user) {
-            if(user.isRegistered()) {
                 try {
-                    user.register(username, password, email);
+                    //the first if might not be necessary when we will connect to web
+                    if(!user.isRegistered()) {
+                        if(userRepositoryAsHashmap.checkIfUserExists(username) != null) {
+                            user.register(username, password, email);
+                        }else{
+                            System.out.println("user with this username already exists!");
+                        }
+                    }else{
+                        System.out.println("already registered!");
+                    }
                 }catch(Exception e){
                     System.out.println(e.getMessage());
                 }
             }
         }
-    }
 
+
+    @Override
+    public int login(int userID,String username, String password) {
+        try{
+            //gets the user that we want to log into
+            User user = userRepositoryAsHashmap.checkIfUserExists(username);
+            user.login(username,password);
+            //removes the current guest profile to swap to the existing member one
+            userRepositoryAsHashmap.removeUser(userID);
+            //gets the new id - of the user we logging into
+            return userRepositoryAsHashmap.getUserId(user);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return 0;
+        }
+    }
 }
