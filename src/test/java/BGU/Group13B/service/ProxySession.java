@@ -74,7 +74,7 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void register(int userId, String username, String password, String email) {
+    public void register(int userId, String username, String password, String email,String answer1,String answer2,String answer3) {
 
     }
 
@@ -114,8 +114,8 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public int login(int userID, String username, String password) {
-        return realSession.login(userID, username, password);
+    public int login(int userID, String username, String password,String answer1,String answer2, String answer3) {
+        return realSession.login(userID, username, password, answer1, answer2 ,answer3);
     }
 
     @Override

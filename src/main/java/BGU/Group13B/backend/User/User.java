@@ -20,6 +20,12 @@ public class User {
     private String userName;
     private Message currentMessageToReply;
     private String password;
+
+    private String email;
+
+    private String answer1;
+    private String answer2;
+    private String answer3;
     //eyal addition
     private volatile boolean isLoggedIn;
 
@@ -33,6 +39,9 @@ public class User {
         this.userPermissions = new UserPermissions();
         this.cart = new Cart(userId);
         this.market = SingletonCollection.getMarket();
+        this.answer1 = "";
+        this.answer2 = "";
+        this.answer3 = "";
         this.isLoggedIn = false;
     }
 
@@ -52,7 +61,14 @@ public class User {
 
     //#15
     //returns User on success (for future functionalities)
-    public User register(String userName, String password, String email) {
+    public User register(String userName, String password, String email,String answer1,String answer2,String answer3) {
+        checkRegisterInfo(userName,password,email);
+        //updates the user info upon registration - no longer a guest
+        updateUserDetail(userName, password, email,answer1,answer2,answer3);
+        this.userPermissions.register();
+        return this;
+    }
+    private void checkRegisterInfo(String userName,String password, String email){
         String usernameRegex = "^[a-zA-Z0-9_-]{4,16}$"; // 4-16 characters, letters/numbers/underscore/hyphen
         String passwordRegex = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)[A-Za-z\\d]{8,}$"; // need at least 8 characters, 1 uppercase, 1 lowercase, 1 number)
         String emailRegex = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\\\.[A-Za-z0-9-]+)*(\\\\.[A-Za-z]{2,})$"; // checks email validation
@@ -65,14 +81,21 @@ public class User {
         if (!Pattern.matches(emailRegex, email)) {
             throw new IllegalArgumentException("Invalid email.");
         }
-        this.userName = userName;
-        this.password = password;
-        this.userPermissions.register();
-        return this;
     }
 
-    public void login(String userName, String password) {
+    //function that currently only used in register, but is cna function as a setter
+    //TODO change following fields in the database
+    private void updateUserDetail(String userName, String password, String email,String answer1,String answer2,String answer3) {
+        this.answer1 = answer1;
+        this.answer2 = answer2;
+        this.answer3 = answer3;
+        this.userName = userName;
+        this.password = password;
+    }
+
+    public void login(String userName, String password, String answer1,String answer2,String answer3) {
         //second username check for security
+        //TODO add answers checks here
         if (this.userName.equals(userName) && this.password.equals(password)) {
             this.isLoggedIn = true;
             return;

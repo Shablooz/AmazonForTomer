@@ -86,13 +86,14 @@ class Session implements ISession {
     }
 
     @Override
-    public synchronized void register(int userId, String username, String password, String email) {
+    public synchronized void register(int userId, String username, String password,
+                                      String email,String answer1,String answer2,String answer3) {
         User user = userRepositoryAsHashmap.getUser(userId);
         try {
             //the first "if" might not be necessary when we will connect to web
             if (!user.isRegistered()) {
                 if (userRepositoryAsHashmap.checkIfUserExists(username) != null) {
-                    user.register(username, password, email);
+                    user.register(username, password, email,answer1,answer2,answer3);
                 } else {
                     System.out.println("user with this username already exists!");
                 }
@@ -140,13 +141,14 @@ class Session implements ISession {
         market.filterByStoreRank(minRating, maxRating);
     }
 
+
     @Override
-    public int login(int userID, String username, String password) {
+    public int login(int userID, String username, String password,String answer1,String answer2,String answer3) {
         try {
             //gets the user that we want to log into
             User user = userRepositoryAsHashmap.checkIfUserExists(username);
             synchronized (user) {
-                user.login(username, password);
+                user.login(username, password,answer1,answer2,answer3);
                 //removes the current guest profile to swap to the existing member one
                 userRepositoryAsHashmap.removeUser(userID);
                 //gets the new id - of the user we're logging into
