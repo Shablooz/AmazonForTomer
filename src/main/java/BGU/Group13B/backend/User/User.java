@@ -29,8 +29,8 @@ public class User {
 
     //TODO: show the messages upon registering
     private static final String question1 = "What is your favorite color?";
-    private static final String question2 = "What is your favorite color?";
-    private static final String question3 = "What is your favorite color?";
+    private static final String question2 = "What is your favorite food?";
+    private static final String question3 = "What is your favorite book or movie?";
     //eyal addition
     private volatile boolean isLoggedIn;
 
@@ -44,9 +44,15 @@ public class User {
         this.userPermissions = new UserPermissions();
         this.cart = new Cart(userId);
         this.market = SingletonCollection.getMarket();
+        this.userName = "";
+        this.password = "";
+        this.email = "";
+
+        //do not change those fields!
         this.answer1 = "";
         this.answer2 = "";
         this.answer3 = "";
+
         this.isLoggedIn = false;
     }
 
