@@ -26,6 +26,11 @@ public class User {
     private String answer1;
     private String answer2;
     private String answer3;
+
+    //TODO: show the messages upon registering
+    private static final String question1 = "What is your favorite color?";
+    private static final String question2 = "What is your favorite color?";
+    private static final String question3 = "What is your favorite color?";
     //eyal addition
     private volatile boolean isLoggedIn;
 
@@ -94,13 +99,15 @@ public class User {
     }
 
     public void login(String userName, String password, String answer1,String answer2,String answer3) {
-        //second username check for security
-        //TODO add answers checks here
+        //second username check is for security
         if (this.userName.equals(userName) && this.password.equals(password)) {
             this.isLoggedIn = true;
-            return;
+        }else {
+            throw new IllegalArgumentException("incorrect username or password");
         }
-        throw new IllegalArgumentException("incorrect username or password");
+        if(!this.answer1.equals(answer1) || !this.answer2.equals(answer2) || !this.answer3.equals(answer3)){
+            throw new IllegalArgumentException("wrong answers on secuirity questions!");
+        }
     }
 
     public String getUserName() {
