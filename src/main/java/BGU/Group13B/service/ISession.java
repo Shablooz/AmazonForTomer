@@ -132,18 +132,56 @@ public interface ISession {
      * */
     void register(int userId,String username,String password,String email);
 
+    /**
+     * #18
+     * require 2.2
+     * @param productName
+     */
     void searchProductByName(String productName);
 
+    /**
+     * #18
+     * require 2.2
+     * @param category
+     */
     void searchProductByCategory(String category);
 
+    /**
+     * #18
+     * require 2.2
+     * @param keywords
+     */
     void searchProductByKeywords(List<String> keywords);
 
+    /**
+     * #18
+     * require 2.2
+     * @param minPrice
+     * @param maxPrice
+     */
     void filterByPriceRange(int minPrice, int maxPrice);
 
+    /**
+     * #18
+     * require 2.2
+     * @param minRating
+     * @param maxRating
+     */
     void filterByProductRank(int minRating, int maxRating);
 
+    /**
+     * #18
+     * require 2.2
+     * @param category
+     */
     void filterByCategory(String category);
 
+    /**
+     * #18
+     * require 2.2
+     * @param minRating
+     * @param maxRating
+     */
     void filterByStoreRank(int minRating, int maxRating);
 
     /**
