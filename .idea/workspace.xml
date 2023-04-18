@@ -22,25 +22,22 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3436d65a-5e76-4e77-818d-f39d961d7bb1" name="Changes" comment="adding search and filter products feature.">
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_39_PM_[Changes]/shelved.patch" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_39_PM__Changes_.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_42_PM_[Changes]/shelved.patch" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_42_PM__Changes_.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_44_PM_[Changes]/shelved.patch" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_44_PM_[Changes]1/shelved.patch" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_44_PM__Changes_.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM_[Changes]/shelved.patch" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM_[Changes]1/shelved.patch" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_1.xml" afterDir="false" />
+    <list default="true" id="3436d65a-5e76-4e77-818d-f39d961d7bb1" name="Changes" comment="finish set premissions">
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_39_PM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_39_PM__Changes_.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_42_PM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_42_PM__Changes_.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_44_PM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_44_PM__Changes_.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_1.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_1.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductRepositoryImpl/ProductRepositoryAsJPA.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductRepositoryImpl/ProductRepositoryAsJPA.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductRepositoryImpl/ProductRepositoryAsList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductRepositoryImpl/ProductRepositoryAsList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ReviewRepositoryImpl/ReviewRepositoryAsList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ReviewRepositoryImpl/ReviewRepositoryAsList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IProductRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IRepositoryReview.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IRepositoryReview.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/BID.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/BID.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Market.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Market.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Product.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Store.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Store.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/SingletonCollection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/SingletonCollection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/storePackage/StoreTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/storePackage/StoreTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/service/ProxySession.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/service/ProxySession.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,12 +81,14 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "rateProduct__#25",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "spring.configuration.checksum": "2eea27aecebaecc0287d463dc0733f7d",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -125,6 +124,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="JUnit.All in TradingSystemProject" />
+        <item itemvalue="JUnit.All in TradingSystemProject" />
+        <item itemvalue="JUnit.All in TradingSystemProject" />
+        <item itemvalue="JUnit.All in TradingSystemProject" />
+        <item itemvalue="JUnit.All in TradingSystemProject" />
       </list>
     </recent_temporary>
   </component>
@@ -143,6 +146,7 @@
       <workItem from="1680681882942" duration="16736000" />
       <workItem from="1681634067663" duration="1523000" />
       <workItem from="1681664294888" duration="714000" />
+      <workItem from="1681833715499" duration="6481000" />
     </task>
     <task id="LOCAL-00001" summary="save work">
       <created>1680688726166</created>
@@ -179,6 +183,11 @@
     <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
+    <option name="OPEN_GENERIC_TABS">
+      <map>
+        <entry key="efcad7ce-d5ff-4133-91d6-3861fc2e57df" value="TOOL_WINDOW" />
+      </map>
+    </option>
     <option name="RECENT_FILTERS">
       <map>
         <entry key="Branch">
@@ -218,6 +227,11 @@
             </State>
           </value>
         </entry>
+        <entry key="efcad7ce-d5ff-4133-91d6-3861fc2e57df">
+          <value>
+            <State />
+          </value>
+        </entry>
       </map>
     </option>
   </component>
@@ -227,7 +241,8 @@
     <MESSAGE value="please review :)" />
     <MESSAGE value="adding Discount.java for the use of calculating the price." />
     <MESSAGE value="adding search and filter products feature." />
-    <option name="LAST_COMMIT_MESSAGE" value="adding search and filter products feature." />
+    <MESSAGE value="finish set premissions" />
+    <option name="LAST_COMMIT_MESSAGE" value="finish set premissions" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

@@ -16,8 +16,6 @@ import BGU.Group13B.service.callbacks.AddToUserCart;
 
 import java.util.Set;
 
-import java.util.List;
-
 public class Store {
     private final int storeId;
     private final IProductRepository productRepository;
@@ -81,6 +79,46 @@ public class Store {
         if (!this.storePermission.checkPermission(userId))
             throw new NoPermissionException("User " + userName + " has no permission to handle message of store " + this.storeId);
         storeMessagesRepository.refreshOldMassage(this.storeId,userName);
+    }
+
+
+    public void addReview(String review, int userId, int productId) {
+        //TODO:need to check history
+      Product product = productRepository.getProduct(productId, this.storeId);
+      if(product==null)
+          throw new IllegalArgumentException("Product with id: "+productId+" does not exist in store: "+this.storeId);
+      product.addReview(review, userId);
+    }
+    public void removeReview(int userId, int productId) {
+        Product product = productRepository.getProduct(productId, this.storeId);
+        if(product==null)
+            throw new IllegalArgumentException("Product with id: "+productId+" does not exist in store: "+this.storeId);
+        product.removeReview(userId);
+    }
+    public Review getReview(int userId, int productId) {
+        Product product = productRepository.getProduct(productId, this.storeId);
+        if(product==null)
+            throw new IllegalArgumentException("Product with id: "+productId+" does not exist in store: "+this.storeId);
+        return product.getReview(userId);
+    }
+    public float getProductScore(int productId) {
+        Product product = productRepository.getProduct(productId, this.storeId);
+        if(product==null)
+            throw new IllegalArgumentException("Product with id: "+productId+" does not exist in store: "+this.storeId);
+        return product.getProductScore();
+    }
+    public void addAndSetProductScore(int productId,int userId, int score) {
+        //TODO:need to check history
+        Product product = productRepository.getProduct(productId, this.storeId);
+        if(product==null)
+            throw new IllegalArgumentException("Product with id: "+productId+" does not exist in store: "+this.storeId);
+        product.addAndSetScore(userId,score);
+    }
+    public void removeProductScore(int productId,int userId) {
+        Product product = productRepository.getProduct(productId, this.storeId);
+        if(product==null)
+            throw new IllegalArgumentException("Product with id: "+productId+" does not exist in store: "+this.storeId);
+        product.removeProductScore(userId);
     }
 
 

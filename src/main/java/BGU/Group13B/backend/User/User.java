@@ -4,6 +4,7 @@ import BGU.Group13B.backend.Repositories.Interfaces.ICartRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IMessageRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
 import BGU.Group13B.backend.storePackage.Market;
+import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 //eyal import
 import java.util.regex.Pattern;
@@ -162,5 +163,34 @@ public class User {
 
     private int getAndIncrementMessageId() {
         return messageId++;
+    }
+
+    void addReview(String review, int storeId, int productId, int userId) throws NoPermissionException{
+        if(!isRegistered())
+            throw new NoPermissionException("Only registered users can add reviews");
+        market.addReview(review,storeId,productId,userId);
+    }
+    public void removeReview(int storeId, int productId, int userId)throws NoPermissionException{
+        if(!isRegistered())
+            throw new NoPermissionException("Only registered users can remove reviews");
+        market.removeReview(storeId,productId,userId);
+    }
+    public Review getReview(int storeId, int productId, int userId){
+        return market.getReview(storeId,productId,userId);
+    }
+
+    public float getProductScore(int storeId,int productId){
+        return market.getProductScore(storeId,productId);
+    }
+
+    public void addAndSetProductScore(int storeId, int productId, int userId, int score) throws NoPermissionException{
+        if(!isRegistered())
+            throw new NoPermissionException("Only registered users can add scores");
+        market.addAndSetProductScore(storeId,productId,userId,score);
+    }
+    public void removeProductScore(int storeId, int productId, int userId)throws NoPermissionException{
+        if(!isRegistered())
+            throw new NoPermissionException("Only registered users can remove scores");
+        market.removeProductScore(storeId,productId,userId);
     }
 }

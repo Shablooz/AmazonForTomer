@@ -54,5 +54,10 @@ public class ProductRepositoryAsJPA implements IProductRepository {
         return null;
     }
 
+    @Override
+    public Product getProduct(int productId, int storeId) { //TODO:implement
+        return null;
+    }
+
 
 }

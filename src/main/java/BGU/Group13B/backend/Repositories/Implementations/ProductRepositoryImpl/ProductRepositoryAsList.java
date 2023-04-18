@@ -52,4 +52,9 @@ public class ProductRepositoryAsList implements IProductRepository {
     public List<Product> filterByPriceRange(int minPrice, int maxPrice) {
         return null;
     }
+
+    @Override
+    public Product getProduct(int productId, int storeId) { //TODO:implement
+        return null;
+    }
 }

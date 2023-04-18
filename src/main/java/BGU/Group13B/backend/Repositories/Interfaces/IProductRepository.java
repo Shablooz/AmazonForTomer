@@ -17,4 +17,6 @@ public interface IProductRepository {
     List<Product> getProductByKeywords(List<String> keywords);
 
     List<Product> filterByPriceRange(int minPrice, int maxPrice);
+
+    Product getProduct(int productId, int storeId);
 }

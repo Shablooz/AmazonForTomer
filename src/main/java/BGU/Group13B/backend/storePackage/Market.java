@@ -47,6 +47,26 @@ public class Market {
         storeRepository.getStore(storeId).refreshMessages(userName,storeId);
     }
 
+    public void addReview(String review, int storeId, int productId, int userId){ //TODO:check get store impl
+        storeRepository.getStore(storeId).addReview(review,productId,userId);
+    }
+    public void removeReview(int storeId, int productId, int userId){
+        storeRepository.getStore(storeId).removeReview(productId,userId);
+    }
+    public Review getReview(int storeId, int productId, int userId){
+        return storeRepository.getStore(storeId).getReview(productId,userId);
+    }
+
+    public float getProductScore(int storeId,int productId){
+        return storeRepository.getStore(storeId).getProductScore(productId);
+    }
+
+    public void addAndSetProductScore(int storeId,int productId,int userId,int score){
+        storeRepository.getStore(storeId).addAndSetProductScore(productId,userId,score);
+    }
+    public void removeProductScore(int storeId,int productId,int userId){
+        storeRepository.getStore(storeId).removeProductScore(productId,userId);
+    }
 
 
     public void addProduct(int userId, String productName, int quantity, double price, int storeId) throws NoPermissionException {
