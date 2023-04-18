@@ -183,4 +183,19 @@ class Session implements ISession {
         }
     }
 
+    @Override
+    public boolean SecurityAnswer1Exists(int userId) {
+        return userRepositoryAsHashmap.getUser(userId).SecurityAnswer1Exists();
+    }
+
+    @Override
+    public boolean SecurityAnswer2Exists(int userId) {
+        return userRepositoryAsHashmap.getUser(userId).SecurityAnswer2Exists();
+    }
+
+    @Override
+    public boolean SecurityAnswer3Exists(int userId) {
+        return userRepositoryAsHashmap.getUser(userId).SecurityAnswer3Exists();
+    }
+
 }

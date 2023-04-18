@@ -219,4 +219,28 @@ public interface ISession {
      * @param category  the store category, currently a free text
      * */
     void addStore(int userId, String storeName, String category);
+
+
+    /**
+     * #31
+     * require 3.9
+     * @param userId
+     * */
+    boolean SecurityAnswer1Exists(int userId);
+
+    /**
+     * #31
+     * require 3.9
+     * @param userId
+     * */
+    boolean SecurityAnswer2Exists(int userId);
+
+
+    /**
+     * #31
+     * require 3.9
+     * @param userId
+     * */
+    boolean SecurityAnswer3Exists(int userId);
+
 }

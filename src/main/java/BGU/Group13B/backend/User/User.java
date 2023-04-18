@@ -210,4 +210,16 @@ public class User {
         cart.purchaseCart(address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType);
     }
 
+
+    public boolean SecurityAnswer1Exists(){
+        return answer1.equals("") == false;
+    }
+    public boolean SecurityAnswer2Exists(){
+        return answer2.equals("") == false;
+    }
+    public boolean SecurityAnswer3Exists(){
+        return answer3.equals("") == false;
+    }
+
+
 }
