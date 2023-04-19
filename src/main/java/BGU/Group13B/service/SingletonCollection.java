@@ -20,6 +20,10 @@ import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
 import BGU.Group13B.service.callbacks.AddToUserCart;
 import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
 
+import java.io.IOException;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+
 //(#61)
 public class SingletonCollection {
 
@@ -60,6 +64,7 @@ public class SingletonCollection {
     private static final Searcher searcher;
     private static final Market market;
 
+    private static final String LOG_FILE_NAME = "logger_output.txt";
 
     //static initializer
     static {
@@ -179,6 +184,17 @@ public class SingletonCollection {
         SingletonCollection.calculatePriceOfBasket = calculatePriceOfBasket;
     }
 
+    /**
+     * <h1>LOGGER</h1>
+     */
+    public static void setFileHandler(Logger LOGGER) {
+        try {
+            FileHandler fileHandler = new FileHandler(LOG_FILE_NAME);
+            LOGGER.addHandler(fileHandler);
+        } catch (IOException e) {
+            System.out.println("Error setting the logger handler: " + e.getMessage());
+        }
+    }
 
 }
 

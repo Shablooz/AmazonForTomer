@@ -12,10 +12,17 @@ import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import java.time.LocalDateTime;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 
 class Session implements ISession {
     private final Market market;
+    private static final Logger LOGGER = Logger.getLogger(Session.class.getName());
+
+    static {
+        SingletonCollection.setFileHandler(LOGGER);
+    }
+
     UserRepositoryAsHashmap userRepositoryAsHashmap;
 
     public Session(Market market) {
@@ -74,6 +81,7 @@ class Session implements ISession {
     public void auctionPurchase(int userId, int storeId, int productId, double newPrice) {
 
     }
+
     @Override
     public PublicAuctionInfo getAuctionInfo(int userId, int storeId, int productId) {
         return null;
@@ -147,6 +155,8 @@ class Session implements ISession {
             User user = userRepositoryAsHashmap.checkIfUserExists(username);
             synchronized (user) {
                 user.login(username, password);
+                /*example of use*/
+                LOGGER.info("user " + username + " logged in");
                 //removes the current guest profile to swap to the existing member one
                 userRepositoryAsHashmap.removeUser(userID);
                 //gets the new id - of the user we're logging into
@@ -169,12 +179,11 @@ class Session implements ISession {
     @Override
     public void addStore(int userId, String storeName, String category) {
         User user = userRepositoryAsHashmap.getUser(userId);
-        synchronized (user){
-            if(user.isRegistered()){
-                try{
+        synchronized (user) {
+            if (user.isRegistered()) {
+                try {
                     market.addStore(userId, storeName, category);
-                }
-                catch(Exception e){
+                } catch (Exception e) {
                     //TODO: handle exception
                 }
             }
