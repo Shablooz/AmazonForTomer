@@ -22,5 +22,6 @@ public interface IProductRepository {//deeded because it contains the product qu
 
     List<Product> filterByPriceRange(int minPrice, int maxPrice);
 
-    boolean isProductAvailable(int productId, int storeId);
+    public Product getStoreProductById(int productId,int storeId);
+
 }

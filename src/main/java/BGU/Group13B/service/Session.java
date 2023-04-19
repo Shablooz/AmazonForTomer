@@ -182,10 +182,9 @@ class Session implements ISession {
     }
 
     @Override
-    public void addProductToCart(int userId, int productId, int StoreId) {
+    public void addProductToCart(int userId, int productId, int storeId) {
         try{
-            market.isProductAvailable(productId, StoreId);
-            userRepositoryAsHashmap.getUser(userId).getCart().addProductToCart(productId, StoreId);
+            userRepositoryAsHashmap.getUser(userId).addProductToCart(productId, storeId);
         }catch (Exception e){
             //TODO: handle exception
         }

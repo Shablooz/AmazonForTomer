@@ -179,4 +179,8 @@ public class User {
         return cart;
     }
 
+    public void addProductToCart(int productId, int storeId) throws Exception {
+        market.isProductAvailable(productId, storeId);
+        cart.addProductToCart(productId, storeId);
+    }
 }

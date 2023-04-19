@@ -123,10 +123,16 @@ public class Basket {
     }
 
     public void addProduct(int productId) {
-        if(basketProductRepository.getBasketProducts(storeId, userId).get().stream().anyMatch(basketProduct -> basketProduct.getProductId() == productId)){
-            basketProductRepository.changeProductQuantity(productId, userId, storeId, 1);
+        try {
+            BasketProduct basketProduct = basketProductRepository.getBasketProduct(storeId, userId, productId);
+            if(basketProduct != null){
+                basketProductRepository.changeProductQuantity(productId, userId, storeId, 1);
+            }
+            else
+                basketProductRepository.addNewProductToBasket(productId, userId, storeId);
+        }catch (Exception e){
+            throw e;
         }
-        else
-            basketProductRepository.addNewProductToBasket(productId, userId, storeId);
+
     }
 }

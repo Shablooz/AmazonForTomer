@@ -280,9 +280,8 @@ public class Store implements Comparable<Store> {
     }
 
     public synchronized void isProductAvailable(int productId) throws Exception {
-        Product product= productRepository.getStoreProducts(this.storeId).orElseThrow(()->new IllegalArgumentException("There are no products in the set")).stream().filter(p -> p.getProductId()== productId).findFirst()
-                 .orElseThrow(() -> new IllegalArgumentException("There is no such product in the store"));
-        if(product.getAmount()<=0)
+        Product product= productRepository.getStoreProductById(productId,storeId);
+        if(product!=null && product.getAmount()<=0)
             throw new Exception("The product is out of stock");
     }
 }
