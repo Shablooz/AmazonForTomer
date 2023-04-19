@@ -19,10 +19,10 @@ public class BasketRepositoryAsHashMap implements IBasketRepository {
         this.baskets = new ConcurrentHashMap<>();
     }
 
-    public Optional<Set<Basket>> getUserBaskets(int userId) {
+    public Set<Basket> getUserBaskets(int userId) {
         if (!baskets.containsKey(userId))
-            return Optional.empty();
-        return Optional.of(baskets.get(userId));
+            return baskets.get(userId);
+        return null;
     }
 
     public void removeUserBasket(int userId, int storeId) {
@@ -31,12 +31,13 @@ public class BasketRepositoryAsHashMap implements IBasketRepository {
         baskets.get(userId).removeIf(basket -> basket.getStoreId() == storeId);
     }
 
-    public void addUserBasket(int userId, int storeId, IBasketProductRepository productRepository,
-                              PaymentAdapter paymentAdapter, IProductHistoryRepository productHistoryRepository,
-                              CalculatePriceOfBasket calculatePriceOfBasket) {
-        if (baskets.putIfAbsent(userId, ConcurrentHashMap.newKeySet()) != null)
-            baskets.get(userId).add(new Basket(userId, storeId, productRepository,
-                    paymentAdapter, productHistoryRepository, calculatePriceOfBasket));
+    public Basket addUserBasket(int userId, int storeId) {
+        if (baskets.putIfAbsent(userId, ConcurrentHashMap.newKeySet()) != null) {
+            Basket basket = new Basket(userId, storeId);
+            baskets.get(userId).add(basket);
+            return basket;
+        }
+        return null;
     }
 
 }

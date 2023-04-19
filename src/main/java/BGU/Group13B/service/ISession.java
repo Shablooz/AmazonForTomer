@@ -137,52 +137,52 @@ public interface ISession {
     /**
      * #18
      * require 2.2
-     * @param productName
+     * @param productName - the name of the product
      */
     void searchProductByName(String productName);
 
     /**
      * #18
      * require 2.2
-     * @param category
+     * @param category - the category of the product
      */
     void searchProductByCategory(String category);
 
     /**
      * #18
      * require 2.2
-     * @param keywords
+     * @param keywords - list of keywords
      */
     void searchProductByKeywords(List<String> keywords);
 
     /**
      * #18
      * require 2.2
-     * @param minPrice
-     * @param maxPrice
+     * @param minPrice - the minimum price of the product
+     * @param maxPrice - the maximum price of the product
      */
     void filterByPriceRange(int minPrice, int maxPrice);
 
     /**
      * #18
      * require 2.2
-     * @param minRating
-     * @param maxRating
+     * @param minRating - the minimum rating of the product
+     * @param maxRating - the maximum rating of the product
      */
     void filterByProductRank(int minRating, int maxRating);
 
     /**
      * #18
      * require 2.2
-     * @param category
+     * @param category - the category of the product
      */
     void filterByCategory(String category);
 
     /**
      * #18
      * require 2.2
-     * @param minRating
-     * @param maxRating
+     * @param minRating - the minimum rating of the store
+     * @param maxRating - the maximum rating of the store
      */
     void filterByStoreRank(int minRating, int maxRating);
 
@@ -217,6 +217,16 @@ public interface ISession {
     void addStore(int userId, String storeName, String category);
 
 
+    /**
+     * #19
+     * require 2.3
+     * @param userId    the user id
+     * @param storeId   the store id
+     * @param productId the product id
+     */
+    void addProductToCart(int userId, int productId, int storeId);
+
+    void getUserPurchaseHistory(int userId);
 
     /**
      * [#28]

@@ -8,11 +8,9 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface IBasketRepository {
-    public Optional<Set<Basket>> getUserBaskets(int userId);
+    public Set<Basket> getUserBaskets(int userId);
 
     public void removeUserBasket(int userId, int storeId);
 
-    void addUserBasket(int userId, int storeId, IBasketProductRepository productRepository,
-                       PaymentAdapter paymentAdapter, IProductHistoryRepository productHistoryRepository,
-                       CalculatePriceOfBasket calculatePriceOfBasket);
+    Basket addUserBasket(int userId, int storeId);
 }

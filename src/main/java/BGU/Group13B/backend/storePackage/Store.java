@@ -324,4 +324,10 @@ public class Store implements Comparable<Store> {
             throw new NoPermissionException("User " + storeManagerId + " has no permission to create an auction in the store: " + this.storeId);
         auctionRepository.addNewAuctionForAProduct(productId, startingPrice, this.storeId, lastDate);
     }
+
+    public synchronized void isProductAvailable(int productId) throws Exception {
+        Product product= productRepository.getStoreProductById(productId,storeId);
+        if(product!=null && product.getAmount()<=0)
+            throw new Exception("The product is out of stock");
+    }
 }

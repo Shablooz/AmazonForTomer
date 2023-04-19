@@ -184,6 +184,11 @@ class Session implements ISession {
     }
 
     @Override
+    public void addProductToCart(int userId, int productId, int storeId) {
+        try{
+            userRepositoryAsHashmap.getUser(userId).addProductToCart(productId, storeId);
+        }catch (Exception e){
+            //TODO: handle exception
     public void openComplaint(int userId, String header, String complaint) {
         try {
             userRepositoryAsHashmap.getUser(userId).openComplaint(header, complaint);
@@ -192,7 +197,7 @@ class Session implements ISession {
         }
     }
 
-    @Override
+ 
     public Message getComplaint(int userId) {
         try {
            return  userRepositoryAsHashmap.getUser(userId).getComplaint();
