@@ -1,13 +1,9 @@
 package BGU.Group13B.backend.storePackage;
 
 
-import BGU.Group13B.backend.Repositories.Interfaces.IAuctionRepository;
+import BGU.Group13B.backend.Repositories.Interfaces.*;
 import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyImpl.StoreMessageRepositoryNonPersist;
-import BGU.Group13B.backend.Repositories.Interfaces.IBIDRepository;
-import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
-import BGU.Group13B.backend.Repositories.Interfaces.IStoreMessagesRepository;
 import BGU.Group13B.backend.User.Message;
-import BGU.Group13B.backend.Repositories.Interfaces.IStoreDiscountsRepository;
 import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.storePackage.Discounts.Discount;
 import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
@@ -39,6 +35,7 @@ public class Store implements Comparable<Store> {
     private final int storeId;
 
 
+    private final IPurchaseHistoryRepository purchaseHistoryRepository;
     private int rank;
     private String storeName;
     private String category;
@@ -63,6 +60,7 @@ public class Store implements Comparable<Store> {
         this.category = category;
         this.storePermission = new StorePermission(founderId);
         this.rank = 0;
+        this.purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
     }
 
     //used only for testing
@@ -70,7 +68,7 @@ public class Store implements Comparable<Store> {
                  PurchasePolicy purchasePolicy, DiscountPolicy discountPolicy, DeliveryAdapter deliveryAdapter,
                  PaymentAdapter paymentAdapter, AlertManager alertManager, StorePermission storePermission,
                  IStoreDiscountsRepository storeDiscounts, AddToUserCart addToUserCart, IBIDRepository bidRepository,
-                 StoreMessageRepositoryNonPersist storeMessagesRepository, IAuctionRepository auctionRepository) {
+                 StoreMessageRepositoryNonPersist storeMessagesRepository, IAuctionRepository auctionRepository,IPurchaseHistoryRepository purchaseHistoryRepository) {
         this.productRepository = productRepository;
         this.purchasePolicy = purchasePolicy;
         this.discountPolicy = discountPolicy;
@@ -83,6 +81,8 @@ public class Store implements Comparable<Store> {
         this.addToUserCart = addToUserCart;
         this.bidRepository = bidRepository;
         this.storeId = storeId;
+        this.rank=0;
+        this.purchaseHistoryRepository = purchaseHistoryRepository;
         this.storeName = storeName;
         this.category = category;
         this.auctionRepository = auctionRepository;
@@ -90,38 +90,78 @@ public class Store implements Comparable<Store> {
     }
 
 
-    public void sendMassage(Message message, String userName, int userId) {
-        storeMessagesRepository.sendMassage(message, this.storeId, userName);
+
+    public void sendMassage(Message message,String userName,int userId){
+        storeMessagesRepository.sendMassage(message,this.storeId,userName);
     }
 
-
     @DefaultOwnerFunctionality
-    public Message getUnreadMessages(String userName, int userId) throws NoPermissionException {
+    public Message getUnreadMessages(String userName,int userId)throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId))
             throw new NoPermissionException("User " + userName + " has no permission to read message of store " + this.storeId);
 
-        return storeMessagesRepository.readUnreadMassage(this.storeId, userName);
+        return storeMessagesRepository.readUnreadMassage(this.storeId,userName);
     }
-
     @DefaultOwnerFunctionality
-    public Message getReadMessages(String userName, int userId) throws NoPermissionException {
+    public Message getReadMessages(String userName,int userId) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId))
             throw new NoPermissionException("User " + userName + " has no permission to read message of store " + this.storeId);
-        return storeMessagesRepository.readReadMassage(this.storeId, userName);
+        return storeMessagesRepository.readReadMassage(this.storeId,userName);
     }
-
     @DefaultOwnerFunctionality
-    public void markAsCompleted(String senderId, int messageId, String userName, int userId) throws NoPermissionException {
+    public void markAsCompleted(String senderId,int messageId,String userName,int userId) throws NoPermissionException{
         if (!this.storePermission.checkPermission(userId))
             throw new NoPermissionException("User " + userName + " has no permission to mark message as complete of store: " + this.storeId);
-        storeMessagesRepository.markAsRead(senderId, messageId, userName);
+        storeMessagesRepository.markAsRead(senderId,messageId,userName);
     }
 
     @DefaultOwnerFunctionality
-    public void refreshMessages(String userName, int userId) throws NoPermissionException {
+    public void refreshMessages(String userName,int userId) throws NoPermissionException{
         if (!this.storePermission.checkPermission(userId))
             throw new NoPermissionException("User " + userName + " has no permission to handle message of store " + this.storeId);
-        storeMessagesRepository.refreshOldMassage(this.storeId, userName);
+        storeMessagesRepository.refreshOldMassage(this.storeId,userName);
+    }
+
+
+    public void addReview(String review, int userId, int productId) {
+        if(purchaseHistoryRepository.isPurchase(userId,this.storeId,productId))
+            throw new IllegalArgumentException("User with id: "+userId+" did not purchase product with id: "+productId+" from store: "+this.storeId);
+      Product product = productRepository.getProduct(productId, this.storeId);
+      if(product==null)
+          throw new IllegalArgumentException("Product with id: "+productId+" does not exist in store: "+this.storeId);
+      product.addReview(review, userId);
+    }
+    public void removeReview(int userId, int productId) {
+        Product product = productRepository.getProduct(productId, this.storeId);
+        if(product==null)
+            throw new IllegalArgumentException("Product with id: "+productId+" does not exist in store: "+this.storeId);
+        product.removeReview(userId);
+    }
+    public Review getReview(int userId, int productId) {
+        Product product = productRepository.getProduct(productId, this.storeId);
+        if(product==null)
+            throw new IllegalArgumentException("Product with id: "+productId+" does not exist in store: "+this.storeId);
+        return product.getReview(userId);
+    }
+    public float getProductScore(int productId) {
+        Product product = productRepository.getProduct(productId, this.storeId);
+        if(product==null)
+            throw new IllegalArgumentException("Product with id: "+productId+" does not exist in store: "+this.storeId);
+        return product.getProductScore();
+    }
+    public void addAndSetProductScore(int productId,int userId, int score) {
+        if(purchaseHistoryRepository.isPurchase(userId,this.storeId,productId))
+            throw new IllegalArgumentException("User with id: "+userId+" did not purchase product with id: "+productId+" from store: "+this.storeId);
+        Product product = productRepository.getProduct(productId, this.storeId);
+        if(product==null)
+            throw new IllegalArgumentException("Product with id: "+productId+" does not exist in store: "+this.storeId);
+        product.addAndSetScore(userId,score);
+    }
+    public void removeProductScore(int productId,int userId) {
+        Product product = productRepository.getProduct(productId, this.storeId);
+        if(product==null)
+            throw new IllegalArgumentException("Product with id: "+productId+" does not exist in store: "+this.storeId);
+        product.removeProductScore(userId);
     }
 
 
@@ -159,24 +199,7 @@ public class Store implements Comparable<Store> {
     }
 
 
-    public void sendMassage(Message message, String userName) { //need to check how to send message back to the user
-        //TODO: need to check permission only registered user can send massage
-        storeMessagesRepository.sendMassage(message, this.storeId, userName);
-    }
 
-    public Message getUnreadMessages(String userName) {
-        //TODO: need to check permission only store owner can read massage
-        return storeMessagesRepository.readUnreadMassage(this.storeId, userName);
-    }
-
-    public void markAsCompleted(String senderId, int messageId, String userName) {
-        //TODO: need to check permission
-        storeMessagesRepository.markAsRead(senderId, messageId, userName);
-    }
-
-    public void refreshMessages(String userName) {
-        storeMessagesRepository.refreshOldMassage(this.storeId, userName);
-    }
 
 
     public static String getCurrentMethodName() {

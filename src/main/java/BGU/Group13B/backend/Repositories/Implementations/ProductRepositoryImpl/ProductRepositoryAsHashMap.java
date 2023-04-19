@@ -52,6 +52,11 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
         return null;
     }
 
+    @Override
+    public Product getProduct(int productId, int storeId) {
+        return null;
+    }
+
 /*    @Override
     public double calculatePrice(int storeId, int productId, int productQuantity, String couponCode) {
         if (!storeProducts.containsKey(storeId))

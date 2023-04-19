@@ -13,4 +13,9 @@ public class PurchaseHistoryRepositoryAsList implements IPurchaseHistoryReposito
     public PurchaseHistoryRepositoryAsList() {
         this.purchaseHistories = new LinkedList<>();
     }
+
+    @Override
+    public boolean isPurchase(int userId, int storeId, int productId) {
+        return false;
+    }
 }
