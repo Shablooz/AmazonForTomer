@@ -167,33 +167,57 @@ public class User {
         return messageId++;
     }
 
-    void addReview(String review, int storeId, int productId, int userId) throws NoPermissionException{
+    //#25
+    public void addReview(String review, int storeId, int productId) throws NoPermissionException{
         if(!isRegistered())
             throw new NoPermissionException("Only registered users can add reviews");
-        market.addReview(review,storeId,productId,userId);
+        market.addReview(review,storeId,productId,this.userId);
     }
-    public void removeReview(int storeId, int productId, int userId)throws NoPermissionException{
+    //#25
+    public void removeReview(int storeId, int productId)throws NoPermissionException{
         if(!isRegistered())
             throw new NoPermissionException("Only registered users can remove reviews");
-        market.removeReview(storeId,productId,userId);
+        market.removeReview(storeId,productId,this.userId);
     }
-    public Review getReview(int storeId, int productId, int userId){
-        return market.getReview(storeId,productId,userId);
+    //#25
+    public Review getReview(int storeId, int productId){
+        return market.getReview(storeId,productId,this.userId);
     }
-
+    //#26
     public float getProductScore(int storeId,int productId){
         return market.getProductScore(storeId,productId);
     }
 
-    public void addAndSetProductScore(int storeId, int productId, int userId, int score) throws NoPermissionException{
+    public void addAndSetProductScore(int storeId, int productId, int score) throws NoPermissionException{
         if(!isRegistered())
             throw new NoPermissionException("Only registered users can add scores");
-        market.addAndSetProductScore(storeId,productId,userId,score);
+        market.addAndSetProductScore(storeId,productId,this.userId,score);
     }
-    public void removeProductScore(int storeId, int productId, int userId)throws NoPermissionException{
+    public void removeProductScore(int storeId, int productId)throws NoPermissionException{
         if(!isRegistered())
             throw new NoPermissionException("Only registered users can remove scores");
         market.removeProductScore(storeId,productId,userId);
+    }
+    public void addStoreScore(int storeId ,int score) throws NoPermissionException{
+        if(!isRegistered())
+            throw new NoPermissionException("Only registered users can add scores to stores");
+        market.addStoreScore(userId,storeId,score);
+    }
+
+    public void removeStoreScore(int storeId) throws NoPermissionException{
+        if(!isRegistered())
+            throw new NoPermissionException("Only registered users can remove scores from stores");
+        market.removeStoreScore(userId,storeId);
+    }
+
+    public void modifyStoreScore(int storeId, int score)throws NoPermissionException{
+        if(!isRegistered())
+            throw new NoPermissionException("Only registered users can modify scores of stores");
+        market.modifyStoreScore(userId,storeId,score);
+    }
+
+    public float getStoreScore(int storeId){
+        return market.getStoreScore(storeId);
     }
 
     void purchaseCart(String address, String creditCardNumber, String creditCardMonth, String creditCardYear, String creditCardHolderFirstName, String creditCardHolderLastName, String creditCardCcv, String id, String creditCardType) {
