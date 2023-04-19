@@ -31,36 +31,68 @@ public class Market {
 
     //Tomer
     //#27
-    public void sendMassage(Message message, String userName, int storeId) { //need to check how to send message back to the user
-        storeRepository.getStore(storeId).sendMassage(message, userName, storeId);
+    public void sendMassage(Message message, String userName,int storeId) { //need to check how to send message back to the user
+        storeRepository.getStore(storeId).sendMassage(message,userName,storeId);
+    }
+    //#42
+    public Message getUnreadMessages(String userName,int storeId)throws NoPermissionException {
+
+        return storeRepository.getStore(storeId).getUnreadMessages(userName,storeId);
+    }
+    //#42
+    public Message getReadMessages(String userName,int storeId)throws NoPermissionException {
+
+        return storeRepository.getStore(storeId).getReadMessages(userName,storeId);
+    }
+    //#42
+    public void markAsCompleted(String senderId,int messageId,String userName,int storeId) throws NoPermissionException {
+
+        storeRepository.getStore(storeId).markAsCompleted(senderId,messageId,userName,storeId);
+    }
+    //#42
+    public void refreshMessages(String userName,int storeId) throws NoPermissionException {
+        storeRepository.getStore(storeId).refreshMessages(userName,storeId);
     }
 
-    //#42
-    public Message getUnreadMessages(String userName, int storeId) throws NoPermissionException {
-
-        return storeRepository.getStore(storeId).getUnreadMessages(userName, storeId);
+    public void addReview(String review, int storeId, int productId, int userId){ //TODO:check get store impl
+        storeRepository.getStore(storeId).addReview(review,productId,userId);
+    }
+    public void removeReview(int storeId, int productId, int userId){
+        storeRepository.getStore(storeId).removeReview(productId,userId);
+    }
+    public Review getReview(int storeId, int productId, int userId){
+        return storeRepository.getStore(storeId).getReview(productId,userId);
     }
 
-    //#42
-    public Message getReadMessages(String userName, int storeId) throws NoPermissionException {
-
-        return storeRepository.getStore(storeId).getReadMessages(userName, storeId);
+    public float getProductScore(int storeId,int productId){
+        return storeRepository.getStore(storeId).getProductScore(productId);
     }
 
-    //#42
-    public void markAsCompleted(String senderId, int messageId, String userName, int storeId) throws NoPermissionException {
-
-        storeRepository.getStore(storeId).markAsCompleted(senderId, messageId, userName, storeId);
+    public void addAndSetProductScore(int storeId,int productId,int userId,int score){
+        storeRepository.getStore(storeId).addAndSetProductScore(productId,userId,score);
     }
-
-    //#42
-    public void refreshMessages(String userName, int storeId) throws NoPermissionException {
-        storeRepository.getStore(storeId).refreshMessages(userName, storeId);
+    public void removeProductScore(int storeId,int productId,int userId){
+        storeRepository.getStore(storeId).removeProductScore(productId,userId);
     }
 
 
     public void addProduct(int userId, String productName, int quantity, double price, int storeId) throws NoPermissionException {
         storeRepository.getStore(storeId).addProduct(userId, productName, quantity, price);
+    }
+    public void addStoreScore(int userId,int storeId ,int score){
+       storeRepository.getStore(storeId).addStoreScore(userId,score);
+    }
+
+    public void removeStoreScore(int userId,int storeId){
+        storeRepository.getStore(storeId).removeStoreScore(userId);
+    }
+
+    public void modifyStoreScore(int userId,int storeId, int score){
+        storeRepository.getStore(storeId).modifyStoreScore(userId,score);
+    }
+
+    public float getStoreScore(int storeId){
+        return storeRepository.getStore(storeId).getStoreScore();
     }
 
 

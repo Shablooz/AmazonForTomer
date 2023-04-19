@@ -11,4 +11,14 @@ public class PurchaseHistoryRepositoryAsJPA implements IPurchaseHistoryRepositor
     public PurchaseHistoryRepositoryAsJPA(JpaRepository<PurchaseHistory, Integer> repo) {
         this.repo = repo;
     }
+
+    @Override
+    public boolean isPurchase(int userId, int storeId, int productId) {
+        return false;
+    }
+
+    @Override
+    public boolean isPurchaseFromStore(int userId, int storeId) {
+        return false;
+    }
 }
