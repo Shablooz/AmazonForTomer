@@ -56,7 +56,7 @@ class StoreTest {
         msg = "User " + managerWithPermission + " has submitted a purchase proposal for product " + productId + " in store " + storeId;
         Mockito.doNothing().when(alertManager).sendAlert(managerWithPermission, msg);
         store = new Store(null, null, null, null, null,
-                alertManager, storePermission, addToUserCart, bidRepository, storeId,null);
+                alertManager, storePermission, addToUserCart, bidRepository, storeId,null,null);
 
     }
 

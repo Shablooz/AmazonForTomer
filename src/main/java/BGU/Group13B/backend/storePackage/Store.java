@@ -4,6 +4,7 @@ package BGU.Group13B.backend.storePackage;
 import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyImpl.StoreMessageRepositoryNonPersist;
 import BGU.Group13B.backend.Repositories.Interfaces.IBIDRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
+import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreMessagesRepository;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
@@ -29,11 +30,14 @@ public class Store {
     private final AddToUserCart addToUserCart;
     private final IBIDRepository bidRepository;
 
+    private final IPurchaseHistoryRepository purchaseHistoryRepository;
     private int rank;
 
 
 
-    public Store(IProductRepository productRepository, PurchasePolicy purchasePolicy, DiscountPolicy discountPolicy, DeliveryAdapter deliveryAdapter, PaymentAdapter paymentAdapter, AlertManager alertManager, StorePermission storePermission, AddToUserCart addToUserCart, IBIDRepository bidRepository, int storeId, StoreMessageRepositoryNonPersist storeMessagesRepository) {
+    public Store(IProductRepository productRepository, PurchasePolicy purchasePolicy, DiscountPolicy discountPolicy, DeliveryAdapter deliveryAdapter,
+                 PaymentAdapter paymentAdapter, AlertManager alertManager, StorePermission storePermission, AddToUserCart addToUserCart,
+                 IBIDRepository bidRepository, int storeId, StoreMessageRepositoryNonPersist storeMessagesRepository, IPurchaseHistoryRepository purchaseHistoryRepository) {
         this.productRepository = productRepository;
         this.purchasePolicy = purchasePolicy;
         this.discountPolicy = discountPolicy;
@@ -46,6 +50,7 @@ public class Store {
         this.bidRepository = bidRepository;
         this.storeId = storeId;
         this.rank=0;
+        this.purchaseHistoryRepository = purchaseHistoryRepository;
     }
 
 
@@ -83,7 +88,8 @@ public class Store {
 
 
     public void addReview(String review, int userId, int productId) {
-        //TODO:need to check history
+        if(purchaseHistoryRepository.isPurchase(userId,this.storeId,productId))
+            throw new IllegalArgumentException("User with id: "+userId+" did not purchase product with id: "+productId+" from store: "+this.storeId);
       Product product = productRepository.getProduct(productId, this.storeId);
       if(product==null)
           throw new IllegalArgumentException("Product with id: "+productId+" does not exist in store: "+this.storeId);
@@ -108,7 +114,8 @@ public class Store {
         return product.getProductScore();
     }
     public void addAndSetProductScore(int productId,int userId, int score) {
-        //TODO:need to check history
+        if(purchaseHistoryRepository.isPurchase(userId,this.storeId,productId))
+            throw new IllegalArgumentException("User with id: "+userId+" did not purchase product with id: "+productId+" from store: "+this.storeId);
         Product product = productRepository.getProduct(productId, this.storeId);
         if(product==null)
             throw new IllegalArgumentException("Product with id: "+productId+" does not exist in store: "+this.storeId);
