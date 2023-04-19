@@ -1,13 +1,9 @@
 package BGU.Group13B.backend.storePackage;
 
 
-import BGU.Group13B.backend.Repositories.Interfaces.IAuctionRepository;
+import BGU.Group13B.backend.Repositories.Interfaces.*;
 import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyImpl.StoreMessageRepositoryNonPersist;
-import BGU.Group13B.backend.Repositories.Interfaces.IBIDRepository;
-import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
-import BGU.Group13B.backend.Repositories.Interfaces.IStoreMessagesRepository;
 import BGU.Group13B.backend.User.Message;
-import BGU.Group13B.backend.Repositories.Interfaces.IStoreDiscountsRepository;
 import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.storePackage.Discounts.Discount;
 import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
@@ -64,6 +60,7 @@ public class Store implements Comparable<Store> {
         this.category = category;
         this.storePermission = new StorePermission(founderId);
         this.rank = 0;
+        this.purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
     }
 
     //used only for testing
@@ -71,7 +68,7 @@ public class Store implements Comparable<Store> {
                  PurchasePolicy purchasePolicy, DiscountPolicy discountPolicy, DeliveryAdapter deliveryAdapter,
                  PaymentAdapter paymentAdapter, AlertManager alertManager, StorePermission storePermission,
                  IStoreDiscountsRepository storeDiscounts, AddToUserCart addToUserCart, IBIDRepository bidRepository,
-                 StoreMessageRepositoryNonPersist storeMessagesRepository, IAuctionRepository auctionRepository) {
+                 StoreMessageRepositoryNonPersist storeMessagesRepository, IAuctionRepository auctionRepository,IPurchaseHistoryRepository purchaseHistoryRepository) {
         this.productRepository = productRepository;
         this.purchasePolicy = purchasePolicy;
         this.discountPolicy = discountPolicy;
