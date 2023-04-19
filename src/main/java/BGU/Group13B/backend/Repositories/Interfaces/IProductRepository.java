@@ -24,4 +24,5 @@ public interface IProductRepository {//deeded because it contains the product qu
 
      Product getStoreProductById(int productId,int storeId);
 
+
 }
