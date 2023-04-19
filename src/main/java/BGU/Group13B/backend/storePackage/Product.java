@@ -84,6 +84,9 @@ public class Product {
         currentAmount -= quantity;
         return true;
     }
+    public synchronized void increaseQuantity(int quantity) {
+        currentAmount += quantity;
+    }
 
     public synchronized double calculatePrice(int productQuantity, String couponCodes) {
         purchasePolicy.checkPolicy(this, productQuantity);
@@ -94,7 +97,7 @@ public class Product {
                 productDiscounts.removeProductDiscount(productId, discount);
             else
                 finalPrice = discount.applyProductDiscount(finalPrice, productQuantity, couponCodes);
-        return finalPrice;
+        return finalPrice * productQuantity;//added by shaun in the night of 20/04/2023
     }
 
     public double getPrice() {

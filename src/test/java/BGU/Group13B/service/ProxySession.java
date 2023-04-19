@@ -131,6 +131,16 @@ public class ProxySession implements ISession {
     }
 
     @Override
+    public void addProductToCart(int userId, int productId, int storeId) {
+        realSession.addProductToCart(userId, productId, storeId);
+    }
+
+    @Override
+    public void getUserPurchaseHistory(int userId) {
+        realSession.getUserPurchaseHistory(userId);
+    }
+
+    @Override
     public void openComplaint(int userId, String header, String complaint) {
 
     }
