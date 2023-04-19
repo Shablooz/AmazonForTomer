@@ -70,6 +70,6 @@ public class BasketProductRepositoryAsHashMap implements IBasketProductRepositor
                 return basketProduct;
             }
         }
-        throw null;
+        return null;
     }
 }
