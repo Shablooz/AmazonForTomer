@@ -198,4 +198,9 @@ class Session implements ISession {
         return userRepositoryAsHashmap.getUser(userId).SecurityAnswer3Exists();
     }
 
+    @Override
+    public boolean checkIfQuestionsExist(int userId) {
+        return SecurityAnswer1Exists(userId) || SecurityAnswer2Exists(userId) || SecurityAnswer3Exists(userId);
+    }
+
 }

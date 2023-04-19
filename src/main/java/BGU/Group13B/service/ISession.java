@@ -243,4 +243,14 @@ public interface ISession {
      * */
     boolean SecurityAnswer3Exists(int userId);
 
+
+    /**
+     * #31
+     * require 3.9
+     * @param userId
+     * checks if user has security questions answered
+     * */
+    boolean checkIfQuestionsExist(int userId);
+
+
 }
