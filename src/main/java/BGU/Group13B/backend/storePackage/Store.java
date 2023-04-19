@@ -1,24 +1,30 @@
 package BGU.Group13B.backend.storePackage;
 
 
+import BGU.Group13B.backend.Repositories.Interfaces.IAuctionRepository;
 import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyImpl.StoreMessageRepositoryNonPersist;
 import BGU.Group13B.backend.Repositories.Interfaces.IBIDRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
-import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreMessagesRepository;
 import BGU.Group13B.backend.User.Message;
+import BGU.Group13B.backend.Repositories.Interfaces.IStoreDiscountsRepository;
+import BGU.Group13B.backend.User.BasketProduct;
+import BGU.Group13B.backend.storePackage.Discounts.Discount;
 import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
 import BGU.Group13B.backend.storePackage.permissions.DefaultManagerFunctionality;
 import BGU.Group13B.backend.storePackage.permissions.DefaultOwnerFunctionality;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.permissions.StorePermission;
+import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.AddToUserCart;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
-public class Store {
-    private final int storeId;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+public class Store implements Comparable<Store> {
     private final IProductRepository productRepository;
     private final PurchasePolicy purchasePolicy;
     private final DiscountPolicy discountPolicy;
@@ -26,18 +32,46 @@ public class Store {
     private final PaymentAdapter paymentAdapter;
     private final AlertManager alertManager;
     private final StorePermission storePermission;
+    private final IStoreDiscountsRepository storeDiscounts;
     private final IStoreMessagesRepository storeMessagesRepository;
     private final AddToUserCart addToUserCart;
     private final IBIDRepository bidRepository;
+    private final int storeId;
+
 
     private final IPurchaseHistoryRepository purchaseHistoryRepository;
     private int rank;
+    private String storeName;
+    private String category;
+    private final IAuctionRepository auctionRepository;
 
 
 
-    public Store(IProductRepository productRepository, PurchasePolicy purchasePolicy, DiscountPolicy discountPolicy, DeliveryAdapter deliveryAdapter,
-                 PaymentAdapter paymentAdapter, AlertManager alertManager, StorePermission storePermission, AddToUserCart addToUserCart,
-                 IBIDRepository bidRepository, int storeId, StoreMessageRepositoryNonPersist storeMessagesRepository, IPurchaseHistoryRepository purchaseHistoryRepository) {
+    public Store(int storeId, int founderId, String storeName, String category) {
+        this.auctionRepository = SingletonCollection.getAuctionRepository();
+        this.productRepository = SingletonCollection.getProductRepository();
+        this.bidRepository = SingletonCollection.getBidRepository();
+        this.deliveryAdapter = SingletonCollection.getDeliveryAdapter();
+        this.paymentAdapter = SingletonCollection.getPaymentAdapter();
+        this.alertManager = SingletonCollection.getAlertManager();
+        this.addToUserCart = SingletonCollection.getAddToUserCart();
+        this.storeMessagesRepository = SingletonCollection.getStoreMessagesRepository();
+        this.storeDiscounts = SingletonCollection.getStoreDiscountsRepository();
+        this.discountPolicy = new DiscountPolicy();
+        this.purchasePolicy = new PurchasePolicy();
+        this.storeId = storeId;
+        this.storeName = storeName;
+        this.category = category;
+        this.storePermission = new StorePermission(founderId);
+        this.rank = 0;
+    }
+
+    //used only for testing
+    public Store(int storeId, String storeName, String category, IProductRepository productRepository,
+                 PurchasePolicy purchasePolicy, DiscountPolicy discountPolicy, DeliveryAdapter deliveryAdapter,
+                 PaymentAdapter paymentAdapter, AlertManager alertManager, StorePermission storePermission,
+                 IStoreDiscountsRepository storeDiscounts, AddToUserCart addToUserCart, IBIDRepository bidRepository,
+                 StoreMessageRepositoryNonPersist storeMessagesRepository, IAuctionRepository auctionRepository) {
         this.productRepository = productRepository;
         this.purchasePolicy = purchasePolicy;
         this.discountPolicy = discountPolicy;
@@ -45,12 +79,17 @@ public class Store {
         this.paymentAdapter = paymentAdapter;
         this.alertManager = alertManager;
         this.storePermission = storePermission;
+        this.storeDiscounts = storeDiscounts;
         this.storeMessagesRepository = storeMessagesRepository;
         this.addToUserCart = addToUserCart;
         this.bidRepository = bidRepository;
         this.storeId = storeId;
         this.rank=0;
         this.purchaseHistoryRepository = purchaseHistoryRepository;
+        this.storeName = storeName;
+        this.category = category;
+        this.auctionRepository = auctionRepository;
+        this.rank = 0;
     }
 
 
@@ -144,27 +183,26 @@ public class Store {
         if (!this.storePermission.checkPermission(userId))
             throw new NoPermissionException("User " + userId + " has no permission to add product to store " + this.storeId);
 
-        Product product = new Product(productName, -1/*todo*/, price, quantity);
-        productRepository.add(product);
+        /*Product product = new Product(productName, -1*//*todo*//*, price, quantity);
+        productRepository.add(product);*/
+
+    }
+
+    public double calculatePriceOfBasket(double totalAmountBeforeStoreDiscountPolicy,
+                                         ConcurrentLinkedQueue<BasketProduct> successfulProducts,
+                                         String storeCoupon) {
+        double totalAmount = totalAmountBeforeStoreDiscountPolicy;
+        for (Discount discount : storeDiscounts.getStoreDiscounts(storeId).
+                orElseThrow(() -> new RuntimeException("Store with id " + storeId + " does not exist"))) {
+
+            totalAmount = discount.applyStoreDiscount(totalAmount, successfulProducts, storeCoupon);
+        }
+        return totalAmount;
+
     }
 
 
-    public void sendMassage(Message message,String userName) { //need to check how to send message back to the user
-        //TODO: need to check permission only registered user can send massage
-        storeMessagesRepository.sendMassage(message,this.storeId,userName);
-    }
-    public Message getUnreadMessages(String userName) {
-        //TODO: need to check permission only store owner can read massage
-        return storeMessagesRepository.readUnreadMassage(this.storeId,userName);
-    }
-    public void markAsCompleted(String senderId,int messageId,String userName) {
-        //TODO: need to check permission
-        storeMessagesRepository.markAsRead(senderId,messageId,userName);
-    }
 
-    public void refreshMessages(String userName) {
-        storeMessagesRepository.refreshOldMassage(this.storeId,userName);
-    }
 
 
     public static String getCurrentMethodName() {
@@ -193,7 +231,7 @@ public class Store {
          * */
         Set<Integer> userIds = this.storePermission.getAllUsersWithPermission(Store.getCurrentMethodName());
         for (Integer id : userIds) {//wait for the interface in AlertManager.java to finish
-             alertManager.sendAlert(id, "User " + userId + " has submitted a purchase proposal for product " + productId + " in store " + this.storeId);
+            alertManager.sendAlert(id, "User " + userId + " has submitted a purchase proposal for product " + productId + " in store " + this.storeId);
             //fixme!!!!!!!!!
         }
     }
@@ -211,7 +249,6 @@ public class Store {
 
         if (currentBid.isRejected())
             alertManager.sendAlert(managerId, "The bid for product " + currentBid.getProductId() + " in store " + this.storeId + " has been rejected already");
-            //throw new IllegalArgumentException("The bid for product " + currentBid.getProductId() + " in store " + this.storeId + " has been rejected already");
         currentBid.approve(managerId);
         Set<Integer> managers = storePermission.getAllUsersWithPermission("purchaseProposalSubmit");
 
@@ -233,7 +270,38 @@ public class Store {
         bidRepository.removeBID(bidId);
     }
 
+    @Override
+    public int compareTo(Store o) {
+        return Integer.compare(this.storeId, o.storeId);
+    }
+
     public int getRank() {
         return rank;
+    }
+
+    //only members of the store can create an auction purchase
+    @DefaultManagerFunctionality
+    @DefaultOwnerFunctionality
+    public void auctionPurchase(int userId, int productId, double newPrice) throws NoPermissionException {
+        if (!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userId + " has no permission to create an auction purchase in the store: " + this.storeId);
+        auctionRepository.updateAuction(productId, this.storeId, newPrice, userId);
+    }
+
+    @DefaultManagerFunctionality
+    @DefaultOwnerFunctionality
+    public PublicAuctionInfo getAuctionInfo(int userId, int productId) throws NoPermissionException {
+        if (!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userId + " has no permission to get auction info in the store: " + this.storeId);
+        return auctionRepository.getAuctionInfo(productId, this.storeId).orElseThrow(() ->
+                new IllegalArgumentException("There is no such auction for product " + productId + " in store " + this.storeId));
+    }
+
+    @DefaultManagerFunctionality
+    @DefaultOwnerFunctionality
+    public void createAuctionForProduct(int storeManagerId, int productId, double startingPrice, LocalDateTime lastDate) throws NoPermissionException {
+        if (!this.storePermission.checkPermission(storeManagerId))
+            throw new NoPermissionException("User " + storeManagerId + " has no permission to create an auction in the store: " + this.storeId);
+        auctionRepository.addNewAuctionForAProduct(productId, startingPrice, this.storeId, lastDate);
     }
 }

@@ -11,12 +11,18 @@ public class UserPermissions {
     }
 
     public enum StoreRole {
+        FOUNDER,
         OWNER,
-        MANAGER
+        MANAGER,
     }
 
     private UserPermissionStatus userPermissionStatus;
     private HashMap<Integer/*storeId*/, StoreRole> userStoreRole;
+
+    public UserPermissions() {
+        this.userPermissionStatus = UserPermissionStatus.GUEST;
+        this.userStoreRole = new HashMap<>();
+    }
 
     public UserPermissionStatus getUserPermissionStatus() {
         return userPermissionStatus;

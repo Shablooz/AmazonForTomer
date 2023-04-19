@@ -1,7 +1,10 @@
 package BGU.Group13B.service;
 
+import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
+
+import java.time.LocalDateTime;
 
 import java.util.List;
 
@@ -31,7 +34,7 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice) {
+    public void purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount) {
 
     }
 
@@ -51,8 +54,18 @@ public class ProxySession implements ISession {
     }
 
     @Override
+    public void createAuctionForProduct(int storeManagerId, int storeId, int productId, double startingPrice, LocalDateTime lastDate) {
+
+    }
+
+    @Override
     public void auctionPurchase(int userId, int storeId, int productId, double price) {
 
+    }
+
+    @Override
+    public PublicAuctionInfo getAuctionInfo(int userId, int storeId, int productId) {
+        return null;
     }
 
     @Override
@@ -108,5 +121,10 @@ public class ProxySession implements ISession {
     @Override
     public void logout(int userID) {
         realSession.logout(userID);
+    }
+
+    @Override
+    public void addStore(int userId, String storeName, String category) {
+        realSession.addStore(userId, storeName, category);
     }
 }

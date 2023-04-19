@@ -4,38 +4,36 @@ import BGU.Group13B.backend.Repositories.Interfaces.ICartRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IMessageRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
 import BGU.Group13B.backend.storePackage.Market;
-import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
+import BGU.Group13B.service.SingletonCollection;
 //eyal import
 import java.util.regex.Pattern;
 
 public class User {
     private final IPurchaseHistoryRepository purchaseHistoryRepository;
-    private final ICartRepository cartRepository;
+
+    private final int userId;
     private final IMessageRepository messageRepository;
     private final UserPermissions userPermissions;
+    private final Cart cart;
     private final Market market;
     private int messageId;
-    private final String userName;
-
+    private String userName;
     private Message currentMessageToReply;
-
-    private final String password;
+    private String password;
     //eyal addition
-    private boolean isLoggedIn;
+    private volatile boolean isLoggedIn;
 
     private final String adminIdentifier = "admin";
 
+    public User(int userId) {
 
-    //creation of a new user
-    public User(IPurchaseHistoryRepository purchaseHistoryRepository, ICartRepository cartRepository, IMessageRepository messageRepository, UserPermissions userPermissions, Market market,String userName,String password) {
-        this.purchaseHistoryRepository = purchaseHistoryRepository;
-        this.cartRepository = cartRepository;
-        this.messageRepository = messageRepository;
-        this.userPermissions = userPermissions;
-        this.market = market;
-        this.userName = userName;
-        this.password = password;
+        this.purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
+        this.userId = userId;
+        this.messageRepository = SingletonCollection.getMessageRepository();
+        this.userPermissions = new UserPermissions();
+        this.cart = new Cart(userId);
+        this.market = SingletonCollection.getMarket();
         this.isLoggedIn = false;
     }
 
@@ -44,11 +42,12 @@ public class User {
         return isLoggedIn;
     }
 
-    public boolean isRegistered(){
+    public boolean isRegistered() {
         return this.userPermissions.getUserPermissionStatus() == UserPermissions.UserPermissionStatus.MEMBER ||
                 this.userPermissions.getUserPermissionStatus() == UserPermissions.UserPermissionStatus.ADMIN;
     }
-    public boolean isAdmin(){
+
+    public boolean isAdmin() {
         return this.userPermissions.getUserPermissionStatus() == UserPermissions.UserPermissionStatus.ADMIN;
     }
 
@@ -67,13 +66,15 @@ public class User {
         if (!Pattern.matches(emailRegex, email)) {
             throw new IllegalArgumentException("Invalid email.");
         }
+        this.userName = userName;
+        this.password = password;
         this.userPermissions.register();
         return this;
     }
 
-    public void login(String userName,String password){
+    public void login(String userName, String password) {
         //second username check for security
-        if (this.userName.equals(userName) && this.password.equals(password)){
+        if (this.userName.equals(userName) && this.password.equals(password)) {
             this.isLoggedIn = true;
             return;
         }
@@ -193,4 +194,9 @@ public class User {
             throw new NoPermissionException("Only registered users can remove scores");
         market.removeProductScore(storeId,productId,userId);
     }
+
+    void purchaseCart(String address, String creditCardNumber, String creditCardMonth, String creditCardYear, String creditCardHolderFirstName, String creditCardHolderLastName, String creditCardCcv, String id, String creditCardType) {
+        cart.purchaseCart(address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType);
+    }
+
 }

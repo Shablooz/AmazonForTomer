@@ -5,21 +5,27 @@ import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
 import BGU.Group13B.backend.System.Searcher;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
+import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.AddToUserCart;
 
+import java.time.LocalDateTime;
+
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Market {
     private final IStoreRepository storeRepository;
+    private Searcher searcher; //inject in the loading of the system
 
     private final AddToUserCart addToUserCart;
 
-    private Searcher searcher; //inject in the loading of the system
+    public Market() {
+        SingletonCollection.setCalculatePriceOfBasket(this::calculatePriceOfBasket);
 
-    public Market(IStoreRepository storeRepository, AddToUserCart addToUserCart, Searcher searcher) {
-        this.searcher = searcher;
-        this.storeRepository = storeRepository;
-        this.addToUserCart = addToUserCart;
+        this.storeRepository = SingletonCollection.getStoreRepository();
+        this.searcher = SingletonCollection.getSearcher();
+        this.addToUserCart = SingletonCollection.getAddToUserCart();
     }
 
     //Tomer
@@ -81,6 +87,21 @@ public class Market {
     public void purchaseProposalApprove(int managerId, int storeId, int productId) throws NoPermissionException {
         storeRepository.getStore(storeId).purchaseProposalApprove(managerId, productId);
     }
+    public void auctionPurchase(int userId, int storeId, int productId, double newPrice) throws NoPermissionException {
+        storeRepository.getStore(storeId).auctionPurchase(userId, productId, newPrice);
+    }
+    public PublicAuctionInfo getAuctionInfo(int userId, int storeId, int productId) throws NoPermissionException {
+        return storeRepository.getStore(storeId).getAuctionInfo(userId, productId);
+    }
+    public void createAuctionForProduct(int storeManagerId, int storeId, int productId,
+                                        double minPrice, LocalDateTime lastDate) throws NoPermissionException {
+        storeRepository.getStore(storeId).createAuctionForProduct(storeManagerId, productId, minPrice, lastDate);
+    }
+
+    //(#24) open store - requirement 3.2
+    public void addStore(int founderId, String storeName, String category){
+        storeRepository.addStore(founderId, storeName, category);
+    }
 
     public void searchProductByName(String productName) {
         searcher.searchByName(productName);
@@ -110,7 +131,12 @@ public class Market {
         searcher.filterByStoreRank(minRating, maxRating);
     }
 
-
+    private double calculatePriceOfBasket(double totalAmountBeforeStoreDiscountPolicy, ConcurrentLinkedQueue<BasketProduct> successfulProducts, int storeId,
+                                          String storeCoupon) {
+        return Optional.of(storeRepository.getStore(storeId)).orElseThrow(
+                () -> new RuntimeException("Store with id " + storeId + " does not exist")
+        ).calculatePriceOfBasket(totalAmountBeforeStoreDiscountPolicy, successfulProducts, storeCoupon);
+    }
 
 
 }
