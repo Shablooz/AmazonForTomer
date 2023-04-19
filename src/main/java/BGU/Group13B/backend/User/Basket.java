@@ -7,6 +7,7 @@ import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
 import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
 import BGU.Group13B.service.SingletonCollection;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Basket {
@@ -134,5 +135,40 @@ public class Basket {
             throw e;
         }
 
+    }
+
+    public String getBasketContent() {
+        String basketContent = "";
+        basketProductRepository.getBasketProducts(storeId, userId);
+        for (BasketProduct basketProduct : basketProductRepository.getBasketProducts(storeId, userId).get()) {
+            basketContent += basketProduct.toString();
+    }
+        return basketContent;
+    }
+
+    public void removeProduct(int productId) throws Exception {
+        try {
+            BasketProduct basketProduct = basketProductRepository.getBasketProduct(storeId, userId, productId);
+            if(basketProduct != null){
+                basketProductRepository.removeStoreProduct(productId, userId, storeId);
+            }
+            else
+                throw new Exception("Product not in basket");
+        }catch (Exception e){
+            throw e;
+        }
+    }
+
+    public void changeProductQuantity(int productId, int quantity) throws Exception {
+        try {
+            BasketProduct basketProduct = basketProductRepository.getBasketProduct(storeId, userId, productId);
+            if(basketProduct != null){
+                basketProductRepository.changeProductQuantity(productId, userId, storeId, quantity);
+            }
+            else
+                throw new Exception("Product not in basket");
+        }catch (Exception e){
+            throw e;
+        }
     }
 }

@@ -225,6 +225,9 @@ public class User {
         cart.purchaseCart(address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType);
     }
 
+    public String getCartContent() {
+        return cart.getCartContent();
+    }
     public Cart getCart() {
         return cart;
     }
@@ -232,5 +235,13 @@ public class User {
     public void addProductToCart(int productId, int storeId) throws Exception {
         market.isProductAvailable(productId, storeId);
         cart.addProductToCart(productId, storeId);
+    }
+
+    public void removeProductFromCart(int storeId, int productId) throws Exception {
+        cart.removeProduct(storeId, productId);
+    }
+
+    public void changeProductQuantityInCart(int storeId, int productId, int quantity) throws Exception {
+        cart.changeProductQuantity(storeId, productId, quantity);
     }
 }

@@ -185,10 +185,12 @@ class Session implements ISession {
 
     @Override
     public void addProductToCart(int userId, int productId, int storeId) {
-        try{
+        try {
             userRepositoryAsHashmap.getUser(userId).addProductToCart(productId, storeId);
-        }catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
+        }
+    }
     public void openComplaint(int userId, String header, String complaint) {
         try {
             userRepositoryAsHashmap.getUser(userId).openComplaint(header, complaint);
@@ -372,6 +374,29 @@ class Session implements ISession {
     public float getStoreScore(int userId, int storeId) {
         try {
             return userRepositoryAsHashmap.getUser(userId).getStoreScore(storeId);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void getCartContent(int userId) {
+        userRepositoryAsHashmap.getUser(userId).getCartContent();
+    }
+
+    @Override
+    public void removeProductFromCart(int userId, int storeId, int productId) {
+        try{
+            userRepositoryAsHashmap.getUser(userId).removeProductFromCart(storeId, productId);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void changeProductQuantityInCart(int userId, int storeId, int productId, int quantity) {
+        try{
+            userRepositoryAsHashmap.getUser(userId).changeProductQuantityInCart(storeId, productId, quantity);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

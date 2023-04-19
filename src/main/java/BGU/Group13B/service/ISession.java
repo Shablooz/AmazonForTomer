@@ -226,8 +226,6 @@ public interface ISession {
      */
     void addProductToCart(int userId, int productId, int storeId);
 
-    void getUserPurchaseHistory(int userId);
-
     /**
      * [#28]
      * @param userId   the user id
@@ -407,4 +405,28 @@ public interface ISession {
      * @return the score
      */
     public float getStoreScore( int userId,int storeId);
+    /**
+     * #20
+     * require 2.4
+     * @param userId    the user id
+     * */
+    void getCartContent(int userId);
+    /**
+     * #20
+     * require 2.4
+     * @param userId    the user id
+     * @param storeId   the store id
+     * @param productId   the product id
+     * */
+    void removeProductFromCart(int userId, int storeId, int productId);
+    /**
+     * #20
+     * require 2.4
+     * @param userId     the user id
+     * @param storeId    the store id
+     * @param productId  the product id
+     * @param quantity   the quantity of the product
+     * */
+    void changeProductQuantityInCart(int userId, int storeId, int productId, int quantity);
+
 }
