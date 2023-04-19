@@ -7,5 +7,5 @@ public interface IStoreScore {
 
     void modifyStoreScore(int userId,int storeId, int score);
 
-    int getStoreScore(int storeId);
+    float getStoreScore(int storeId);
 }
