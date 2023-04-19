@@ -123,4 +123,7 @@ public class Market {
     }
 
 
+    public void isProductAvailable(int productId, int storeId) throws Exception {
+         storeRepository.getStore(storeId).isProductAvailable(productId);
+    }
 }

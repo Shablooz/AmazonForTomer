@@ -15,7 +15,7 @@ public class Product {
     private String category;
     private int rank;
     private int maxAmount;
-
+    private int currentAmount;
     private final PurchasePolicy purchasePolicy;
     private final IProductDiscountsRepository productDiscounts;
 
@@ -26,6 +26,7 @@ public class Product {
         this.storeId = storeId;
         this.price = price;
         this.maxAmount = maxAmount;
+        this.currentAmount = maxAmount;
         this.productDiscounts = productDiscounts;
         this.rank=0;
         purchasePolicy = null;
@@ -70,11 +71,10 @@ public class Product {
         return purchasePolicy;
     }
 
-
-    public boolean tryDecreaseQuantity(int quantity) {
-        if (maxAmount < quantity)
+    public synchronized boolean tryDecreaseQuantity(int quantity) {
+        if (currentAmount < quantity)
             return false;
-        maxAmount -= quantity;
+        currentAmount -= quantity;
         return true;
     }
 
@@ -92,5 +92,9 @@ public class Product {
 
     public double getPrice() {
         return price;
+    }
+
+    public int getAmount() {
+        return this.currentAmount;
     }
 }

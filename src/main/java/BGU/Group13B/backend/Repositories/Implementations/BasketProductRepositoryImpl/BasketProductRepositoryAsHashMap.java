@@ -3,6 +3,7 @@ package BGU.Group13B.backend.Repositories.Implementations.BasketProductRepositor
 import BGU.Group13B.backend.Repositories.Interfaces.IBasketProductRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
 import BGU.Group13B.backend.User.BasketProduct;
+import BGU.Group13B.service.SingletonCollection;
 import org.springframework.data.util.Pair;
 
 import java.util.Optional;
@@ -14,9 +15,9 @@ public class BasketProductRepositoryAsHashMap implements IBasketProductRepositor
     private final ConcurrentHashMap<Pair<Integer/*storeId*/, Integer/*userId*/>, Optional<Set<BasketProduct>>> basketProducts;
     private final IProductRepository productRepository;
 
-    public BasketProductRepositoryAsHashMap(IProductRepository productRepository) {
+    public BasketProductRepositoryAsHashMap() {
         this.basketProducts = new ConcurrentHashMap<>();
-        this.productRepository = productRepository;
+        this.productRepository = SingletonCollection.getProductRepository();
     }
 
     @Override

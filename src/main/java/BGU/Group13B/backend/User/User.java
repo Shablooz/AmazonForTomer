@@ -41,6 +41,7 @@ public class User {
         return isLoggedIn;
     }
 
+
     public boolean isRegistered() {
         return this.userPermissions.getUserPermissionStatus() == UserPermissions.UserPermissionStatus.MEMBER ||
                 this.userPermissions.getUserPermissionStatus() == UserPermissions.UserPermissionStatus.ADMIN;
@@ -172,6 +173,10 @@ public class User {
 
     void purchaseCart(String address, String creditCardNumber, String creditCardMonth, String creditCardYear, String creditCardHolderFirstName, String creditCardHolderLastName, String creditCardCcv, String id, String creditCardType) {
         cart.purchaseCart(address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType);
+    }
+
+    public Cart getCart() {
+        return cart;
     }
 
 }

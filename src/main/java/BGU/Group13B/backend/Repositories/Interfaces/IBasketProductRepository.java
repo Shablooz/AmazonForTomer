@@ -12,5 +12,5 @@ public interface IBasketProductRepository {
     void removeStoreProduct(int productId, int storeId, int userId);
 
     void addNewProductToBasket(int productId, int storeId, int userId);
-    void changeProductQuantity(int productId, int storeId, int userId, int newQuantity);
+    void changeProductQuantity(int productId, int storeId, int userId, int addedQuantity);
 }
