@@ -79,6 +79,21 @@ public class Market {
     public void addProduct(int userId, String productName, int quantity, double price, int storeId) throws NoPermissionException {
         storeRepository.getStore(storeId).addProduct(userId, productName, quantity, price);
     }
+    public void addStoreScore(int userId,int storeId ,int score){
+       storeRepository.getStore(storeId).addStoreScore(userId,score);
+    }
+
+    public void removeStoreScore(int userId,int storeId){
+        storeRepository.getStore(storeId).removeStoreScore(userId);
+    }
+
+    public void modifyStoreScore(int userId,int storeId, int score){
+        storeRepository.getStore(storeId).modifyStoreScore(userId,score);
+    }
+
+    public float getStoreScore(int storeId){
+        return storeRepository.getStore(storeId).getStoreScore();
+    }
 
 
     public void purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount) throws NoPermissionException {

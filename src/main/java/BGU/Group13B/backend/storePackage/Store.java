@@ -1,6 +1,7 @@
 package BGU.Group13B.backend.storePackage;
 
 
+import BGU.Group13B.backend.Repositories.Implementations.IStoreScoreRepository.StoreScoreImplNotPer;
 import BGU.Group13B.backend.Repositories.Interfaces.*;
 import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyImpl.StoreMessageRepositoryNonPersist;
 import BGU.Group13B.backend.User.Message;
@@ -40,6 +41,7 @@ public class Store implements Comparable<Store> {
     private String storeName;
     private String category;
     private final IAuctionRepository auctionRepository;
+    private IStoreScore storeScore;
 
 
 
@@ -61,6 +63,7 @@ public class Store implements Comparable<Store> {
         this.storePermission = new StorePermission(founderId);
         this.rank = 0;
         this.purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
+        this.storeScore = new StoreScoreImplNotPer();
     }
 
     //used only for testing
@@ -68,7 +71,8 @@ public class Store implements Comparable<Store> {
                  PurchasePolicy purchasePolicy, DiscountPolicy discountPolicy, DeliveryAdapter deliveryAdapter,
                  PaymentAdapter paymentAdapter, AlertManager alertManager, StorePermission storePermission,
                  IStoreDiscountsRepository storeDiscounts, AddToUserCart addToUserCart, IBIDRepository bidRepository,
-                 StoreMessageRepositoryNonPersist storeMessagesRepository, IAuctionRepository auctionRepository,IPurchaseHistoryRepository purchaseHistoryRepository) {
+                 StoreMessageRepositoryNonPersist storeMessagesRepository, IAuctionRepository auctionRepository,IPurchaseHistoryRepository purchaseHistoryRepository,
+                 IStoreScore storeScore) {
         this.productRepository = productRepository;
         this.purchasePolicy = purchasePolicy;
         this.discountPolicy = discountPolicy;
@@ -87,6 +91,7 @@ public class Store implements Comparable<Store> {
         this.category = category;
         this.auctionRepository = auctionRepository;
         this.rank = 0;
+        this.storeScore = storeScore;
     }
 
 
@@ -162,6 +167,24 @@ public class Store implements Comparable<Store> {
         if(product==null)
             throw new IllegalArgumentException("Product with id: "+productId+" does not exist in store: "+this.storeId);
         product.removeProductScore(userId);
+    }
+
+    public void addStoreScore(int userId ,int score){
+        if(purchaseHistoryRepository.isPurchaseFromStore(userId,this.storeId))
+            throw new IllegalArgumentException("User with id: "+userId+" did not purchase from store: "+storeId);
+        storeScore.addStoreScore(userId,storeId,score);
+    }
+
+    public void removeStoreScore(int userId){
+        storeScore.removeStoreScore(userId,this.storeId);
+    }
+
+    public void modifyStoreScore(int userId, int score){
+        storeScore.modifyStoreScore(userId,this.storeId,score);
+    }
+
+    public float getStoreScore(){
+        return storeScore.getStoreScore(this.storeId);
     }
 
 
