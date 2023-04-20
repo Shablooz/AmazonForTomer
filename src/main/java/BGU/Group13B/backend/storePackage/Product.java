@@ -7,6 +7,7 @@ import java.util.LinkedList;
 
 import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Interfaces.IRepositoryReview;
+import BGU.Group13B.service.SingletonCollection;
 
 public class Product {
 
@@ -14,7 +15,6 @@ public class Product {
     private int productId;
     private int storeId;
     private double price;
-    private int amount;
     private String category;
     private int rank;
     private int maxAmount;
@@ -25,18 +25,18 @@ public class Product {
     private final IProductDiscountsRepository productDiscounts;
 
 
-    public Product(String name, int productId, int storeId, double price, int maxAmount, IProductDiscountsRepository productDiscounts) {
+    public Product(String name, int productId, int storeId, double price, int maxAmount) {
         this.name = name;
         this.productId = productId;
         this.storeId = storeId;
         this.price = price;
         this.maxAmount = maxAmount;
         this.currentAmount = maxAmount;
-        this.productDiscounts = productDiscounts;
+        this.productDiscounts = SingletonCollection.getProductDiscountsRepository();
         this.rank=0;
         purchasePolicy = null;
         discountPolicy = null;
-        repositoryReview=new ReviewRepositoryAsList();
+        repositoryReview = SingletonCollection.getReviewRepository();
     }
 
     public String getName() {
@@ -78,13 +78,13 @@ public class Product {
         return purchasePolicy;
     }
 
-    public synchronized boolean tryDecreaseQuantity(int quantity) {
+    public boolean tryDecreaseQuantity(int quantity) {
         if (currentAmount < quantity)
             return false;
         currentAmount -= quantity;
         return true;
     }
-    public synchronized void increaseQuantity(int quantity) {
+    public void increaseQuantity(int quantity) {
         currentAmount += quantity;
     }
 

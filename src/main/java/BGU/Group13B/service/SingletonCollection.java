@@ -5,6 +5,7 @@ import BGU.Group13B.backend.Repositories.Implementations.BIDRepositoryImpl.BIDRe
 import BGU.Group13B.backend.Repositories.Implementations.BasketProductRepositoryImpl.BasketProductRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.BasketReposistoryImpl.BasketRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.MessageRepositoryImpl.MessageRepositoryAsList;
+import BGU.Group13B.backend.Repositories.Implementations.ProductDiscountsRepositoryImpl.ProductDiscountsRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.ProductHistoryRepositoryImpl.ProductHistoryRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl.ProductRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.PurchaseHistoryRepositoryImpl.PurchaseHistoryRepositoryAsList;
@@ -41,6 +42,7 @@ public class SingletonCollection {
     private static final IStoreDiscountsRepository storeDiscountsRepository;
     private static final IAuctionRepository auctionRepository;
     private static final IProductHistoryRepository productHistoryRepository;
+    private static final IProductDiscountsRepository productDiscountsRepository;
 
 
     /**
@@ -81,6 +83,7 @@ public class SingletonCollection {
         auctionRepository = new AuctionRepositoryAsHashMap();
         basketProductRepository = new BasketProductRepositoryAsHashMap();
         productHistoryRepository = new ProductHistoryRepositoryAsList();
+        productDiscountsRepository = new ProductDiscountsRepositoryAsHashMap();
 
 
         //adapters
@@ -189,5 +192,8 @@ public class SingletonCollection {
         SingletonCollection.calculatePriceOfBasket = calculatePriceOfBasket;
     }
 
+    public static IProductDiscountsRepository getProductDiscountsRepository() {
+        return SingletonCollection.productDiscountsRepository;
+    }
 }
 

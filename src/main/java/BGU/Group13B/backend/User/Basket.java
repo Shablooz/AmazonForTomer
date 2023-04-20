@@ -9,11 +9,9 @@ import BGU.Group13B.service.SingletonCollection;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.Semaphore;
 
 public class Basket {
     private final int userId;
@@ -100,7 +98,9 @@ public class Basket {
 
     private void restoreProductsStock() {
         for (BasketProduct basketProduct : successfulProducts) {
-            basketProduct.getProduct().increaseQuantity(basketProduct.getQuantity());
+            synchronized (basketProduct.getProduct()) {
+                basketProduct.getProduct().increaseQuantity(basketProduct.getQuantity());
+            }
         }
     }
 
@@ -119,7 +119,7 @@ public class Basket {
                 //try to decrease the quantity of the product in the store
                 //if succeeded, add the product to the successful products list
                 //if failed, add the product to the failed products list
-                if (basketProduct.getProduct().tryDecreaseQuantity(basketProduct.getQuantity())) {//duplicate of locks
+                if (basketProduct.getProduct().tryDecreaseQuantity(basketProduct.getQuantity())) {
                     successfulProducts.add(basketProduct);
                 } else {
                     failedProducts.add(basketProduct);
