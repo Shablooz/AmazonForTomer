@@ -10,9 +10,9 @@ public interface IProductRepository {//deeded because it contains the product qu
 
     Optional<Set<Product>> getStoreProducts(int storeId);
 
-    void removeStoreProduct(int productId, int storeId);
+    void removeStoreProduct(int storeId, int productId);
 
-    void addProduct(int StoreId /*to complete*/);//generate unique productId thanks:)
+    void addProduct(int storeId, String name, String category, double price, int maxAmount);
 
     List<Product> getProductByName(String name);
 
@@ -21,4 +21,6 @@ public interface IProductRepository {//deeded because it contains the product qu
     List<Product> getProductByKeywords(List<String> keywords);
 
     List<Product> filterByPriceRange(int minPrice, int maxPrice);
+
+    Product getStoreProduct(int storeId, int productId);
 }

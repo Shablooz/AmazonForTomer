@@ -124,24 +124,15 @@ public class Store implements Comparable<Store> {
         storeMessagesRepository.refreshOldMassage(this.storeId, userName);
     }
 
-
-    //todo: complete the function
-    public void addProduct(Product product, int userId) {
-
-
-    }
-
-    @DefaultManagerFunctionality
     @DefaultOwnerFunctionality
-    public void addProduct(int userId, String productName, int quantity, double price) throws NoPermissionException {
+    public void addProduct(int userId, int storeId, String productName, String category, double price, int quantity) throws NoPermissionException {
         /*
          * check if the user has permission to add product
          * */
         if (!this.storePermission.checkPermission(userId))
             throw new NoPermissionException("User " + userId + " has no permission to add product to store " + this.storeId);
 
-        /*Product product = new Product(productName, -1*//*todo*//*, price, quantity);
-        productRepository.add(product);*/
+        this.productRepository.addProduct(storeId, productName, category, price, quantity);
 
     }
 
@@ -278,4 +269,61 @@ public class Store implements Comparable<Store> {
             throw new NoPermissionException("User " + storeManagerId + " has no permission to create an auction in the store: " + this.storeId);
         auctionRepository.addNewAuctionForAProduct(productId, startingPrice, this.storeId, lastDate);
     }
+
+    @DefaultOwnerFunctionality
+    public void setProductName(int userId, int productId, String name) throws NoPermissionException {
+        if(!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userId + " has no permission to set product name in the store: " + this.storeId);
+
+        Product product = this.productRepository.getStoreProduct(storeId, productId);
+        synchronized (product) {
+            product.setName(name);
+        }
+    }
+
+    @DefaultOwnerFunctionality
+    public void setProductCategory(int userId, int productId, String category) throws NoPermissionException {
+        if(!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userId + " has no permission to set product category in the store: " + this.storeId);
+
+        Product product = this.productRepository.getStoreProduct(storeId, productId);
+        synchronized (product) {
+            product.setCategory(category);
+        }
+    }
+
+    @DefaultOwnerFunctionality
+    public void setProductPrice(int userId, int productId, double price) throws NoPermissionException {
+        if(!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userId + " has no permission to set product price in the store: " + this.storeId);
+
+        Product product = this.productRepository.getStoreProduct(storeId, productId);
+        synchronized (product) {
+            product.setPrice(price);
+        }
+    }
+
+    @DefaultOwnerFunctionality
+    public void setProductStockQuantity(int userId, int productId, int quantity) throws NoPermissionException {
+        if(!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userId + " has no permission to set product stock quantity in the store: " + this.storeId);
+
+        Product product = this.productRepository.getStoreProduct(storeId, productId);
+        synchronized (product) {
+            product.setMaxAmount(quantity);
+        }
+    }
+
+    @DefaultOwnerFunctionality
+    public void removeProduct(int userId, int productId) throws NoPermissionException {
+        if(!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userId + " has no permission to remove product in the store: " + this.storeId);
+
+        Product product = this.productRepository.getStoreProduct(storeId, productId);
+        synchronized (product) {
+            this.productRepository.removeStoreProduct(storeId, productId);
+        }
+    }
+
+
 }

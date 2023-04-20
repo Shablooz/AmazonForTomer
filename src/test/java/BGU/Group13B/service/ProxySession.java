@@ -17,9 +17,9 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void addProduct(int userId, String productName, int quantity, double price, int storeId) throws NoPermissionException {
+    public void addProduct(int userId, int storeId, String productName, String category, double price, int quantity) throws NoPermissionException {
         if (realSession != null)
-            realSession.addProduct(userId, productName, quantity, price, storeId);
+            realSession.addProduct(userId, storeId, productName, category, price, quantity);
     }
 
     @Override
@@ -126,5 +126,30 @@ public class ProxySession implements ISession {
     @Override
     public void addStore(int userId, String storeName, String category) {
         realSession.addStore(userId, storeName, category);
+    }
+
+    @Override
+    public void setProductName(int userId, int storeId, int productId, String name) {
+        realSession.setProductName(userId, storeId, productId, name);
+    }
+
+    @Override
+    public void setProductCategory(int userId, int storeId, int productId, String category) {
+        realSession.setProductCategory(userId, storeId, productId, category);
+    }
+
+    @Override
+    public void setProductPrice(int userId, int storeId, int productId, double price) {
+        realSession.setProductPrice(userId, storeId, productId, price);
+    }
+
+    @Override
+    public void setProductQuantity(int userId, int storeId, int productId, int quantity) {
+        realSession.setProductQuantity(userId, storeId, productId, quantity);
+    }
+
+    @Override
+    public void removeProduct(int userId, int storeId, int productId) {
+        realSession.removeProduct(userId, storeId, productId);
     }
 }

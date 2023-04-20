@@ -2,6 +2,7 @@ package BGU.Group13B.backend.storePackage;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IProductDiscountsRepository;
 import BGU.Group13B.backend.storePackage.Discounts.Discount;
+import BGU.Group13B.service.SingletonCollection;
 
 import java.util.LinkedList;
 
@@ -20,15 +21,16 @@ public class Product {
     private final IProductDiscountsRepository productDiscounts;
 
 
-    public Product(String name, int productId, int storeId, double price, int maxAmount, IProductDiscountsRepository productDiscounts) {
+    public Product(int storeId, int productId, String name, String category, double price, int maxAmount) {
         this.name = name;
+        this.category = category;
         this.productId = productId;
         this.storeId = storeId;
         this.price = price;
         this.maxAmount = maxAmount;
-        this.productDiscounts = productDiscounts;
+        this.productDiscounts = SingletonCollection.getProductDiscountsRepository();
         this.rank=0;
-        purchasePolicy = null;
+        purchasePolicy = new PurchasePolicy();
     }
 
     public String getName() {
@@ -53,6 +55,8 @@ public class Product {
     }
 
     public void setPrice(double price) {
+        if(price <= 0)
+            throw new IllegalArgumentException("product price must greater than 0");
         this.price = price;
     }
 
@@ -61,6 +65,8 @@ public class Product {
     }
 
     public void setMaxAmount(int maxAmount) {
+        if (maxAmount < 0)
+            throw new IllegalArgumentException("product stock quantity must be non-negative");
         this.maxAmount = maxAmount;
     }
 
@@ -92,5 +98,9 @@ public class Product {
 
     public double getPrice() {
         return price;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

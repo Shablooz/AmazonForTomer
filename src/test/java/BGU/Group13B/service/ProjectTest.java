@@ -19,8 +19,8 @@ public abstract class ProjectTest {
         setUpProducts();
     }
 
-    protected void addProduct(int userId, String productName, int quantity, double price, int storeId) throws NoPermissionException {
-        session.addProduct(userId, productName, quantity, price, storeId);
+    protected void addProduct(int userId, int storeId, String productName, String category, double price, int quantity) throws NoPermissionException {
+        session.addProduct(userId, storeId, productName, category, price, quantity);
     }
 
     protected void purchaseProductCart(int userId, String address, String creditCardNumber, String creditCardMonth, String creditCardYear, String creditCardHolderFirstName, String creditCardHolderLastName, String creditCardCcv, String id, String creditCardType) {
