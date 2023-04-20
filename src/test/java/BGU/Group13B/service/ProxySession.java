@@ -19,9 +19,9 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void addProduct(int userId, String productName, int quantity, double price, int storeId) throws NoPermissionException {
+    public void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity){
         if (realSession != null)
-            realSession.addProduct(userId, productName, quantity, price, storeId);
+            realSession.addProduct(userId, storeId, productName, category, price, stockQuantity);
     }
 
     @Override
@@ -131,6 +131,16 @@ public class ProxySession implements ISession {
     }
 
     @Override
+    public void addProductToCart(int userId, int productId, int storeId) {
+        realSession.addProductToCart(userId, productId, storeId);
+    }
+
+    @Override
+    public void getUserPurchaseHistory(int userId) {
+        realSession.getUserPurchaseHistory(userId);
+    }
+
+    @Override
     public void openComplaint(int userId, String header, String complaint) {
 
     }
@@ -233,5 +243,30 @@ public class ProxySession implements ISession {
     @Override
     public float getStoreScore(int userId, int storeId) {
         return 0;
+    }
+
+    @Override
+    public void setProductName(int userId, int storeId, int productId, String name) {
+        realSession.setProductName(userId, storeId, productId, name);
+    }
+
+    @Override
+    public void setProductCategory(int userId, int storeId, int productId, String category) {
+        realSession.setProductCategory(userId, storeId, productId, category);
+    }
+
+    @Override
+    public void setProductPrice(int userId, int storeId, int productId, double price) {
+        realSession.setProductPrice(userId, storeId, productId, price);
+    }
+
+    @Override
+    public void setProductStockQuantity(int userId, int storeId, int productId, int stockQuantity) {
+        realSession.setProductStockQuantity(userId, storeId, productId, stockQuantity);
+    }
+
+    @Override
+    public void removeProduct(int userId, int storeId, int productId) {
+        realSession.removeProduct(userId, storeId, productId);
     }
 }

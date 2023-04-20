@@ -16,9 +16,8 @@ public class StoreDiscountsRepositoryAsHashMap implements IStoreDiscountsReposit
 
     @Override
     public Optional<List<Discount>> getStoreDiscounts(int storeId) {
-        if(!storeDiscounts.containsKey(storeId))
-            return Optional.empty();
-        return Optional.of(storeDiscounts.get(storeId));
+        return Optional.ofNullable(storeDiscounts.get(storeId));
+
     }
 
     @Override
