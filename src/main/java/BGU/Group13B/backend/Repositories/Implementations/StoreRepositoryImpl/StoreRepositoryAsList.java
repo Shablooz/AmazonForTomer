@@ -19,7 +19,8 @@ public class StoreRepositoryAsList implements IStoreRepository {
 
     @Override
     public Store getStore(int storeId) {
-        return null;
+        return this.stores.stream().filter(store -> store.getStoreId() == storeId).findFirst()
+                .orElseThrow( () -> new IllegalArgumentException("there is not store with the id " + storeId) );
     }
 
     //(#24) open store - requirement 3.2
