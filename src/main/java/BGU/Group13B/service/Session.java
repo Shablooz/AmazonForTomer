@@ -189,6 +189,14 @@ class Session implements ISession {
             userRepositoryAsHashmap.getUser(userId).addProductToCart(productId, storeId);
         }catch (Exception e){
             //TODO: handle exception
+           }
+    }
+
+    @Override
+    public void getUserPurchaseHistory(int userId) {
+        throw new RuntimeException("not implemented");
+    }
+
     public void openComplaint(int userId, String header, String complaint) {
         try {
             userRepositoryAsHashmap.getUser(userId).openComplaint(header, complaint);
