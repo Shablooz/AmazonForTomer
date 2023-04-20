@@ -6,6 +6,7 @@ import BGU.Group13B.backend.storePackage.Discounts.Discount;
 import java.util.LinkedList;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IRepositoryReview;
+import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 import BGU.Group13B.service.SingletonCollection;
 
 public class Product {
@@ -81,7 +82,7 @@ public class Product {
         this.stockQuantity += quantity;
     }
 
-    public synchronized double calculatePrice(int productQuantity, String couponCodes) {
+    public synchronized double calculatePrice(int productQuantity, String couponCodes) throws PurchaseExceedsPolicyException {
         purchasePolicy.checkPolicy(productQuantity);
         double finalPrice = price;
         for (Discount discount :
