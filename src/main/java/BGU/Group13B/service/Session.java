@@ -28,9 +28,16 @@ class Session implements ISession {
     }
 
     @Override
-    public void addProduct(int userId, String productName, int quantity, double price, int storeId) throws NoPermissionException {
-        market.addProduct(userId, productName, quantity, price, storeId);
+    public void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity){
+        try{
+            market.addProduct(userId, storeId, productName, category, price, stockQuantity);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+        }
+
     }
+
 
     @Override
     public void addToCart(int userId, int storeId, int productId, int quantity) {
@@ -382,6 +389,57 @@ class Session implements ISession {
             return userRepositoryAsHashmap.getUser(userId).getStoreScore(storeId);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void setProductName(int userId, int storeId, int productId, String name) {
+        try{
+            market.setProductName(userId, storeId, productId, name);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+        }
+
+    }
+
+    @Override
+    public void setProductCategory(int userId, int storeId, int productId, String category) {
+        try{
+            market.setProductCategory(userId, storeId, productId, category);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+        }
+    }
+
+    @Override
+    public void setProductPrice(int userId, int storeId, int productId, double price) {
+        try{
+            market.setProductPrice(userId, storeId, productId, price);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+        }
+    }
+
+    @Override
+    public void setProductStockQuantity(int userId, int storeId, int productId, int stockQuantity) {
+        try{
+            market.setProductStockQuantity(userId, storeId, productId, stockQuantity);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+        }
+    }
+
+    @Override
+    public void removeProduct(int userId, int storeId, int productId) {
+        try{
+            market.removeProduct(userId, storeId, productId);
+        }
+        catch (Exception e){
+            //TODO: handle exception
         }
     }
 

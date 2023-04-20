@@ -38,7 +38,7 @@ class BasketTest {
         /*public Basket(int userId, int storeId, IBasketProductRepository productRepository,
                   PaymentAdapter paymentAdapter, IProductHistoryRepository productHistoryRepository,
                   CalculatePriceOfBasket calculatePriceOfBasket)*/
-        basket = new Basket()
+        basket = null; //TODO!!! FIXME!!!
     }
 
     private void initCalculatePriceOfBasket() {
