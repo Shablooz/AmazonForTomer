@@ -269,4 +269,9 @@ public class ProxySession implements ISession {
     public void removeProduct(int userId, int storeId, int productId) {
         realSession.removeProduct(userId, storeId, productId);
     }
+
+    @Override
+    public int enterAsGuest() {
+        return realSession.enterAsGuest();
+    }
 }
