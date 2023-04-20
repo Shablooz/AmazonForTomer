@@ -3,6 +3,7 @@ package BGU.Group13B.backend.Repositories.Implementations.ProductDiscountsReposi
 import BGU.Group13B.backend.Repositories.Interfaces.IProductDiscountsRepository;
 import BGU.Group13B.backend.storePackage.Discounts.Discount;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,9 +25,12 @@ public class ProductDiscountsRepositoryAsHashMap implements IProductDiscountsRep
 
     @Override
     public void addProductDiscount(int productId, Discount discount) {
-        if (!productDiscounts.containsKey(productId))
-            productDiscounts.put(productId, List.of(discount));
-        else {
+        if (!productDiscounts.containsKey(productId)) {
+            List<Discount> discounts = new LinkedList<>();
+            discounts.add(discount);
+            productDiscounts.put(productId, discounts);
+
+        }else {
             var discounts = productDiscounts.get(productId);
             if (discounts.contains(discount))
                 throw new IllegalArgumentException("Discount already exists");

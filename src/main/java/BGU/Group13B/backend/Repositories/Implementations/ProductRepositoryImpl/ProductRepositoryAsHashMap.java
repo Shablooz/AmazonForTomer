@@ -34,10 +34,14 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
     }
 
     @Override
-    public void addProduct(int storeId, String name, String category, double price, int maxAmount) {
-        if(!storeProducts.containsKey(storeId))
+    public int addProduct(int storeId, String name, String category, double price, int maxAmount) {
+        if (!storeProducts.containsKey(storeId))
             storeProducts.put(storeId, new ConcurrentSkipListSet<>(Comparator.comparingInt(Product::getProductId)));
-        storeProducts.get(storeId).add(new Product(productIdCounter.getAndIncrement(), storeId, name, category, price, maxAmount));
+        synchronized (this) {
+            int productId = productIdCounter.getAndIncrement();
+            storeProducts.get(storeId).add(new Product(productId, storeId, name, category, price, maxAmount));
+            return productId;
+        }
     }
 
     @Override
@@ -61,7 +65,7 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
     }
 
     @Override
-    public Product getStoreProductById(int productId, int storeId){
+    public Product getStoreProductById(int productId, int storeId) {
         return getStoreProducts(storeId).orElseThrow(
                         () -> new IllegalArgumentException("Store " + storeId + " not found")
                 ).stream().filter(product -> product.getProductId() == productId).

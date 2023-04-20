@@ -186,6 +186,10 @@ public class SingletonCollection {
 
     public static IStoreScore getStoreScoreRepository() { return storeScoreRepository; }
 
+    public static IProductDiscountsRepository getProductDiscountsRepository() {
+        return SingletonCollection.productDiscountsRepository;
+    }
+
     /**
      * <h1>setters (for callbacks)</h1>
      */
@@ -195,10 +199,6 @@ public class SingletonCollection {
 
     public static void setCalculatePriceOfBasket(CalculatePriceOfBasket calculatePriceOfBasket) {
         SingletonCollection.calculatePriceOfBasket = calculatePriceOfBasket;
-    }
-
-    public static IProductDiscountsRepository getProductDiscountsRepository() {
-        return SingletonCollection.productDiscountsRepository;
     }
 }
 
