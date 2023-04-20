@@ -3,40 +3,15 @@
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
-  <component name="BranchesTreeState">
-    <expand>
-      <path>
-        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
-      </path>
-      <path>
-        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
-      </path>
-      <path>
-        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
-      </path>
-    </expand>
-    <select />
-  </component>
   <component name="ChangeListManager">
-    <list default="true" id="3436d65a-5e76-4e77-818d-f39d961d7bb1" name="Changes" comment="adding search and filter products feature.">
-      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/System/Searcher.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="3436d65a-5e76-4e77-818d-f39d961d7bb1" name="Changes" comment="Done (#53) WITHOUT TESTS.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductRepositoryImpl/ProductRepositoryAsJPA.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductRepositoryImpl/ProductRepositoryAsJPA.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductRepositoryImpl/ProductRepositoryAsList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductRepositoryImpl/ProductRepositoryAsList.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IProductRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/SystemInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/System/SystemInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductRepositoryImpl/ProductRepositoryAsHashMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductRepositoryImpl/ProductRepositoryAsHashMap.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/PurchaseHistoryRepositoryImpl/PurchaseHistoryRepositoryAsList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/PurchaseHistoryRepositoryImpl/PurchaseHistoryRepositoryAsList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/User.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Market.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Market.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Product.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Store.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Store.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/ISession.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/ISession.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/Session.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/Session.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/service/ProjectTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/service/ProjectTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/service/ProxySession.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/service/ProxySession.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/storePackage/StoreTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/storePackage/StoreTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,6 +22,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="JUnit5 Test Class" />
+        <option value="Record" />
         <option value="Interface" />
         <option value="Class" />
       </list>
@@ -59,6 +35,7 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="HARD" />
   </component>
   <component name="GithubProjectSettings">
     <option name="branchProtectionPatterns">
@@ -67,16 +44,11 @@
       </list>
     </option>
   </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="jar://$MAVEN_REPOSITORY$/org/springframework/data/spring-data-commons/2.4.0/spring-data-commons-2.4.0.jar!/org/springframework/data/util/Pair.class" root0="SKIP_INSPECTION" />
+  </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
-  </component>
-  <component name="MavenImportPreferences">
-    <option name="generalSettings">
-      <MavenGeneralSettings>
-        <option name="mavenHome" value="C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2020.2.3\plugins\maven\lib\maven3" />
-        <option name="useMavenConfig" value="true" />
-      </MavenGeneralSettings>
-    </option>
   </component>
   <component name="ProjectId" id="2NVL9aAg74nFCBYGHK0CdSKGYHb" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -84,16 +56,36 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;settings.editor.selected.configurable&quot;: &quot;org.jetbrains.plugins.github.ui.GithubSettingsConfigurable&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
+    "create.test.in.the.same.root": "true",
+    "git-widget-placeholder": "rateProduct__#25",
+    "last_opened_file_path": "C:/Users/Shust/OneDrive/Documents/First Degree/Semester 5/Fundamentals of software engineering/Assignment2",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "editor.preferences.fonts.default",
+    "spring.configuration.checksum": "0bff9c3a4f5bac17f71b3dede1d050f7",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
-    <key name="CreateTestDialog.RecentsKey">
-      <recent name="BGU.Group13B.service" />
+    <key name="CreateClassDialog.RecentsKey">
       <recent name="BGU.Group13B.backend.storePackage" />
-      <recent name="BGU.Group13B" />
+      <recent name="BGU.Group13B.backend.Repositories.Interfaces" />
+      <recent name="BGU.Group13B.backend" />
+      <recent name="BGU.Group13B.backend.User" />
+      <recent name="BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Shust\OneDrive\Documents\First Degree\Semester6\Sadna\trading-system\src\main\java\BGU\Group13B\backend\Repositories\Implementations\StoreRepositoryImpl" />
@@ -101,13 +93,57 @@
     <key name="CreateTestDialog.Recents.Supers">
       <recent name="" />
     </key>
-    <key name="CreateClassDialog.RecentsKey">
-      <recent name="BGU.Group13B.backend.Repositories.Interfaces" />
-      <recent name="BGU.Group13B.backend" />
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="BGU.Group13B.service" />
       <recent name="BGU.Group13B.backend.storePackage" />
-      <recent name="BGU.Group13B.backend.User" />
-      <recent name="BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl" />
+      <recent name="BGU.Group13B" />
     </key>
+  </component>
+  <component name="RunManager" selected="JUnit.StoreTest">
+    <configuration name="All in TradingSystemProject" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="TradingSystemProject" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="BGU.Group13B.backend.storePackage in trading-system" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="trading-system" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="BGU.Group13B.backend.storePackage.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="BGU.Group13B.backend.storePackage" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="StoreTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="TradingSystemProject" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="BGU.Group13B.backend.storePackage.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="BGU.Group13B.backend.storePackage" />
+      <option name="MAIN_CLASS_NAME" value="BGU.Group13B.backend.storePackage.StoreTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.StoreTest" />
+        <item itemvalue="JUnit.All in TradingSystemProject" />
+        <item itemvalue="JUnit.BGU.Group13B.backend.storePackage in trading-system" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -122,7 +158,8 @@
       <workItem from="1679745836554" duration="107000" />
       <workItem from="1680599750928" duration="13707000" />
       <workItem from="1680681882942" duration="16736000" />
-      <workItem from="1681634067663" duration="1523000" />
+      <workItem from="1681475547708" duration="1108000" />
+      <workItem from="1681476828448" duration="49000" />
     </task>
     <task id="LOCAL-00001" summary="save work">
       <created>1680688726166</created>
@@ -152,7 +189,21 @@
       <option name="project" value="LOCAL" />
       <updated>1680879711169</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="save work 2">
+      <created>1681378394670</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1681378394670</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Done (#53) WITHOUT TESTS.">
+      <created>1681392081418</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1681392081418</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -169,7 +220,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="SearchAndFilterProducts_2.2_#18" />
+                        <option value="bid_purchase_2.5.4_#53" />
                       </list>
                     </value>
                   </entry>
@@ -180,40 +231,24 @@
         </entry>
       </map>
     </option>
-    <option name="RECENT_FILTERS">
-      <map>
-        <entry key="Branch">
-          <value>
-            <list>
-              <RecentGroup>
-                <option name="FILTER_VALUES">
-                  <option value="SearchAndFilterProducts_2.2_#18" />
-                </option>
-              </RecentGroup>
-              <RecentGroup>
-                <option name="FILTER_VALUES">
-                  <option value="HEAD" />
-                </option>
-              </RecentGroup>
-            </list>
-          </value>
-        </entry>
-      </map>
-    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="save work" />
     <MESSAGE value="updating  interfaces in order to create the tests infrastructure" />
     <MESSAGE value="please review :)" />
     <MESSAGE value="adding Discount.java for the use of calculating the price." />
-    <MESSAGE value="adding search and filter products feature." />
-    <option name="LAST_COMMIT_MESSAGE" value="adding search and filter products feature." />
+    <MESSAGE value="save work 2" />
+    <MESSAGE value="Done (#53) WITHOUT TESTS." />
+    <option name="LAST_COMMIT_MESSAGE" value="Done (#53) WITHOUT TESTS." />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
     <select />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/trading_system$StoreTest.ic" NAME="StoreTest Coverage Results" MODIFIED="1680968615168" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>BGU.Group13B.backend.storePackage.*</FILTER>
+    </SUITE>
     <SUITE FILE_PATH="coverage/trading_system$Main.ic" NAME="Main Coverage Results" MODIFIED="1680682126010" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
       <FILTER>BGU.Group13B.*</FILTER>
     </SUITE>

@@ -42,11 +42,12 @@ public class StoreMessageRepositoryNonPersist implements IStoreMessagesRepositor
     }
 
     @Override
-    public void markAsRead(String senderId, int massageId, String userName) {
+    public void markAsRead(String senderId, int messageId, String userName) {
         Message first= unreadMessages.peek();
 
         if(first==null) throw new IllegalArgumentException("No unread messages");
-        if(!unreadMessages.remove(first)) throw new IllegalArgumentException("message is not in unread messages");
+        if((first.getSenderId()!=senderId || first.getMessageId()!=messageId)|| !unreadMessages.remove(first))
+            throw new IllegalArgumentException("Not able to mark message as read");
 
         oldMessages.put(counter.getAndIncrement(),first);
     }

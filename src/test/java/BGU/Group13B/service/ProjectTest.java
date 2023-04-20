@@ -27,8 +27,8 @@ public abstract class ProjectTest {
         session.purchaseProductCart(userId, address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType);
     }
 
-    protected void purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice) {
-        session.purchaseProposalSubmit(userId, storeId, productId, proposedPrice);
+    protected void purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount) {
+        session.purchaseProposalSubmit(userId, storeId, productId, proposedPrice, amount);
     }
 
     protected void immediatePurchase(int userId, int storeId, int productId, int quantity) {

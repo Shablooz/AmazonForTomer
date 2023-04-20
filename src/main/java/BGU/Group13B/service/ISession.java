@@ -1,6 +1,8 @@
 package BGU.Group13B.service;
 
 import BGU.Group13B.backend.System.SystemInfo;
+import BGU.Group13B.backend.User.Message;
+import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 
@@ -135,52 +137,52 @@ public interface ISession {
     /**
      * #18
      * require 2.2
-     * @param productName
+     * @param productName - the name of the product
      */
     void searchProductByName(String productName);
 
     /**
      * #18
      * require 2.2
-     * @param category
+     * @param category - the category of the product
      */
     void searchProductByCategory(String category);
 
     /**
      * #18
      * require 2.2
-     * @param keywords
+     * @param keywords - list of keywords
      */
     void searchProductByKeywords(List<String> keywords);
 
     /**
      * #18
      * require 2.2
-     * @param minPrice
-     * @param maxPrice
+     * @param minPrice - the minimum price of the product
+     * @param maxPrice - the maximum price of the product
      */
     void filterByPriceRange(int minPrice, int maxPrice);
 
     /**
      * #18
      * require 2.2
-     * @param minRating
-     * @param maxRating
+     * @param minRating - the minimum rating of the product
+     * @param maxRating - the maximum rating of the product
      */
     void filterByProductRank(int minRating, int maxRating);
 
     /**
      * #18
      * require 2.2
-     * @param category
+     * @param category - the category of the product
      */
     void filterByCategory(String category);
 
     /**
      * #18
      * require 2.2
-     * @param minRating
-     * @param maxRating
+     * @param minRating - the minimum rating of the store
+     * @param maxRating - the maximum rating of the store
      */
     void filterByStoreRank(int minRating, int maxRating);
 
@@ -213,4 +215,196 @@ public interface ISession {
      * @param category  the store category, currently a free text
      * */
     void addStore(int userId, String storeName, String category);
+
+
+    /**
+     * #19
+     * require 2.3
+     * @param userId    the user id
+     * @param storeId   the store id
+     * @param productId the product id
+     */
+    void addProductToCart(int userId, int productId, int storeId);
+
+    void getUserPurchaseHistory(int userId);
+
+    /**
+     * [#28]
+     * @param userId   the user id
+     * @param header  the header of the message
+     * @param complaint the complaint
+     */
+    public void openComplaint(int userId,String header,String complaint);
+
+    /**
+     * [#47]
+     * @param userId  the user id
+     * @return the complaint message
+     */
+    public Message getComplaint(int userId);
+
+    /**
+     * [#47]
+     * @param userId the user id
+     * @param receiverId the receiver id
+     * @param senderId the sender id
+     * @param messageId the message id
+     */
+    public void markMessageAsRead(int userId,String receiverId,String senderId,int messageId);
+
+    /**
+     * [#47]
+     * @param userId the user id
+     * @param receiverId the receiver id
+     * @param header the header of the message
+     * @param massage the massage
+     */
+    public void sendMassageAdmin(int userId,String receiverId,String header,String massage);
+
+    /**
+     * [#47]
+     * @param userId the user id
+     * @param answer the answer
+     */
+    public void answerComplaint(int userId,String answer);
+
+
+    /**
+     *
+     * @param userId the user id
+     * @param receiverId the receiver id
+     * @return the message
+     */
+    public Message readMassage(int userId,String receiverId);
+
+
+    /**
+     * [#27]
+     * @param userId the user id
+     * @param header  the header of the message
+     * @param massage the massage
+     * @param storeId the store id
+     */
+    public void sendMassageStore(int userId,String header,String massage,int storeId);
+
+    /**
+     * [#42]
+     * @param userId the user id
+     * @param storeId the store id
+     * @return the message
+     */
+
+    public Message readUnreadMassageStore(int userId,int storeId);
+
+    /**
+     * [#42]
+     * @param userId the user id
+     * @param storeId the store id
+     * @return the message
+     */
+
+    public Message readReadMassageStore(int userId,int storeId);
+
+    /**
+     * [#42]
+     * @param userId the user id
+     * @param answer the answer
+     */
+
+    public void answerQuestionStore(int userId,String answer);
+
+    /**
+     * [#42]
+     * @param userId the user id
+     * @param storeId the store id
+     */
+
+    public void refreshOldMessageStore(int userId,int storeId);
+
+
+    /**
+     * [#25]
+     * @param userId the user id
+     * @param review the review
+     * @param storeId the store id
+     * @param productId the product id
+     */
+
+    void addReview(int userId,String review, int storeId, int productId);
+
+    /**
+     * [#25]
+     * @param userId the user id
+     * @param storeId the store id
+     * @param productId the product id
+     */
+
+    public void removeReview( int userId,int storeId, int productId);
+
+    /**
+     * [#25]
+     * @param userId the user id
+     * @param storeId the store id
+     * @param productId the product id
+     * @return the review
+     */
+
+    public Review getReview( int userId,int storeId, int productId);
+
+    /**
+     * [#26]
+     * @param userId the user id
+     * @param storeId the store id
+     * @param productId the product id
+     * @return the score
+     */
+
+    public float getProductScore( int userId,int storeId,int productId);
+
+    /**
+     * [#26]
+     * @param userId the user id
+     * @param storeId the store id
+     * @param productId the product id
+     * @param score the score
+     */
+    public void addAndSetProductScore( int userId,int storeId, int productId, int score);
+
+    /**
+     * [#26]
+     * @param userId the user id
+     * @param storeId the store id
+     * @param productId the product id
+     */
+    public void removeProductScore( int userId,int storeId, int productId);
+
+    /**
+     * [#26]
+     * @param userId the user id
+     * @param storeId the store id
+     * @param score the score
+     */
+    public void addStoreScore(int userId,int storeId ,int score) ;
+
+    /**
+     * [#26]
+     * @param userId the user id
+     * @param storeId the store id
+     */
+    public void removeStoreScore(int userId,int storeId);
+
+    /**
+     * [#26]
+     * @param userId the user id
+     * @param storeId the store id
+     * @param score the score
+     */
+    public void modifyStoreScore(int userId,int storeId, int score);
+
+    /**
+     * @param userId the user id
+     * @param storeId the store id
+     * @return the score
+     */
+    public float getStoreScore( int userId,int storeId);
 }
