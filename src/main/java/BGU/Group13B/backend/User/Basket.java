@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 
 public class Basket {
     private final int userId;
@@ -56,7 +57,7 @@ public class Basket {
         return storeId;
     }
 
-    public void purchaseBasket(String address, String creditCardNumber,
+    public double purchaseBasket(String address, String creditCardNumber,
                                String creditCardMonth, String creditCardYear,
                                String creditCardHolderFirstName, String creditCardHolderLastName,
                                String creditCardCVV, String id, String creditCardType,
@@ -64,8 +65,8 @@ public class Basket {
                                String/*store coupons*/ storeCoupon
     ) throws Exception {
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        var scheduledFuture = scheduler.schedule(this::restoreProductsStock, 5, java.util.concurrent.TimeUnit.MINUTES);
         getSuccessfulProducts();
-        scheduler.schedule(this::restoreProductsStock, 5, java.util.concurrent.TimeUnit.MINUTES);
 
 
         double totalAmount = getTotalAmount(productsCoupons);
@@ -74,11 +75,14 @@ public class Basket {
         if (paymentAdapter.
                 pay(address, creditCardNumber, creditCardMonth, creditCardYear,
                         creditCardHolderFirstName, creditCardHolderLastName,
-                        creditCardCVV, id, creditCardType, successfulProducts, failedProducts)) {
+                        creditCardCVV, id, creditCardType, successfulProducts, failedProducts, totalAmount)) {
+            scheduledFuture.cancel(true);
+            scheduler.shutdown();
             //if succeeded, add the successful products to the purchase history
             for (BasketProduct basketProduct : successfulProducts) {
                 productHistoryRepository.addProductToHistory(basketProduct, userId);
             }
+            return totalAmount;
         } else {
             throw new PurchaseFailedException("Payment failed");
         }
