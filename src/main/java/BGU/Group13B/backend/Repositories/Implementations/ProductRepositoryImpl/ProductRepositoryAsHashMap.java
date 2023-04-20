@@ -3,6 +3,7 @@ package BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
 import BGU.Group13B.backend.storePackage.Product;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -35,7 +36,7 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
     @Override
     public void addProduct(int storeId, String name, String category, double price, int maxAmount) {
         if(!storeProducts.containsKey(storeId))
-            throw new IllegalArgumentException("Store " + storeId + " not found");
+            storeProducts.put(storeId, new ConcurrentSkipListSet<>(Comparator.comparingInt(Product::getProductId)));
         storeProducts.get(storeId).add(new Product(productIdCounter.getAndIncrement(), storeId, name, category, price, maxAmount));
     }
 
