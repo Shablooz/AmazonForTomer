@@ -436,6 +436,13 @@ class Session implements ISession {
     }
 
     @Override
+    public int enterAsGuest() {
+        int id =  userRepositoryAsHashmap.getNewUserId();
+        userRepositoryAsHashmap.addUser(id, new User(id));
+        return id;
+    }
+
+    @Override
     public void removeProduct(int userId, int storeId, int productId) {
         try{
             market.removeProduct(userId, storeId, productId);

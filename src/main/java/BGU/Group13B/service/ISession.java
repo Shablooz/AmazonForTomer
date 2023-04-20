@@ -459,11 +459,20 @@ public interface ISession {
     void setProductStockQuantity(int userId, int storeId, int productId, int stockQuantity);
 
     /**
-     * #32
-     * require 4.1
+     * #13
+     * require 1.1
      * @param userId    the user id
      * @param storeId   the store id
      * @param productId the product id to remove
      */
     void removeProduct(int userId, int storeId, int productId);
+
+    /**
+     * #13
+     * require 1.1
+     * returns the new user id
+     */
+    int enterAsGuest();
+
+
 }
