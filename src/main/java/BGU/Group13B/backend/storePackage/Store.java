@@ -15,9 +15,8 @@ import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.permissions.StorePermission;
 import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.AddToUserCart;
-
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -43,6 +42,7 @@ public class Store {
     private String category;
     private final IAuctionRepository auctionRepository;
     private IStoreScore storeScore;
+
 
 
     public Store(int storeId, int founderId, String storeName, String category) {
@@ -194,14 +194,14 @@ public class Store {
 
 
     @DefaultOwnerFunctionality
-    public void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity) throws NoPermissionException {
+    public void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) throws NoPermissionException {
         /*
          * check if the user has permission to add product
          * */
         if (!this.storePermission.checkPermission(userId))
             throw new NoPermissionException("User " + userId + " has no permission to add product to store " + this.storeId);
 
-        this.productRepository.addProduct(storeId, productName, category, price, stockQuantity);
+        this.productRepository.addProduct(storeId, productName, category, price, stockQuantity, description);
     }
 
     public double calculatePriceOfBasket(double totalAmountBeforeStoreDiscountPolicy,
@@ -281,6 +281,10 @@ public class Store {
         bidRepository.removeBID(bidId);
     }
 
+
+//    public int compareTo(Store o) {
+//        return Integer.compare(this.storeId, o.storeId);
+//    }
 
     public int getRank() {
         return rank;

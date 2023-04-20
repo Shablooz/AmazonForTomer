@@ -76,8 +76,8 @@ public class Market {
     }
 
 
-    public void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity) throws NoPermissionException {
-        storeRepository.getStore(storeId).addProduct(userId, storeId, productName, category, price, stockQuantity);
+    public void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) throws NoPermissionException {
+        storeRepository.getStore(storeId).addProduct(userId, storeId, productName, category, price, stockQuantity, description);
     }
 
     public void addStoreScore(int userId,int storeId ,int score){
@@ -120,32 +120,32 @@ public class Market {
         storeRepository.addStore(founderId, storeName, category);
     }
 
-    public void searchProductByName(String productName) {
-        searcher.searchByName(productName);
+    public List<Product> searchProductByName(String productName) {
+        return searcher.searchByName(productName);
     }
 
-    public void searchProductByCategory(String category) {
-        searcher.searchByCategory(category);
+    public List<Product> searchProductByCategory(String category) {
+        return searcher.searchByCategory(category);
     }
 
-    public void searchProductByKeywords(List<String> keywords) {
-        searcher.searchByKeywords(keywords);
+    public List<Product> searchProductByKeywords(List<String> keywords) {
+        return searcher.searchByKeywords(keywords);
     }
 
-    public void filterByPriceRange(int minPrice, int maxPrice) {
-        searcher.filterByPriceRange(minPrice, maxPrice);
+    public List<Product> filterByPriceRange(int minPrice, int maxPrice) {
+        return searcher.filterByPriceRange(minPrice, maxPrice);
     }
 
-    public void filterByProductRank(int minRating, int maxRating) {
-        searcher.filterByProductRank(minRating, maxRating);
+    public List<Product> filterByProductRank(int minRating, int maxRating) {
+        return searcher.filterByProductRank(minRating, maxRating);
     }
 
-    public void filterByCategory(String category) {
-        searcher.filterByCategory(category);
+    public List<Product> filterByCategory(String category) {
+        return searcher.filterByCategory(category);
     }
 
-    public void filterByStoreRank(int minRating, int maxRating) {
-        searcher.filterByStoreRank(minRating, maxRating);
+    public List<Product> filterByStoreRank(int minRating, int maxRating) {
+        return searcher.filterByStoreRank(minRating, maxRating);
     }
 
     private double calculatePriceOfBasket(double totalAmountBeforeStoreDiscountPolicy, ConcurrentLinkedQueue<BasketProduct> successfulProducts, int storeId,

@@ -15,6 +15,7 @@ public class Product {
     private final int storeId;
     private double price;
     private String category;
+    private String description;
     private int rank;
     private int stockQuantity;
     private final PurchasePolicy purchasePolicy;
@@ -23,7 +24,7 @@ public class Product {
     private final IProductDiscountsRepository productDiscounts;
 
 
-    public Product(int productId, int storeId, String name, String category, double price, int stockQuantity) {
+    public Product(int productId, int storeId, String name, String category, double price, int stockQuantity, String description) {
         this.productId = productId;
         this.storeId = storeId;
         this.name = name;
@@ -31,6 +32,7 @@ public class Product {
         this.price = price;
         this.stockQuantity = stockQuantity;
         this.rank = 0;
+        this.description=description;
         this.purchasePolicy = new PurchasePolicy();
         this.discountPolicy = new DiscountPolicy();
         this.repositoryReview = SingletonCollection.getReviewRepository();
@@ -117,6 +119,9 @@ public class Product {
     }
     public void removeProductScore(int userId){
         repositoryReview.removeProductScore(storeId,productId,userId);
+    }
+    public String getDescription() {
+        return description;
     }
 
     public void setCategory(String category) {

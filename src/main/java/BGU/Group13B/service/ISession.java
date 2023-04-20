@@ -22,7 +22,7 @@ public interface ISession {
      * @param price         the product price
      * @param stockQuantity the stock quantity
      */
-    void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity);
+    void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description);
 
     /**
      * #19

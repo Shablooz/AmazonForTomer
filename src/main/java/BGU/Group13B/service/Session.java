@@ -28,16 +28,15 @@ class Session implements ISession {
     }
 
     @Override
-    public void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity){
+    public void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description){
         try{
-            market.addProduct(userId, storeId, productName, category, price, stockQuantity);
+            market.addProduct(userId, storeId, productName, category, price, stockQuantity, description);
         }
         catch (Exception e){
             //TODO: handle exception
         }
 
     }
-
 
     @Override
     public void addToCart(int userId, int storeId, int productId, int quantity) {
@@ -192,16 +191,16 @@ class Session implements ISession {
 
     @Override
     public void addProductToCart(int userId, int productId, int storeId) {
-        try{
+        try {
             userRepositoryAsHashmap.getUser(userId).addProductToCart(productId, storeId);
-        }catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
-           }
+        }
     }
 
     @Override
     public void getUserPurchaseHistory(int userId) {
-        throw new RuntimeException("not implemented");
+        //TODO: implement
     }
 
     public void openComplaint(int userId, String header, String complaint) {
