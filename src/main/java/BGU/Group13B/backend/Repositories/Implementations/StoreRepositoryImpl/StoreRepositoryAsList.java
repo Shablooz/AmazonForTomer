@@ -26,8 +26,8 @@ public class StoreRepositoryAsList implements IStoreRepository {
     //(#24) open store - requirement 3.2
     @Override
     public int addStore(int founderId, String storeName, String category) {
-
+        int storeId = storeIdCounter.get();
         this.stores.add(new Store(storeIdCounter.getAndIncrement(), founderId, storeName, category));
-        return storeIdCounter.get();
+        return storeId;
     }
 }
