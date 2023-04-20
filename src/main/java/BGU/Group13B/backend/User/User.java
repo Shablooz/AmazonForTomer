@@ -27,6 +27,7 @@ public class User {
 
     private final String adminIdentifier = "admin";
 
+
     public User(int userId) {
 
         this.purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();

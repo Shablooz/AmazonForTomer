@@ -1,6 +1,7 @@
 package BGU.Group13B.service;
 
 import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepositoryAsHashmap;
+import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepositoryAsHashmap;
 import BGU.Group13B.backend.User.Message;
@@ -18,13 +19,14 @@ import java.util.List;
 
 class Session implements ISession {
     private final Market market;
-    UserRepositoryAsHashmap userRepositoryAsHashmap;
+    IUserRepository userRepositoryAsHashmap;
 
     public Session(Market market) {
         this.market = market;
 
         //callbacks initialization
         SingletonCollection.setAddToUserCart(this::addToCart);
+        this.userRepositoryAsHashmap = SingletonCollection.getUserRepository();
     }
 
     @Override
