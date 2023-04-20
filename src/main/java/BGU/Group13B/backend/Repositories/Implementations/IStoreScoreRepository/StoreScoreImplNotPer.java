@@ -8,6 +8,10 @@ public class StoreScoreImplNotPer implements IStoreScore {
 
     ConcurrentHashMap<Integer, Integer> storeScore;
 
+    public StoreScoreImplNotPer() {
+        storeScore = new ConcurrentHashMap<>();
+    }
+
     @Override
     public void addStoreScore(int userId, int storeId, int score) {
         if(storeScore.containsKey(storeId))

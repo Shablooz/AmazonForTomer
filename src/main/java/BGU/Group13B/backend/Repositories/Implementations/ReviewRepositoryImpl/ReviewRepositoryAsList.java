@@ -10,6 +10,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class ReviewRepositoryAsList implements IRepositoryReview {
 
+
+
     ConcurrentHashMap<Integer, Review> reviews;
     ConcurrentHashMap<Integer, Integer> scores;
     float score;

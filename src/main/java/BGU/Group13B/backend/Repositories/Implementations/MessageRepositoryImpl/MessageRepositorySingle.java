@@ -1,21 +1,27 @@
 package BGU.Group13B.backend.Repositories.Implementations.MessageRepositoryImpl;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IMessageRepository;
-import BGU.Group13B.backend.Repositories.Interfaces.IStoreMessagesRepository;
 import BGU.Group13B.backend.User.Message;
 
 import java.util.Iterator;
-import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ConcurrentMap;
 
-public class MessageRepositoryAsList implements IMessageRepository {
-    ConcurrentMap<String, ConcurrentLinkedDeque<Message>> unreadMessages;
-    ConcurrentMap<String, ConcurrentLinkedQueue<Message>> readMessages;
+public class MessageRepositorySingle implements IMessageRepository {
+
+    ConcurrentHashMap<String, ConcurrentLinkedDeque<Message>> unreadMessages;
+    ConcurrentHashMap<String, ConcurrentLinkedQueue<Message>> readMessages;
 
 
-    ConcurrentMap<String, Iterator<Message>> readMessagesIterator;
+    ConcurrentHashMap<String, Iterator<Message>> readMessagesIterator;
+
+
+    public MessageRepositorySingle() {
+        unreadMessages = new ConcurrentHashMap<>();
+        readMessages = new ConcurrentHashMap<>();
+        readMessagesIterator = new ConcurrentHashMap<>();
+    }
 
     @Override
     public void sendMassage(Message message) {

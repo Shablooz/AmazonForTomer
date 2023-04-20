@@ -140,28 +140,29 @@ public class User {
 
 
     public void sendMassageStore(String header,String massage,int storeId) {
-        market.sendMassage(Message.constractMessage(this.userName,getAndIncrementMessageId(), header,massage , String.valueOf(storeId)),this.userName,storeId);
+        market.sendMassage(Message.constractMessage(this.userName,getAndIncrementMessageId(), header,massage , String.valueOf(storeId)),userId,storeId);
     }
     //42
     public Message readUnreadMassageStore(int storeId) throws NoPermissionException {
-        Message message= market.getUnreadMessages(this.userName,storeId);
+        Message message= market.getUnreadMessages(this.userId,storeId);
         currentMessageToReply=message;
         return message;
     }
     //42
+
     public Message readReadMassageStore(int storeId)throws NoPermissionException {
-        return market.getUnreadMessages(this.userName,storeId);
+        return market.getUnreadMessages(this.userId,storeId);
     }
     //42
     public void answerQuestionStore(String answer)throws NoPermissionException
     {
         assert currentMessageToReply.getReceiverId().matches("-?\\d+");
-        market.markAsCompleted(currentMessageToReply.getSenderId(), currentMessageToReply.getMessageId(),this.userName,Integer.parseInt(currentMessageToReply.getReceiverId()));
+        market.markAsCompleted(currentMessageToReply.getSenderId(), currentMessageToReply.getMessageId(),this.userId,Integer.parseInt(currentMessageToReply.getReceiverId()));
         messageRepository.sendMassage(Message.constractMessage(this.userName,getAndIncrementMessageId(), "RE: "+ currentMessageToReply.getHeader(),answer , currentMessageToReply.getSenderId()));
     }
     //42
     public void refreshOldMessageStore(int storeId)throws NoPermissionException {
-        market.refreshMessages(this.userName,storeId);
+        market.refreshMessages(this.userId,storeId);
     }
 
     private int getAndIncrementMessageId() {

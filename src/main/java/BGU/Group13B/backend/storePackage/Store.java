@@ -94,37 +94,37 @@ public class Store {
     }
 
 
-    public void sendMassage(Message message, String userName, int userId) {
-        storeMessagesRepository.sendMassage(message, this.storeId, userName);
+    public void sendMassage(Message message, int userId) {
+        storeMessagesRepository.sendMassage(message, this.storeId, userId);
     }
 
     @DefaultOwnerFunctionality
-    public Message getUnreadMessages(String userName, int userId) throws NoPermissionException {
+    public Message getUnreadMessages( int userId) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId))
-            throw new NoPermissionException("User " + userName + " has no permission to read message of store " + this.storeId);
+            throw new NoPermissionException("User " + userId + " has no permission to read message of store " + this.storeId);
 
-        return storeMessagesRepository.readUnreadMassage(this.storeId, userName);
+        return storeMessagesRepository.readUnreadMassage(this.storeId, userId);
     }
 
     @DefaultOwnerFunctionality
-    public Message getReadMessages(String userName, int userId) throws NoPermissionException {
+    public Message getReadMessages(int userId) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId))
-            throw new NoPermissionException("User " + userName + " has no permission to read message of store " + this.storeId);
-        return storeMessagesRepository.readReadMassage(this.storeId, userName);
+            throw new NoPermissionException("User " + userId + " has no permission to read message of store " + this.storeId);
+        return storeMessagesRepository.readReadMassage(this.storeId, userId);
     }
 
     @DefaultOwnerFunctionality
-    public void markAsCompleted(String senderId, int messageId, String userName, int userId) throws NoPermissionException {
+    public void markAsCompleted(String senderId, int messageId, int userId) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId))
-            throw new NoPermissionException("User " + userName + " has no permission to mark message as complete of store: " + this.storeId);
-        storeMessagesRepository.markAsRead(senderId, messageId, userName);
+            throw new NoPermissionException("User " + userId + " has no permission to mark message as complete of store: " + this.storeId);
+        storeMessagesRepository.markAsRead(senderId, messageId, userId);
     }
 
     @DefaultOwnerFunctionality
-    public void refreshMessages(String userName, int userId) throws NoPermissionException {
+    public void refreshMessages(int userId) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId))
-            throw new NoPermissionException("User " + userName + " has no permission to handle message of store " + this.storeId);
-        storeMessagesRepository.refreshOldMassage(this.storeId, userName);
+            throw new NoPermissionException("User " + userId + " has no permission to handle message of store " + this.storeId);
+        storeMessagesRepository.refreshOldMassage(this.storeId, userId);
     }
 
 
