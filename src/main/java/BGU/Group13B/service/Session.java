@@ -16,6 +16,7 @@ import BGU.Group13B.service.info.StoreInfo;
 import java.time.LocalDateTime;
 
 import java.util.List;
+import java.util.Set;
 
 
 class Session implements ISession {
@@ -552,6 +553,17 @@ class Session implements ISession {
         catch (Exception e){
             //TODO: handle exception
             return -1;
+        }
+    }
+
+    @Override
+    public Set<ProductInfo> getAllStoreProductsInfo(int storeId) {
+        try{
+            return market.getAllStoreProductsInfo(storeId);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+            return null;
         }
     }
 

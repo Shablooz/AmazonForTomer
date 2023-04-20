@@ -11,6 +11,7 @@ import BGU.Group13B.service.info.StoreInfo;
 import java.time.LocalDateTime;
 
 import java.util.List;
+import java.util.Set;
 
 public class ProxySession implements ISession {
     private ISession realSession;
@@ -320,5 +321,10 @@ public class ProxySession implements ISession {
     @Override
     public float getProductScore(int productId) {
         return realSession.getProductScore(productId);
+    }
+
+    @Override
+    public Set<ProductInfo> getAllStoreProductsInfo(int storeId) {
+        return realSession.getAllStoreProductsInfo(storeId);
     }
 }

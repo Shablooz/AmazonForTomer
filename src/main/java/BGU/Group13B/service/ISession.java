@@ -11,6 +11,7 @@ import BGU.Group13B.service.info.StoreInfo;
 import java.time.LocalDateTime;
 
 import java.util.List;
+import java.util.Set;
 
 public interface ISession {
     /**
@@ -540,4 +541,11 @@ public interface ISession {
      * @param productId the product id
      */
     float getProductScore(int productId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param storeId the store id
+     */
+    Set<ProductInfo> getAllStoreProductsInfo(int storeId);
 }

@@ -15,7 +15,9 @@ import java.time.LocalDateTime;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.stream.Collectors;
 
 public class Market {
     private final IStoreRepository storeRepository;
@@ -220,6 +222,10 @@ public class Market {
 
     public float getProductScore(int productId) {
         return searcher.getProductById(productId).getProductScore();
+    }
+
+    public Set<ProductInfo> getAllStoreProductsInfo(int storeId){
+        return storeRepository.getStore(storeId).getAllStoreProducts().stream().map(Product::getProductInfo).collect(Collectors.toSet());
     }
 
 
