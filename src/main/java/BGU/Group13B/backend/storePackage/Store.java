@@ -15,6 +15,7 @@ import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.permissions.StorePermission;
 import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.AddToUserCart;
+import BGU.Group13B.service.info.StoreInfo;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -377,5 +378,19 @@ public class Store {
         }
     }
 
+    public String getCategory() {
+        return category;
+    }
 
+    public String getStoreName() {
+        return storeName;
+    }
+
+    public StoreInfo getStoreInfo() {
+        return new StoreInfo(this);
+    }
+
+    public Product getStoreProduct(int productId) {
+        return productRepository.getStoreProductById(productId, storeId);
+    }
 }

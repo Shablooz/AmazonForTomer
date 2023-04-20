@@ -8,6 +8,8 @@ import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.AddToUserCart;
+import BGU.Group13B.service.info.ProductInfo;
+import BGU.Group13B.service.info.StoreInfo;
 
 import java.time.LocalDateTime;
 
@@ -179,5 +181,49 @@ public class Market {
     public void removeProduct(int userId, int storeId, int productId) throws NoPermissionException{
         storeRepository.getStore(storeId).removeProduct(userId, productId);
     }
+
+    public StoreInfo getStoreInfo(int storeId){
+        return storeRepository.getStore(storeId).getStoreInfo();
+    }
+
+    public String getStoreName(int storeId) {
+        return storeRepository.getStore(storeId).getStoreName();
+    }
+
+    public String getStoreCategory(int storeId) {
+        return storeRepository.getStore(storeId).getCategory();
+    }
+
+    public ProductInfo getStoreProductInfo(int storeId, int productId){
+        return storeRepository.getStore(storeId).getStoreProduct(productId).getProductInfo();
+    }
+
+    public ProductInfo getProductInfo(int productId){
+        return searcher.getProductById(productId).getProductInfo();
+    }
+
+    public String getProductName(int productId) {
+        return searcher.getProductById(productId).getName();
+    }
+
+    public String getProductCategory(int productId) {
+        return searcher.getProductById(productId).getCategory();
+    }
+
+    public double getProductPrice(int productId) {
+        return searcher.getProductById(productId).getPrice();
+    }
+
+    public int getProductStockQuantity(int productId) {
+        return searcher.getProductById(productId).getStockQuantity();
+    }
+
+    public float getProductScore(int productId) {
+        return searcher.getProductById(productId).getProductScore();
+    }
+
+
+
+
 
 }

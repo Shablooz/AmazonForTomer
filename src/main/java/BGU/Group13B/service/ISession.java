@@ -5,6 +5,8 @@ import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
+import BGU.Group13B.service.info.ProductInfo;
+import BGU.Group13B.service.info.StoreInfo;
 
 import java.time.LocalDateTime;
 
@@ -466,4 +468,76 @@ public interface ISession {
      * @param productId the product id to remove
      */
     void removeProduct(int userId, int storeId, int productId);
+
+
+    /**
+     * #17
+     * require 2.1
+     * @param storeId   the store id
+     */
+    StoreInfo getStoreInfo(int storeId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param storeId   the store id
+     */
+    String getStoreName(int storeId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param storeId   the store id
+     */
+    String getStoreCategory(int storeId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param storeId   the store id
+     * @param productId the product id
+     */
+    ProductInfo getStoreProductInfo(int storeId, int productId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param productId the product id
+     */
+    ProductInfo getProductInfo(int productId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param productId the product id
+     */
+    String getProductName(int productId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param productId the product id
+     */
+    String getProductCategory(int productId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param productId the product id
+     */
+    double getProductPrice(int productId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param productId the product id
+     */
+    int getProductStockQuantity(int productId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param productId the product id
+     */
+    float getProductScore(int productId);
 }

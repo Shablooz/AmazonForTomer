@@ -10,6 +10,8 @@ import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
+import BGU.Group13B.service.info.ProductInfo;
+import BGU.Group13B.service.info.StoreInfo;
 
 import java.time.LocalDateTime;
 
@@ -440,6 +442,116 @@ class Session implements ISession {
         }
         catch (Exception e){
             //TODO: handle exception
+        }
+    }
+
+    @Override
+    public StoreInfo getStoreInfo(int storeId) {
+        try{
+            return market.getStoreInfo(storeId);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+            return null;
+        }
+    }
+
+    @Override
+    public String getStoreName(int storeId) {
+        try{
+            return market.getStoreName(storeId);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+            return null;
+        }
+    }
+
+    @Override
+    public String getStoreCategory(int storeId) {
+        try{
+            return market.getStoreCategory(storeId);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+            return null;
+        }
+    }
+
+    @Override
+    public ProductInfo getStoreProductInfo(int storeId, int productId) {
+        try{
+            return market.getStoreProductInfo(storeId, productId);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+            return null;
+        }
+    }
+
+    @Override
+    public ProductInfo getProductInfo(int productId) {
+        try{
+            return market.getProductInfo(productId);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+            return null;
+        }
+    }
+
+    @Override
+    public String getProductName(int productId) {
+        try{
+            return market.getProductName(productId);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+            return null;
+        }
+    }
+
+    @Override
+    public String getProductCategory(int productId) {
+        try{
+            return market.getProductCategory(productId);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+            return null;
+        }
+    }
+
+    @Override
+    public double getProductPrice(int productId) {
+        try{
+            return market.getProductPrice(productId);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+            return -1;
+        }
+    }
+
+    @Override
+    public int getProductStockQuantity(int productId) {
+        try{
+            return market.getProductStockQuantity(productId);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+            return -1;
+        }
+    }
+
+    @Override
+    public float getProductScore(int productId) {
+        try{
+            return market.getProductScore(productId);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+            return -1;
         }
     }
 

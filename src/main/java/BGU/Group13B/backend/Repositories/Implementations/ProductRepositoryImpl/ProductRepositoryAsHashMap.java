@@ -70,6 +70,14 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
                 );
     }
 
+    @Override
+    public Product getProductById(int productId) {
+        return storeProducts.values().stream().flatMap(Set::stream).filter(product -> product.getProductId() == productId).
+                findFirst().orElseThrow(
+                        () -> new IllegalArgumentException("Product " + productId + " not found")
+                );
+    }
+
 /*    @Override
     public double calculatePrice(int storeId, int productId, int productQuantity, String couponCode) {
         if (!storeProducts.containsKey(storeId))
