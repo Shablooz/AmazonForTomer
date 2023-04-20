@@ -21,4 +21,8 @@ public interface IProductRepository {//deeded because it contains the product qu
     List<Product> getProductByKeywords(List<String> keywords);
 
     List<Product> filterByPriceRange(int minPrice, int maxPrice);
+
+     Product getStoreProductById(int productId,int storeId);
+
+
 }

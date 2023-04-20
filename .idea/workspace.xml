@@ -6,8 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="3436d65a-5e76-4e77-818d-f39d961d7bb1" name="Changes" comment="Done (#53) WITHOUT TESTS.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/ISession.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/ISession.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/Session.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/Session.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductRepositoryImpl/ProductRepositoryAsHashMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductRepositoryImpl/ProductRepositoryAsHashMap.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/PurchaseHistoryRepositoryImpl/PurchaseHistoryRepositoryAsList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/PurchaseHistoryRepositoryImpl/PurchaseHistoryRepositoryAsList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Market.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Market.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Store.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Store.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/storePackage/StoreTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/storePackage/StoreTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,6 +35,7 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="HARD" />
   </component>
   <component name="GithubProjectSettings">
     <option name="branchProtectionPatterns">
@@ -51,29 +56,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
-    &quot;create.test.in.the.same.root&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/eyalz/OneDrive/Desktop/New folder/trading-system&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;,
-    &quot;spring.configuration.checksum&quot;: &quot;2eea27aecebaecc0287d463dc0733f7d&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
+    "create.test.in.the.same.root": "true",
+    "git-widget-placeholder": "rateProduct__#25",
+    "last_opened_file_path": "C:/Users/Shust/OneDrive/Documents/First Degree/Semester 5/Fundamentals of software engineering/Assignment2",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "editor.preferences.fonts.default",
+    "spring.configuration.checksum": "0bff9c3a4f5bac17f71b3dede1d050f7",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="BGU.Group13B.backend.storePackage" />
@@ -94,7 +99,15 @@
       <recent name="BGU.Group13B" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="JUnit.StoreTest">
+    <configuration name="All in TradingSystemProject" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="TradingSystemProject" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="BGU.Group13B.backend.storePackage in trading-system" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="trading-system" />
       <extension name="coverage">
@@ -109,9 +122,25 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="StoreTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="TradingSystemProject" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="BGU.Group13B.backend.storePackage.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="BGU.Group13B.backend.storePackage" />
+      <option name="MAIN_CLASS_NAME" value="BGU.Group13B.backend.storePackage.StoreTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.BGU.Group13B.backend.storePackage in trading-system" />
+        <item itemvalue="JUnit.StoreTest" />
+        <item itemvalue="JUnit.All in TradingSystemProject" />
         <item itemvalue="JUnit.BGU.Group13B.backend.storePackage in trading-system" />
       </list>
     </recent_temporary>
@@ -131,7 +160,6 @@
       <workItem from="1680681882942" duration="16736000" />
       <workItem from="1681475547708" duration="1108000" />
       <workItem from="1681476828448" duration="49000" />
-      <workItem from="1681741769185" duration="5350000" />
     </task>
     <task id="LOCAL-00001" summary="save work">
       <created>1680688726166</created>

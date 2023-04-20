@@ -2,8 +2,11 @@ package BGU.Group13B.service;
 
 import BGU.Group13B.backend.Repositories.Implementations.AcutionRepositoryImpl.AuctionRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.BIDRepositoryImpl.BIDRepositoryAsList;
+import BGU.Group13B.backend.Repositories.Implementations.BasketProductRepositoryImpl.BasketProductRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.BasketReposistoryImpl.BasketRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.MessageRepositoryImpl.MessageRepositoryAsList;
+import BGU.Group13B.backend.Repositories.Implementations.ProductDiscountsRepositoryImpl.ProductDiscountsRepositoryAsHashMap;
+import BGU.Group13B.backend.Repositories.Implementations.ProductHistoryRepositoryImpl.ProductHistoryRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl.ProductRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.PurchaseHistoryRepositoryImpl.PurchaseHistoryRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepositoryAsList;
@@ -35,8 +38,11 @@ public class SingletonCollection {
     private static final IStoreRepository storeRepository;
     private static final IUserRepository userRepository;
     private static final IBasketRepository basketRepository;
+    private static final IBasketProductRepository basketProductRepository;
     private static final IStoreDiscountsRepository storeDiscountsRepository;
     private static final IAuctionRepository auctionRepository;
+    private static final IProductHistoryRepository productHistoryRepository;
+    private static final IProductDiscountsRepository productDiscountsRepository;
 
 
     /**
@@ -75,6 +81,9 @@ public class SingletonCollection {
         basketRepository = new BasketRepositoryAsHashMap();
         storeDiscountsRepository = new StoreDiscountsRepositoryAsHashMap();
         auctionRepository = new AuctionRepositoryAsHashMap();
+        basketProductRepository = new BasketProductRepositoryAsHashMap();
+        productHistoryRepository = new ProductHistoryRepositoryAsList();
+        productDiscountsRepository = new ProductDiscountsRepositoryAsHashMap();
 
 
         //adapters
@@ -168,6 +177,10 @@ public class SingletonCollection {
         return auctionRepository;
     }
 
+    public static IBasketProductRepository getBasketProductRepository() { return basketProductRepository; }
+
+    public static IProductHistoryRepository getProductHistoryRepository() { return productHistoryRepository;}
+
     /**
      * <h1>setters (for callbacks)</h1>
      */
@@ -179,6 +192,8 @@ public class SingletonCollection {
         SingletonCollection.calculatePriceOfBasket = calculatePriceOfBasket;
     }
 
-
+    public static IProductDiscountsRepository getProductDiscountsRepository() {
+        return SingletonCollection.productDiscountsRepository;
+    }
 }
 

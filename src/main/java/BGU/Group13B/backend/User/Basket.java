@@ -2,29 +2,45 @@ package BGU.Group13B.backend.User;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IBasketProductRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductHistoryRepository;
+import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
 import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
+import BGU.Group13B.service.SingletonCollection;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class Basket {
     private final int userId;
     private final int storeId;
-    private final IBasketProductRepository productRepository;
+    private final IBasketProductRepository basketProductRepository;
     private final PaymentAdapter paymentAdapter;
     private final ConcurrentLinkedQueue<BasketProduct> successfulProducts;
     private final ConcurrentLinkedQueue<BasketProduct> failedProducts;
     private final IProductHistoryRepository productHistoryRepository;
     private final CalculatePriceOfBasket calculatePriceOfBasket;
 
-    //todo: remove all unnecessary fields and move to the singletonCollection class
+    public Basket(int userId, int storeId) {
+        this.userId = userId;
+        this.storeId = storeId;
+        this.basketProductRepository = SingletonCollection.getBasketProductRepository();
+        this.paymentAdapter = SingletonCollection.getPaymentAdapter();
+        this.productHistoryRepository = SingletonCollection.getProductHistoryRepository();
+        this.calculatePriceOfBasket = SingletonCollection.getCalculatePriceOfBasket();
+        this.successfulProducts = new ConcurrentLinkedQueue<>();
+        this.failedProducts = new ConcurrentLinkedQueue<>();
+    }
+
+    //used for testing
     public Basket(int userId, int storeId, IBasketProductRepository productRepository,
                   PaymentAdapter paymentAdapter, IProductHistoryRepository productHistoryRepository,
                   CalculatePriceOfBasket calculatePriceOfBasket) {
         this.userId = userId;
         this.storeId = storeId;
-        this.productRepository = productRepository;
+        this.basketProductRepository = productRepository;
         this.paymentAdapter = paymentAdapter;
         this.productHistoryRepository = productHistoryRepository;
         this.calculatePriceOfBasket = calculatePriceOfBasket;
@@ -47,9 +63,11 @@ public class Basket {
                                HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
                                String/*store coupons*/ storeCoupon
     ) throws Exception {
-        //todo add timer for 5 minutes and then do roll back that restores the quantity of the products
-
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
         getSuccessfulProducts();
+        scheduler.schedule(this::restoreProductsStock, 5, java.util.concurrent.TimeUnit.MINUTES);
+
+
         double totalAmount = getTotalAmount(productsCoupons);
         //calculate the total price of the products by the store discount policy
         totalAmount = calculateStoreDiscount(totalAmount, storeCoupon);
@@ -67,14 +85,26 @@ public class Basket {
 
         //try to pay for the product using PaymentAdapter
         //if succeeded, add the product to the purchase history, todo: and send message with the failed products ids
-        //if the user wants to cancel the purchase
-        //then restore the quantity of the product in the store
+        //if the user wants to cancel the purchase, added the function cancel purchase.
+        //then restore the quantity of the product in the store, yap
         //if failed throw an appropriate exception
 
     }
 
+    /*In case the user pressed on exit in the middle of the purchase or something like that*/
+    public void cancelPurchase() {
+        restoreProductsStock();
+    }
+
+    private void restoreProductsStock() {
+        for (BasketProduct basketProduct : successfulProducts) {
+            synchronized (basketProduct.getProduct()) {
+                basketProduct.getProduct().increaseQuantity(basketProduct.getQuantity());
+            }
+        }
+    }
+
     private double calculateStoreDiscount(double totalAmountAfterProductDiscounts, String storeCoupon) {
-        //todo: SingletonCollection.getCalculatePriceOfBasket().apply(totalAmountAfterProductDiscounts, successfulProducts, storeId, storeCoupons);
         return calculatePriceOfBasket.apply(totalAmountAfterProductDiscounts, successfulProducts, storeId, storeCoupon);
     }
 
@@ -83,7 +113,7 @@ public class Basket {
 
         //for every product in the basket
 
-        for (BasketProduct basketProduct : productRepository.getBasketProducts(storeId, userId).get()) {
+        for (BasketProduct basketProduct : basketProductRepository.getBasketProducts(storeId, userId).orElseGet(HashSet::new)) {
             //synchronize product
             synchronized (basketProduct.getProduct()) {
                 //try to decrease the quantity of the product in the store
@@ -103,8 +133,18 @@ public class Basket {
         for (BasketProduct basketProduct : successfulProducts) {//Hidden assumption we are first calculating the discount of the products
             //calculate price remembering the discount policies
             String productDiscountCode = productsCoupons.getOrDefault(basketProduct.getProductId(), null);
-            totalAmount += basketProduct.getProduct().calculatePrice(basketProduct.getQuantity(), productDiscountCode);
+            Product currentProduct = basketProduct.getProduct();
+            totalAmount += currentProduct.calculatePrice(basketProduct.getQuantity(), productDiscountCode);
         }
         return totalAmount;
+    }
+
+    public void addProduct(int productId) throws IllegalArgumentException {
+        BasketProduct basketProduct = basketProductRepository.getBasketProduct(storeId, userId, productId);
+        if (basketProduct != null) {
+            basketProductRepository.changeProductQuantity(productId, userId, storeId, 1);
+        } else
+            basketProductRepository.addNewProductToBasket(productId, userId, storeId);
+
     }
 }

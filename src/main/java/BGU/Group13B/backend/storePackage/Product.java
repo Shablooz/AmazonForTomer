@@ -5,30 +5,38 @@ import BGU.Group13B.backend.storePackage.Discounts.Discount;
 
 import java.util.LinkedList;
 
+import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepositoryAsList;
+import BGU.Group13B.backend.Repositories.Interfaces.IRepositoryReview;
+import BGU.Group13B.service.SingletonCollection;
+
 public class Product {
 
     private String name;
-    private final int productId;
-
-    private final int storeId;
+    private int productId;
+    private int storeId;
     private double price;
     private String category;
     private int rank;
     private int maxAmount;
-
+    private int currentAmount;
     private final PurchasePolicy purchasePolicy;
+    private final DiscountPolicy discountPolicy;
+    private final IRepositoryReview repositoryReview;
     private final IProductDiscountsRepository productDiscounts;
 
 
-    public Product(String name, int productId, int storeId, double price, int maxAmount, IProductDiscountsRepository productDiscounts) {
+    public Product(String name, int productId, int storeId, double price, int maxAmount) {
         this.name = name;
         this.productId = productId;
         this.storeId = storeId;
         this.price = price;
         this.maxAmount = maxAmount;
-        this.productDiscounts = productDiscounts;
+        this.currentAmount = maxAmount;
+        this.productDiscounts = SingletonCollection.getProductDiscountsRepository();
         this.rank=0;
         purchasePolicy = null;
+        discountPolicy = null;
+        repositoryReview = SingletonCollection.getReviewRepository();
     }
 
     public String getName() {
@@ -70,12 +78,14 @@ public class Product {
         return purchasePolicy;
     }
 
-
     public boolean tryDecreaseQuantity(int quantity) {
-        if (maxAmount < quantity)
+        if (currentAmount < quantity)
             return false;
-        maxAmount -= quantity;
+        currentAmount -= quantity;
         return true;
+    }
+    public void increaseQuantity(int quantity) {
+        currentAmount += quantity;
     }
 
     public synchronized double calculatePrice(int productQuantity, String couponCodes) {
@@ -87,10 +97,33 @@ public class Product {
                 productDiscounts.removeProductDiscount(productId, discount);
             else
                 finalPrice = discount.applyProductDiscount(finalPrice, productQuantity, couponCodes);
-        return finalPrice;
+        return finalPrice * productQuantity;//added by shaun in the night of 20/04/2023
     }
 
     public double getPrice() {
         return price;
     }
+
+    public int getAmount() {
+        return this.currentAmount;
+    }
+    public void addReview(String review, int userId){
+        repositoryReview.addReview(review,storeId,productId,userId);
+    }
+    public void removeReview(int userId){
+        repositoryReview.removeReview(storeId,productId,userId);
+    }
+    public Review getReview(int userId){
+        return repositoryReview.getReview(storeId,productId,userId);
+    }
+    public float getProductScore(){
+        return repositoryReview.getProductScore(storeId,productId);
+    }
+    public void addAndSetScore(int userId,int score){
+        repositoryReview.addAndSetProductScore(storeId,productId,userId,score);
+    }
+    public void removeProductScore(int userId){
+        repositoryReview.removeProductScore(storeId,productId,userId);
+    }
+
 }

@@ -4,6 +4,7 @@ import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
 import BGU.Group13B.backend.storePackage.Product;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,6 +21,11 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
     @Override
     public Optional<Set<Product>> getStoreProducts(int storeId) {
         return Optional.empty();
+    }
+
+    public Product getStoreProductById(int productId,int storeId){
+        return storeProducts.values().stream().flatMap(Set::stream).filter(product -> product.getProductId() == productId && product.getStoreId()==storeId)
+                .findFirst().orElseThrow(() -> new NoSuchElementException("Product not found"));
     }
 
     @Override
@@ -51,6 +57,8 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
     public List<Product> filterByPriceRange(int minPrice, int maxPrice) {
         return null;
     }
+
+
 
 /*    @Override
     public double calculatePrice(int storeId, int productId, int productQuantity, String couponCode) {

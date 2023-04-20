@@ -8,9 +8,8 @@ import java.util.Set;
 
 public interface IBasketProductRepository {
     Optional<Set<BasketProduct>> getBasketProducts(int storeId, int userId);
-
     void removeStoreProduct(int productId, int storeId, int userId);
-
     void addNewProductToBasket(int productId, int storeId, int userId);
-    void changeProductQuantity(int productId, int storeId, int userId, int newQuantity);
+    void changeProductQuantity(int productId, int storeId, int userId, int addedQuantity);
+    BasketProduct getBasketProduct(int productId, int storeId, int userId) throws IllegalArgumentException;
 }
