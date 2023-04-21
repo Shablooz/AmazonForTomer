@@ -11,6 +11,7 @@ import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
+import org.springframework.data.util.Pair;
 import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
 
@@ -461,6 +462,40 @@ class Session implements ISession {
     }
 
     @Override
+
+    public String getUserName(int userId) {
+        return userRepositoryAsHashmap.getUser(userId).getUserName();
+    }
+
+    @Override
+    public void setUsername(int userId, String newUsername) {
+        userRepositoryAsHashmap.getUser(userId).setUserName(newUsername);
+    }
+
+    @Override
+    public void setUserStatus(int userId, int newStatus) {
+        if(newStatus == 1 && userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.MEMBER)
+            userRepositoryAsHashmap.getUser(userId).setPermissions(UserPermissions.UserPermissionStatus.ADMIN);
+
+        if(newStatus == 2 && userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.ADMIN)
+            userRepositoryAsHashmap.getUser(userId).setPermissions(UserPermissions.UserPermissionStatus.MEMBER);
+    }
+
+    @Override
+    public String getUserStatus(int userId) {
+        if(userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.MEMBER)
+            return "Member";
+        else if(userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.ADMIN)
+            return "Admin";
+        else
+            return "Guest";
+    }
+
+    @Override
+    public List<Pair<Integer, String>> getStoresOfUser(int userId) {
+        return userRepositoryAsHashmap.getUser(userId).getStoresAndRoles();
+        }
+
     public StoreInfo getStoreInfo(int storeId) {
         try{
             return market.getStoreInfo(storeId);

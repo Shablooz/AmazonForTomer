@@ -5,6 +5,7 @@ import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
+import org.springframework.data.util.Pair;
 import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
 
@@ -274,6 +275,30 @@ public class ProxySession implements ISession {
     }
 
     @Override
+    public String getUserName(int userId) {
+        return realSession.getUserName(userId);
+    }
+
+    @Override
+    public void setUsername(int userId, String newUsername) {
+        realSession.setUsername(userId,newUsername);
+    }
+
+    @Override
+    public void setUserStatus(int userId, int newStatus) {
+        realSession.setUserStatus(userId,newStatus);
+    }
+
+    @Override
+    public String getUserStatus(int userId) {
+        return realSession.getUserStatus(userId);
+    }
+
+    @Override
+    public List<Pair<Integer, String>> getStoresOfUser(int userId) {
+        return realSession.getStoresOfUser(userId);
+        }
+
     public StoreInfo getStoreInfo(int storeId) {
         return realSession.getStoreInfo(storeId);
     }
