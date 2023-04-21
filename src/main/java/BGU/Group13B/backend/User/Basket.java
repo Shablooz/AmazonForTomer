@@ -9,9 +9,11 @@ import BGU.Group13B.service.SingletonCollection;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 
 public class Basket {
     private final int userId;
@@ -56,16 +58,16 @@ public class Basket {
         return storeId;
     }
 
-    public void purchaseBasket(String address, String creditCardNumber,
+    public double purchaseBasket(String address, String creditCardNumber,
                                String creditCardMonth, String creditCardYear,
                                String creditCardHolderFirstName, String creditCardHolderLastName,
                                String creditCardCVV, String id, String creditCardType,
                                HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
                                String/*store coupons*/ storeCoupon
-    ) throws Exception {
+    ) throws PurchaseFailedException {
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        var scheduledFuture = scheduler.schedule(this::restoreProductsStock, 5, java.util.concurrent.TimeUnit.MINUTES);
         getSuccessfulProducts();
-        scheduler.schedule(this::restoreProductsStock, 5, java.util.concurrent.TimeUnit.MINUTES);
 
 
         double totalAmount = getTotalAmount(productsCoupons);
@@ -74,11 +76,18 @@ public class Basket {
         if (paymentAdapter.
                 pay(address, creditCardNumber, creditCardMonth, creditCardYear,
                         creditCardHolderFirstName, creditCardHolderLastName,
-                        creditCardCVV, id, creditCardType, successfulProducts, failedProducts)) {
+                        creditCardCVV, id, creditCardType, successfulProducts, failedProducts, totalAmount)) {
+            scheduledFuture.cancel(true);
+            scheduler.shutdown();
             //if succeeded, add the successful products to the purchase history
             for (BasketProduct basketProduct : successfulProducts) {
                 productHistoryRepository.addProductToHistory(basketProduct, userId);
             }
+            basketProductRepository.removeBasketProducts(storeId, userId);
+            successfulProducts.clear();
+            /*//todo: send message with the failed products ids!
+            failedProducts.clear();*/
+            return totalAmount;
         } else {
             throw new PurchaseFailedException("Payment failed");
         }
@@ -94,6 +103,8 @@ public class Basket {
     /*In case the user pressed on exit in the middle of the purchase or something like that*/
     public void cancelPurchase() {
         restoreProductsStock();
+        successfulProducts.clear();
+        failedProducts.clear();
     }
 
     private void restoreProductsStock() {
@@ -113,7 +124,7 @@ public class Basket {
 
         //for every product in the basket
 
-        for (BasketProduct basketProduct : basketProductRepository.getBasketProducts(storeId, userId).orElseGet(HashSet::new)) {
+        for (BasketProduct basketProduct : basketProductRepository.getBasketProducts(storeId, userId).orElseGet(LinkedList::new)) {
             //synchronize product
             synchronized (basketProduct.getProduct()) {
                 //try to decrease the quantity of the product in the store
@@ -147,4 +158,12 @@ public class Basket {
             basketProductRepository.addNewProductToBasket(productId, userId, storeId);
 
     }
+
+    public ConcurrentLinkedQueue<BasketProduct> getFailedProducts() {
+        return failedProducts;
+    }
+    public ConcurrentLinkedQueue<BasketProduct> getSuccessfulProductsList() {
+        return successfulProducts;
+    }
+
 }

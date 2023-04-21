@@ -11,8 +11,18 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ISession {
-    void addProduct(int userId, String productName, int quantity, double price, int storeId) throws NoPermissionException;
-    //generate param documentation
+    /**
+     * #32
+     * require 4.1
+     *
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param productName   the product id
+     * @param category      the product category
+     * @param price         the product price
+     * @param stockQuantity the stock quantity
+     */
+    void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity);
 
     /**
      * #19
@@ -413,6 +423,55 @@ public interface ISession {
      * @return the score
      */
     public float getStoreScore( int userId,int storeId);
+
+    /**
+     * #32
+     * require 4.1
+     * @param userId    the user id
+     * @param storeId   the store id
+     * @param productId the product id
+     * @param name      the name of the product
+     */
+    void setProductName(int userId, int storeId, int productId, String name);
+
+    /**
+     * #32
+     * require 4.1
+     * @param userId    the user id
+     * @param storeId   the store id
+     * @param productId the product id
+     * @param category  the category of the product
+     */
+    void setProductCategory(int userId, int storeId, int productId, String category);
+
+    /**
+     * #32
+     * require 4.1
+     * @param userId    the user id
+     * @param storeId   the store id
+     * @param productId the product id
+     * @param price     the price of the product
+     */
+    void setProductPrice(int userId, int storeId, int productId, double price);
+
+    /**
+     * #32
+     * require 4.1
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param productId     the product id
+     * @param stockQuantity the stock quantity of the product
+     */
+    void setProductStockQuantity(int userId, int storeId, int productId, int stockQuantity);
+
+    /**
+     * #32
+     * require 4.1
+     * @param userId    the user id
+     * @param storeId   the store id
+     * @param productId the product id to remove
+     */
+    void removeProduct(int userId, int storeId, int productId);
 
 
     /**

@@ -4,6 +4,7 @@ import BGU.Group13B.backend.Repositories.Implementations.AcutionRepositoryImpl.A
 import BGU.Group13B.backend.Repositories.Implementations.BIDRepositoryImpl.BIDRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.BasketProductRepositoryImpl.BasketProductRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.BasketReposistoryImpl.BasketRepositoryAsHashMap;
+import BGU.Group13B.backend.Repositories.Implementations.IStoreScoreRepository.StoreScoreImplNotPer;
 import BGU.Group13B.backend.Repositories.Implementations.MessageRepositoryImpl.MessageRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.ProductDiscountsRepositoryImpl.ProductDiscountsRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.ProductHistoryRepositoryImpl.ProductHistoryRepositoryAsList;
@@ -43,6 +44,7 @@ public class SingletonCollection {
     private static final IAuctionRepository auctionRepository;
     private static final IProductHistoryRepository productHistoryRepository;
     private static final IProductDiscountsRepository productDiscountsRepository;
+    private static final IStoreScore storeScoreRepository;
 
 
     /**
@@ -84,6 +86,7 @@ public class SingletonCollection {
         basketProductRepository = new BasketProductRepositoryAsHashMap();
         productHistoryRepository = new ProductHistoryRepositoryAsList();
         productDiscountsRepository = new ProductDiscountsRepositoryAsHashMap();
+        storeScoreRepository = new StoreScoreImplNotPer();
 
 
         //adapters
@@ -181,6 +184,12 @@ public class SingletonCollection {
 
     public static IProductHistoryRepository getProductHistoryRepository() { return productHistoryRepository;}
 
+    public static IStoreScore getStoreScoreRepository() { return storeScoreRepository; }
+
+    public static IProductDiscountsRepository getProductDiscountsRepository() {
+        return SingletonCollection.productDiscountsRepository;
+    }
+
     /**
      * <h1>setters (for callbacks)</h1>
      */
@@ -190,10 +199,6 @@ public class SingletonCollection {
 
     public static void setCalculatePriceOfBasket(CalculatePriceOfBasket calculatePriceOfBasket) {
         SingletonCollection.calculatePriceOfBasket = calculatePriceOfBasket;
-    }
-
-    public static IProductDiscountsRepository getProductDiscountsRepository() {
-        return SingletonCollection.productDiscountsRepository;
     }
 }
 

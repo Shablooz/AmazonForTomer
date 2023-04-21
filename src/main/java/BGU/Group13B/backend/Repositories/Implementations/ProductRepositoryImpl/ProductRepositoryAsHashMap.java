@@ -3,15 +3,18 @@ package BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
 import BGU.Group13B.backend.storePackage.Product;
 
+import java.util.Comparator;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ProductRepositoryAsHashMap implements IProductRepository {
 
-    private final ConcurrentHashMap<Integer/*storeId*/, Set<Product>> storeProducts;
+    private final ConcurrentHashMap<Integer/*storeId*/, ConcurrentSkipListSet<Product>> storeProducts;
+    private final AtomicInteger productIdCounter = new AtomicInteger(0);
 
     public ProductRepositoryAsHashMap() {
         this.storeProducts = new ConcurrentHashMap<>();
@@ -20,22 +23,25 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
 
     @Override
     public Optional<Set<Product>> getStoreProducts(int storeId) {
-        return Optional.empty();
-    }
-
-    public Product getStoreProductById(int productId,int storeId){
-        return storeProducts.values().stream().flatMap(Set::stream).filter(product -> product.getProductId() == productId && product.getStoreId()==storeId)
-                .findFirst().orElseThrow(() -> new NoSuchElementException("Product not found"));
+        return Optional.ofNullable(storeProducts.get(storeId));
     }
 
     @Override
     public void removeStoreProduct(int productId, int storeId) {
-
+        getStoreProducts(storeId).orElseThrow(
+                () -> new IllegalArgumentException("Store " + storeId + " not found")
+        ).removeIf(product -> product.getProductId() == productId);
     }
 
     @Override
-    public void addProduct(int StoreId) {
-
+    public int addProduct(int storeId, String name, String category, double price, int maxAmount) {
+        if (!storeProducts.containsKey(storeId))
+            storeProducts.put(storeId, new ConcurrentSkipListSet<>(Comparator.comparingInt(Product::getProductId)));
+        synchronized (this) {
+            int productId = productIdCounter.getAndIncrement();
+            storeProducts.get(storeId).add(new Product(productId, storeId, name, category, price, maxAmount));
+            return productId;
+        }
     }
 
     @Override
@@ -58,7 +64,15 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
         return null;
     }
 
-
+    @Override
+    public Product getStoreProductById(int productId, int storeId) {
+        return getStoreProducts(storeId).orElseThrow(
+                        () -> new IllegalArgumentException("Store " + storeId + " not found")
+                ).stream().filter(product -> product.getProductId() == productId).
+                findFirst().orElseThrow(
+                        () -> new IllegalArgumentException("Product " + productId + " not found in store " + storeId)
+                );
+    }
 
 /*    @Override
     public double calculatePrice(int storeId, int productId, int productQuantity, String couponCode) {

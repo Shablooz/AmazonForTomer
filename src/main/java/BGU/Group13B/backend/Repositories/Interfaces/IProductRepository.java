@@ -12,7 +12,7 @@ public interface IProductRepository {//deeded because it contains the product qu
 
     void removeStoreProduct(int productId, int storeId);
 
-    void addProduct(int StoreId /*to complete*/);//generate unique productId thanks:)
+    int addProduct(int storeId, String name, String category, double price, int stockQuantity);
 
     List<Product> getProductByName(String name);
 

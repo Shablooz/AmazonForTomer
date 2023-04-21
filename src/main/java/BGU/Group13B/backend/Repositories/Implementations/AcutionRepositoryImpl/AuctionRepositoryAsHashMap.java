@@ -31,7 +31,8 @@ public class AuctionRepositoryAsHashMap implements IAuctionRepository {
             storeAuctionsList.add(new PublicAuction(productId, startingPrice, startingPrice, endTime));
             scheduleAuctionEnd(storeId, productId, endTime);
         } else {
-            storeAuctions.put(storeId, List.of(new PublicAuction(productId, startingPrice, startingPrice, endTime)));
+            List<PublicAuction> auctions = new LinkedList<>(List.of(new PublicAuction(productId, startingPrice, startingPrice, endTime)));
+            storeAuctions.put(storeId, auctions);
             scheduleAuctionEnd(storeId, productId, endTime);
         }
     }
