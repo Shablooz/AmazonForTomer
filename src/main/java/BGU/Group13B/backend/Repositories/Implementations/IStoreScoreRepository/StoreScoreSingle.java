@@ -35,4 +35,10 @@ public class StoreScoreSingle implements IStoreScore {
         implementations.putIfAbsent(storeId,new StoreScoreImplNotPer());
         return implementations.get(storeId).getStoreScore(storeId);
     }
+
+    @Override
+    public int getNumberOfScores(int storeId) {
+        implementations.putIfAbsent(storeId,new StoreScoreImplNotPer());
+        return implementations.get(storeId).getNumberOfScores(storeId);
+    }
 }
