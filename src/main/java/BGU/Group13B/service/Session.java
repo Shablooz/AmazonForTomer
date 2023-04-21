@@ -1,6 +1,7 @@
 package BGU.Group13B.service;
 
 import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepositoryAsHashmap;
+import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepositoryAsHashmap;
 import BGU.Group13B.backend.User.Message;
@@ -18,13 +19,15 @@ import java.util.List;
 
 class Session implements ISession {
     private final Market market;
-    UserRepositoryAsHashmap userRepositoryAsHashmap;
+    IUserRepository userRepositoryAsHashmap;
 
     public Session(Market market) {
         this.market = market;
 
         //callbacks initialization
         SingletonCollection.setAddToUserCart(this::addToCart);
+        this.userRepositoryAsHashmap = SingletonCollection.getUserRepository();
+
     }
 
     @Override
@@ -95,13 +98,14 @@ class Session implements ISession {
     }
 
     @Override
-    public synchronized void register(int userId, String username, String password, String email) {
+    public synchronized void register(int userId, String username, String password,
+                                      String email,String answer1,String answer2,String answer3) {
         User user = userRepositoryAsHashmap.getUser(userId);
         try {
             //the first "if" might not be necessary when we will connect to web
             if (!user.isRegistered()) {
                 if (userRepositoryAsHashmap.checkIfUserExists(username) != null) {
-                    user.register(username, password, email);
+                    user.register(username, password, email,answer1,answer2,answer3);
                 } else {
                     System.out.println("user with this username already exists!");
                 }
@@ -149,13 +153,14 @@ class Session implements ISession {
         market.filterByStoreRank(minRating, maxRating);
     }
 
+
     @Override
-    public int login(int userID, String username, String password) {
+    public int login(int userID, String username, String password,String answer1,String answer2,String answer3) {
         try {
             //gets the user that we want to log into
             User user = userRepositoryAsHashmap.checkIfUserExists(username);
             synchronized (user) {
-                user.login(username, password);
+                user.login(username, password,answer1,answer2,answer3);
                 //removes the current guest profile to swap to the existing member one
                 userRepositoryAsHashmap.removeUser(userID);
                 //gets the new id - of the user we're logging into
@@ -212,7 +217,7 @@ class Session implements ISession {
         }
     }
 
- 
+
     public Message getComplaint(int userId) {
         try {
            return  userRepositoryAsHashmap.getUser(userId).getComplaint();
@@ -400,7 +405,6 @@ class Session implements ISession {
         catch (Exception e){
             //TODO: handle exception
         }
-
     }
 
     @Override
@@ -441,6 +445,26 @@ class Session implements ISession {
         catch (Exception e){
             //TODO: handle exception
         }
+    }
+
+    @Override
+    public boolean SecurityAnswer1Exists(int userId) {
+        return userRepositoryAsHashmap.getUser(userId).SecurityAnswer1Exists();
+    }
+
+    @Override
+    public boolean SecurityAnswer2Exists(int userId) {
+        return userRepositoryAsHashmap.getUser(userId).SecurityAnswer2Exists();
+    }
+
+    @Override
+    public boolean SecurityAnswer3Exists(int userId) {
+        return userRepositoryAsHashmap.getUser(userId).SecurityAnswer3Exists();
+    }
+
+    @Override
+    public boolean checkIfQuestionsExist(int userId) {
+        return SecurityAnswer1Exists(userId) || SecurityAnswer2Exists(userId) || SecurityAnswer3Exists(userId);
     }
 
 }
