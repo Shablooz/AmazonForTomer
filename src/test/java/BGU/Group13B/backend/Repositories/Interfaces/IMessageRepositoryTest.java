@@ -4,6 +4,7 @@ import BGU.Group13B.backend.Repositories.Implementations.MessageRepositoryImpl.M
 import BGU.Group13B.backend.User.Message;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
@@ -49,7 +50,7 @@ class IMessageRepositoryTest {
     void tearDown() {
     }
 
-    @Test
+    @RepeatedTest(15)
     void sendMassage_ManyToMany() {
         Message[] messages = constructMessages(10, null);
 
@@ -72,7 +73,7 @@ class IMessageRepositoryTest {
         startAndWait(readers);
     }
 
-    @Test
+    @RepeatedTest(15)
     void sendMassage_ManyToOne() {
         Message[] messages = constructMessages(10, "1");
 
@@ -99,7 +100,7 @@ class IMessageRepositoryTest {
         assertEquals(10, messagesSet.size());
     }
 
-    @Test
+    @RepeatedTest(15)
     void readUnreadMassage() {
         Message[] messages = constructMessages(10, "1");
 
@@ -124,7 +125,7 @@ class IMessageRepositoryTest {
         startAndWait(readers);
     }
 
-    @Test
+    @RepeatedTest(15)
     void readReadMassage() {
         Message[] messages = constructMessages(10, "1");
 
@@ -140,7 +141,7 @@ class IMessageRepositoryTest {
 
     }
 
-    @Test
+    @RepeatedTest(15)
     void markAsRead() {
         Message[] messages = constructMessages(10, "1");
 
@@ -155,7 +156,7 @@ class IMessageRepositoryTest {
         assertThrows(Exception.class, () -> messageRepository.readReadMassage("1"));
     }
 
-    @Test
+    @RepeatedTest(15)
     void refreshOldMessages() {
         Message[] messages = constructMessages(10, "1");
 

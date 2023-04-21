@@ -5,6 +5,7 @@ import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.service.SingletonCollection;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
@@ -21,12 +22,11 @@ class IStoreMessagesRepositoryTest {
     }
 
     private void startAndWait(Thread[] threads) {
-        for (int i = 0; i < threads.length; i++)
-            threads[i].start();
+        for (Thread thread : threads) thread.start();
 
-        for (int i = 0; i < threads.length; i++)
+        for (Thread thread : threads)
             try {
-                threads[i].join();
+                thread.join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -55,7 +55,7 @@ class IStoreMessagesRepositoryTest {
     }
 
 
-    @Test
+    @RepeatedTest(15)
     void sendMassage() {
 
         storeMessagesRepository.sendMassage(Message.constractMessage("Test", 1, "Test", "Test", "Test"), 1, 1);
@@ -65,7 +65,7 @@ class IStoreMessagesRepositoryTest {
         assertEquals(message.getSenderId(), "Test");
     }
 
-    @Test
+    @RepeatedTest(15)
     void sendMassage_TreadVersion() {
         Thread[] threads = new Thread[10];
         Message[] messages = constructMessages(10);
@@ -90,7 +90,7 @@ class IStoreMessagesRepositoryTest {
 
     }
 
-    @Test
+    @RepeatedTest(15)
     void readUnreadMassage() {
         Message message = constructMessages(1)[0];
         storeMessagesRepository.sendMassage(message, 1, 1);
@@ -98,7 +98,7 @@ class IStoreMessagesRepositoryTest {
         assertEquals(message, message1);
     }
 
-    @Test
+    @RepeatedTest(15)
     void readUnreadMassage_TreadVersion_One_Store() {
         int messageNum = 1;
         int threadNum = 10;
@@ -133,7 +133,7 @@ class IStoreMessagesRepositoryTest {
     }
 
 
-    @Test
+    @RepeatedTest(15)
     void readReadMassage_TreadVersion() {
         Message[] messages = constructMessages(2);
         for (int i = 0; i < messages.length; i++) {
@@ -161,7 +161,7 @@ class IStoreMessagesRepositoryTest {
     }
 
 
-    @Test
+    @RepeatedTest(15)
     void markAsRead() {
         Message message = constructMessages(1)[0];
         storeMessagesRepository.sendMassage(message, 1, 1);
@@ -170,7 +170,7 @@ class IStoreMessagesRepositoryTest {
         assertEquals(message, message1);
     }
 
-    @Test
+    @RepeatedTest(15)
     void markAsRead_TreadVersion() {
         Message[] messages = constructMessages(10);
         Thread[] senders = new Thread[10];
@@ -208,14 +208,14 @@ class IStoreMessagesRepositoryTest {
         startAndWait(senders);
         startAndWait(readers);
         for (int i = 0; i < 10; i++) {
-            Message message1 = storeMessagesRepository.readReadMassage(1, 0);
+             storeMessagesRepository.readReadMassage(1, 0);
         }
         assertThrows(Exception.class, () -> {
             storeMessagesRepository.readReadMassage(1, 0);
         });
     }
 
-    @Test
+    @RepeatedTest(15)
     void refreshOldMassage() {
         Message[] messages = constructMessages(10);
         for (int i = 0; i < messages.length; i++)
@@ -229,7 +229,7 @@ class IStoreMessagesRepositoryTest {
         assertEquals(storeMessagesRepository.readReadMassage(1, 1), messages[0]);
     }
 
-    @Test
+    @RepeatedTest(15)
     void refreshOldMassage_ThreadVersion() {
         Message[] messages = constructMessages(10);
         for (int i = 0; i < messages.length; i++)

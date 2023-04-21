@@ -3,6 +3,7 @@ package BGU.Group13B.backend.Repositories.Interfaces;
 import BGU.Group13B.backend.Repositories.Implementations.IStoreScoreRepository.StoreScoreSingle;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -30,12 +31,11 @@ class IStoreScoreTest {
     }
 
     private void startAndWait(Thread[] threads) {
-        for (int i = 0; i < threads.length; i++)
-            threads[i].start();
+        for (Thread thread : threads) thread.start();
 
-        for (int i = 0; i < threads.length; i++)
+        for (Thread thread : threads)
             try {
-                threads[i].join();
+                thread.join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -52,7 +52,7 @@ class IStoreScoreTest {
     void tearDown() {
     }
 
-    @Test
+    @RepeatedTest(15)
     void addStoreScore() {
         int sum = 0;
         int counter = 0;
@@ -72,7 +72,7 @@ class IStoreScoreTest {
 
     }
 
-    @Test
+    @RepeatedTest(15)
     void addStoreScore_MultiThread() {
         int[] scores = random_scores(10);
         float res = (float) Arrays.stream(scores).sum() / scores.length;
@@ -89,7 +89,7 @@ class IStoreScoreTest {
         assertEquals(res, storeScore.getStoreScore(storeId));
     }
 
-    @Test
+    @RepeatedTest(15)
     void removeStoreScore_MultiThread() {
         int[] scores = random_scores(10);
         float res = (float) Arrays.stream(scores).sum() / scores.length;
@@ -109,7 +109,7 @@ class IStoreScoreTest {
         assertEquals(0, storeScore.getNumberOfScores(storeId));
     }
 
-    @Test
+    @RepeatedTest(15)
     void modifyStoreScore() {
         int[] scores = random_scores(10);
         for (int i = 0; i < scores.length; i++)
@@ -129,7 +129,9 @@ class IStoreScoreTest {
         assertEquals(10, storeScore.getNumberOfScores(storeId));
     }
 
-    @Test
+
+
+    @RepeatedTest(15)
     void getStoreScore() {
         int[] scores = random_scores(10);
         for (int i = 0; i < scores.length; i++)

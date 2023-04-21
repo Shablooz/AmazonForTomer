@@ -73,9 +73,7 @@ public class MessageRepositorySingle implements IMessageRepository {
     }
     private void addEntryIfNotExist(String receiverId)
     {
-        if(!checkIfExist(receiverId)) {
-            unreadMessages.put(receiverId, new ConcurrentLinkedDeque<>());
-            readMessages.put(receiverId, new ConcurrentLinkedQueue<>());
-        }
+            unreadMessages.putIfAbsent(receiverId, new ConcurrentLinkedDeque<>());
+            readMessages.putIfAbsent(receiverId, new ConcurrentLinkedQueue<>());
     }
 }

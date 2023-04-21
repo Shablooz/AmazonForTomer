@@ -4,6 +4,7 @@ import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.Re
 import BGU.Group13B.backend.storePackage.Review;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -46,12 +47,11 @@ class IRepositoryReviewTest {
     }
 
     private void startAndWait(Thread[] threads) {
-        for (int i = 0; i < threads.length; i++)
-            threads[i].start();
+        for (Thread thread : threads) thread.start();
 
-        for (int i = 0; i < threads.length; i++)
+        for (Thread thread : threads)
             try {
-                threads[i].join();
+                thread.join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -68,7 +68,7 @@ class IRepositoryReviewTest {
     void tearDown() {
     }
 
-    @Test
+    @RepeatedTest(15)
     void addReview() {
         Review[] review = reviewsCreator(10);
         for (int i = 0; i < 10; i++) {
@@ -79,7 +79,7 @@ class IRepositoryReviewTest {
         }
     }
 
-    @Test
+    @RepeatedTest(15)
     void addReviewTwice() {
         Review review = reviewsCreator(1)[0];
         repositoryReview.addReview(review.getReview(), review.getStoreId(), review.getProductId(), review.getUserId());
@@ -87,7 +87,7 @@ class IRepositoryReviewTest {
 
     }
 
-    @Test
+    @RepeatedTest(15)
     void addReview_multiThread() {
         Review[] review = reviewsCreator(10);
 
@@ -105,7 +105,7 @@ class IRepositoryReviewTest {
         }
     }
 
-    @Test
+    @RepeatedTest(15)
     void removeReview() {
         Review[] review = reviewsCreator(10);
         for (int i = 0; i < 10; i++) {
@@ -124,7 +124,7 @@ class IRepositoryReviewTest {
         }
     }
 
-    @Test
+    @RepeatedTest(15)
     void getReview() {
         Review[] review = reviewsCreator(10);
         for (int i = 0; i < 10; i++) {
@@ -135,7 +135,7 @@ class IRepositoryReviewTest {
         }
     }
 
-    @Test
+    @RepeatedTest(15)
     void getReview_multiThread() {
         Review[] review = reviewsCreator(10);
         for (int i = 0; i < 10; i++) {
@@ -153,7 +153,7 @@ class IRepositoryReviewTest {
 
     }
 
-    @Test
+    @RepeatedTest(15)
     void getProductScore() {
         int[] scores = random_scores(10);
         for (int i = 0; i < scores.length; i++)
@@ -163,7 +163,7 @@ class IRepositoryReviewTest {
 
     }
 
-    @Test
+    @RepeatedTest(15)
     void addAndSetProductScore_multiThread() {
         int[] scores = random_scores(10);
         float res = (float) Arrays.stream(scores).sum() / scores.length;
@@ -181,7 +181,7 @@ class IRepositoryReviewTest {
     }
 
 
-    @Test
+    @RepeatedTest(15)
     void addAndSetProductScore() {
         int sum = 0;
         int counter = 0;
@@ -200,10 +200,10 @@ class IRepositoryReviewTest {
         assertEquals((float) sum / counter, repositoryReview.getProductScore(storeId, productId));
     }
 
-    @Test
+    @RepeatedTest(15)
     void removeProductScore_multiThread() {
         int[] scores = random_scores(10);
-        float res = (float) Arrays.stream(scores).sum() / scores.length;
+
         for (int i = 0; i < scores.length; i++)
             repositoryReview.addAndSetProductScore(storeId, productId, i, scores[i]);
 
