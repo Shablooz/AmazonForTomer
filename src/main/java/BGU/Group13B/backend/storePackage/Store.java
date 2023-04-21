@@ -78,6 +78,8 @@ public class Store {
         this.rank = 0;
         this.purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
         this.storeScore = SingletonCollection.getStoreScoreRepository();
+
+        this.storePurchasePolicyRepository.insertPurchasePolicy(new PurchasePolicy(this.storeId));
     }
 
     //used only for testing

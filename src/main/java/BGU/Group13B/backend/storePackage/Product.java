@@ -40,6 +40,8 @@ public class Product {
         this.discountPolicy = new DiscountPolicy();
         this.repositoryReview = SingletonCollection.getReviewRepository();
         this.productDiscounts = SingletonCollection.getProductDiscountsRepository();
+
+        this.productPurchasePolicy.insertPurchasePolicy(storeId, new PurchasePolicy(productId));
     }
 
     public String getName() {
