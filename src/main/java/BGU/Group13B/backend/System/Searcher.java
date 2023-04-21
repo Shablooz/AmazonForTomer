@@ -32,41 +32,45 @@ public class Searcher {
         return products;
     }
     public List<Product> filterByPriceRange(int minPrice, int maxPrice) {
-        checkProducts();
+        List<Product> newProducts = new LinkedList<>();
         for (Product product : products) {
-            if (product.getPrice() < minPrice || product.getPrice() > maxPrice) {
-                products.remove(product);
+            if (product.getPrice() >= minPrice && product.getPrice() <= maxPrice) {
+                newProducts.add(product);
             }
         }
+        products = newProducts;
         return products;
     }
     public List<Product> filterByProductRank(int minRating, int maxRating) {
-        checkProducts();
+        List<Product> newProducts = new LinkedList<>();
         for (Product product : products) {
-            if (product.getRank() < minRating || product.getRank() > maxRating) {
-                products.remove(product);
+            if (product.getRank() >= minRating && product.getRank() <= maxRating) {
+                newProducts.add(product);
             }
         }
+        products = newProducts;
         return products;
     }
     public List<Product> filterByCategory(String category) {
-        checkProducts();
+        List<Product> newProducts = new LinkedList<>();
         for (Product product : products) {
-            if (!product.getCategory().toLowerCase().equals(category.toLowerCase())) {
-                products.remove(product);
+            if (product.getCategory().toLowerCase().equals(category.toLowerCase())) {
+                newProducts.add(product);
             }
         }
+        products = newProducts;
         return products;
     }
     //filter by store rating
     public List<Product> filterByStoreRank(int minRating, int maxRating) {
-        checkProducts();
+        List<Product> newProducts = new LinkedList<>();
         for (Product product : products) {
-            if (storeRepository.getStore(product.getStoreId()).getRank() < minRating ||
-                    storeRepository.getStore(product.getStoreId()).getRank() > maxRating) {
-                products.remove(product);
+            if (storeRepository.getStore(product.getStoreId()).getRank() >= minRating &&
+                    storeRepository.getStore(product.getStoreId()).getRank() <= maxRating) {
+                newProducts.add(product);
             }
         }
+        products = newProducts;
         return products;
     }
 

@@ -4,31 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3436d65a-5e76-4e77-818d-f39d961d7bb1" name="Changes" comment="Done (#53) WITHOUT TESTS.">
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_39_PM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_39_PM__Changes_.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_42_PM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_42_PM__Changes_.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_44_PM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_44_PM__Changes_.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_1.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_1.xml" afterDir="false" />
+    <list default="true" id="3436d65a-5e76-4e77-818d-f39d961d7bb1" name="Changes" comment="adding new code to &quot;search and filter&quot; feature and add tests .2.2 #18">
       <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_21_2023_2_35_PM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_21_2023_2_35_PM__Changes_.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_21_2023_9_56_AM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_21_2023_9_56_AM__Changes_.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_4_20_2023_11_54_AM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_4_20_2023_11_54_AM__Changes_.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_4_21_2023_2_37_PM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_4_21_2023_2_37_PM__Changes_.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductRepositoryImpl/ProductRepositoryAsHashMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductRepositoryImpl/ProductRepositoryAsHashMap.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/ISession.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/ISession.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/Session.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/Session.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/User/BasketTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/User/BasketTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/service/ProjectTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/service/ProjectTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/service/ProxySession.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/service/ProxySession.java" afterDir="false" />
-    </list>
-    <list id="6807ac3c-79c2-454f-8785-d28217089695" name="Changes by Shust" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/BasketProductRepositoryImpl/BasketProductRepositoryAsHashMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/BasketProductRepositoryImpl/BasketProductRepositoryAsHashMap.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductRepositoryImpl/ProductRepositoryAsHashMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductRepositoryImpl/ProductRepositoryAsHashMap.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IBasketProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IBasketProductRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IProductRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/Basket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/Basket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/User/BasketTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/User/BasketTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/StoreRepositoryImpl/StoreRepositoryAsList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/StoreRepositoryImpl/StoreRepositoryAsList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IStoreRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IStoreRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/System/Searcher.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/System/Searcher.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/MarketTests/marketTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/MarketTests/marketTests.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,17 +23,17 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="JUnit5 Test Class" />
         <option value="Record" />
         <option value="Interface" />
         <option value="Class" />
-        <option value="JUnit5 Test Class" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="logAsGuest" />
+        <entry key="$PROJECT_DIR$" value="master" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -56,25 +41,6 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="jar://$MAVEN_REPOSITORY$/org/springframework/data/spring-data-commons/2.4.0/spring-data-commons-2.4.0.jar!/org/springframework/data/util/Pair.class" root0="SKIP_INSPECTION" />
-  </component>
-  <component name="LineStatusTrackerManager">
-    <file path="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/User/BasketTest.java">
-      <ranges>
-        <range start1="84" end1="86" start2="84" end2="86" changelist="6807ac3c-79c2-454f-8785-d28217089695" />
-        <range start1="113" end1="114" start2="113" end2="114" changelist="6807ac3c-79c2-454f-8785-d28217089695" />
-        <range start1="124" end1="125" start2="124" end2="125" changelist="3436d65a-5e76-4e77-818d-f39d961d7bb1" />
-      </ranges>
-    </file>
-    <file path="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductRepositoryImpl/ProductRepositoryAsHashMap.java">
-      <ranges>
-        <range start1="32" end1="33" start2="32" end2="33" changelist="6807ac3c-79c2-454f-8785-d28217089695" />
-        <range start1="37" end1="38" start2="37" end2="38" changelist="6807ac3c-79c2-454f-8785-d28217089695" />
-        <range start1="42" end1="43" start2="42" end2="42" changelist="3436d65a-5e76-4e77-818d-f39d961d7bb1" />
-        <range start1="76" end1="80" start2="75" end2="78" changelist="6807ac3c-79c2-454f-8785-d28217089695" />
-        <range start1="90" end1="91" start2="88" end2="89" changelist="6807ac3c-79c2-454f-8785-d28217089695" />
-        <range start1="115" end1="116" start2="113" end2="114" changelist="6807ac3c-79c2-454f-8785-d28217089695" />
-      </ranges>
-    </file>
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -95,17 +61,16 @@
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
     "create.test.in.the.same.root": "true",
     "git-widget-placeholder": "rateProduct__#25",
-    "last_opened_file_path": "C:/Users/eyalz/OneDrive/Desktop/New folder/trading-system",
+    "last_opened_file_path": "C:/Users/ynal6/Desktop/School/Semester D/nitutz/assignment3/superlee/dev/src/Test",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
     "settings.editor.selected.configurable": "editor.preferences.fonts.default",
-    "spring.configuration.checksum": "2eea27aecebaecc0287d463dc0733f7d",
+    "spring.configuration.checksum": "0bff9c3a4f5bac17f71b3dede1d050f7",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -124,35 +89,12 @@
       <recent name="" />
     </key>
     <key name="CreateTestDialog.RecentsKey">
-      <recent name="BGU.Group13B.backend.User" />
       <recent name="BGU.Group13B.service" />
       <recent name="BGU.Group13B.backend.storePackage" />
       <recent name="BGU.Group13B" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.All in TradingSystemProject">
-    <configuration name="All in TradingSystemProject" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="TradingSystemProject" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="TEST_OBJECT" value="package" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="BGU.Group13B.backend.storePackage in trading-system" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="trading-system" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="BGU.Group13B.backend.storePackage.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="BGU.Group13B.backend.storePackage" />
-      <option name="TEST_OBJECT" value="package" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
+  <component name="RunManager" selected="JUnit.marketTests">
     <configuration name="StoreTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="TradingSystemProject" />
       <extension name="coverage">
@@ -168,13 +110,76 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="marketTests" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="TradingSystemProject" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="BGU.Group13B.MarketTests.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="BGU.Group13B.MarketTests" />
+      <option name="MAIN_CLASS_NAME" value="BGU.Group13B.MarketTests.marketTests" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="marketTests.filterByPriceRange" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="TradingSystemProject" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="BGU.Group13B.MarketTests.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="BGU.Group13B.MarketTests" />
+      <option name="MAIN_CLASS_NAME" value="BGU.Group13B.MarketTests.marketTests" />
+      <option name="METHOD_NAME" value="filterByPriceRange" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="marketTests.filterByStoreRank_EmptyList" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="TradingSystemProject" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="BGU.Group13B.MarketTests.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="BGU.Group13B.MarketTests" />
+      <option name="MAIN_CLASS_NAME" value="BGU.Group13B.MarketTests.marketTests" />
+      <option name="METHOD_NAME" value="filterByStoreRank_EmptyList" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="marketTests.searchProductByName" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="TradingSystemProject" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="BGU.Group13B.MarketTests.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="BGU.Group13B.MarketTests" />
+      <option name="MAIN_CLASS_NAME" value="BGU.Group13B.MarketTests.marketTests" />
+      <option name="METHOD_NAME" value="searchProductByName" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.All in TradingSystemProject" />
+        <item itemvalue="JUnit.marketTests" />
+        <item itemvalue="JUnit.marketTests.filterByPriceRange" />
+        <item itemvalue="JUnit.marketTests.filterByStoreRank_EmptyList" />
         <item itemvalue="JUnit.StoreTest" />
-        <item itemvalue="JUnit.BGU.Group13B.backend.storePackage in trading-system" />
-        <item itemvalue="JUnit.StoreTest" />
-        <item itemvalue="JUnit.All in TradingSystemProject" />
+        <item itemvalue="JUnit.marketTests.searchProductByName" />
       </list>
     </recent_temporary>
   </component>
@@ -193,7 +198,6 @@
       <workItem from="1680681882942" duration="16736000" />
       <workItem from="1681475547708" duration="1108000" />
       <workItem from="1681476828448" duration="49000" />
-      <workItem from="1682080739231" duration="2047000" />
     </task>
     <task id="LOCAL-00001" summary="save work">
       <created>1680688726166</created>
@@ -237,7 +241,42 @@
       <option name="project" value="LOCAL" />
       <updated>1681392081418</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL‎-00007" summary="Adding add to cart feature- updated.2.3 #19">
+      <created>1681935559924</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL‎-00007" />
+      <option name="project" value="LOCAL‎" />
+      <updated>1681935559924</updated>
+    </task>
+    <task id="LOCAL‎-00008" summary="Adding add to cart feature- updated.2.3 #19">
+      <created>1681935694320</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL‎-00008" />
+      <option name="project" value="LOCAL‎" />
+      <updated>1681935694320</updated>
+    </task>
+    <task id="LOCAL‎-00009" summary="managing cart feature .2.4 #20">
+      <created>1681945111740</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL‎-00009" />
+      <option name="project" value="LOCAL‎" />
+      <updated>1681945111740</updated>
+    </task>
+    <task id="LOCAL‎-00010" summary="adding new code to &quot;search and filter&quot; feature and add tests .2.2 #18">
+      <created>1682015705189</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL‎-00010" />
+      <option name="project" value="LOCAL‎" />
+      <updated>1682015705189</updated>
+    </task>
+    <task id="LOCAL‎-00011" summary="adding new code to &quot;search and filter&quot; feature and add tests .2.2 #18">
+      <created>1682015928691</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL‎-00011" />
+      <option name="project" value="LOCAL‎" />
+      <updated>1682015928691</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -254,7 +293,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="bid_purchase_2.5.4_#53" />
+                        <option value="HEAD" />
                       </list>
                     </value>
                   </entry>
@@ -273,7 +312,26 @@
     <MESSAGE value="adding Discount.java for the use of calculating the price." />
     <MESSAGE value="save work 2" />
     <MESSAGE value="Done (#53) WITHOUT TESTS." />
-    <option name="LAST_COMMIT_MESSAGE" value="Done (#53) WITHOUT TESTS." />
+    <MESSAGE value="Adding add to cart feature- updated.2.3 #19" />
+    <MESSAGE value="managing cart feature .2.4 #20" />
+    <MESSAGE value="adding new code to &quot;search and filter&quot; feature and add tests .2.2 #18" />
+    <option name="LAST_COMMIT_MESSAGE" value="adding new code to &quot;search and filter&quot; feature and add tests .2.2 #18" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/BGU/Group13B/MarketTests/marketTests.java</url>
+          <line>208</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/BGU/Group13B/MarketTests/marketTests.java</url>
+          <line>136</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
