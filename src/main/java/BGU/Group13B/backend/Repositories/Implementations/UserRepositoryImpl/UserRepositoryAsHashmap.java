@@ -43,7 +43,16 @@ public class UserRepositoryAsHashmap implements IUserRepository {
         if(user != null){
             return user;
         }
-        throw new IllegalArgumentException("cannot find user with this username");
+        return null;
+    }
+
+    @Override
+    public boolean checkIfUserWithEmailExists(String email) throws IllegalArgumentException {
+        for (Map.Entry<Integer, User> entry : integerUserHashMap.entrySet()){
+            if(email.equals(entry.getValue().getEmail()))
+                return true;
+        }
+        return false;
     }
 
 

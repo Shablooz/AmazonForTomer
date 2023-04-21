@@ -41,7 +41,6 @@ class BasketTest {
                 thenReturn(Mockito.mock(IProductRepository.class));*/ //remember
 
         productRepository = SingletonCollection.getProductRepository();
-
         basketProductRepository = new BasketProductRepositoryAsHashMap();
 
         //initCalculatePriceOfBasket(market);
