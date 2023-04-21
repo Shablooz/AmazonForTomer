@@ -35,27 +35,27 @@ public class Market {
 
     //Tomer
     //#27
-    public void sendMassage(Message message, String userName,int storeId) { //need to check how to send message back to the user
-        storeRepository.getStore(storeId).sendMassage(message,userName,storeId);
+    public void sendMassage(Message message, int userId,int storeId) { //need to check how to send message back to the user
+        storeRepository.getStore(storeId).sendMassage(message,userId);
     }
     //#42
-    public Message getUnreadMessages(String userName,int storeId)throws NoPermissionException {
+    public Message getUnreadMessages(int userId,int storeId)throws NoPermissionException {
 
-        return storeRepository.getStore(storeId).getUnreadMessages(userName,storeId);
+        return storeRepository.getStore(storeId).getUnreadMessages(userId);
     }
     //#42
-    public Message getReadMessages(String userName,int storeId)throws NoPermissionException {
+    public Message getReadMessages(int userId,int storeId)throws NoPermissionException {
 
-        return storeRepository.getStore(storeId).getReadMessages(userName,storeId);
+        return storeRepository.getStore(storeId).getReadMessages(userId);
     }
     //#42
-    public void markAsCompleted(String senderId,int messageId,String userName,int storeId) throws NoPermissionException {
+    public void markAsCompleted(String senderId,int messageId,int userId,int storeId) throws NoPermissionException {
 
-        storeRepository.getStore(storeId).markAsCompleted(senderId,messageId,userName,storeId);
+        storeRepository.getStore(storeId).markAsCompleted(senderId,messageId,userId);
     }
     //#42
-    public void refreshMessages(String userName,int storeId) throws NoPermissionException {
-        storeRepository.getStore(storeId).refreshMessages(userName,storeId);
+    public void refreshMessages(int userId,int storeId) throws NoPermissionException {
+        storeRepository.getStore(storeId).refreshMessages(userId);
     }
 
     public void addReview(String review, int storeId, int productId, int userId){ //TODO:check get store impl
