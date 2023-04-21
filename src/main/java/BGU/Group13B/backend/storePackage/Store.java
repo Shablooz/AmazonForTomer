@@ -15,13 +15,18 @@ import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.permissions.StorePermission;
 import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.AddToUserCart;
-
+import java.util.ArrayList;
 import java.time.LocalDateTime;
 import java.util.Set;
+import BGU.Group13B.service.info.StoreInfo;
+import java.time.LocalDateTime;
+import java.util.*;
+
 
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentSkipListSet;
 
-public class Store implements Comparable<Store> {
+public class Store {
     private final IProductRepository productRepository;
     private final PurchasePolicy purchasePolicy;
     private final DiscountPolicy discountPolicy;
@@ -63,7 +68,7 @@ public class Store implements Comparable<Store> {
         this.storePermission = new StorePermission(founderId);
         this.rank = 0;
         this.purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
-        this.storeScore = new StoreScoreImplNotPer();
+        this.storeScore = SingletonCollection.getStoreScoreRepository();
     }
 
     //used only for testing
@@ -71,7 +76,7 @@ public class Store implements Comparable<Store> {
                  PurchasePolicy purchasePolicy, DiscountPolicy discountPolicy, DeliveryAdapter deliveryAdapter,
                  PaymentAdapter paymentAdapter, AlertManager alertManager, StorePermission storePermission,
                  IStoreDiscountsRepository storeDiscounts, AddToUserCart addToUserCart, IBIDRepository bidRepository,
-                 StoreMessageRepositoryNonPersist storeMessagesRepository, IAuctionRepository auctionRepository,IPurchaseHistoryRepository purchaseHistoryRepository,
+                 StoreMessageRepositoryNonPersist storeMessagesRepository, IAuctionRepository auctionRepository, IPurchaseHistoryRepository purchaseHistoryRepository,
                  IStoreScore storeScore) {
         this.productRepository = productRepository;
         this.purchasePolicy = purchasePolicy;
@@ -85,7 +90,6 @@ public class Store implements Comparable<Store> {
         this.addToUserCart = addToUserCart;
         this.bidRepository = bidRepository;
         this.storeId = storeId;
-        this.rank=0;
         this.purchaseHistoryRepository = purchaseHistoryRepository;
         this.storeName = storeName;
         this.category = category;
@@ -95,134 +99,126 @@ public class Store implements Comparable<Store> {
     }
 
 
-
-    public void sendMassage(Message message,String userName,int userId){
-        storeMessagesRepository.sendMassage(message,this.storeId,userName);
+    public void sendMassage(Message message, String userName, int userId) {
+        storeMessagesRepository.sendMassage(message, this.storeId, userName);
     }
 
     @DefaultOwnerFunctionality
-    public Message getUnreadMessages(String userName,int userId)throws NoPermissionException {
+    public Message getUnreadMessages(String userName, int userId) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId))
             throw new NoPermissionException("User " + userName + " has no permission to read message of store " + this.storeId);
 
-        return storeMessagesRepository.readUnreadMassage(this.storeId,userName);
+        return storeMessagesRepository.readUnreadMassage(this.storeId, userName);
     }
+
     @DefaultOwnerFunctionality
-    public Message getReadMessages(String userName,int userId) throws NoPermissionException {
+    public Message getReadMessages(String userName, int userId) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId))
             throw new NoPermissionException("User " + userName + " has no permission to read message of store " + this.storeId);
-        return storeMessagesRepository.readReadMassage(this.storeId,userName);
+        return storeMessagesRepository.readReadMassage(this.storeId, userName);
     }
+
     @DefaultOwnerFunctionality
-    public void markAsCompleted(String senderId,int messageId,String userName,int userId) throws NoPermissionException{
+    public void markAsCompleted(String senderId, int messageId, String userName, int userId) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId))
             throw new NoPermissionException("User " + userName + " has no permission to mark message as complete of store: " + this.storeId);
-        storeMessagesRepository.markAsRead(senderId,messageId,userName);
+        storeMessagesRepository.markAsRead(senderId, messageId, userName);
     }
 
     @DefaultOwnerFunctionality
-    public void refreshMessages(String userName,int userId) throws NoPermissionException{
+    public void refreshMessages(String userName, int userId) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId))
             throw new NoPermissionException("User " + userName + " has no permission to handle message of store " + this.storeId);
-        storeMessagesRepository.refreshOldMassage(this.storeId,userName);
+        storeMessagesRepository.refreshOldMassage(this.storeId, userName);
     }
 
 
     public void addReview(String review, int userId, int productId) {
-        if(purchaseHistoryRepository.isPurchase(userId,this.storeId,productId))
-            throw new IllegalArgumentException("User with id: "+userId+" did not purchase product with id: "+productId+" from store: "+this.storeId);
-      Product product = productRepository.getProduct(productId, this.storeId);
-      if(product==null)
-          throw new IllegalArgumentException("Product with id: "+productId+" does not exist in store: "+this.storeId);
-      product.addReview(review, userId);
+        if (purchaseHistoryRepository.isPurchase(userId, this.storeId, productId))
+            throw new IllegalArgumentException("User with id: " + userId + " did not purchase product with id: " + productId + " from store: " + this.storeId);
+        Product product = productRepository.getStoreProductById(productId, this.storeId);
+        if (product == null)
+            throw new IllegalArgumentException("Product with id: " + productId + " does not exist in store: " + this.storeId);
+        product.addReview(review, userId);
     }
+
     public void removeReview(int userId, int productId) {
-        Product product = productRepository.getProduct(productId, this.storeId);
-        if(product==null)
-            throw new IllegalArgumentException("Product with id: "+productId+" does not exist in store: "+this.storeId);
+        Product product = productRepository.getStoreProductById(productId, this.storeId);
+        if (product == null)
+            throw new IllegalArgumentException("Product with id: " + productId + " does not exist in store: " + this.storeId);
         product.removeReview(userId);
     }
+
     public Review getReview(int userId, int productId) {
-        Product product = productRepository.getProduct(productId, this.storeId);
-        if(product==null)
-            throw new IllegalArgumentException("Product with id: "+productId+" does not exist in store: "+this.storeId);
+        Product product = productRepository.getStoreProductById(productId, this.storeId);
+        if (product == null)
+            throw new IllegalArgumentException("Product with id: " + productId + " does not exist in store: " + this.storeId);
         return product.getReview(userId);
     }
+
     public float getProductScore(int productId) {
-        Product product = productRepository.getProduct(productId, this.storeId);
-        if(product==null)
-            throw new IllegalArgumentException("Product with id: "+productId+" does not exist in store: "+this.storeId);
+        Product product = productRepository.getStoreProductById(productId, this.storeId);
+        if (product == null)
+            throw new IllegalArgumentException("Product with id: " + productId + " does not exist in store: " + this.storeId);
         return product.getProductScore();
     }
-    public void addAndSetProductScore(int productId,int userId, int score) {
-        if(purchaseHistoryRepository.isPurchase(userId,this.storeId,productId))
-            throw new IllegalArgumentException("User with id: "+userId+" did not purchase product with id: "+productId+" from store: "+this.storeId);
-        Product product = productRepository.getProduct(productId, this.storeId);
-        if(product==null)
-            throw new IllegalArgumentException("Product with id: "+productId+" does not exist in store: "+this.storeId);
-        product.addAndSetScore(userId,score);
+
+    public void addAndSetProductScore(int productId, int userId, int score) {
+        if (purchaseHistoryRepository.isPurchase(userId, this.storeId, productId))
+            throw new IllegalArgumentException("User with id: " + userId + " did not purchase product with id: " + productId + " from store: " + this.storeId);
+        Product product = productRepository.getStoreProductById(productId, this.storeId);
+        if (product == null)
+            throw new IllegalArgumentException("Product with id: " + productId + " does not exist in store: " + this.storeId);
+        product.addAndSetScore(userId, score);
     }
-    public void removeProductScore(int productId,int userId) {
-        Product product = productRepository.getProduct(productId, this.storeId);
-        if(product==null)
-            throw new IllegalArgumentException("Product with id: "+productId+" does not exist in store: "+this.storeId);
+
+    public void removeProductScore(int productId, int userId) {
+        Product product = productRepository.getStoreProductById(productId, this.storeId);
+        if (product == null)
+            throw new IllegalArgumentException("Product with id: " + productId + " does not exist in store: " + this.storeId);
         product.removeProductScore(userId);
     }
 
-    public void addStoreScore(int userId ,int score){
-        if(purchaseHistoryRepository.isPurchaseFromStore(userId,this.storeId))
-            throw new IllegalArgumentException("User with id: "+userId+" did not purchase from store: "+storeId);
-        storeScore.addStoreScore(userId,storeId,score);
+    public void addStoreScore(int userId, int score) {
+        if (purchaseHistoryRepository.isPurchaseFromStore(userId, this.storeId))
+            throw new IllegalArgumentException("User with id: " + userId + " did not purchase from store: " + storeId);
+        storeScore.addStoreScore(userId, storeId, score);
     }
 
-    public void removeStoreScore(int userId){
-        storeScore.removeStoreScore(userId,this.storeId);
+    public void removeStoreScore(int userId) {
+        storeScore.removeStoreScore(userId, this.storeId);
     }
 
-    public void modifyStoreScore(int userId, int score){
-        storeScore.modifyStoreScore(userId,this.storeId,score);
+    public void modifyStoreScore(int userId, int score) {
+        storeScore.modifyStoreScore(userId, this.storeId, score);
     }
 
-    public float getStoreScore(){
+    public float getStoreScore() {
         return storeScore.getStoreScore(this.storeId);
     }
 
 
-    //todo: complete the function
-    public void addProduct(Product product, int userId) {
-
-
-    }
-
-    @DefaultManagerFunctionality
     @DefaultOwnerFunctionality
-    public void addProduct(int userId, String productName, int quantity, double price) throws NoPermissionException {
+    public void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) throws NoPermissionException {
         /*
          * check if the user has permission to add product
          * */
         if (!this.storePermission.checkPermission(userId))
             throw new NoPermissionException("User " + userId + " has no permission to add product to store " + this.storeId);
 
-        /*Product product = new Product(productName, -1*//*todo*//*, price, quantity);
-        productRepository.add(product);*/
-
+        this.productRepository.addProduct(storeId, productName, category, price, stockQuantity, description);
     }
 
     public double calculatePriceOfBasket(double totalAmountBeforeStoreDiscountPolicy,
                                          ConcurrentLinkedQueue<BasketProduct> successfulProducts,
                                          String storeCoupon) {
         double totalAmount = totalAmountBeforeStoreDiscountPolicy;
-        for (Discount discount : storeDiscounts.getStoreDiscounts(storeId).
-                orElseThrow(() -> new RuntimeException("Store with id " + storeId + " does not exist"))) {
-
+        for (Discount discount : storeDiscounts.getStoreDiscounts(storeId).orElseGet(ArrayList::new)) {
             totalAmount = discount.applyStoreDiscount(totalAmount, successfulProducts, storeCoupon);
         }
         return totalAmount;
 
     }
-
-
-
 
 
     public static String getCurrentMethodName() {
@@ -290,10 +286,10 @@ public class Store implements Comparable<Store> {
         bidRepository.removeBID(bidId);
     }
 
-    @Override
-    public int compareTo(Store o) {
-        return Integer.compare(this.storeId, o.storeId);
-    }
+
+//    public int compareTo(Store o) {
+//        return Integer.compare(this.storeId, o.storeId);
+//    }
 
     public int getRank() {
         return rank;
@@ -326,8 +322,87 @@ public class Store implements Comparable<Store> {
     }
 
     public synchronized void isProductAvailable(int productId) throws Exception {
-        Product product= productRepository.getStoreProductById(productId,storeId);
-        if(product!=null && product.getAmount()<=0)
+        Product product = productRepository.getStoreProductById(productId, storeId);
+        if (product.isOutOfStock())
             throw new Exception("The product is out of stock");
+    }
+
+    public int getStoreId() {
+        return storeId;
+    }
+
+    @DefaultOwnerFunctionality
+    public void setProductName(int userId, int productId, String name) throws NoPermissionException {
+        if(!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userId + " has no permission to set product name in the store: " + this.storeId);
+
+        Product product = this.productRepository.getStoreProductById(productId, storeId);
+        synchronized (product) {
+            product.setName(name);
+        }
+    }
+
+    @DefaultOwnerFunctionality
+    public void setProductCategory(int userId, int productId, String category) throws NoPermissionException {
+        if(!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userId + " has no permission to set product category in the store: " + this.storeId);
+
+        Product product = this.productRepository.getStoreProductById(productId, storeId);
+        synchronized (product) {
+            product.setCategory(category);
+        }
+    }
+
+    @DefaultOwnerFunctionality
+    public void setProductPrice(int userId, int productId, double price) throws NoPermissionException {
+        if(!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userId + " has no permission to set product price in the store: " + this.storeId);
+
+        Product product = this.productRepository.getStoreProductById(productId, storeId);
+        synchronized (product) {
+            product.setPrice(price);
+        }
+    }
+
+    @DefaultOwnerFunctionality
+    public void setProductStockQuantity(int userId, int productId, int quantity) throws NoPermissionException {
+        if(!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userId + " has no permission to set product stock quantity in the store: " + this.storeId);
+
+        Product product = this.productRepository.getStoreProductById(productId, storeId);
+        synchronized (product) {
+            product.setStockQuantity(quantity);
+        }
+    }
+
+    @DefaultOwnerFunctionality
+    public void removeProduct(int userId, int productId) throws NoPermissionException {
+        if(!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userId + " has no permission to remove product in the store: " + this.storeId);
+
+        Product product = this.productRepository.getStoreProductById(productId, storeId);
+        synchronized (product) {
+            this.productRepository.removeStoreProduct(productId, storeId);
+        }
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public String getStoreName() {
+        return storeName;
+    }
+
+    public StoreInfo getStoreInfo() {
+        return new StoreInfo(this);
+    }
+
+    public Product getStoreProduct(int productId) {
+        return productRepository.getStoreProductById(productId, storeId);
+    }
+
+    public Set<Product> getAllStoreProducts(){
+        return productRepository.getStoreProducts(storeId).orElse(new ConcurrentSkipListSet<>(Comparator.comparingInt(Product::getProductId)));
     }
 }

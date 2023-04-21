@@ -3,65 +3,61 @@ package BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
 import BGU.Group13B.backend.storePackage.Product;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ProductRepositoryAsHashMap implements IProductRepository {
 
-    private final ConcurrentHashMap<Integer/*storeId*/, Set<Product>> storeProducts;
+    private final ConcurrentHashMap<Integer/*storeId*/, ConcurrentSkipListSet<Product>> storeProducts;
+    private final AtomicInteger productIdCounter = new AtomicInteger(0);
 
     public ProductRepositoryAsHashMap() {
         this.storeProducts = new ConcurrentHashMap<>();
     }
 
-
     @Override
     public Optional<Set<Product>> getStoreProducts(int storeId) {
-        return Optional.empty();
-    }
-
-    public Product getStoreProductById(int productId,int storeId){
-        return storeProducts.values().stream().flatMap(Set::stream).filter(product -> product.getProductId() == productId && product.getStoreId()==storeId)
-                .findFirst().orElseThrow(() -> new NoSuchElementException("Product not found"));
+        return Optional.ofNullable(storeProducts.get(storeId));
     }
 
     @Override
     public void removeStoreProduct(int productId, int storeId) {
+        getStoreProducts(storeId).orElseThrow(
+                () -> new IllegalArgumentException("Store " + storeId + " not found")
+        ).removeIf(product -> product.getProductId() == productId);
+    }
+
+  
+    public int addProduct(int storeId, String name, String category, double price, int maxAmount, String description) {
+        if (!storeProducts.containsKey(storeId))
+            storeProducts.put(storeId, new ConcurrentSkipListSet<>(Comparator.comparingInt(Product::getProductId)));
+        synchronized (this) {
+            int productId = productIdCounter.getAndIncrement();
+            storeProducts.get(storeId).add(new Product(productId, storeId, name, category, price, maxAmount));
+            return productId;
+        }
+    }
 
     }
 
     @Override
-    public void addProduct(int StoreId) {
-
+    public Product getStoreProductById(int productId, int storeId) {
+        return getStoreProducts(storeId).orElseThrow(
+                        () -> new IllegalArgumentException("Store " + storeId + " not found or has no products")
+                ).stream().filter(product -> product.getProductId() == productId).
+                findFirst().orElseThrow(
+                        () -> new IllegalArgumentException("Product " + productId + " not found in store " + storeId)
+                );
     }
 
     @Override
-    public List<Product> getProductByName(String name) {
-        return null;
-    }
-
-    @Override
-    public List<Product> getProductByCategory(String category) {
-        return null;
-    }
-
-    @Override
-    public List<Product> getProductByKeywords(List<String> keywords) {
-        return null;
-    }
-
-    @Override
-    public List<Product> filterByPriceRange(int minPrice, int maxPrice) {
-        return null;
-    }
-
-
-    @Override
-    public Product getProduct(int productId, int storeId) {
-        return null;
+    public Product getProductById(int productId) {
+        return storeProducts.values().stream().flatMap(Set::stream).filter(product -> product.getProductId() == productId).
+                findFirst().orElseThrow(
+                        () -> new IllegalArgumentException("Product " + productId + " not found")
+                );
     }
 
 /*    @Override
@@ -74,4 +70,57 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
                         () -> new IllegalArgumentException("Product not found in store")
                 ).calculatePrice(productQuantity, couponCode);
     }*/
+
+    @Override
+    public List<Product> getProductByName(String name) {
+        List<Product> products = new LinkedList<>();
+        storeProducts.entrySet().stream().forEach(entry -> {
+            Set<Product> storeProducts = entry.getValue();
+            for(Product product : storeProducts){
+                if(product.getName().toLowerCase().contains(name.toLowerCase())){
+                    products.add(product);
+                }
+            }
+        });
+        return products;
+    }
+
+    @Override
+    public List<Product> getProductByCategory(String category) {
+        List<Product> products = new LinkedList<>();
+        storeProducts.entrySet().stream().forEach(entry -> {
+            Set<Product> storeProducts = entry.getValue();
+            for(Product product : storeProducts){
+                if(product.getCategory().toLowerCase().contains(category.toLowerCase())){
+                    products.add(product);
+                }
+            }
+        });
+        return products;
+    }
+
+    private boolean checkIfContainsSomeKeywords(List<String> keywords, String description) {
+        List<String> modifiedKeywords = keywords.stream().map(String::toLowerCase).toList();
+        String modifiedDescription = description.toLowerCase();
+        for (String keyword : modifiedKeywords) {
+            if (modifiedDescription.contains(keyword)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public List<Product> getProductByKeywords(List<String> keywords) {
+        List<Product> products = new LinkedList<>();
+        storeProducts.entrySet().stream().forEach(entry -> {
+            Set<Product> storeProducts = entry.getValue();
+            for(Product product : storeProducts){
+                if(checkIfContainsSomeKeywords(keywords, product.getDescription())){
+                    products.add(product);
+                }
+            }
+        });
+        return products;
+    }
 }

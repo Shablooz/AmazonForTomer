@@ -4,7 +4,9 @@ import BGU.Group13B.backend.Repositories.Implementations.AcutionRepositoryImpl.A
 import BGU.Group13B.backend.Repositories.Implementations.BIDRepositoryImpl.BIDRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.BasketProductRepositoryImpl.BasketProductRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.BasketReposistoryImpl.BasketRepositoryAsHashMap;
+import BGU.Group13B.backend.Repositories.Implementations.IStoreScoreRepository.StoreScoreImplNotPer;
 import BGU.Group13B.backend.Repositories.Implementations.MessageRepositoryImpl.MessageRepositoryAsList;
+import BGU.Group13B.backend.Repositories.Implementations.ProductDiscountsRepositoryImpl.ProductDiscountsRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.ProductHistoryRepositoryImpl.ProductHistoryRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl.ProductRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.PurchaseHistoryRepositoryImpl.PurchaseHistoryRepositoryAsList;
@@ -21,6 +23,10 @@ import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
 import BGU.Group13B.service.callbacks.AddToUserCart;
 import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
+
+import java.io.IOException;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
 
 //(#61)
 public class SingletonCollection {
@@ -41,6 +47,8 @@ public class SingletonCollection {
     private static final IStoreDiscountsRepository storeDiscountsRepository;
     private static final IAuctionRepository auctionRepository;
     private static final IProductHistoryRepository productHistoryRepository;
+    private static final IProductDiscountsRepository productDiscountsRepository;
+    private static final IStoreScore storeScoreRepository;
 
 
     /**
@@ -64,6 +72,7 @@ public class SingletonCollection {
     private static final Searcher searcher;
     private static final Market market;
 
+    private static final String LOG_FILE_NAME = "logger_output.txt";
 
     //static initializer
     static {
@@ -81,6 +90,8 @@ public class SingletonCollection {
         auctionRepository = new AuctionRepositoryAsHashMap();
         basketProductRepository = new BasketProductRepositoryAsHashMap();
         productHistoryRepository = new ProductHistoryRepositoryAsList();
+        productDiscountsRepository = new ProductDiscountsRepositoryAsHashMap();
+        storeScoreRepository = new StoreScoreImplNotPer();
 
 
         //adapters
@@ -178,6 +189,12 @@ public class SingletonCollection {
 
     public static IProductHistoryRepository getProductHistoryRepository() { return productHistoryRepository;}
 
+    public static IStoreScore getStoreScoreRepository() { return storeScoreRepository; }
+
+    public static IProductDiscountsRepository getProductDiscountsRepository() {
+        return SingletonCollection.productDiscountsRepository;
+    }
+
     /**
      * <h1>setters (for callbacks)</h1>
      */
@@ -188,6 +205,20 @@ public class SingletonCollection {
     public static void setCalculatePriceOfBasket(CalculatePriceOfBasket calculatePriceOfBasket) {
         SingletonCollection.calculatePriceOfBasket = calculatePriceOfBasket;
     }
+
+
+    /**
+     * <h1>LOGGER</h1>
+     */
+    public static void setFileHandler(Logger LOGGER) {
+        try {
+            FileHandler fileHandler = new FileHandler(LOG_FILE_NAME);
+            LOGGER.addHandler(fileHandler);
+        } catch (IOException e) {
+            System.out.println("Error setting the logger handler: " + e.getMessage());
+        }
+    }
+
 
 }
 

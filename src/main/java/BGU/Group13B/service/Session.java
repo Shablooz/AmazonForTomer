@@ -1,6 +1,7 @@
 package BGU.Group13B.service;
 
 import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepositoryAsHashmap;
+import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepositoryAsHashmap;
 import BGU.Group13B.backend.User.Message;
@@ -10,26 +11,46 @@ import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
+import org.springframework.data.util.Pair;
+import BGU.Group13B.service.info.ProductInfo;
+import BGU.Group13B.service.info.StoreInfo;
 
 import java.time.LocalDateTime;
 
 import java.util.List;
+import java.util.Set;
+import java.util.logging.Logger;
 
 
 class Session implements ISession {
     private final Market market;
-    UserRepositoryAsHashmap userRepositoryAsHashmap;
+
+    private static final Logger LOGGER = Logger.getLogger(Session.class.getName());
+
+    static {
+        SingletonCollection.setFileHandler(LOGGER);
+    }
+    IUserRepository userRepositoryAsHashmap;
+
 
     public Session(Market market) {
         this.market = market;
 
         //callbacks initialization
         SingletonCollection.setAddToUserCart(this::addToCart);
+        this.userRepositoryAsHashmap = SingletonCollection.getUserRepository();
+
     }
 
     @Override
-    public void addProduct(int userId, String productName, int quantity, double price, int storeId) throws NoPermissionException {
-        market.addProduct(userId, productName, quantity, price, storeId);
+    public void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description){
+        try{
+            market.addProduct(userId, storeId, productName, category, price, stockQuantity, description);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+        }
+
     }
 
     @Override
@@ -76,6 +97,7 @@ class Session implements ISession {
     public void auctionPurchase(int userId, int storeId, int productId, double newPrice) {
 
     }
+
     @Override
     public PublicAuctionInfo getAuctionInfo(int userId, int storeId, int productId) {
         return null;
@@ -88,13 +110,14 @@ class Session implements ISession {
     }
 
     @Override
-    public synchronized void register(int userId, String username, String password, String email) {
+    public synchronized void register(int userId, String username, String password,
+                                      String email,String answer1,String answer2,String answer3) {
         User user = userRepositoryAsHashmap.getUser(userId);
         try {
             //the first "if" might not be necessary when we will connect to web
             if (!user.isRegistered()) {
                 if (userRepositoryAsHashmap.checkIfUserExists(username) != null) {
-                    user.register(username, password, email);
+                    user.register(username, password, email,answer1,answer2,answer3);
                 } else {
                     System.out.println("user with this username already exists!");
                 }
@@ -142,13 +165,16 @@ class Session implements ISession {
         market.filterByStoreRank(minRating, maxRating);
     }
 
+
     @Override
-    public int login(int userID, String username, String password) {
+    public int login(int userID, String username, String password,String answer1,String answer2,String answer3) {
         try {
             //gets the user that we want to log into
             User user = userRepositoryAsHashmap.checkIfUserExists(username);
             synchronized (user) {
-                user.login(username, password);
+                user.login(username, password,answer1,answer2,answer3);
+                /*example of use*/
+                LOGGER.info("user " + username + " logged in");
                 //removes the current guest profile to swap to the existing member one
                 userRepositoryAsHashmap.removeUser(userID);
                 //gets the new id - of the user we're logging into
@@ -171,12 +197,11 @@ class Session implements ISession {
     @Override
     public void addStore(int userId, String storeName, String category) {
         User user = userRepositoryAsHashmap.getUser(userId);
-        synchronized (user){
-            if(user.isRegistered()){
-                try{
+        synchronized (user) {
+            if (user.isRegistered()) {
+                try {
                     market.addStore(userId, storeName, category);
-                }
-                catch(Exception e){
+                } catch (Exception e) {
                     //TODO: handle exception
                 }
             }
@@ -191,6 +216,13 @@ class Session implements ISession {
             //TODO: handle exception
         }
     }
+
+
+    @Override
+    public void getUserPurchaseHistory(int userId) {
+        //TODO: implement
+    }
+
     public void openComplaint(int userId, String header, String complaint) {
         try {
             userRepositoryAsHashmap.getUser(userId).openComplaint(header, complaint);
@@ -199,7 +231,7 @@ class Session implements ISession {
         }
     }
 
- 
+
     public Message getComplaint(int userId) {
         try {
            return  userRepositoryAsHashmap.getUser(userId).getComplaint();
@@ -390,6 +422,166 @@ class Session implements ISession {
             userRepositoryAsHashmap.getUser(userId).removeProductFromCart(storeId, productId);
         } catch (Exception e) {
             throw new RuntimeException(e);
+            }
+        }
+        
+    public void setProductName(int userId, int storeId, int productId, String name) {
+        try{
+            market.setProductName(userId, storeId, productId, name);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+        }
+    }
+
+    @Override
+    public void setProductCategory(int userId, int storeId, int productId, String category) {
+        try{
+            market.setProductCategory(userId, storeId, productId, category);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+        }
+    }
+
+    @Override
+    public void setProductPrice(int userId, int storeId, int productId, double price) {
+        try{
+            market.setProductPrice(userId, storeId, productId, price);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+        }
+    }
+
+    @Override
+    public void setProductStockQuantity(int userId, int storeId, int productId, int stockQuantity) {
+        try{
+            market.setProductStockQuantity(userId, storeId, productId, stockQuantity);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+        }
+    }
+
+    @Override
+    public void removeProduct(int userId, int storeId, int productId) {
+        try{
+            market.removeProduct(userId, storeId, productId);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+        }
+    }
+
+    @Override
+
+    public String getUserName(int userId) {
+        return userRepositoryAsHashmap.getUser(userId).getUserName();
+    }
+
+    @Override
+    public void setUsername(int userId, String newUsername) {
+        userRepositoryAsHashmap.getUser(userId).setUserName(newUsername);
+    }
+
+    @Override
+    public void setUserStatus(int userId, int newStatus) {
+        if(newStatus == 1 && userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.MEMBER)
+            userRepositoryAsHashmap.getUser(userId).setPermissions(UserPermissions.UserPermissionStatus.ADMIN);
+
+        if(newStatus == 2 && userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.ADMIN)
+            userRepositoryAsHashmap.getUser(userId).setPermissions(UserPermissions.UserPermissionStatus.MEMBER);
+    }
+
+    @Override
+    public String getUserStatus(int userId) {
+        if(userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.MEMBER)
+            return "Member";
+        else if(userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.ADMIN)
+            return "Admin";
+        else
+            return "Guest";
+    }
+
+    @Override
+    public List<Pair<Integer, String>> getStoresOfUser(int userId) {
+        return userRepositoryAsHashmap.getUser(userId).getStoresAndRoles();
+        }
+
+    public StoreInfo getStoreInfo(int storeId) {
+        try{
+            return market.getStoreInfo(storeId);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+            return null;
+        }
+    }
+
+    @Override
+    public String getStoreName(int storeId) {
+        try{
+            return market.getStoreName(storeId);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+            return null;
+        }
+    }
+
+    @Override
+    public String getStoreCategory(int storeId) {
+        try{
+            return market.getStoreCategory(storeId);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+            return null;
+        }
+    }
+
+    @Override
+    public ProductInfo getStoreProductInfo(int storeId, int productId) {
+        try{
+            return market.getStoreProductInfo(storeId, productId);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+            return null;
+        }
+    }
+
+    @Override
+    public ProductInfo getProductInfo(int productId) {
+        try{
+            return market.getProductInfo(productId);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+            return null;
+        }
+    }
+
+    @Override
+    public String getProductName(int productId) {
+        try{
+            return market.getProductName(productId);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+            return null;
+        }
+    }
+
+    @Override
+    public String getProductCategory(int productId) {
+        try{
+            return market.getProductCategory(productId);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+            return null;
         }
     }
 
@@ -400,6 +592,67 @@ class Session implements ISession {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+    
+    public double getProductPrice(int productId) {
+        try{
+            return market.getProductPrice(productId);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+            return -1;
+        }
+    }
+
+    @Override
+    public int getProductStockQuantity(int productId) {
+        try{
+            return market.getProductStockQuantity(productId);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+            return -1;
+        }
+    }
+
+    @Override
+    public float getProductScore(int productId) {
+        try{
+            return market.getProductScore(productId);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+            return -1;
+        }
+    }
+
+    @Override
+    public Set<ProductInfo> getAllStoreProductsInfo(int storeId) {
+        try{
+            return market.getAllStoreProductsInfo(storeId);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+            return null;
+        }
+
+    public boolean SecurityAnswer1Exists(int userId) {
+        return userRepositoryAsHashmap.getUser(userId).SecurityAnswer1Exists();
+    }
+
+    @Override
+    public boolean SecurityAnswer2Exists(int userId) {
+        return userRepositoryAsHashmap.getUser(userId).SecurityAnswer2Exists();
+    }
+
+    @Override
+    public boolean SecurityAnswer3Exists(int userId) {
+        return userRepositoryAsHashmap.getUser(userId).SecurityAnswer3Exists();
+    }
+
+    @Override
+    public boolean checkIfQuestionsExist(int userId) {
+        return SecurityAnswer1Exists(userId) || SecurityAnswer2Exists(userId) || SecurityAnswer3Exists(userId);
     }
 
 }

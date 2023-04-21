@@ -8,12 +8,16 @@ import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.AddToUserCart;
+import BGU.Group13B.service.info.ProductInfo;
+import BGU.Group13B.service.info.StoreInfo;
 
 import java.time.LocalDateTime;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.stream.Collectors;
 
 public class Market {
     private final IStoreRepository storeRepository;
@@ -76,9 +80,10 @@ public class Market {
     }
 
 
-    public void addProduct(int userId, String productName, int quantity, double price, int storeId) throws NoPermissionException {
-        storeRepository.getStore(storeId).addProduct(userId, productName, quantity, price);
+    public void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) throws NoPermissionException {
+        storeRepository.getStore(storeId).addProduct(userId, storeId, productName, category, price, stockQuantity, description);
     }
+
     public void addStoreScore(int userId,int storeId ,int score){
        storeRepository.getStore(storeId).addStoreScore(userId,score);
     }
@@ -119,32 +124,32 @@ public class Market {
         storeRepository.addStore(founderId, storeName, category);
     }
 
-    public void searchProductByName(String productName) {
-        searcher.searchByName(productName);
+    public List<Product> searchProductByName(String productName) {
+        return searcher.searchByName(productName);
     }
 
-    public void searchProductByCategory(String category) {
-        searcher.searchByCategory(category);
+    public List<Product> searchProductByCategory(String category) {
+        return searcher.searchByCategory(category);
     }
 
-    public void searchProductByKeywords(List<String> keywords) {
-        searcher.searchByKeywords(keywords);
+    public List<Product> searchProductByKeywords(List<String> keywords) {
+        return searcher.searchByKeywords(keywords);
     }
 
-    public void filterByPriceRange(int minPrice, int maxPrice) {
-        searcher.filterByPriceRange(minPrice, maxPrice);
+    public List<Product> filterByPriceRange(int minPrice, int maxPrice) {
+        return searcher.filterByPriceRange(minPrice, maxPrice);
     }
 
-    public void filterByProductRank(int minRating, int maxRating) {
-        searcher.filterByProductRank(minRating, maxRating);
+    public List<Product> filterByProductRank(int minRating, int maxRating) {
+        return searcher.filterByProductRank(minRating, maxRating);
     }
 
-    public void filterByCategory(String category) {
-        searcher.filterByCategory(category);
+    public List<Product> filterByCategory(String category) {
+        return searcher.filterByCategory(category);
     }
 
-    public void filterByStoreRank(int minRating, int maxRating) {
-        searcher.filterByStoreRank(minRating, maxRating);
+    public List<Product> filterByStoreRank(int minRating, int maxRating) {
+        return searcher.filterByStoreRank(minRating, maxRating);
     }
 
     private double calculatePriceOfBasket(double totalAmountBeforeStoreDiscountPolicy, ConcurrentLinkedQueue<BasketProduct> successfulProducts, int storeId,
@@ -158,4 +163,73 @@ public class Market {
     public void isProductAvailable(int productId, int storeId) throws Exception {
          storeRepository.getStore(storeId).isProductAvailable(productId);
     }
+
+    public void setProductName(int userId, int storeId, int productId, String name) throws NoPermissionException{
+        storeRepository.getStore(storeId).setProductName(userId, productId, name);
+    }
+
+    public void setProductCategory(int userId, int storeId, int productId, String category) throws NoPermissionException{
+        storeRepository.getStore(storeId).setProductCategory(userId, productId, category);
+    }
+
+    public void setProductPrice(int userId, int storeId, int productId, double price) throws NoPermissionException{
+        storeRepository.getStore(storeId).setProductPrice(userId, productId, price);
+    }
+
+    public void setProductStockQuantity(int userId, int storeId, int productId, int stockQuantity) throws NoPermissionException{
+        storeRepository.getStore(storeId).setProductStockQuantity(userId, productId, stockQuantity);
+    }
+
+    public void removeProduct(int userId, int storeId, int productId) throws NoPermissionException{
+        storeRepository.getStore(storeId).removeProduct(userId, productId);
+    }
+
+    public StoreInfo getStoreInfo(int storeId){
+        return storeRepository.getStore(storeId).getStoreInfo();
+    }
+
+    public String getStoreName(int storeId) {
+        return storeRepository.getStore(storeId).getStoreName();
+    }
+
+    public String getStoreCategory(int storeId) {
+        return storeRepository.getStore(storeId).getCategory();
+    }
+
+    public ProductInfo getStoreProductInfo(int storeId, int productId){
+        return storeRepository.getStore(storeId).getStoreProduct(productId).getProductInfo();
+    }
+
+    public ProductInfo getProductInfo(int productId){
+        return searcher.getProductById(productId).getProductInfo();
+    }
+
+    public String getProductName(int productId) {
+        return searcher.getProductById(productId).getName();
+    }
+
+    public String getProductCategory(int productId) {
+        return searcher.getProductById(productId).getCategory();
+    }
+
+    public double getProductPrice(int productId) {
+        return searcher.getProductById(productId).getPrice();
+    }
+
+    public int getProductStockQuantity(int productId) {
+        return searcher.getProductById(productId).getStockQuantity();
+    }
+
+    public float getProductScore(int productId) {
+        return searcher.getProductById(productId).getProductScore();
+    }
+
+    public Set<ProductInfo> getAllStoreProductsInfo(int storeId){
+        return storeRepository.getStore(storeId).getAllStoreProducts().stream().map(Product::getProductInfo).collect(Collectors.toSet());
+    }
+
+
+
+
+
 }
