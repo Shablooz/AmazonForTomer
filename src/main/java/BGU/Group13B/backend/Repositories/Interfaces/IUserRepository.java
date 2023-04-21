@@ -15,4 +15,7 @@ public interface IUserRepository {
 
     //returns the users id
     int getUserId(User user) throws IllegalArgumentException;
+
+    //returns an id for a new user - this id is unique
+    int getNewUserId();
 }

@@ -8,10 +8,10 @@ import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
 import BGU.Group13B.service.SingletonCollection;
 
 import java.util.HashMap;
+import java.util.Set;
 import java.util.HashSet;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.LinkedList;
+import java.util.concurrent.*;
 
 public class Basket {
     private final int userId;
@@ -22,6 +22,9 @@ public class Basket {
     private final ConcurrentLinkedQueue<BasketProduct> failedProducts;
     private final IProductHistoryRepository productHistoryRepository;
     private final CalculatePriceOfBasket calculatePriceOfBasket;
+    private ScheduledFuture<?> scheduledFuture;
+    private int idealTime = 5;
+    private TimeUnit unitsToRestore = TimeUnit.MINUTES;
 
     public Basket(int userId, int storeId) {
         this.userId = userId;
@@ -56,16 +59,16 @@ public class Basket {
         return storeId;
     }
 
-    public void purchaseBasket(String address, String creditCardNumber,
+    public double purchaseBasket(String address, String creditCardNumber,
                                String creditCardMonth, String creditCardYear,
                                String creditCardHolderFirstName, String creditCardHolderLastName,
                                String creditCardCVV, String id, String creditCardType,
                                HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
                                String/*store coupons*/ storeCoupon
-    ) throws Exception {
+    ) throws PurchaseFailedException {
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduledFuture = scheduler.schedule(this::restoreProductsStock, idealTime, unitsToRestore);
         getSuccessfulProducts();
-        scheduler.schedule(this::restoreProductsStock, 5, java.util.concurrent.TimeUnit.MINUTES);
 
 
         double totalAmount = getTotalAmount(productsCoupons);
@@ -74,11 +77,19 @@ public class Basket {
         if (paymentAdapter.
                 pay(address, creditCardNumber, creditCardMonth, creditCardYear,
                         creditCardHolderFirstName, creditCardHolderLastName,
-                        creditCardCVV, id, creditCardType, successfulProducts, failedProducts)) {
+                        creditCardCVV, id, creditCardType, successfulProducts, failedProducts, totalAmount)) {
+            scheduledFuture.cancel(true);
+            scheduledFuture = null;
+            scheduler.shutdown();
             //if succeeded, add the successful products to the purchase history
             for (BasketProduct basketProduct : successfulProducts) {
                 productHistoryRepository.addProductToHistory(basketProduct, userId);
             }
+            basketProductRepository.removeBasketProducts(storeId, userId);
+            successfulProducts.clear();
+            /*//todo: send message with the failed products ids!
+            failedProducts.clear();*/
+            return totalAmount;
         } else {
             throw new PurchaseFailedException("Payment failed");
         }
@@ -93,7 +104,13 @@ public class Basket {
 
     /*In case the user pressed on exit in the middle of the purchase or something like that*/
     public void cancelPurchase() {
+        if(scheduledFuture != null && !scheduledFuture.isDone()){
+            scheduledFuture.cancel(true);
+            scheduledFuture = null;
+        }
         restoreProductsStock();
+        successfulProducts.clear();
+        failedProducts.clear();
     }
 
     private void restoreProductsStock() {
@@ -113,7 +130,7 @@ public class Basket {
 
         //for every product in the basket
 
-        for (BasketProduct basketProduct : basketProductRepository.getBasketProducts(storeId, userId).orElseGet(HashSet::new)) {
+        for (BasketProduct basketProduct : basketProductRepository.getBasketProducts(storeId, userId).orElseGet(LinkedList::new)) {
             //synchronize product
             synchronized (basketProduct.getProduct()) {
                 //try to decrease the quantity of the product in the store
@@ -145,6 +162,52 @@ public class Basket {
             basketProductRepository.changeProductQuantity(productId, userId, storeId, 1);
         } else
             basketProductRepository.addNewProductToBasket(productId, userId, storeId);
+    }
 
+    public String getBasketContent() {
+        String basketContent = "";
+        basketProductRepository.getBasketProducts(storeId, userId);
+        for (BasketProduct basketProduct : basketProductRepository.getBasketProducts(storeId, userId).get()) {
+            basketContent += basketProduct.toString();
+    }
+        return basketContent;
+    }
+
+    public void removeProduct(int productId) throws Exception {
+        try {
+            BasketProduct basketProduct = basketProductRepository.getBasketProduct(storeId, userId, productId);
+            if(basketProduct != null){
+                basketProductRepository.removeBasketProduct(productId, userId, storeId);
+            }
+            else
+                throw new Exception("Product not in basket");
+        }catch (Exception e){
+            throw e;
+        }
+    }
+
+    public void changeProductQuantity(int productId, int quantity) throws Exception {
+        BasketProduct basketProduct = basketProductRepository.getBasketProduct(storeId, userId, productId);
+        if(basketProduct != null){
+            basketProductRepository.changeProductQuantity(productId, userId, storeId, quantity);
+        }
+        else
+            throw new Exception("Product not in basket");
+    }
+
+    public ConcurrentLinkedQueue<BasketProduct> getFailedProducts() {
+        return failedProducts;
+    }
+    public ConcurrentLinkedQueue<BasketProduct> getSuccessfulProductsList() {
+        return successfulProducts;
+    }
+
+
+    /*used for testing*/
+    public void setIdealTime(int idealTime) {
+        this.idealTime = idealTime;
+    }
+    public void setUnitsToRestore(java.util.concurrent.TimeUnit unitsToRestore) {
+        this.unitsToRestore = unitsToRestore;
     }
 }

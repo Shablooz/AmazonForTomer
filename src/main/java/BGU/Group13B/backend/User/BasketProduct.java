@@ -29,4 +29,8 @@ public class BasketProduct  {
     public void addQuantity(int addedQuantity) {
         this.quantity += addedQuantity;
     }
+
+    public String toString(){
+        return "Product: " + product.getName() + " Quantity: " + quantity +"\n";
+    }
 }

@@ -19,8 +19,8 @@ public abstract class ProjectTest {
         setUpProducts();
     }
 
-    protected void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity){
-        session.addProduct(userId, storeId, productName, category, price, stockQuantity);
+    protected void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description){
+        session.addProduct(userId, storeId, productName, category, price, stockQuantity,description);
     }
 
     protected void purchaseProductCart(int userId, String address, String creditCardNumber, String creditCardMonth, String creditCardYear, String creditCardHolderFirstName, String creditCardHolderLastName, String creditCardCcv, String id, String creditCardType) {
