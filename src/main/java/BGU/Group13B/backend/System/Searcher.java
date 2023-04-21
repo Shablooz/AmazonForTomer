@@ -32,7 +32,7 @@ public class Searcher {
         return products;
     }
     public List<Product> filterByPriceRange(int minPrice, int maxPrice) {
-
+        checkProducts();
         for (Product product : products) {
             if (product.getPrice() < minPrice || product.getPrice() > maxPrice) {
                 products.remove(product);
@@ -41,6 +41,7 @@ public class Searcher {
         return products;
     }
     public List<Product> filterByProductRank(int minRating, int maxRating) {
+        checkProducts();
         for (Product product : products) {
             if (product.getRank() < minRating || product.getRank() > maxRating) {
                 products.remove(product);
@@ -49,8 +50,9 @@ public class Searcher {
         return products;
     }
     public List<Product> filterByCategory(String category) {
+        checkProducts();
         for (Product product : products) {
-            if (!product.getCategory().equals(category)) {
+            if (!product.getCategory().toLowerCase().equals(category.toLowerCase())) {
                 products.remove(product);
             }
         }
@@ -58,6 +60,7 @@ public class Searcher {
     }
     //filter by store rating
     public List<Product> filterByStoreRank(int minRating, int maxRating) {
+        checkProducts();
         for (Product product : products) {
             if (storeRepository.getStore(product.getStoreId()).getRank() < minRating ||
                     storeRepository.getStore(product.getStoreId()).getRank() > maxRating) {
@@ -65,6 +68,18 @@ public class Searcher {
             }
         }
         return products;
+    }
+
+
+    private void checkProducts() {
+        if(products.isEmpty()) {
+            throw new IllegalArgumentException("No products to filter");
+        }
+       }
+
+    public Product getProductById(int productId) {
+        return productRepository.getProductById(productId);
+
     }
 
 }

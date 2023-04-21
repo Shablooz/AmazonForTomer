@@ -7,7 +7,9 @@ import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.service.SingletonCollection;
+import org.springframework.data.util.Pair;
 //eyal import
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class User {
@@ -22,6 +24,17 @@ public class User {
     private String userName;
     private Message currentMessageToReply;
     private String password;
+
+    private String email;
+
+    private String answer1;
+    private String answer2;
+    private String answer3;
+
+    //TODO: show the messages upon registering
+    private static final String question1 = "What is your favorite color?";
+    private static final String question2 = "What is your favorite food?";
+    private static final String question3 = "What is your favorite book or movie?";
     //eyal addition
     private volatile boolean isLoggedIn;
 
@@ -36,6 +49,15 @@ public class User {
         this.userPermissions = new UserPermissions();
         this.cart = new Cart(userId);
         this.market = SingletonCollection.getMarket();
+        this.userName = "";
+        this.password = "";
+        this.email = "";
+
+        //do not change those fields!
+        this.answer1 = "";
+        this.answer2 = "";
+        this.answer3 = "";
+
         this.isLoggedIn = false;
     }
 
@@ -56,7 +78,14 @@ public class User {
 
     //#15
     //returns User on success (for future functionalities)
-    public User register(String userName, String password, String email) {
+    public User register(String userName, String password, String email,String answer1,String answer2,String answer3) {
+        checkRegisterInfo(userName,password,email);
+        //updates the user info upon registration - no longer a guest
+        updateUserDetail(userName, password, email,answer1,answer2,answer3);
+        this.userPermissions.register();
+        return this;
+    }
+    private void checkRegisterInfo(String userName,String password, String email){
         String usernameRegex = "^[a-zA-Z0-9_-]{4,16}$"; // 4-16 characters, letters/numbers/underscore/hyphen
         String passwordRegex = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)[A-Za-z\\d]{8,}$"; // need at least 8 characters, 1 uppercase, 1 lowercase, 1 number)
         String emailRegex = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\\\.[A-Za-z0-9-]+)*(\\\\.[A-Za-z]{2,})$"; // checks email validation
@@ -69,19 +98,28 @@ public class User {
         if (!Pattern.matches(emailRegex, email)) {
             throw new IllegalArgumentException("Invalid email.");
         }
-        this.userName = userName;
-        this.password = password;
-        this.userPermissions.register();
-        return this;
     }
 
-    public void login(String userName, String password) {
-        //second username check for security
-        if (this.userName.equals(userName) && this.password.equals(password)) {
-            this.isLoggedIn = true;
-            return;
+    //function that currently only used in register, but is cna function as a setter
+    //TODO change following fields in the database
+    private void updateUserDetail(String userName, String password, String email,String answer1,String answer2,String answer3) {
+        this.answer1 = answer1;
+        this.answer2 = answer2;
+        this.answer3 = answer3;
+        this.userName = userName;
+        this.password = password;
+    }
+
+
+    public void login(String userName, String password, String answer1,String answer2,String answer3) {
+        //second username check is for security
+        if (!((this.userName.equals(userName) && this.password.equals(password)))){
+            throw new IllegalArgumentException("incorrect username or password");
         }
-        throw new IllegalArgumentException("incorrect username or password");
+        this.isLoggedIn = true;
+        if(!this.answer1.equals(answer1) || !this.answer2.equals(answer2) || !this.answer3.equals(answer3)){
+            throw new IllegalArgumentException("wrong answers on security questions!");
+        }
     }
 
     public String getUserName() {
@@ -226,6 +264,24 @@ public class User {
         cart.purchaseCart(address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType);
     }
 
+
+    public String getCartContent() {
+        return cart.getCartContent();
+    }
+
+
+    public boolean SecurityAnswer1Exists(){
+        return answer1.equals("") == false;
+    }
+    public boolean SecurityAnswer2Exists(){
+        return answer2.equals("") == false;
+    }
+    public boolean SecurityAnswer3Exists(){
+        return answer3.equals("") == false;
+    }
+
+
+
     public Cart getCart() {
         return cart;
     }
@@ -233,6 +289,36 @@ public class User {
     public void addProductToCart(int productId, int storeId) throws Exception {
         market.isProductAvailable(productId, storeId);
         cart.addProductToCart(productId, storeId);
+    }
+
+
+    public void removeProductFromCart(int storeId, int productId) throws Exception {
+        cart.removeProduct(storeId, productId);
+    }
+
+    public void changeProductQuantityInCart(int storeId, int productId, int quantity) throws Exception {
+        cart.changeProductQuantity(storeId, productId, quantity);
+    }
+
+    public void setPermissions(UserPermissions.UserPermissionStatus status){
+        this.userPermissions.setUserPermissionStatus(status);
+    }
+
+    public UserPermissions.UserPermissionStatus getStatus(){
+        return this.userPermissions.getUserPermissionStatus();
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+
+    public List<Pair<Integer, String>> getStoresAndRoles() {
+        return this.userPermissions.getStoresAndRoles();
     }
 
 
