@@ -70,10 +70,16 @@ public class Searcher {
         return products;
     }
 
+
     private void checkProducts() {
         if(products.isEmpty()) {
             throw new IllegalArgumentException("No products to filter");
         }
+       }
+
+    public Product getProductById(int productId) {
+        return productRepository.getProductById(productId);
+
     }
 
 }

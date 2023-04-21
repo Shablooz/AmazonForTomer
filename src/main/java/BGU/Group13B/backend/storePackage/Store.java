@@ -18,8 +18,13 @@ import BGU.Group13B.service.callbacks.AddToUserCart;
 import java.util.ArrayList;
 import java.time.LocalDateTime;
 import java.util.Set;
+import BGU.Group13B.service.info.StoreInfo;
+import java.time.LocalDateTime;
+import java.util.*;
+
 
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class Store {
     private final IProductRepository productRepository;
@@ -381,5 +386,23 @@ public class Store {
         }
     }
 
+    public String getCategory() {
+        return category;
+    }
 
+    public String getStoreName() {
+        return storeName;
+    }
+
+    public StoreInfo getStoreInfo() {
+        return new StoreInfo(this);
+    }
+
+    public Product getStoreProduct(int productId) {
+        return productRepository.getStoreProductById(productId, storeId);
+    }
+
+    public Set<Product> getAllStoreProducts(){
+        return productRepository.getStoreProducts(storeId).orElse(new ConcurrentSkipListSet<>(Comparator.comparingInt(Product::getProductId)));
+    }
 }

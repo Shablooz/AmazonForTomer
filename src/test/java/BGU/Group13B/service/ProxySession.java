@@ -5,10 +5,14 @@ import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
+import org.springframework.data.util.Pair;
+import BGU.Group13B.service.info.ProductInfo;
+import BGU.Group13B.service.info.StoreInfo;
 
 import java.time.LocalDateTime;
 
 import java.util.List;
+import java.util.Set;
 
 public class ProxySession implements ISession {
     private ISession realSession;
@@ -76,7 +80,7 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void register(int userId, String username, String password, String email) {
+    public void register(int userId, String username, String password, String email,String answer1,String answer2,String answer3) {
 
     }
 
@@ -116,8 +120,8 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public int login(int userID, String username, String password) {
-        return realSession.login(userID, username, password);
+    public int login(int userID, String username, String password,String answer1,String answer2, String answer3) {
+        return realSession.login(userID, username, password, answer1, answer2 ,answer3);
     }
 
     @Override
@@ -268,5 +272,102 @@ public class ProxySession implements ISession {
     @Override
     public void removeProduct(int userId, int storeId, int productId) {
         realSession.removeProduct(userId, storeId, productId);
+    }
+
+    @Override
+    public String getUserName(int userId) {
+        return realSession.getUserName(userId);
+    }
+
+    @Override
+    public void setUsername(int userId, String newUsername) {
+        realSession.setUsername(userId,newUsername);
+    }
+
+    @Override
+    public void setUserStatus(int userId, int newStatus) {
+        realSession.setUserStatus(userId,newStatus);
+    }
+
+    @Override
+    public String getUserStatus(int userId) {
+        return realSession.getUserStatus(userId);
+    }
+
+    @Override
+    public List<Pair<Integer, String>> getStoresOfUser(int userId) {
+        return realSession.getStoresOfUser(userId);
+        }
+
+    public StoreInfo getStoreInfo(int storeId) {
+        return realSession.getStoreInfo(storeId);
+    }
+
+    @Override
+    public String getStoreName(int storeId) {
+        return realSession.getStoreName(storeId);
+    }
+
+    @Override
+    public String getStoreCategory(int storeId) {
+        return realSession.getStoreCategory(storeId);
+    }
+
+    @Override
+    public ProductInfo getStoreProductInfo(int storeId, int productId) {
+        return realSession.getStoreProductInfo(storeId, productId);
+    }
+
+    @Override
+    public ProductInfo getProductInfo(int productId) {
+        return realSession.getProductInfo(productId);
+    }
+
+    @Override
+    public String getProductName(int productId) {
+        return realSession.getProductName(productId);
+    }
+
+    @Override
+    public String getProductCategory(int productId) {
+        return realSession.getProductCategory(productId);
+    }
+
+    @Override
+    public double getProductPrice(int productId) {
+        return realSession.getProductPrice(productId);
+    }
+
+    @Override
+    public int getProductStockQuantity(int productId) {
+        return realSession.getProductStockQuantity(productId);
+    }
+
+    @Override
+    public float getProductScore(int productId) {
+        return realSession.getProductScore(productId);
+    }
+
+    @Override
+    public Set<ProductInfo> getAllStoreProductsInfo(int storeId) {
+        return realSession.getAllStoreProductsInfo(storeId);
+        
+    public boolean SecurityAnswer1Exists(int userId) {
+        return realSession.SecurityAnswer1Exists(userId);
+    }
+
+    @Override
+    public boolean SecurityAnswer2Exists(int userId) {
+        return realSession.SecurityAnswer2Exists(userId);
+    }
+
+    @Override
+    public boolean SecurityAnswer3Exists(int userId) {
+        return realSession.SecurityAnswer3Exists(userId);
+    }
+
+    @Override
+    public boolean checkIfQuestionsExist(int userId) {
+        return false;
     }
 }

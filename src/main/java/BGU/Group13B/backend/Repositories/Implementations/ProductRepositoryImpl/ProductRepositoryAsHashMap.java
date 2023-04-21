@@ -45,10 +45,18 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
     @Override
     public Product getStoreProductById(int productId, int storeId) {
         return getStoreProducts(storeId).orElseThrow(
-                        () -> new IllegalArgumentException("Store " + storeId + " not found")
+                        () -> new IllegalArgumentException("Store " + storeId + " not found or has no products")
                 ).stream().filter(product -> product.getProductId() == productId).
                 findFirst().orElseThrow(
                         () -> new IllegalArgumentException("Product " + productId + " not found in store " + storeId)
+                );
+    }
+
+    @Override
+    public Product getProductById(int productId) {
+        return storeProducts.values().stream().flatMap(Set::stream).filter(product -> product.getProductId() == productId).
+                findFirst().orElseThrow(
+                        () -> new IllegalArgumentException("Product " + productId + " not found")
                 );
     }
 
