@@ -144,8 +144,11 @@ public interface ISession {
      * @param username
      * @param password
      * @param email
+     * @param answer1 - optional for security question number 1 can put empty String
+     * @param answer2 - optional for security question number 2 can put empty String
+     * @param answer1 - optional for security question number 3 can put empty String
      * */
-    void register(int userId,String username,String password,String email);
+    void register(int userId,String username,String password,String email,String answer1,String answer2,String answer3);
 
     /**
      * #18
@@ -205,9 +208,12 @@ public interface ISession {
      * @param userID - current userID - of the visitor
      * @param username
      * @param password
+     * @param answer1 - optional for security question number 1 can put empty String
+     * @param answer2 - optional for security question number 2 can put empty String
+     * @param answer3 - optional for security question number 3 can put empty String
      * returns the new user id - of the already existing user - need to make a uniq generator if failed returns 0
      * */
-    int login(int userID,String username,String password);
+    int login(int userID,String username,String password,String answer1,String answer2,String answer3);
 
 
     /**
@@ -472,6 +478,7 @@ public interface ISession {
 
 
     /**
+
      * #17
      * require 2.1
      * @param storeId   the store id
@@ -548,4 +555,36 @@ public interface ISession {
      * @param storeId the store id
      */
     Set<ProductInfo> getAllStoreProductsInfo(int storeId);
+=======
+     * #31
+     * require 3.9
+     * @param userId
+     * */
+    boolean SecurityAnswer1Exists(int userId);
+
+    /**
+     * #31
+     * require 3.9
+     * @param userId
+     * */
+    boolean SecurityAnswer2Exists(int userId);
+
+
+    /**
+     * #31
+     * require 3.9
+     * @param userId
+     * */
+    boolean SecurityAnswer3Exists(int userId);
+
+
+    /**
+     * #31
+     * require 3.9
+     * @param userId
+     * checks if user has security questions answered
+     * */
+    boolean checkIfQuestionsExist(int userId);
+
+
 }
