@@ -1,0 +1,149 @@
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	
++++ b/.idea/workspace.xml	
+@@ -4,16 +4,8 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="3436d65a-5e76-4e77-818d-f39d961d7bb1" name="Changes" comment="adding Discount.java for the use of calculating the price.">
+-      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/CartRepositoryImpl/CartRepositoryAsList.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/ICartRepository.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/Basket.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Discounts/ConditionalDiscount.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Discounts/Discount.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Discounts/HiddenDiscount.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Discounts/VisibleDiscount.java" afterDir="false" />
++    <list default="true" id="3436d65a-5e76-4e77-818d-f39d961d7bb1" name="Changes" comment="save work 2">
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/User.java" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -43,6 +35,9 @@
+         <option value="master" />
+       </list>
+     </option>
++  </component>
++  <component name="HighlightingSettingsPerFile">
++    <setting file="jar://$MAVEN_REPOSITORY$/org/springframework/data/spring-data-commons/2.4.0/spring-data-commons-2.4.0.jar!/org/springframework/data/util/Pair.class" root0="SKIP_INSPECTION" />
+   </component>
+   <component name="MarkdownSettingsMigration">
+     <option name="stateVersion" value="1" />
+@@ -53,35 +48,35 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent"><![CDATA[{
+-  "keyToString": {
+-    "RunOnceActivity.OpenProjectViewOnStart": "true",
+-    "RunOnceActivity.ShowReadmeOnStart": "true",
+-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+-    "WebServerToolWindowFactoryState": "false",
+-    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
+-    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
+-    "create.test.in.the.same.root": "true",
+-    "last_opened_file_path": "C:/Users/Shust/OneDrive/Documents/First Degree/Semester 5/Fundamentals of software engineering/Assignment2",
+-    "node.js.detected.package.eslint": "true",
+-    "node.js.detected.package.tslint": "true",
+-    "node.js.selected.package.eslint": "(autodetect)",
+-    "node.js.selected.package.tslint": "(autodetect)",
+-    "project.structure.last.edited": "Modules",
+-    "project.structure.proportion": "0.15",
+-    "project.structure.side.proportion": "0.2",
+-    "settings.editor.selected.configurable": "editor.preferences.fonts.default",
+-    "spring.configuration.checksum": "0bff9c3a4f5bac17f71b3dede1d050f7",
+-    "vue.rearranger.settings.migration": "true"
++  <component name="PropertiesComponent">{
++  &quot;keyToString&quot;: {
++    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
++    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
++    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
++    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
++    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
++    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
++    &quot;create.test.in.the.same.root&quot;: &quot;true&quot;,
++    &quot;last_opened_file_path&quot;: &quot;C:/Users/Shust/OneDrive/Documents/First Degree/Semester 5/Fundamentals of software engineering/Assignment2&quot;,
++    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
++    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
++    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
++    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
++    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
++    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
++    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
++    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;,
++    &quot;spring.configuration.checksum&quot;: &quot;0bff9c3a4f5bac17f71b3dede1d050f7&quot;,
++    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+   }
+-}]]></component>
++}</component>
+   <component name="RecentsManager">
+     <key name="CreateClassDialog.RecentsKey">
+       <recent name="BGU.Group13B.backend.Repositories.Interfaces" />
++      <recent name="BGU.Group13B.service" />
+       <recent name="BGU.Group13B.backend" />
+       <recent name="BGU.Group13B.backend.storePackage" />
+       <recent name="BGU.Group13B.backend.User" />
+-      <recent name="BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl" />
+     </key>
+     <key name="CopyFile.RECENT_KEYS">
+       <recent name="C:\Users\Shust\OneDrive\Documents\First Degree\Semester6\Sadna\trading-system\src\main\java\BGU\Group13B\backend\Repositories\Implementations\StoreRepositoryImpl" />
+@@ -108,6 +103,7 @@
+       <workItem from="1679745836554" duration="107000" />
+       <workItem from="1680599750928" duration="13707000" />
+       <workItem from="1680681882942" duration="16736000" />
++      <workItem from="1681227856134" duration="11774000" />
+     </task>
+     <task id="LOCAL-00001" summary="save work">
+       <created>1680688726166</created>
+@@ -137,7 +133,21 @@
+       <option name="project" value="LOCAL" />
+       <updated>1680879711169</updated>
+     </task>
+-    <option name="localTasksCounter" value="5" />
++    <task id="LOCAL-00005" summary="save work">
++      <created>1680985918161</created>
++      <option name="number" value="00005" />
++      <option name="presentableId" value="LOCAL-00005" />
++      <option name="project" value="LOCAL" />
++      <updated>1680985918161</updated>
++    </task>
++    <task id="LOCAL-00006" summary="save work 2">
++      <created>1681240044759</created>
++      <option name="number" value="00006" />
++      <option name="presentableId" value="LOCAL-00006" />
++      <option name="project" value="LOCAL" />
++      <updated>1681240044759</updated>
++    </task>
++    <option name="localTasksCounter" value="7" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+@@ -167,17 +177,21 @@
+     </option>
+   </component>
+   <component name="VcsManagerConfiguration">
+-    <MESSAGE value="save work" />
+     <MESSAGE value="updating  interfaces in order to create the tests infrastructure" />
+     <MESSAGE value="please review :)" />
+     <MESSAGE value="adding Discount.java for the use of calculating the price." />
+-    <option name="LAST_COMMIT_MESSAGE" value="adding Discount.java for the use of calculating the price." />
++    <MESSAGE value="save work" />
++    <MESSAGE value="save work 2" />
++    <option name="LAST_COMMIT_MESSAGE" value="save work 2" />
+   </component>
+   <component name="XSLT-Support.FileAssociations.UIState">
+     <expand />
+     <select />
+   </component>
+   <component name="com.intellij.coverage.CoverageDataManagerImpl">
++    <SUITE FILE_PATH="coverage/trading_system$StoreTest.ic" NAME="StoreTest Coverage Results" MODIFIED="1680968615168" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
++      <FILTER>BGU.Group13B.backend.storePackage.*</FILTER>
++    </SUITE>
+     <SUITE FILE_PATH="coverage/trading_system$Main.ic" NAME="Main Coverage Results" MODIFIED="1680682126010" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+       <FILTER>BGU.Group13B.*</FILTER>
+     </SUITE>
