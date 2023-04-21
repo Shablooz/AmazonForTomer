@@ -8,8 +8,8 @@ import java.util.Collection;
 public class VisibleDiscount extends Discount {
     //a very sad class :(
 
-    public VisibleDiscount(Integer priority, double discountPercentage, LocalDateTime discountLastDate) {
-        super(priority, discountPercentage, discountLastDate);
+    public VisibleDiscount(int discountId, int parentId, double discountPercentage, LocalDateTime discountLastDate) {
+        super(discountId, parentId, discountPercentage, discountLastDate);
     }
 
     /*@Override

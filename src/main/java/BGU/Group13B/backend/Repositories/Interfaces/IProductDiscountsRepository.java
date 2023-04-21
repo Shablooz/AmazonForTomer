@@ -2,11 +2,16 @@ package BGU.Group13B.backend.Repositories.Interfaces;
 
 import BGU.Group13B.backend.storePackage.Discounts.Discount;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface IProductDiscountsRepository {
-    Optional<List<Discount>> getProductDiscounts(int productId);
-    void addProductDiscount(int productId, Discount discount);
-    void removeProductDiscount(int productId, Discount discount);
+    Set<Discount> getProductDiscounts(int productId);
+    int addProductVisibleDiscount(int productId, double discountPercentage, LocalDateTime discountLastDate);
+    int addProductConditionalDiscount(int productId, double discountPercentage, LocalDateTime discountLastDate,
+                                      double minPriceForDiscount, int quantityForDiscount);
+    int addProductHiddenDiscount(int productId, double discountPercentage, LocalDateTime discountLastDate, String code);
+    void removeProductDiscount(int productId, int discountId);
 }
