@@ -4,8 +4,10 @@ import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
 import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.service.SingletonCollection;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.util.Assert;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -38,7 +40,7 @@ class UserTest {
     private final String goodPassword3 = "ShtrudelEater420";
 
 
-    private final String goodEmail1 = "eyalthegreat@gmail.com";
+    private final String goodEmail1 = "eylalozof123@gmail.com";
     private final String goodEmail2 = "eyalthegever@gmail.com";
     private final String goodEmail3 = "eyalisthebest123@gmail.com";
 
@@ -72,11 +74,81 @@ class UserTest {
 
     @Test
     void register() {
+        //user1
+        try {
+            user1.register(goodUsername1, goodPassword1, goodEmail1, "", "", "");
+        }catch(Exception e){
+            Assertions.fail(e.getMessage());
+        }
+
+        try {
+            user2.register(goodUsername2,goodPassword2,goodEmail2,"","","");
+        }catch(Exception e){
+            Assertions.fail(e.getMessage());
+        }
+
+        try {
+            user3.register(goodUsername3,goodPassword3,goodEmail3,"","","");
+        }catch(Exception e){
+            Assertions.fail(e.getMessage());
+        }
+
+        try {
+            user4.register(badUsername1,badPassword1,badEmail1,"","","");
+            Assertions.fail();
+        }catch(Exception e){
+
+        }
+
+        try {
+            user5.register(badUsername2,badPassword2,badEmail2,"","","");
+            Assertions.fail();
+        }catch(Exception e){
+
+        }
+
+        //now lets check that we cant register twice!
+        try {
+            user1.register(goodUsername1, goodPassword1, goodEmail1, "", "", "");
+        }catch(Exception e){
+            Assertions.fail();
+        }
+
 
     }
 
     @Test
     void login() {
+        user1.register(goodUsername1, goodPassword1, goodEmail1, "yellow", "", "");
+        user2.register(goodUsername2,goodPassword2,goodEmail2,"","yak","");
+        user3.register(goodUsername3,goodPassword3,goodEmail3,"","","");
+
+        user4.register("orangesLove", goodPassword1, "orangeslover@gmail.com", "yellow", "", "");
+
+        try {
+            user1.login(goodUsername1, goodPassword1, "yellow", "", "");
+        }catch(Exception e){
+            Assertions.fail(e.getMessage());
+        }
+
+        try {
+            user2.login(goodUsername2,goodPassword2,"","yak","");
+        }catch(Exception e){
+            Assertions.fail(e.getMessage());
+        }
+
+        try {
+            user3.login(goodUsername3,goodPassword3,"","","");
+        }catch(Exception e){
+            Assertions.fail(e.getMessage());
+        }
+
+        //should fail because he didnt answer the questions
+        try {
+            user4.login("orangesLove",goodPassword1,"","","");
+            Assertions.fail();
+        }catch(Exception e){
+        }
     }
 
     @Test
