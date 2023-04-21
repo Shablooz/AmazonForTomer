@@ -76,9 +76,10 @@ public class Market {
     }
 
 
-    public void addProduct(int userId, String productName, int quantity, double price, int storeId) throws NoPermissionException {
-        storeRepository.getStore(storeId).addProduct(userId, productName, quantity, price);
+    public void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity) throws NoPermissionException {
+        storeRepository.getStore(storeId).addProduct(userId, storeId, productName, category, price, stockQuantity);
     }
+
     public void addStoreScore(int userId,int storeId ,int score){
        storeRepository.getStore(storeId).addStoreScore(userId,score);
     }
@@ -154,5 +155,29 @@ public class Market {
         ).calculatePriceOfBasket(totalAmountBeforeStoreDiscountPolicy, successfulProducts, storeCoupon);
     }
 
+
+    public void isProductAvailable(int productId, int storeId) throws Exception {
+         storeRepository.getStore(storeId).isProductAvailable(productId);
+    }
+
+    public void setProductName(int userId, int storeId, int productId, String name) throws NoPermissionException{
+        storeRepository.getStore(storeId).setProductName(userId, productId, name);
+    }
+
+    public void setProductCategory(int userId, int storeId, int productId, String category) throws NoPermissionException{
+        storeRepository.getStore(storeId).setProductCategory(userId, productId, category);
+    }
+
+    public void setProductPrice(int userId, int storeId, int productId, double price) throws NoPermissionException{
+        storeRepository.getStore(storeId).setProductPrice(userId, productId, price);
+    }
+
+    public void setProductStockQuantity(int userId, int storeId, int productId, int stockQuantity) throws NoPermissionException{
+        storeRepository.getStore(storeId).setProductStockQuantity(userId, productId, stockQuantity);
+    }
+
+    public void removeProduct(int userId, int storeId, int productId) throws NoPermissionException{
+        storeRepository.getStore(storeId).removeProduct(userId, productId);
+    }
 
 }

@@ -43,6 +43,7 @@ public class User {
         return isLoggedIn;
     }
 
+
     public boolean isRegistered() {
         return this.userPermissions.getUserPermissionStatus() == UserPermissions.UserPermissionStatus.MEMBER ||
                 this.userPermissions.getUserPermissionStatus() == UserPermissions.UserPermissionStatus.ADMIN;
@@ -224,4 +225,12 @@ public class User {
         cart.purchaseCart(address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType);
     }
 
+    public Cart getCart() {
+        return cart;
+    }
+
+    public void addProductToCart(int productId, int storeId) throws Exception {
+        market.isProductAvailable(productId, storeId);
+        cart.addProductToCart(productId, storeId);
+    }
 }

@@ -11,8 +11,18 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ISession {
-    void addProduct(int userId, String productName, int quantity, double price, int storeId) throws NoPermissionException;
-    //generate param documentation
+    /**
+     * #32
+     * require 4.1
+     *
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param productName   the product id
+     * @param category      the product category
+     * @param price         the product price
+     * @param stockQuantity the stock quantity
+     */
+    void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity);
 
     /**
      * #19
@@ -137,52 +147,52 @@ public interface ISession {
     /**
      * #18
      * require 2.2
-     * @param productName
+     * @param productName - the name of the product
      */
     void searchProductByName(String productName);
 
     /**
      * #18
      * require 2.2
-     * @param category
+     * @param category - the category of the product
      */
     void searchProductByCategory(String category);
 
     /**
      * #18
      * require 2.2
-     * @param keywords
+     * @param keywords - list of keywords
      */
     void searchProductByKeywords(List<String> keywords);
 
     /**
      * #18
      * require 2.2
-     * @param minPrice
-     * @param maxPrice
+     * @param minPrice - the minimum price of the product
+     * @param maxPrice - the maximum price of the product
      */
     void filterByPriceRange(int minPrice, int maxPrice);
 
     /**
      * #18
      * require 2.2
-     * @param minRating
-     * @param maxRating
+     * @param minRating - the minimum rating of the product
+     * @param maxRating - the maximum rating of the product
      */
     void filterByProductRank(int minRating, int maxRating);
 
     /**
      * #18
      * require 2.2
-     * @param category
+     * @param category - the category of the product
      */
     void filterByCategory(String category);
 
     /**
      * #18
      * require 2.2
-     * @param minRating
-     * @param maxRating
+     * @param minRating - the minimum rating of the store
+     * @param maxRating - the maximum rating of the store
      */
     void filterByStoreRank(int minRating, int maxRating);
 
@@ -217,6 +227,16 @@ public interface ISession {
     void addStore(int userId, String storeName, String category);
 
 
+    /**
+     * #19
+     * require 2.3
+     * @param userId    the user id
+     * @param storeId   the store id
+     * @param productId the product id
+     */
+    void addProductToCart(int userId, int productId, int storeId);
+
+    void getUserPurchaseHistory(int userId);
 
     /**
      * [#28]
@@ -397,4 +417,53 @@ public interface ISession {
      * @return the score
      */
     public float getStoreScore( int userId,int storeId);
+
+    /**
+     * #32
+     * require 4.1
+     * @param userId    the user id
+     * @param storeId   the store id
+     * @param productId the product id
+     * @param name      the name of the product
+     */
+    void setProductName(int userId, int storeId, int productId, String name);
+
+    /**
+     * #32
+     * require 4.1
+     * @param userId    the user id
+     * @param storeId   the store id
+     * @param productId the product id
+     * @param category  the category of the product
+     */
+    void setProductCategory(int userId, int storeId, int productId, String category);
+
+    /**
+     * #32
+     * require 4.1
+     * @param userId    the user id
+     * @param storeId   the store id
+     * @param productId the product id
+     * @param price     the price of the product
+     */
+    void setProductPrice(int userId, int storeId, int productId, double price);
+
+    /**
+     * #32
+     * require 4.1
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param productId     the product id
+     * @param stockQuantity the stock quantity of the product
+     */
+    void setProductStockQuantity(int userId, int storeId, int productId, int stockQuantity);
+
+    /**
+     * #32
+     * require 4.1
+     * @param userId    the user id
+     * @param storeId   the store id
+     * @param productId the product id to remove
+     */
+    void removeProduct(int userId, int storeId, int productId);
 }
