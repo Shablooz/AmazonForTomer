@@ -8,7 +8,6 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/User.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/User/UserTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/User/UserTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/service/ProxySession.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/service/ProxySession.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,7 +41,7 @@
       <recent name="BGU.Group13B.backend.User" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.UserTest.login">
+  <component name="RunManager" selected="JUnit.UserTest.testLogout">
     <configuration name="All in TradingSystemProject" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="TradingSystemProject" />
       <option name="PACKAGE_NAME" value="" />
@@ -91,8 +90,25 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="UserTest.testLogout" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="TradingSystemProject" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="BGU.Group13B.backend.User.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="BGU.Group13B.backend.User" />
+      <option name="MAIN_CLASS_NAME" value="BGU.Group13B.backend.User.UserTest" />
+      <option name="METHOD_NAME" value="testLogout" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.UserTest.testLogout" />
         <item itemvalue="JUnit.UserTest.login" />
         <item itemvalue="JUnit.UserTest.register" />
         <item itemvalue="JUnit.All in trading-system" />

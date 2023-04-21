@@ -1,15 +1,11 @@
 package BGU.Group13B.backend.User;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
-import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.service.SingletonCollection;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.util.Assert;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class UserTest {
 
@@ -73,7 +69,7 @@ class UserTest {
     }
 
     @Test
-    void register() {
+    void testRegister() {
         //user1
         try {
             user1.register(goodUsername1, goodPassword1, goodEmail1, "", "", "");
@@ -118,7 +114,7 @@ class UserTest {
     }
 
     @Test
-    void login() {
+    void testLogin() {
         user1.register(goodUsername1, goodPassword1, goodEmail1, "yellow", "", "");
         user2.register(goodUsername2,goodPassword2,goodEmail2,"","yak","");
         user3.register(goodUsername3,goodPassword3,goodEmail3,"","","");
@@ -152,18 +148,38 @@ class UserTest {
     }
 
     @Test
-    void logout() {
-    }
-
-    @Test
-    void testRegister() {
-    }
-
-    @Test
-    void testLogin() {
-    }
-
-    @Test
     void testLogout() {
+        user1.register(goodUsername1, goodPassword1, goodEmail1, "yellow", "", "");
+        user2.register(goodUsername2, goodPassword2, goodEmail2, "", "yak", "");
+        user3.register(goodUsername3, goodPassword3, goodEmail3, "", "", "");
+
+        user1.login(goodUsername1, goodPassword1, "yellow", "", "");
+        user2.login(goodUsername2, goodPassword2, "", "yak", "");
+        user3.login(goodUsername3, goodPassword3, "", "", "");
+
+        Assertions.assertTrue(user1.isLoggedIn());
+        user1.logout();
+        Assertions.assertFalse(user1.isLoggedIn());
+
+        Assertions.assertTrue(user2.isLoggedIn());
+        user2.logout();
+        Assertions.assertFalse(user2.isLoggedIn());
+
+        Assertions.assertTrue(user3.isLoggedIn());
+        user3.logout();
+        Assertions.assertFalse(user3.isLoggedIn());
+
+        try {
+            user3.logout();
+            Assertions.fail("should have failed - cant log out twice!");
+        } catch (Exception e) {
+
+        }
     }
+
+
+
+
+
+
 }

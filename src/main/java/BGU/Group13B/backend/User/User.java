@@ -174,6 +174,8 @@ public class User {
 
     //27
     public void logout(){
+        if(isLoggedIn == false)
+            throw new IllegalArgumentException("already logged out!");
         this.isLoggedIn = false;
     }
 
