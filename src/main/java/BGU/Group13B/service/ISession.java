@@ -474,5 +474,12 @@ public interface ISession {
      */
     int enterAsGuest();
 
+    /**
+     * #13
+     * require 1.1
+     * @param userId the user id
+     * as a guess u can exit the system and delete all ur related data
+     */
+    void exitSystemAsGuest(int userId);
 
 }

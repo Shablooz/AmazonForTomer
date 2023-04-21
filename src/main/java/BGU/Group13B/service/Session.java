@@ -442,6 +442,8 @@ class Session implements ISession {
         return id;
     }
 
+
+
     @Override
     public void removeProduct(int userId, int storeId, int productId) {
         try{
@@ -450,6 +452,11 @@ class Session implements ISession {
         catch (Exception e){
             //TODO: handle exception
         }
+    }
+
+    @Override
+    public void exitSystemAsGuest(int userId) {
+        userRepositoryAsHashmap.removeUser(userId);
     }
 
 }

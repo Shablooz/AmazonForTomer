@@ -234,4 +234,6 @@ public class User {
         market.isProductAvailable(productId, storeId);
         cart.addProductToCart(productId, storeId);
     }
+
+
 }
