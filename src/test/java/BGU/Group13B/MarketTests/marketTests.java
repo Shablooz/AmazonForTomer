@@ -89,6 +89,7 @@ public class marketTests {
             List<Product> products=market.searchProductByName(productName1);
             assertEquals(2, products.size());
             assertEquals(2, products.stream().filter(p->p.getName().contains(productName1)).count());
+
         } catch (Exception e) {
             fail("Exception was thrown");
         }
@@ -100,6 +101,7 @@ public class marketTests {
             List<Product> products=market.searchProductByCategory(productCategory1);
             assertEquals(4, products.size());
             assertEquals(4, products.stream().filter(p->p.getCategory().contains(productCategory1)).count());
+
         } catch (Exception e) {
             fail("Exception was thrown");
         }

@@ -1,6 +1,7 @@
 package BGU.Group13B.service;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
+import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.User.User;
@@ -19,6 +20,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
+/**IMPORTANT need to initialize the session AFTER loading first user (id = 1) from database
+ */
 
 class Session implements ISession {
     private final Market market;
@@ -31,13 +34,21 @@ class Session implements ISession {
     IUserRepository userRepositoryAsHashmap;
 
 
+    //IMPORTANT need to initialize the session AFTER loading first user (id = 1) from database
     public Session(Market market) {
         this.market = market;
-
         //callbacks initialization
         SingletonCollection.setAddToUserCart(this::addToCart);
         this.userRepositoryAsHashmap = SingletonCollection.getUserRepository();
 
+        //IMPORTANT need to initialize the session AFTER loading first user (id = 1) from database
+        //id should 1
+        //This should do nothing if the system was initialized in the past - making first admin
+        int id = 1;
+        userRepositoryAsHashmap.addUser(id, new User(id));
+        register(id, "kingOfTheSheep","SheePLover420",
+                "mrsheep@gmail.com","054-1234567","1234","answer3");
+        setUserStatus(id,1);
     }
 
     @Override
@@ -422,7 +433,7 @@ class Session implements ISession {
             throw new RuntimeException(e);
             }
         }
-        
+
     public void setProductName(int userId, int storeId, int productId, String name) {
         try{
             market.setProductName(userId, storeId, productId, name);
@@ -461,6 +472,15 @@ class Session implements ISession {
             //TODO: handle exception
         }
     }
+
+    @Override
+    public int enterAsGuest() {
+        int id =  userRepositoryAsHashmap.getNewUserId();
+        userRepositoryAsHashmap.addUser(id, new User(id));
+        return id;
+    }
+
+
 
     @Override
     public void removeProduct(int userId, int storeId, int productId) {
@@ -591,7 +611,7 @@ class Session implements ISession {
             throw new RuntimeException(e);
         }
     }
-    
+
     public double getProductPrice(int productId) {
         try{
             return market.getProductPrice(productId);
@@ -651,6 +671,11 @@ class Session implements ISession {
     @Override
     public boolean checkIfQuestionsExist(int userId) {
         return SecurityAnswer1Exists(userId) || SecurityAnswer2Exists(userId) || SecurityAnswer3Exists(userId);
+    }
+
+    @Override
+    public void exitSystemAsGuest(int userId) {
+        userRepositoryAsHashmap.removeUser(userId);
     }
 
 }
