@@ -24,6 +24,17 @@ public class User {
     private String userName;
     private Message currentMessageToReply;
     private String password;
+
+    private String email;
+
+    private String answer1;
+    private String answer2;
+    private String answer3;
+
+    //TODO: show the messages upon registering
+    private static final String question1 = "What is your favorite color?";
+    private static final String question2 = "What is your favorite food?";
+    private static final String question3 = "What is your favorite book or movie?";
     //eyal addition
     private volatile boolean isLoggedIn;
 
@@ -37,6 +48,15 @@ public class User {
         this.userPermissions = new UserPermissions();
         this.cart = new Cart(userId);
         this.market = SingletonCollection.getMarket();
+        this.userName = "";
+        this.password = "";
+        this.email = "";
+
+        //do not change those fields!
+        this.answer1 = "";
+        this.answer2 = "";
+        this.answer3 = "";
+
         this.isLoggedIn = false;
     }
 
@@ -57,7 +77,14 @@ public class User {
 
     //#15
     //returns User on success (for future functionalities)
-    public User register(String userName, String password, String email) {
+    public User register(String userName, String password, String email,String answer1,String answer2,String answer3) {
+        checkRegisterInfo(userName,password,email);
+        //updates the user info upon registration - no longer a guest
+        updateUserDetail(userName, password, email,answer1,answer2,answer3);
+        this.userPermissions.register();
+        return this;
+    }
+    private void checkRegisterInfo(String userName,String password, String email){
         String usernameRegex = "^[a-zA-Z0-9_-]{4,16}$"; // 4-16 characters, letters/numbers/underscore/hyphen
         String passwordRegex = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)[A-Za-z\\d]{8,}$"; // need at least 8 characters, 1 uppercase, 1 lowercase, 1 number)
         String emailRegex = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\\\.[A-Za-z0-9-]+)*(\\\\.[A-Za-z]{2,})$"; // checks email validation
@@ -70,20 +97,28 @@ public class User {
         if (!Pattern.matches(emailRegex, email)) {
             throw new IllegalArgumentException("Invalid email.");
         }
+    }
+
+    //function that currently only used in register, but is cna function as a setter
+    //TODO change following fields in the database
+    private void updateUserDetail(String userName, String password, String email,String answer1,String answer2,String answer3) {
+        this.answer1 = answer1;
+        this.answer2 = answer2;
+        this.answer3 = answer3;
         this.userName = userName;
         this.password = password;
-        this.userPermissions.register();
-        return this;
     }
 
 
-    public void login(String userName, String password) {
-        //second username check for security
-        if (this.userName.equals(userName) && this.password.equals(password)) {
-            this.isLoggedIn = true;
-            return;
+    public void login(String userName, String password, String answer1,String answer2,String answer3) {
+        //second username check is for security
+        if (!((this.userName.equals(userName) && this.password.equals(password)))){
+            throw new IllegalArgumentException("incorrect username or password");
         }
-        throw new IllegalArgumentException("incorrect username or password");
+        this.isLoggedIn = true;
+        if(!this.answer1.equals(answer1) || !this.answer2.equals(answer2) || !this.answer3.equals(answer3)){
+            throw new IllegalArgumentException("wrong answers on security questions!");
+        }
     }
 
     public String getUserName() {
@@ -227,6 +262,18 @@ public class User {
     void purchaseCart(String address, String creditCardNumber, String creditCardMonth, String creditCardYear, String creditCardHolderFirstName, String creditCardHolderLastName, String creditCardCcv, String id, String creditCardType) {
         cart.purchaseCart(address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType);
     }
+
+
+    public boolean SecurityAnswer1Exists(){
+        return answer1.equals("") == false;
+    }
+    public boolean SecurityAnswer2Exists(){
+        return answer2.equals("") == false;
+    }
+    public boolean SecurityAnswer3Exists(){
+        return answer3.equals("") == false;
+    }
+
 
     public Cart getCart() {
         return cart;

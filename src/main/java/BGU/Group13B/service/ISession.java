@@ -6,10 +6,13 @@ import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import org.springframework.data.util.Pair;
+import BGU.Group13B.service.info.ProductInfo;
+import BGU.Group13B.service.info.StoreInfo;
 
 import java.time.LocalDateTime;
 
 import java.util.List;
+import java.util.Set;
 
 public interface ISession {
     /**
@@ -142,8 +145,11 @@ public interface ISession {
      * @param username
      * @param password
      * @param email
+     * @param answer1 - optional for security question number 1 can put empty String
+     * @param answer2 - optional for security question number 2 can put empty String
+     * @param answer1 - optional for security question number 3 can put empty String
      * */
-    void register(int userId,String username,String password,String email);
+    void register(int userId,String username,String password,String email,String answer1,String answer2,String answer3);
 
     /**
      * #18
@@ -203,9 +209,12 @@ public interface ISession {
      * @param userID - current userID - of the visitor
      * @param username
      * @param password
+     * @param answer1 - optional for security question number 1 can put empty String
+     * @param answer2 - optional for security question number 2 can put empty String
+     * @param answer3 - optional for security question number 3 can put empty String
      * returns the new user id - of the already existing user - need to make a uniq generator if failed returns 0
      * */
-    int login(int userID,String username,String password);
+    int login(int userID,String username,String password,String answer1,String answer2,String answer3);
 
 
     /**
@@ -508,6 +517,115 @@ public interface ISession {
      * return a list of store id - role (as String)
      */
     List<Pair<Integer,String>> getStoresOfUser(int userId);
+=======
+
+     * #17
+     * require 2.1
+     * @param storeId   the store id
+     */
+    StoreInfo getStoreInfo(int storeId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param storeId   the store id
+     */
+    String getStoreName(int storeId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param storeId   the store id
+     */
+    String getStoreCategory(int storeId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param storeId   the store id
+     * @param productId the product id
+     */
+    ProductInfo getStoreProductInfo(int storeId, int productId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param productId the product id
+     */
+    ProductInfo getProductInfo(int productId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param productId the product id
+     */
+    String getProductName(int productId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param productId the product id
+     */
+    String getProductCategory(int productId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param productId the product id
+     */
+    double getProductPrice(int productId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param productId the product id
+     */
+    int getProductStockQuantity(int productId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param productId the product id
+     */
+    float getProductScore(int productId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param storeId the store id
+     */
+    Set<ProductInfo> getAllStoreProductsInfo(int storeId);
+=======
+     * #31
+     * require 3.9
+     * @param userId
+     * */
+    boolean SecurityAnswer1Exists(int userId);
+
+    /**
+     * #31
+     * require 3.9
+     * @param userId
+     * */
+    boolean SecurityAnswer2Exists(int userId);
+
+
+    /**
+     * #31
+     * require 3.9
+     * @param userId
+     * */
+    boolean SecurityAnswer3Exists(int userId);
+
+
+    /**
+     * #31
+     * require 3.9
+     * @param userId
+     * checks if user has security questions answered
+     * */
+    boolean checkIfQuestionsExist(int userId);
+
 
 
 }
