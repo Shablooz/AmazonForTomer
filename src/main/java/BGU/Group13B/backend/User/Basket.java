@@ -11,10 +11,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.*;
 
 public class Basket {
     private final int userId;
@@ -25,6 +22,9 @@ public class Basket {
     private final ConcurrentLinkedQueue<BasketProduct> failedProducts;
     private final IProductHistoryRepository productHistoryRepository;
     private final CalculatePriceOfBasket calculatePriceOfBasket;
+    private ScheduledFuture<?> scheduledFuture;
+    private int idealTime = 5;
+    private TimeUnit unitsToRestore = TimeUnit.MINUTES;
 
     public Basket(int userId, int storeId) {
         this.userId = userId;
@@ -67,7 +67,7 @@ public class Basket {
                                String/*store coupons*/ storeCoupon
     ) throws PurchaseFailedException {
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-        var scheduledFuture = scheduler.schedule(this::restoreProductsStock, 5, java.util.concurrent.TimeUnit.MINUTES);
+        scheduledFuture = scheduler.schedule(this::restoreProductsStock, idealTime, unitsToRestore);
         getSuccessfulProducts();
 
 
@@ -79,6 +79,7 @@ public class Basket {
                         creditCardHolderFirstName, creditCardHolderLastName,
                         creditCardCVV, id, creditCardType, successfulProducts, failedProducts, totalAmount)) {
             scheduledFuture.cancel(true);
+            scheduledFuture = null;
             scheduler.shutdown();
             //if succeeded, add the successful products to the purchase history
             for (BasketProduct basketProduct : successfulProducts) {
@@ -103,6 +104,10 @@ public class Basket {
 
     /*In case the user pressed on exit in the middle of the purchase or something like that*/
     public void cancelPurchase() {
+        if(scheduledFuture != null && !scheduledFuture.isDone()){
+            scheduledFuture.cancel(true);
+            scheduledFuture = null;
+        }
         restoreProductsStock();
         successfulProducts.clear();
         failedProducts.clear();
@@ -198,4 +203,11 @@ public class Basket {
     }
 
 
+    /*used for testing*/
+    public void setIdealTime(int idealTime) {
+        this.idealTime = idealTime;
+    }
+    public void setUnitsToRestore(java.util.concurrent.TimeUnit unitsToRestore) {
+        this.unitsToRestore = unitsToRestore;
+    }
 }

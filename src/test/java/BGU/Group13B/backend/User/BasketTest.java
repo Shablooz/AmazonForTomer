@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -201,8 +202,6 @@ class BasketTest {
 
     @Test
     void purchaseBasketSimpleTest_notInStockFail() {
-
-
         try {
             payBehaviour(true);
             basketProductRepository.changeProductQuantity(productId1, storeId, userId, 2);
@@ -222,6 +221,48 @@ class BasketTest {
 
     @Test
     void cancelPurchase() {
+        try {
+            payBehaviour(false);
+            basket.purchaseBasket("", "", "", "", "", "", "", "", "", new HashMap<>(), "");
+        } catch (PurchaseFailedException e) {
+            basket.cancelPurchase();
+            Assertions.assertEquals(1, productRepository.getStoreProductById(productId1, storeId).getStockQuantity());
+            Assertions.assertEquals(1, productRepository.getStoreProductById(productId2, storeId).getStockQuantity());
+
+        } catch (Exception e) {
+            Assertions.fail(e.getMessage());
+        }
+
+    }
+
+    @Test
+    void cancelPurchaseTimeout() {
+
+        basket.setIdealTime(1);
+        basket.setUnitsToRestore(TimeUnit.SECONDS);
+        payBehaviour(false);
+        Thread t1 = new Thread(() -> {
+            try {
+                basket.purchaseBasket("", "", "", "", "", "", "", "", "", new HashMap<>(), "");
+                //failed products
+                Assertions.assertEquals(2, basket.getFailedProducts().size());
+            } catch (PurchaseFailedException ignore) {
+
+            }
+        });
+        t1.start();
+
+        try {
+            t1.join();
+            Thread.sleep(2000);
+            //items restored
+            Assertions.assertEquals(1, productRepository.getStoreProductById(productId1, storeId).getStockQuantity());
+            Assertions.assertEquals(1, productRepository.getStoreProductById(productId2, storeId).getStockQuantity());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     @Test
