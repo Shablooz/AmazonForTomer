@@ -52,6 +52,32 @@ public class Cart {
         {
             basketRepository.addUserBasket(userId, storeId).addProduct(productId);
         }
+    }
 
+    public String getCartContent() {
+        String cartContent = "";
+        var userBaskets = basketRepository.getUserBaskets(userId);
+        for (var basket : userBaskets) {
+            cartContent+= "Store id " + basket.getStoreId() + " : " + basket.getBasketContent();
+        }
+        return cartContent;
+    }
+
+    public void removeProduct(int storeId, int productId) throws Exception {
+        var userBaskets = basketRepository.getUserBaskets(userId);
+        for (var basket : userBaskets) {
+            if (basket.getStoreId() == storeId) {
+                basket.removeProduct(productId);
+            }
+        }
+    }
+
+    public void changeProductQuantity(int storeId, int productId, int quantity) throws Exception {
+        var userBaskets = basketRepository.getUserBaskets(userId);
+        for (var basket : userBaskets) {
+            if (basket.getStoreId() == storeId) {
+                basket.changeProductQuantity(productId, quantity);
+            }
+        }
     }
 }

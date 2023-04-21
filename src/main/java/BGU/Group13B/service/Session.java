@@ -217,6 +217,7 @@ class Session implements ISession {
         }
     }
 
+
     @Override
     public void getUserPurchaseHistory(int userId) {
         //TODO: implement
@@ -411,6 +412,19 @@ class Session implements ISession {
     }
 
     @Override
+    public void getCartContent(int userId) {
+        userRepositoryAsHashmap.getUser(userId).getCartContent();
+    }
+
+    @Override
+    public void removeProductFromCart(int userId, int storeId, int productId) {
+        try{
+            userRepositoryAsHashmap.getUser(userId).removeProductFromCart(storeId, productId);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+            }
+        }
+        
     public void setProductName(int userId, int storeId, int productId, String name) {
         try{
             market.setProductName(userId, storeId, productId, name);
@@ -572,6 +586,14 @@ class Session implements ISession {
     }
 
     @Override
+    public void changeProductQuantityInCart(int userId, int storeId, int productId, int quantity) {
+        try{
+            userRepositoryAsHashmap.getUser(userId).changeProductQuantityInCart(storeId, productId, quantity);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
     public double getProductPrice(int productId) {
         try{
             return market.getProductPrice(productId);
@@ -631,7 +653,6 @@ class Session implements ISession {
     @Override
     public boolean checkIfQuestionsExist(int userId) {
         return SecurityAnswer1Exists(userId) || SecurityAnswer2Exists(userId) || SecurityAnswer3Exists(userId);
-
     }
 
 }

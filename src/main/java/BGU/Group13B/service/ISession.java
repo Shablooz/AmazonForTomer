@@ -246,8 +246,6 @@ public interface ISession {
      */
     void addProductToCart(int userId, int productId, int storeId);
 
-    void getUserPurchaseHistory(int userId);
-
     /**
      * [#28]
      * @param userId   the user id
@@ -425,8 +423,35 @@ public interface ISession {
      * @param userId the user id
      * @param storeId the store id
      * @return the score
-     */
+     **/
     public float getStoreScore( int userId,int storeId);
+    
+    /**
+     * #20
+     * require 2.4
+     * @param userId    the user id
+     * */
+    void getCartContent(int userId);
+    
+    /**
+     * #20
+     * require 2.4
+     * @param userId    the user id
+     * @param storeId   the store id
+     * @param productId   the product id
+     * */
+    void removeProductFromCart(int userId, int storeId, int productId);
+    
+    /**
+     * #20
+     * require 2.4
+     * @param userId     the user id
+     * @param storeId    the store id
+     * @param productId  the product id
+     * @param quantity   the quantity of the product
+     * */
+    void changeProductQuantityInCart(int userId, int storeId, int productId, int quantity);
+
 
     /**
      * #32
@@ -517,7 +542,7 @@ public interface ISession {
      * return a list of store id - role (as String)
      */
     List<Pair<Integer,String>> getStoresOfUser(int userId);
-=======
+
 
      * #17
      * require 2.1
@@ -595,7 +620,7 @@ public interface ISession {
      * @param storeId the store id
      */
     Set<ProductInfo> getAllStoreProductsInfo(int storeId);
-=======
+
      * #31
      * require 3.9
      * @param userId
@@ -625,6 +650,7 @@ public interface ISession {
      * checks if user has security questions answered
      * */
     boolean checkIfQuestionsExist(int userId);
+
 
 
 

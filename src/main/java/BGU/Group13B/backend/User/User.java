@@ -264,6 +264,11 @@ public class User {
     }
 
 
+    public String getCartContent() {
+        return cart.getCartContent();
+    }
+
+
     public boolean SecurityAnswer1Exists(){
         return answer1.equals("") == false;
     }
@@ -275,6 +280,7 @@ public class User {
     }
 
 
+
     public Cart getCart() {
         return cart;
     }
@@ -282,6 +288,15 @@ public class User {
     public void addProductToCart(int productId, int storeId) throws Exception {
         market.isProductAvailable(productId, storeId);
         cart.addProductToCart(productId, storeId);
+    }
+
+
+    public void removeProductFromCart(int storeId, int productId) throws Exception {
+        cart.removeProduct(storeId, productId);
+    }
+
+    public void changeProductQuantityInCart(int storeId, int productId, int quantity) throws Exception {
+        cart.changeProductQuantity(storeId, productId, quantity);
     }
 
     public void setPermissions(UserPermissions.UserPermissionStatus status){
