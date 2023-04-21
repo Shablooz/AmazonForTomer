@@ -5,16 +5,19 @@ import BGU.Group13B.backend.Repositories.Implementations.BIDRepositoryImpl.BIDRe
 import BGU.Group13B.backend.Repositories.Implementations.BasketProductRepositoryImpl.BasketProductRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.BasketReposistoryImpl.BasketRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.IStoreScoreRepository.StoreScoreImplNotPer;
-import BGU.Group13B.backend.Repositories.Implementations.MessageRepositoryImpl.MessageRepositoryAsList;
+import BGU.Group13B.backend.Repositories.Implementations.IStoreScoreRepository.StoreScoreSingle;
+import BGU.Group13B.backend.Repositories.Implementations.MessageRepositoryImpl.MessageRepositorySingle;
 import BGU.Group13B.backend.Repositories.Implementations.ProductDiscountsRepositoryImpl.ProductDiscountsRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.ProductHistoryRepositoryImpl.ProductHistoryRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.ProductPurchasePolicyRepositoryImpl.ProductPurchasePolicyRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl.ProductRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.PurchaseHistoryRepositoryImpl.PurchaseHistoryRepositoryAsList;
+import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepoSingle;
 import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.StoreDiscountsRepositoryImpl.StoreDiscountsRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyImpl.StoreMessageRepositoryNonPersist;
 import BGU.Group13B.backend.Repositories.Implementations.StorePurchasePolicyRepositoryImpl.StorePurchasePolicyRepositoryAsList;
+import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyImpl.StoreMessageSingle;
 import BGU.Group13B.backend.Repositories.Implementations.StoreRepositoryImpl.StoreRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepositoryAsHashmap;
 import BGU.Group13B.backend.Repositories.Interfaces.*;
@@ -51,8 +54,6 @@ public class SingletonCollection {
     private static final IProductHistoryRepository productHistoryRepository;
     private static final IProductDiscountsRepository productDiscountsRepository;
     private static final IStoreScore storeScoreRepository;
-    private static final IProductPurchasePolicyRepository productPurchasePolicyRepository;
-    private static final IStorePurchasePolicyRepository storePurchasePolicyRepository;
 
 
     /**
@@ -82,11 +83,8 @@ public class SingletonCollection {
     static {
         //repositories
         bidRepository = new BIDRepositoryAsList();
-        messageRepository = new MessageRepositoryAsList();
         productRepository = new ProductRepositoryAsHashMap();
         purchaseHistoryRepository = new PurchaseHistoryRepositoryAsList();
-        reviewRepository = new ReviewRepositoryAsList();
-        storeMessagesRepository = new StoreMessageRepositoryNonPersist();
         storeRepository = new StoreRepositoryAsList();
         userRepository = new UserRepositoryAsHashmap();
         basketRepository = new BasketRepositoryAsHashMap();
@@ -98,6 +96,10 @@ public class SingletonCollection {
         storeScoreRepository = new StoreScoreImplNotPer();
         productPurchasePolicyRepository = new ProductPurchasePolicyRepositoryAsHashMap();
         storePurchasePolicyRepository = new StorePurchasePolicyRepositoryAsList();
+        storeMessagesRepository = new StoreMessageSingle();
+        reviewRepository = new ReviewRepoSingle();
+        messageRepository = new MessageRepositorySingle();
+        storeScoreRepository = new StoreScoreSingle();
 
 
         //adapters

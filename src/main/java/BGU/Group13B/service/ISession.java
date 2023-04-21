@@ -429,14 +429,14 @@ public interface ISession {
      * @return the score
      **/
     public float getStoreScore( int userId,int storeId);
-    
+
     /**
      * #20
      * require 2.4
      * @param userId    the user id
      * */
     void getCartContent(int userId);
-    
+
     /**
      * #20
      * require 2.4
@@ -445,7 +445,7 @@ public interface ISession {
      * @param productId   the product id
      * */
     void removeProductFromCart(int userId, int storeId, int productId);
-    
+
     /**
      * #20
      * require 2.4
@@ -498,8 +498,8 @@ public interface ISession {
     void setProductStockQuantity(int userId, int storeId, int productId, int stockQuantity);
 
     /**
-     * #32
-     * require 4.1
+     * #13
+     * require 1.1
      * @param userId    the user id
      * @param storeId   the store id
      * @param productId the product id to remove
@@ -538,6 +538,16 @@ public interface ISession {
      * returns the user status
      */
     String getUserStatus(int userId);
+
+
+    /**
+     * #30
+     * require 3.8
+     * @param userId    the user id
+     * returns the user status
+     */
+    String getUserEmail(int userId);
+
 
     /**
      * #30
@@ -657,5 +667,21 @@ public interface ISession {
 
 
 
+
+
+    /**
+     * #13
+     * require 1.1
+     * returns the new user id
+     */
+    int enterAsGuest();
+
+    /**
+     * #13
+     * require 1.1
+     * @param userId the user id
+     * as a guess u can exit the system and delete all ur related data
+     */
+    void exitSystemAsGuest(int userId);
 
 }

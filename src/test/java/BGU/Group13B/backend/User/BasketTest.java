@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -40,7 +41,6 @@ class BasketTest {
                 thenReturn(Mockito.mock(IProductRepository.class));*/ //remember
 
         productRepository = SingletonCollection.getProductRepository();
-
         basketProductRepository = new BasketProductRepositoryAsHashMap();
 
         //initCalculatePriceOfBasket(market);
@@ -83,7 +83,7 @@ class BasketTest {
 
     private void initProducts() {
         productId1 = productRepository.addProduct(storeId, "product1", "category1", 10.0, 1, "description1");
-        productId2 = productRepository.addProduct(storeId, "product2", "category2", 15.0, 1,"eyal was here");
+        productId2 = productRepository.addProduct(storeId, "product2", "category2", 15.0, 1, "eyal was here");
 
         basketProductRepository.addNewProductToBasket(productId1, storeId, userId);//adding product 0 to basket
         basketProductRepository.addNewProductToBasket(productId2, storeId, userId);//adding product 1 to basket
@@ -111,38 +111,39 @@ class BasketTest {
     void tearDown() {
 
     }
+
     @RepeatedTest(10)
-    void twoThreadsTryToPurchaseTheLastProduct(){
+    void twoThreadsTryToPurchaseTheLastProduct() {
         AtomicInteger firstThread = new AtomicInteger(0);
-        AtomicReference<Double> pricePayed1 = new AtomicReference<>((double) 0);
         AtomicReference<Double> pricePayed2 = new AtomicReference<>((double) 0);
+        AtomicReference<Double> pricePayed3 = new AtomicReference<>((double) 0);
         int userId2 = 2;
         int userId3 = 3;
         Basket basket2 = new Basket(userId2, storeId, basketProductRepository, paymentAdapter,
                 productHistoryRepository, calculatePriceOfBasket);
         Basket basket3 = new Basket(userId3, storeId, basketProductRepository, paymentAdapter,
                 productHistoryRepository, calculatePriceOfBasket);
-        int productId3 = productRepository.addProduct(storeId, "product3", "category3", 15.0, 1,"eyal was still here");
+        int productId3 = productRepository.addProduct(storeId, "product3", "category3", 15.0, 1, "eyal was still here");
         basketProductRepository.addNewProductToBasket(productId3, storeId, userId3);//adding product 1 to basket
         basketProductRepository.addNewProductToBasket(productId3, storeId, userId2);//adding product 1 to basket2
         Thread thread1 = new Thread(() -> {
             try {
-                if(Math.random() > 0.5)
-                    Thread.sleep(10);
+                if (Math.random() > 0.5)
+                    Thread.sleep(100);
                 payBehaviour(true);
-                pricePayed1.set(basket3.purchaseBasket("", "", "", "", "", "", "", "", "", new HashMap<>(), ""));
                 firstThread.compareAndSet(0, 1);
+                pricePayed3.set(basket3.purchaseBasket("", "", "", "", "", "", "", "", "", new HashMap<>(), ""));
             } catch (PurchaseFailedException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
         });
         Thread thread2 = new Thread(() -> {
             try {
-                if(Math.random() > 0.5)
-                    Thread.sleep(10);
+                if (Math.random() > 0.5)
+                    Thread.sleep(100);
                 payBehaviour(true);
-                pricePayed2.set(basket2.purchaseBasket("", "", "", "", "", "", "", "", "", new HashMap<>(), ""));
                 firstThread.compareAndSet(0, 2);
+                pricePayed2.set(basket2.purchaseBasket("", "", "", "", "", "", "", "", "", new HashMap<>(), ""));
             } catch (PurchaseFailedException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -156,15 +157,22 @@ class BasketTest {
             throw new RuntimeException(e);
         }
         Assertions.assertEquals(0, productRepository.getStoreProductById(productId3, storeId).getStockQuantity());
-        if(firstThread.get() == 1){
-            Assertions.assertEquals(13.5, pricePayed1.get());
-            Assertions.assertEquals(productId3, basket2.getFailedProducts().peek().getProductId());
-        }
-        else{
+
+        Assertions.assertEquals(13.5, pricePayed2.get() + pricePayed3.get());
+        if (basket2.getFailedProducts().size() == 0 && basket3.getFailedProducts().size() == 0)
+            Assertions.fail();
+
+        if (basket2.getFailedProducts().size() == 0) {
             Assertions.assertEquals(13.5, pricePayed2.get());
             Assertions.assertEquals(productId3, basket3.getFailedProducts().peek().getProductId());
-        }
+        } else if (basket3.getFailedProducts().size() == 0) {
+            Assertions.assertEquals(13.5, pricePayed3.get());
+            Assertions.assertEquals(productId3, basket2.getFailedProducts().peek().getProductId());
+        } else
+            Assertions.fail("both failed");
+
     }
+
     @Test
     void purchaseBasketSimpleTest_externalPaySuccess() {
 
@@ -193,8 +201,6 @@ class BasketTest {
 
     @Test
     void purchaseBasketSimpleTest_notInStockFail() {
-
-
         try {
             payBehaviour(true);
             basketProductRepository.changeProductQuantity(productId1, storeId, userId, 2);
@@ -214,6 +220,48 @@ class BasketTest {
 
     @Test
     void cancelPurchase() {
+        try {
+            payBehaviour(false);
+            basket.purchaseBasket("", "", "", "", "", "", "", "", "", new HashMap<>(), "");
+        } catch (PurchaseFailedException e) {
+            basket.cancelPurchase();
+            Assertions.assertEquals(1, productRepository.getStoreProductById(productId1, storeId).getStockQuantity());
+            Assertions.assertEquals(1, productRepository.getStoreProductById(productId2, storeId).getStockQuantity());
+
+        } catch (Exception e) {
+            Assertions.fail(e.getMessage());
+        }
+
+    }
+
+    @Test
+    void cancelPurchaseTimeout() {
+
+        basket.setIdealTime(1);
+        basket.setUnitsToRestore(TimeUnit.SECONDS);
+        payBehaviour(false);
+        Thread t1 = new Thread(() -> {
+            try {
+                basket.purchaseBasket("", "", "", "", "", "", "", "", "", new HashMap<>(), "");
+                //failed products
+                Assertions.assertEquals(2, basket.getFailedProducts().size());
+            } catch (PurchaseFailedException ignore) {
+
+            }
+        });
+        t1.start();
+
+        try {
+            t1.join();
+            Thread.sleep(2000);
+            //items restored
+            Assertions.assertEquals(1, productRepository.getStoreProductById(productId1, storeId).getStockQuantity());
+            Assertions.assertEquals(1, productRepository.getStoreProductById(productId2, storeId).getStockQuantity());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     @Test

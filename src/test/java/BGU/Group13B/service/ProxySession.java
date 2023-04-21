@@ -311,6 +311,11 @@ public class ProxySession implements ISession {
     }
 
     @Override
+    public String getUserEmail(int userId) {
+        return realSession.getUserEmail(userId);
+    }
+
+    @Override
     public List<Pair<Integer, String>> getStoresOfUser(int userId) {
         return realSession.getStoresOfUser(userId);
         }
@@ -385,5 +390,15 @@ public class ProxySession implements ISession {
     @Override
     public boolean checkIfQuestionsExist(int userId) {
         return false;
+    }
+
+    @Override
+    public int enterAsGuest() {
+        return realSession.enterAsGuest();
+    }
+
+    @Override
+    public void exitSystemAsGuest(int userId) {
+        realSession.exitSystemAsGuest(userId);
     }
 }

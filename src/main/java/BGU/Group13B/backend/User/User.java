@@ -40,6 +40,7 @@ public class User {
 
     private final String adminIdentifier = "admin";
 
+
     public User(int userId) {
 
         this.purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
@@ -87,7 +88,7 @@ public class User {
     private void checkRegisterInfo(String userName,String password, String email){
         String usernameRegex = "^[a-zA-Z0-9_-]{4,16}$"; // 4-16 characters, letters/numbers/underscore/hyphen
         String passwordRegex = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)[A-Za-z\\d]{8,}$"; // need at least 8 characters, 1 uppercase, 1 lowercase, 1 number)
-        String emailRegex = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\\\.[A-Za-z0-9-]+)*(\\\\.[A-Za-z]{2,})$"; // checks email validation
+        String emailRegex = "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$"; // checks email validation
         if (!Pattern.matches(usernameRegex, userName)) {
             throw new IllegalArgumentException("Invalid username. Username must be 4-16 characters long and can only contain letters, numbers, underscores, or hyphens.");
         }
@@ -135,7 +136,7 @@ public class User {
     }
 
     //#47
-    public Message getComplaint() throws NoPermissionException{
+    public synchronized Message getComplaint() throws NoPermissionException{
         if(!isAdmin())
             throw new NoPermissionException("Only admin can read complaints");
        return messageRepository.readUnreadMassage(adminIdentifier);
@@ -173,33 +174,36 @@ public class User {
 
     //27
     public void logout(){
+        if(isLoggedIn == false)
+            throw new IllegalArgumentException("already logged out!");
         this.isLoggedIn = false;
     }
 
 
     public void sendMassageStore(String header,String massage,int storeId) {
-        market.sendMassage(Message.constractMessage(this.userName,getAndIncrementMessageId(), header,massage , String.valueOf(storeId)),this.userName,storeId);
+        market.sendMassage(Message.constractMessage(this.userName,getAndIncrementMessageId(), header,massage , String.valueOf(storeId)),userId,storeId);
     }
     //42
     public Message readUnreadMassageStore(int storeId) throws NoPermissionException {
-        Message message= market.getUnreadMessages(this.userName,storeId);
+        Message message= market.getUnreadMessages(this.userId,storeId);
         currentMessageToReply=message;
         return message;
     }
     //42
+
     public Message readReadMassageStore(int storeId)throws NoPermissionException {
-        return market.getUnreadMessages(this.userName,storeId);
+        return market.getUnreadMessages(this.userId,storeId);
     }
     //42
     public void answerQuestionStore(String answer)throws NoPermissionException
     {
         assert currentMessageToReply.getReceiverId().matches("-?\\d+");
-        market.markAsCompleted(currentMessageToReply.getSenderId(), currentMessageToReply.getMessageId(),this.userName,Integer.parseInt(currentMessageToReply.getReceiverId()));
+        market.markAsCompleted(currentMessageToReply.getSenderId(), currentMessageToReply.getMessageId(),this.userId,Integer.parseInt(currentMessageToReply.getReceiverId()));
         messageRepository.sendMassage(Message.constractMessage(this.userName,getAndIncrementMessageId(), "RE: "+ currentMessageToReply.getHeader(),answer , currentMessageToReply.getSenderId()));
     }
     //42
     public void refreshOldMessageStore(int storeId)throws NoPermissionException {
-        market.refreshMessages(this.userName,storeId);
+        market.refreshMessages(this.userId,storeId);
     }
 
     private int getAndIncrementMessageId() {
@@ -316,7 +320,13 @@ public class User {
     }
 
 
+    public String getEmail() {
+        return email;
+    }
+
     public List<Pair<Integer, String>> getStoresAndRoles() {
         return this.userPermissions.getStoresAndRoles();
     }
+
+
 }

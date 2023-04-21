@@ -8,4 +8,6 @@ public interface IStoreScore {
     void modifyStoreScore(int userId,int storeId, int score);
 
     float getStoreScore(int storeId);
+
+    int getNumberOfScores(int storeId);
 }

@@ -7,4 +7,7 @@ public interface IStoreRepository {
 
     //(#24) open store - requirement 3.2
     int addStore(int founderId, String storeName, String category);
+
+    //for testing
+    void removeStore(int storeId);
 }
