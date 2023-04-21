@@ -79,4 +79,9 @@ public class BasketProductRepositoryAsHashMap implements IBasketProductRepositor
         }
         return null;
     }
+    @Override
+    public void removeBasketProduct(int productId, int userId, int storeId) {
+        throw new RuntimeException("not implemented exception");
+    }
+
 }

@@ -8,6 +8,7 @@ import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
 import BGU.Group13B.service.SingletonCollection;
 
 import java.util.HashMap;
+import java.util.Set;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -156,7 +157,37 @@ public class Basket {
             basketProductRepository.changeProductQuantity(productId, userId, storeId, 1);
         } else
             basketProductRepository.addNewProductToBasket(productId, userId, storeId);
+    }
 
+    public String getBasketContent() {
+        String basketContent = "";
+        basketProductRepository.getBasketProducts(storeId, userId);
+        for (BasketProduct basketProduct : basketProductRepository.getBasketProducts(storeId, userId).get()) {
+            basketContent += basketProduct.toString();
+    }
+        return basketContent;
+    }
+
+    public void removeProduct(int productId) throws Exception {
+        try {
+            BasketProduct basketProduct = basketProductRepository.getBasketProduct(storeId, userId, productId);
+            if(basketProduct != null){
+                basketProductRepository.removeBasketProduct(productId, userId, storeId);
+            }
+            else
+                throw new Exception("Product not in basket");
+        }catch (Exception e){
+            throw e;
+        }
+    }
+
+    public void changeProductQuantity(int productId, int quantity) throws Exception {
+        BasketProduct basketProduct = basketProductRepository.getBasketProduct(storeId, userId, productId);
+        if(basketProduct != null){
+            basketProductRepository.changeProductQuantity(productId, userId, storeId, quantity);
+        }
+        else
+            throw new Exception("Product not in basket");
     }
 
     public ConcurrentLinkedQueue<BasketProduct> getFailedProducts() {
@@ -165,5 +196,6 @@ public class Basket {
     public ConcurrentLinkedQueue<BasketProduct> getSuccessfulProductsList() {
         return successfulProducts;
     }
+
 
 }
