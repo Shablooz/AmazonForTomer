@@ -111,11 +111,11 @@ class BasketTest {
     void tearDown() {
 
     }
-    @RepeatedTest(5)
+    @RepeatedTest(10)
     void twoThreadsTryToPurchaseTheLastProduct(){
         AtomicInteger firstThread = new AtomicInteger(0);
-        AtomicReference<Double> pricePayed1 = new AtomicReference<>((double) 0);
         AtomicReference<Double> pricePayed2 = new AtomicReference<>((double) 0);
+        AtomicReference<Double> pricePayed3 = new AtomicReference<>((double) 0);
         int userId2 = 2;
         int userId3 = 3;
         Basket basket2 = new Basket(userId2, storeId, basketProductRepository, paymentAdapter,
@@ -128,10 +128,10 @@ class BasketTest {
         Thread thread1 = new Thread(() -> {
             try {
                 if(Math.random() > 0.5)
-                    Thread.sleep(10);
+                    Thread.sleep(100);
                 payBehaviour(true);
-                pricePayed1.set(basket3.purchaseBasket("", "", "", "", "", "", "", "", "", new HashMap<>(), ""));
                 firstThread.compareAndSet(0, 1);
+                pricePayed3.set(basket3.purchaseBasket("", "", "", "", "", "", "", "", "", new HashMap<>(), ""));
             } catch (PurchaseFailedException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -139,10 +139,10 @@ class BasketTest {
         Thread thread2 = new Thread(() -> {
             try {
                 if(Math.random() > 0.5)
-                    Thread.sleep(10);
+                    Thread.sleep(100);
                 payBehaviour(true);
-                pricePayed2.set(basket2.purchaseBasket("", "", "", "", "", "", "", "", "", new HashMap<>(), ""));
                 firstThread.compareAndSet(0, 2);
+                pricePayed2.set(basket2.purchaseBasket("", "", "", "", "", "", "", "", "", new HashMap<>(), ""));
             } catch (PurchaseFailedException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -156,14 +156,21 @@ class BasketTest {
             throw new RuntimeException(e);
         }
         Assertions.assertEquals(0, productRepository.getStoreProductById(productId3, storeId).getStockQuantity());
-        if(firstThread.get() == 1){
-            Assertions.assertEquals(13.5, pricePayed1.get());
-            Assertions.assertEquals(productId3, basket2.getFailedProducts().peek().getProductId());
-        }
-        else{
+
+        Assertions.assertEquals(13.5, pricePayed2.get() + pricePayed3.get());
+        if(basket2.getFailedProducts().size() == 0 && basket3.getFailedProducts().size() == 0)
+            Assertions.fail();
+
+        if(basket2.getFailedProducts().size() == 0){
             Assertions.assertEquals(13.5, pricePayed2.get());
             Assertions.assertEquals(productId3, basket3.getFailedProducts().peek().getProductId());
         }
+        else if(basket3.getFailedProducts().size() == 0){
+            Assertions.assertEquals(13.5, pricePayed3.get());
+            Assertions.assertEquals(productId3, basket2.getFailedProducts().peek().getProductId());
+        }else
+            Assertions.fail("both failed");
+
     }
     @Test
     void purchaseBasketSimpleTest_externalPaySuccess() {
