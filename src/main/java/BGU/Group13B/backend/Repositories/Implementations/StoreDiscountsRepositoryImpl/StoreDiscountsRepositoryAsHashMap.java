@@ -3,6 +3,7 @@ package BGU.Group13B.backend.Repositories.Implementations.StoreDiscountsReposito
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreDiscountsRepository;
 import BGU.Group13B.backend.storePackage.Discounts.Discount;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,7 +23,9 @@ public class StoreDiscountsRepositoryAsHashMap implements IStoreDiscountsReposit
 
     @Override
     public void addStoreDiscount(int storeId, Discount discount) {
-        if(storeDiscounts.putIfAbsent(storeId, List.of(discount)) != null)
+        List<Discount> discounts = new LinkedList<>();
+        discounts.add(discount);
+        if(storeDiscounts.putIfAbsent(storeId, discounts) != null)
             storeDiscounts.get(storeId).add(discount);
     }
 }
