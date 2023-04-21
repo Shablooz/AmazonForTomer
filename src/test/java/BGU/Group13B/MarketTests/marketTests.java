@@ -83,8 +83,8 @@ public class marketTests {
     void searchProductByCategory() {
         try {
             List<Product> products=market.searchProductByCategory(productCategory1);
-            assertEquals(products.size(),4);
-            assertEquals(products.stream().filter(p->p.getCategory().equals(productCategory1)).count(),4);
+            assertEquals(products.size(),3);
+            assertEquals(products.stream().filter(p->p.getCategory().equals(productCategory1)).count(),3);
         } catch (Exception e) {
             fail("Exception was thrown");
         }

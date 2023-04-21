@@ -128,6 +128,22 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="marketTests.searchProductByCategory" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="TradingSystemProject" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="BGU.Group13B.MarketTests.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="BGU.Group13B.MarketTests" />
+      <option name="MAIN_CLASS_NAME" value="BGU.Group13B.MarketTests.marketTests" />
+      <option name="METHOD_NAME" value="searchProductByCategory" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="marketTests.searchProductByName" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="TradingSystemProject" />
       <extension name="coverage">
@@ -148,9 +164,9 @@
       <list>
         <item itemvalue="JUnit.marketTests.searchProductByName" />
         <item itemvalue="JUnit.All in TradingSystemProject" />
+        <item itemvalue="JUnit.marketTests.searchProductByCategory" />
         <item itemvalue="JUnit.StoreTest" />
         <item itemvalue="JUnit.BGU.Group13B.backend.storePackage in trading-system" />
-        <item itemvalue="JUnit.StoreTest" />
       </list>
     </recent_temporary>
   </component>
@@ -169,7 +185,7 @@
       <workItem from="1680681882942" duration="16736000" />
       <workItem from="1681475547708" duration="1108000" />
       <workItem from="1681476828448" duration="49000" />
-      <workItem from="1682080739231" duration="3883000" />
+      <workItem from="1682080739231" duration="4697000" />
     </task>
     <task id="LOCAL-00001" summary="save work">
       <created>1680688726166</created>
@@ -261,7 +277,7 @@
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>
-          <option name="timeStamp" value="3" />
+          <option name="timeStamp" value="5" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
