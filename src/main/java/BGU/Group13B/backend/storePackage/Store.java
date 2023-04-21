@@ -117,7 +117,7 @@ public class Store {
     public void markAsCompleted(String senderId, int messageId, int userId) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId))
             throw new NoPermissionException("User " + userId + " has no permission to mark message as complete of store: " + this.storeId);
-        storeMessagesRepository.markAsRead(senderId, messageId, userId);
+        storeMessagesRepository.markAsRead(this.storeId,senderId, messageId, userId);
     }
 
     @DefaultOwnerFunctionality

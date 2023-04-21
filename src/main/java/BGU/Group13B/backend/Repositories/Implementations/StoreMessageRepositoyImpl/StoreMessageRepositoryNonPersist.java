@@ -11,11 +11,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class StoreMessageRepositoryNonPersist implements IStoreMessagesRepository{
 
-    ConcurrentLinkedDeque<Message> unreadMessages = new ConcurrentLinkedDeque<>();
-    ConcurrentHashMap<Integer,Message> oldMessages = new ConcurrentHashMap<>();
-    ConcurrentHashMap<Integer/*userId*/,Integer> placeInOldMessages = new ConcurrentHashMap<>();
-    AtomicInteger counter = new AtomicInteger(1);
+    ConcurrentLinkedDeque<Message> unreadMessages;
+    ConcurrentHashMap<Integer,Message> oldMessages;
+    ConcurrentHashMap<Integer/*userId*/,Integer> placeInOldMessages;
+    AtomicInteger counter;
 
+    public StoreMessageRepositoryNonPersist() {
+        unreadMessages = new ConcurrentLinkedDeque<>();
+        oldMessages = new ConcurrentHashMap<>();
+        placeInOldMessages = new ConcurrentHashMap<>();
+        counter = new AtomicInteger(1);
+    }
     @Override
     public void sendMassage(Message message, int storeId, int userId) {
         unreadMessages.add(message);
@@ -42,12 +48,14 @@ public class StoreMessageRepositoryNonPersist implements IStoreMessagesRepositor
     }
 
     @Override
-    public void markAsRead(String senderId, int messageId, int userId) {
+    public void markAsRead(int storeId,String senderId, int messageId, int userId) {
         Message first= unreadMessages.peek();
 
         if(first==null) throw new IllegalArgumentException("No unread messages");
-        if((first.getSenderId()!=senderId || first.getMessageId()!=messageId)|| !unreadMessages.remove(first))
-            throw new IllegalArgumentException("Not able to mark message as read");
+        if((!first.getSenderId().equals(senderId) || first.getMessageId()!=messageId))
+            throw new IllegalArgumentException("The message you are trying to mark as read is not the first message");
+        if(!unreadMessages.remove(first))
+            throw new IllegalArgumentException("The message already marked as read");
 
         oldMessages.put(counter.getAndIncrement(),first);
     }
@@ -57,11 +65,15 @@ public class StoreMessageRepositoryNonPersist implements IStoreMessagesRepositor
         placeInOldMessages.put(userId,1);
     }
 
+    @Override
+    public int getUnreadMessagesSize(int storeId, int userId) {
+        return unreadMessages.size();
+    }
 
-
-
-
-
+    @Override
+    public int getReadMessagesSize(int storeId, int userId) {
+        return oldMessages.size();
+    }
 
 
 }

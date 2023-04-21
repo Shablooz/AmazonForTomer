@@ -34,14 +34,26 @@ public class StoreMessageSingle implements IStoreMessagesRepository {
     }
 
     @Override
-    public void markAsRead(String senderId, int massageId, int userId) {
-        implementations.putIfAbsent(massageId,new StoreMessageRepositoryNonPersist());
-        implementations.get(massageId).markAsRead(senderId,massageId,userId);
+    public void markAsRead(int storeId,String senderId, int massageId, int userId) {
+        implementations.putIfAbsent(storeId,new StoreMessageRepositoryNonPersist());
+        implementations.get(storeId).markAsRead(storeId,senderId,massageId,userId);
     }
 
     @Override
     public void refreshOldMassage(int storeId, int userId) {
         implementations.putIfAbsent(storeId,new StoreMessageRepositoryNonPersist());
         implementations.get(storeId).refreshOldMassage(storeId,userId);
+    }
+
+    @Override
+    public int getUnreadMessagesSize(int storeId, int userId) {
+        implementations.putIfAbsent(storeId,new StoreMessageRepositoryNonPersist());
+        return implementations.get(storeId).getUnreadMessagesSize(storeId,userId);
+    }
+
+    @Override
+    public int getReadMessagesSize(int storeId, int userId) {
+        implementations.putIfAbsent(storeId,new StoreMessageRepositoryNonPersist());
+        return implementations.get(storeId).getReadMessagesSize(storeId,userId);
     }
 }

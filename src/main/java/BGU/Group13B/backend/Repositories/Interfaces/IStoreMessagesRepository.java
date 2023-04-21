@@ -12,7 +12,9 @@ public interface IStoreMessagesRepository {
     Message readUnreadMassage(int storeId,int userId);
     Message readReadMassage(int storeId,int userId);
 
-    void markAsRead(String senderId, int massageId,int userId);
+    void markAsRead(int storeId,String senderId, int massageId,int userId);
     void refreshOldMassage(int storeId,int userId);
 
+    int getUnreadMessagesSize(int storeId,int userId);
+    int getReadMessagesSize(int storeId,int userId);
 }
