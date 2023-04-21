@@ -5,6 +5,7 @@ import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
+import org.springframework.data.util.Pair;
 
 import java.time.LocalDateTime;
 
@@ -466,4 +467,47 @@ public interface ISession {
      * @param productId the product id to remove
      */
     void removeProduct(int userId, int storeId, int productId);
+
+
+    /**
+     * #30
+     * require 3.8
+     * @param userId    the user id
+     * this is more of a GUI function
+     */
+    String getUserName(int userId);
+
+    /**
+     * #30
+     * require 3.8
+     * @param userId    the user id
+     * @param newUsername the new userName
+     */
+    void setUsername(int userId,String newUsername);
+
+    /**
+     * #30
+     * require 3.8
+     * @param userId    the user id
+     * to turn the user from member into admin put 1, to turn it from admin into a member put 2
+     */
+    void setUserStatus(int userId,int newStatus);
+
+    /**
+     * #30
+     * require 3.8
+     * @param userId    the user id
+     * returns the user status
+     */
+    String getUserStatus(int userId);
+
+    /**
+     * #30
+     * require 3.8
+     * @param userId    the user id
+     * return a list of store id - role (as String)
+     */
+    List<Pair<Integer,String>> getStoresOfUser(int userId);
+
+
 }

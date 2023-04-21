@@ -7,7 +7,9 @@ import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.service.SingletonCollection;
+import org.springframework.data.util.Pair;
 //eyal import
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class User {
@@ -73,6 +75,7 @@ public class User {
         this.userPermissions.register();
         return this;
     }
+
 
     public void login(String userName, String password) {
         //second username check for security
@@ -232,5 +235,26 @@ public class User {
     public void addProductToCart(int productId, int storeId) throws Exception {
         market.isProductAvailable(productId, storeId);
         cart.addProductToCart(productId, storeId);
+    }
+
+    public void setPermissions(UserPermissions.UserPermissionStatus status){
+        this.userPermissions.setUserPermissionStatus(status);
+    }
+
+    public UserPermissions.UserPermissionStatus getStatus(){
+        return this.userPermissions.getUserPermissionStatus();
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+
+    public List<Pair<Integer, String>> getStoresAndRoles() {
+        return this.userPermissions.getStoresAndRoles();
     }
 }
