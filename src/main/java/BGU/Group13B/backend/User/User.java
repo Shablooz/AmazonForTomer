@@ -317,6 +317,10 @@ public class User {
     }
 
 
+    public String getEmail() {
+        return email;
+    }
+
     public List<Pair<Integer, String>> getStoresAndRoles() {
         return this.userPermissions.getStoresAndRoles();
     }
