@@ -2,6 +2,7 @@ package BGU.Group13B.backend.Repositories.Implementations.ProductPurchasePolicyR
 
 import BGU.Group13B.backend.Repositories.Interfaces.IProductPurchasePolicyRepository;
 import BGU.Group13B.backend.storePackage.PurchasePolicy;
+import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseBounder;
 
 import java.util.Comparator;
 import java.util.Set;
@@ -52,4 +53,56 @@ public class ProductPurchasePolicyRepositoryAsHashMap implements IProductPurchas
 
         return storeProductPolicies.get(storeId);
     }
+
+    @Override
+    public PurchasePolicy getStoreProductsMergedPurchasePolicies(int storeId) {
+        int maxQuantityLowerBound = 0;
+        int minQuantityUpperBound = -1;
+        int maxPriceLowerBound = 0;
+        int minPriceUpperBound = -1;
+
+        for(PurchasePolicy policy : storeProductPolicies.get(storeId)){
+            if(policy.getQuantityLowerBound() > maxQuantityLowerBound)
+                maxQuantityLowerBound = policy.getQuantityLowerBound();
+            if(minQuantityUpperBound == -1 || (policy.getQuantityUpperBound() != -1 && policy.getQuantityUpperBound() < minQuantityUpperBound))
+                minQuantityUpperBound = policy.getQuantityUpperBound();
+            if(policy.getPriceLowerBound() > maxPriceLowerBound)
+                maxPriceLowerBound = policy.getPriceLowerBound();
+            if(minPriceUpperBound == -1 || (policy.getPriceUpperBound() != -1 && policy.getPriceUpperBound() < minPriceUpperBound))
+                minPriceUpperBound = policy.getPriceUpperBound();
+        }
+
+        return new PurchasePolicy(maxQuantityLowerBound, minQuantityUpperBound, maxPriceLowerBound, minPriceUpperBound);
+
+    }
+
+    @Override
+    public PurchaseBounder getStoreProductsMergedPurchaseQuantityBounders(int storeId) {
+        int maxQuantityLowerBound = 0;
+        int minQuantityUpperBound = -1;
+
+        for(PurchasePolicy policy : storeProductPolicies.get(storeId)){
+            if(policy.getQuantityLowerBound() > maxQuantityLowerBound)
+                maxQuantityLowerBound = policy.getQuantityLowerBound();
+            if(minQuantityUpperBound == -1 || (policy.getQuantityUpperBound() != -1 && policy.getQuantityUpperBound() < minQuantityUpperBound))
+                minQuantityUpperBound = policy.getQuantityUpperBound();
+        }
+        return new PurchaseBounder(maxQuantityLowerBound, minQuantityUpperBound);
+    }
+
+    @Override
+    public PurchaseBounder getStoreProductsMergedPurchasePriceBounders(int storeId) {
+        int maxPriceLowerBound = 0;
+        int minPriceUpperBound = -1;
+
+        for(PurchasePolicy policy : storeProductPolicies.get(storeId)){
+            if(policy.getPriceLowerBound() > maxPriceLowerBound)
+                maxPriceLowerBound = policy.getPriceLowerBound();
+            if(minPriceUpperBound == -1 || (policy.getPriceUpperBound() != -1 && policy.getPriceUpperBound() < minPriceUpperBound))
+                minPriceUpperBound = policy.getPriceUpperBound();
+        }
+        return new PurchaseBounder(maxPriceLowerBound, minPriceUpperBound);
+    }
+
+
 }

@@ -1,6 +1,7 @@
 package BGU.Group13B.backend.storePackage;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IProductDiscountsRepository;
+import BGU.Group13B.backend.Repositories.Interfaces.IProductPurchasePolicyRepository;
 import BGU.Group13B.backend.storePackage.Discounts.Discount;
 
 import java.util.LinkedList;
@@ -20,7 +21,7 @@ public class Product {
     private String description;
     private int rank;
     private int stockQuantity;
-    private final PurchasePolicy purchasePolicy;
+    private final IProductPurchasePolicyRepository productPurchasePolicy;
     private final DiscountPolicy discountPolicy;
     private final IRepositoryReview repositoryReview;
     private final IProductDiscountsRepository productDiscounts;
@@ -35,7 +36,7 @@ public class Product {
         this.stockQuantity = stockQuantity;
         this.rank = 0;
         this.description=description;
-        this.purchasePolicy = new PurchasePolicy();
+        this.productPurchasePolicy = SingletonCollection.getProductPurchasePolicyRepository();
         this.discountPolicy = new DiscountPolicy();
         this.repositoryReview = SingletonCollection.getReviewRepository();
         this.productDiscounts = SingletonCollection.getProductDiscountsRepository();
@@ -69,9 +70,7 @@ public class Product {
     }
 
     public PurchasePolicy getPurchasePolicy() {
-        if (purchasePolicy == null)
-            throw new NullPointerException("Purchase policy is null");
-        return purchasePolicy;
+        return productPurchasePolicy.getPurchasePolicy(storeId, productId);
     }
 
     public boolean tryDecreaseQuantity(int quantity) {
@@ -86,7 +85,6 @@ public class Product {
     }
 
     public synchronized double calculatePrice(int productQuantity, String couponCodes) throws PurchaseExceedsPolicyException {
-        purchasePolicy.checkPolicy(productQuantity);
         double finalPrice = price;
         for (Discount discount :
                 productDiscounts.getProductDiscounts(productId).orElseGet(LinkedList::new))
@@ -94,7 +92,10 @@ public class Product {
                 productDiscounts.removeProductDiscount(productId, discount);
             else
                 finalPrice = discount.applyProductDiscount(finalPrice, productQuantity, couponCodes);
-        return finalPrice * productQuantity;//added by shaun in the night of 20/04/2023
+
+        finalPrice *= productQuantity; //added by shaun in the night of 20/04/2023 and changed by Lior in 21/04/20223
+        getPurchasePolicy().checkPolicy(productQuantity, finalPrice);
+        return finalPrice ;
     }
 
     public double getPrice() {

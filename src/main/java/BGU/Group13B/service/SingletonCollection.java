@@ -8,11 +8,13 @@ import BGU.Group13B.backend.Repositories.Implementations.IStoreScoreRepository.S
 import BGU.Group13B.backend.Repositories.Implementations.MessageRepositoryImpl.MessageRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.ProductDiscountsRepositoryImpl.ProductDiscountsRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.ProductHistoryRepositoryImpl.ProductHistoryRepositoryAsList;
+import BGU.Group13B.backend.Repositories.Implementations.ProductPurchasePolicyRepositoryImpl.ProductPurchasePolicyRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl.ProductRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.PurchaseHistoryRepositoryImpl.PurchaseHistoryRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.StoreDiscountsRepositoryImpl.StoreDiscountsRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyImpl.StoreMessageRepositoryNonPersist;
+import BGU.Group13B.backend.Repositories.Implementations.StorePurchasePolicyRepositoryImpl.StorePurchasePolicyRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.StoreRepositoryImpl.StoreRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepositoryAsHashmap;
 import BGU.Group13B.backend.Repositories.Interfaces.*;
@@ -49,6 +51,8 @@ public class SingletonCollection {
     private static final IProductHistoryRepository productHistoryRepository;
     private static final IProductDiscountsRepository productDiscountsRepository;
     private static final IStoreScore storeScoreRepository;
+    private static final IProductPurchasePolicyRepository productPurchasePolicyRepository;
+    private static final IStorePurchasePolicyRepository storePurchasePolicyRepository;
 
 
     /**
@@ -92,6 +96,8 @@ public class SingletonCollection {
         productHistoryRepository = new ProductHistoryRepositoryAsList();
         productDiscountsRepository = new ProductDiscountsRepositoryAsHashMap();
         storeScoreRepository = new StoreScoreImplNotPer();
+        productPurchasePolicyRepository = new ProductPurchasePolicyRepositoryAsHashMap();
+        storePurchasePolicyRepository = new StorePurchasePolicyRepositoryAsList();
 
 
         //adapters
@@ -193,6 +199,14 @@ public class SingletonCollection {
 
     public static IProductDiscountsRepository getProductDiscountsRepository() {
         return SingletonCollection.productDiscountsRepository;
+    }
+
+    public static IProductPurchasePolicyRepository getProductPurchasePolicyRepository() {
+        return productPurchasePolicyRepository;
+    }
+
+    public static IStorePurchasePolicyRepository getStorePurchasePolicyRepository() {
+        return storePurchasePolicyRepository;
     }
 
     /**
