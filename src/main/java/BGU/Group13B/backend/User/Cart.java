@@ -5,9 +5,7 @@ import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
 import BGU.Group13B.service.SingletonCollection;
 
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 
 public class Cart {
@@ -37,31 +35,57 @@ public class Cart {
             //fixme
         }
     }
+    private boolean isContainsBasket(int storeId, Set<Basket> userBaskets){
+        for (var basket : userBaskets) {
+            if (basket.getStoreId() == storeId) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public void addProductToCart(int productId, int storeId) {
         //if user has basket with storeID, add product to it. else, create new basket and add product to it.
         boolean added = false;
         Set<Basket> userBaskets = basketRepository.getUserBaskets(userId);
-        for (var basket : userBaskets) {
-            if (basket.getStoreId() == storeId) {
-                basket.addProduct(productId);
-                added= true;
+//        if(!isContainsBasket(storeId, userBaskets))
+//        {
+//            basketRepository.addUserBasket(userId, storeId).addProduct(productId);
+//            return;
+//        }
+//        else {
+            for (var basket : userBaskets) {
+                if (basket.getStoreId() == storeId) {
+                    basket.addProduct(productId);
+                    added = true;
+                }
             }
-        }
+       // }
         if(!added)
         {
             basketRepository.addUserBasket(userId, storeId).addProduct(productId);
         }
     }
 
-    public String getCartContent() {
+    public String getCartDescription() {
         String cartContent = "";
         var userBaskets = basketRepository.getUserBaskets(userId);
         for (var basket : userBaskets) {
-            cartContent+= "Store id " + basket.getStoreId() + " : " + basket.getBasketContent();
+            cartContent+= "Store id " + basket.getStoreId() + " : " + basket.getBasketDescription();
         }
         return cartContent;
     }
+
+    public List<Product> getCartContent() {
+        List<Product> cartContent = new LinkedList<>();
+        var userBaskets = basketRepository.getUserBaskets(userId);
+        for (var basket : userBaskets) {
+            cartContent.addAll(basket.getBasketContent());
+        }
+        return cartContent;
+    }
+
+
 
     public void removeProduct(int storeId, int productId) throws Exception {
         var userBaskets = basketRepository.getUserBaskets(userId);
@@ -79,5 +103,9 @@ public class Cart {
                 basket.changeProductQuantity(productId, quantity);
             }
         }
+    }
+
+    public void removeBasket(int basketId) {
+        basketRepository.removeUserBasket(userId, basketId);
     }
 }

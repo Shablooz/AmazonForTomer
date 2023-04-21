@@ -7,11 +7,9 @@ import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
 import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
 import BGU.Group13B.service.SingletonCollection;
 
-import java.util.HashMap;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 public class Basket {
     private final int userId;
@@ -164,7 +162,7 @@ public class Basket {
             basketProductRepository.addNewProductToBasket(productId, userId, storeId);
     }
 
-    public String getBasketContent() {
+    public String getBasketDescription() {
         String basketContent = "";
         basketProductRepository.getBasketProducts(storeId, userId);
         for (BasketProduct basketProduct : basketProductRepository.getBasketProducts(storeId, userId).get()) {
@@ -209,5 +207,9 @@ public class Basket {
     }
     public void setUnitsToRestore(java.util.concurrent.TimeUnit unitsToRestore) {
         this.unitsToRestore = unitsToRestore;
+    }
+
+    public List<Product> getBasketContent() {
+        return basketProductRepository.getBasketProducts(storeId, userId).orElseGet(LinkedList::new).stream().map(BasketProduct::getProduct).collect(Collectors.toList());
     }
 }

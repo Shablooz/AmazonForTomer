@@ -30,6 +30,12 @@ public class ProxySession implements ISession {
     }
 
     @Override
+    public void addProductToCart(int userId, int productId, int storeId) {
+        if (realSession != null)
+            realSession.addProductToCart(userId, productId, storeId);
+    }
+
+    @Override
     public void addToCart(int userId, int storeId, int productId, int quantity) {
         if (realSession != null)
             realSession.addToCart(userId, storeId, productId, quantity);
@@ -133,11 +139,6 @@ public class ProxySession implements ISession {
     @Override
     public void addStore(int userId, String storeName, String category) {
         realSession.addStore(userId, storeName, category);
-    }
-
-    @Override
-    public void addProductToCart(int userId, int productId, int storeId) {
-        realSession.addProductToCart(userId, productId, storeId);
     }
 
     @Override
@@ -251,8 +252,8 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void getCartContent(int userId) {
-        realSession.getCartContent(userId);
+    public void getCartDescription(int userId) {
+        realSession.getCartDescription(userId);
     }
 
     @Override

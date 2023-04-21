@@ -435,7 +435,7 @@ public interface ISession {
      * require 2.4
      * @param userId    the user id
      * */
-    void getCartContent(int userId);
+    void getCartDescription(int userId);
 
     /**
      * #20
