@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
+/**IMPORTANT need to initialize the session AFTER loading first user (id = 1) from database
+ */
 
 class Session implements ISession {
     private final Market market;
@@ -31,16 +33,22 @@ class Session implements ISession {
     }
     IUserRepository userRepositoryAsHashmap;
 
-    IUserRepository userRepositoryAsHashmap;
 
+    //IMPORTANT need to initialize the session AFTER loading first user (id = 1) from database
     public Session(Market market) {
         this.market = market;
-
         //callbacks initialization
         SingletonCollection.setAddToUserCart(this::addToCart);
         this.userRepositoryAsHashmap = SingletonCollection.getUserRepository();
-        this.userRepositoryAsHashmap = SingletonCollection.getUserRepository();
 
+        //IMPORTANT need to initialize the session AFTER loading first user (id = 1) from database
+        //id should 1
+        //This should do nothing if the system was initialized in the past - making first admin
+        int id = 1;
+        userRepositoryAsHashmap.addUser(id, new User(id));
+        register(id, "kingOfTheSheep","SheePLover420",
+                "mrsheep@gmail.com","054-1234567","1234","answer3");
+        setUserStatus(id,1);
     }
 
     @Override
