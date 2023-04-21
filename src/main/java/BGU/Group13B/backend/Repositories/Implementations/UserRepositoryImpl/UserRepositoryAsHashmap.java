@@ -5,12 +5,19 @@ import BGU.Group13B.backend.User.User;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class UserRepositoryAsHashmap implements IUserRepository {
     private final ConcurrentHashMap<Integer,User> integerUserHashMap;
 
+    //this integer is the max id that exists in the system
+    private AtomicInteger maxId;
+
     public UserRepositoryAsHashmap() {
         this.integerUserHashMap = new ConcurrentHashMap<>();
+
+        //TODO when we add the database this maxid should be the highest id we have in the database
+        maxId = new AtomicInteger(0);
     }
 
 
@@ -27,6 +34,7 @@ public class UserRepositoryAsHashmap implements IUserRepository {
     @Override
     public void addUser(int userId, User user) {
         this.integerUserHashMap.put(userId,user);
+        maxId.getAndIncrement();
     }
 
     @Override
@@ -47,6 +55,11 @@ public class UserRepositoryAsHashmap implements IUserRepository {
                 return entry.getKey();
         }
         throw new IllegalArgumentException("cannot find user with this username");
+    }
+
+    @Override
+    public int getNewUserId() {
+        return maxId.get() + 1;
     }
 
 

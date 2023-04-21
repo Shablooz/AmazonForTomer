@@ -40,6 +40,7 @@ public class User {
 
     private final String adminIdentifier = "admin";
 
+
     public User(int userId) {
 
         this.purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
@@ -319,4 +320,6 @@ public class User {
     public List<Pair<Integer, String>> getStoresAndRoles() {
         return this.userPermissions.getStoresAndRoles();
     }
+
+
 }

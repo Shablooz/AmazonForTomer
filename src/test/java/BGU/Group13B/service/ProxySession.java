@@ -386,4 +386,14 @@ public class ProxySession implements ISession {
     public boolean checkIfQuestionsExist(int userId) {
         return false;
     }
+
+    @Override
+    public int enterAsGuest() {
+        return realSession.enterAsGuest();
+    }
+
+    @Override
+    public void exitSystemAsGuest(int userId) {
+        realSession.exitSystemAsGuest(userId);
+    }
 }
