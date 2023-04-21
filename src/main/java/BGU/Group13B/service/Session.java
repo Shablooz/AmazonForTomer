@@ -685,4 +685,144 @@ class Session implements ISession {
         userRepositoryAsHashmap.removeUser(userId);
     }
 
+    @Override
+    public void allowPurchasePolicyConflicts(int userId, int storeId) {
+        try{
+            market.allowPurchasePolicyConflicts(userId, storeId);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+        }
+    }
+
+    @Override
+    public void disallowPurchasePolicyConflicts(int userId, int storeId) {
+        try{
+            market.disallowPurchasePolicyConflicts(userId, storeId);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+        }
+    }
+
+    @Override
+    public void setStorePurchaseQuantityUpperBound(int userId, int storeId, int upperBound) {
+        try{
+            market.setStorePurchaseQuantityUpperBound(userId, storeId, upperBound);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+        }
+    }
+
+    @Override
+    public void setStorePurchaseQuantityLowerBound(int userId, int storeId, int lowerBound) {
+        try{
+            market.setStorePurchaseQuantityLowerBound(userId, storeId, lowerBound);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+        }
+    }
+
+    @Override
+    public void setStorePurchaseQuantityBounds(int userId, int storeId, int lowerBound, int upperBound) {
+        try{
+            market.setStorePurchaseQuantityBounds(userId, storeId, lowerBound, upperBound);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+        }
+    }
+
+    @Override
+    public void setStorePurchasePriceUpperBound(int userId, int storeId, int upperBound) {
+        try{
+            market.setStorePurchasePriceUpperBound(userId, storeId, upperBound);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+        }
+    }
+
+    @Override
+    public void setStorePurchasePriceLowerBound(int userId, int storeId, int lowerBound) {
+        try{
+            market.setStorePurchasePriceLowerBound(userId, storeId, lowerBound);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+        }
+    }
+
+    @Override
+    public void setStorePurchasePriceBounds(int userId, int storeId, int lowerBound, int upperBound) {
+        try{
+            market.setStorePurchasePriceBounds(userId, storeId, lowerBound, upperBound);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+        }
+    }
+
+    @Override
+    public void setProductPurchaseQuantityUpperBound(int userId, int storeId, int productId, int upperBound) {
+        try{
+            market.setProductPurchaseQuantityUpperBound(userId, storeId, productId, upperBound);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+        }
+    }
+
+    @Override
+    public void setProductPurchaseQuantityLowerBound(int userId, int storeId, int productId, int lowerBound) {
+        try{
+            market.setProductPurchaseQuantityLowerBound(userId, storeId, productId, lowerBound);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+        }
+    }
+
+    @Override
+    public void setProductPurchaseQuantityBounds(int userId, int storeId, int productId, int lowerBound, int upperBound) {
+        try{
+            market.setProductPurchaseQuantityBounds(userId, storeId, productId, lowerBound, upperBound);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+        }
+    }
+
+    @Override
+    public void setProductPurchasePriceUpperBound(int userId, int storeId, int productId, int upperBound) {
+        try{
+            market.setProductPurchasePriceUpperBound(userId, storeId, productId, upperBound);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+        }
+    }
+
+    @Override
+    public void setProductPurchasePriceLowerBound(int userId, int storeId, int productId, int lowerBound) {
+        try{
+            market.setProductPurchasePriceLowerBound(userId, storeId, productId, lowerBound);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+        }
+    }
+
+    @Override
+    public void setProductPurchasePriceBounds(int userId, int storeId, int productId, int lowerBound, int upperBound) {
+        try{
+            market.setProductPurchasePriceBounds(userId, storeId, productId, lowerBound, upperBound);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+        }
+    }
+
 }

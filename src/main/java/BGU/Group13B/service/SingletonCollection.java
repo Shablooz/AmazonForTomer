@@ -13,9 +13,7 @@ import BGU.Group13B.backend.Repositories.Implementations.ProductPurchasePolicyRe
 import BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl.ProductRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.PurchaseHistoryRepositoryImpl.PurchaseHistoryRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepoSingle;
-import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.StoreDiscountsRepositoryImpl.StoreDiscountsRepositoryAsHashMap;
-import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyImpl.StoreMessageRepositoryNonPersist;
 import BGU.Group13B.backend.Repositories.Implementations.StorePurchasePolicyRepositoryImpl.StorePurchasePolicyRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyImpl.StoreMessageSingle;
 import BGU.Group13B.backend.Repositories.Implementations.StoreRepositoryImpl.StoreRepositoryAsList;
@@ -54,6 +52,8 @@ public class SingletonCollection {
     private static final IProductHistoryRepository productHistoryRepository;
     private static final IProductDiscountsRepository productDiscountsRepository;
     private static final IStoreScore storeScoreRepository;
+    private static final IProductPurchasePolicyRepository productPurchasePolicyRepository;
+    private static final IStorePurchasePolicyRepository storePurchasePolicyRepository;
 
 
     /**
@@ -93,7 +93,6 @@ public class SingletonCollection {
         basketProductRepository = new BasketProductRepositoryAsHashMap();
         productHistoryRepository = new ProductHistoryRepositoryAsList();
         productDiscountsRepository = new ProductDiscountsRepositoryAsHashMap();
-        storeScoreRepository = new StoreScoreImplNotPer();
         productPurchasePolicyRepository = new ProductPurchasePolicyRepositoryAsHashMap();
         storePurchasePolicyRepository = new StorePurchasePolicyRepositoryAsList();
         storeMessagesRepository = new StoreMessageSingle();

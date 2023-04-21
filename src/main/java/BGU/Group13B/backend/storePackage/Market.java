@@ -228,6 +228,62 @@ public class Market {
         return storeRepository.getStore(storeId).getAllStoreProducts().stream().map(Product::getProductInfo).collect(Collectors.toSet());
     }
 
+    public void allowPurchasePolicyConflicts(int userId, int storeId) throws NoPermissionException {
+        storeRepository.getStore(storeId).allowPurchasePolicyConflicts(userId);
+    }
+
+    public void disallowPurchasePolicyConflicts(int userId, int storeId) throws NoPermissionException {
+        storeRepository.getStore(storeId).disallowPurchasePolicyConflicts(userId);
+    }
+
+    public void setStorePurchaseQuantityUpperBound(int userId, int storeId, int upperBound) throws NoPermissionException {
+        storeRepository.getStore(storeId).setStorePurchaseQuantityUpperBound(userId, upperBound);
+    }
+
+    public void setStorePurchaseQuantityLowerBound(int userId, int storeId, int lowerBound) throws NoPermissionException {
+        storeRepository.getStore(storeId).setStorePurchaseQuantityLowerBound(userId, lowerBound);
+    }
+
+    public void setStorePurchaseQuantityBounds(int userId, int storeId, int lowerBound, int upperBound) throws NoPermissionException {
+        storeRepository.getStore(storeId).setStorePurchaseQuantityBounds(userId, lowerBound, upperBound);
+    }
+
+    public void setStorePurchasePriceUpperBound(int userId, int storeId, int upperBound) throws NoPermissionException {
+        storeRepository.getStore(storeId).setStorePurchasePriceUpperBound(userId, upperBound);
+    }
+
+    public void setStorePurchasePriceLowerBound(int userId, int storeId, int lowerBound) throws NoPermissionException {
+        storeRepository.getStore(storeId).setStorePurchasePriceLowerBound(userId, lowerBound);
+    }
+
+    public void setStorePurchasePriceBounds(int userId, int storeId, int lowerBound, int upperBound) throws NoPermissionException {
+        storeRepository.getStore(storeId).setStorePurchasePriceBounds(userId, lowerBound, upperBound);
+    }
+
+    public void setProductPurchaseQuantityUpperBound(int userId, int storeId, int productId, int upperBound) throws NoPermissionException {
+        storeRepository.getStore(storeId).setProductPurchaseQuantityUpperBound(userId, productId, upperBound);
+    }
+
+    public void setProductPurchaseQuantityLowerBound(int userId, int storeId, int productId, int lowerBound) throws NoPermissionException {
+        storeRepository.getStore(storeId).setProductPurchaseQuantityLowerBound(userId, productId, lowerBound);
+    }
+
+    public void setProductPurchaseQuantityBounds(int userId, int storeId, int productId, int lowerBound, int upperBound) throws NoPermissionException {
+        storeRepository.getStore(storeId).setProductPurchaseQuantityBounds(userId, productId, lowerBound, upperBound);
+    }
+
+    public void setProductPurchasePriceUpperBound(int userId, int storeId, int productId, int upperBound) throws NoPermissionException {
+        storeRepository.getStore(storeId).setProductPurchasePriceUpperBound(userId, productId, upperBound);
+    }
+
+    public void setProductPurchasePriceLowerBound(int userId, int storeId, int productId, int lowerBound) throws NoPermissionException {
+        storeRepository.getStore(storeId).setProductPurchasePriceLowerBound(userId, productId, lowerBound);
+    }
+
+    public void setProductPurchasePriceBounds(int userId, int storeId, int productId, int lowerBound, int upperBound) throws NoPermissionException {
+        storeRepository.getStore(storeId).setProductPurchasePriceBounds(userId, productId, lowerBound, upperBound);
+    }
+
 
 
 

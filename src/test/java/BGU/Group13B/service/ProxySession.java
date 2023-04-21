@@ -401,4 +401,74 @@ public class ProxySession implements ISession {
     public void exitSystemAsGuest(int userId) {
         realSession.exitSystemAsGuest(userId);
     }
+
+    @Override
+    public void allowPurchasePolicyConflicts(int userId, int storeId) {
+        realSession.allowPurchasePolicyConflicts(userId, storeId);
+    }
+
+    @Override
+    public void disallowPurchasePolicyConflicts(int userId, int storeId) {
+        realSession.disallowPurchasePolicyConflicts(userId, storeId);
+    }
+
+    @Override
+    public void setStorePurchaseQuantityUpperBound(int userId, int storeId, int upperBound) {
+        realSession.setStorePurchaseQuantityUpperBound(userId, storeId, upperBound);
+    }
+
+    @Override
+    public void setStorePurchaseQuantityLowerBound(int userId, int storeId, int lowerBound) {
+        realSession.setStorePurchaseQuantityLowerBound(userId, storeId, lowerBound);
+    }
+
+    @Override
+    public void setStorePurchaseQuantityBounds(int userId, int storeId, int lowerBound, int upperBound) {
+        realSession.setStorePurchaseQuantityBounds(userId, storeId, lowerBound, upperBound);
+    }
+
+    @Override
+    public void setStorePurchasePriceUpperBound(int userId, int storeId, int upperBound) {
+        realSession.setStorePurchasePriceUpperBound(userId, storeId, upperBound);
+    }
+
+    @Override
+    public void setStorePurchasePriceLowerBound(int userId, int storeId, int lowerBound) {
+        realSession.setStorePurchasePriceLowerBound(userId, storeId, lowerBound);
+    }
+
+    @Override
+    public void setStorePurchasePriceBounds(int userId, int storeId, int lowerBound, int upperBound) {
+        realSession.setStorePurchasePriceBounds(userId, storeId, lowerBound, upperBound);
+    }
+
+    @Override
+    public void setProductPurchaseQuantityUpperBound(int userId, int storeId, int productId, int upperBound) {
+        realSession.setProductPurchaseQuantityUpperBound(userId, storeId, productId, upperBound);
+    }
+
+    @Override
+    public void setProductPurchaseQuantityLowerBound(int userId, int storeId, int productId, int lowerBound) {
+        realSession.setProductPurchaseQuantityLowerBound(userId, storeId, productId, lowerBound);
+    }
+
+    @Override
+    public void setProductPurchaseQuantityBounds(int userId, int storeId, int productId, int lowerBound, int upperBound) {
+        realSession.setProductPurchaseQuantityBounds(userId, storeId, productId, lowerBound, upperBound);
+    }
+
+    @Override
+    public void setProductPurchasePriceUpperBound(int userId, int storeId, int productId, int upperBound) {
+        realSession.setProductPurchasePriceUpperBound(userId, storeId, productId, upperBound);
+    }
+
+    @Override
+    public void setProductPurchasePriceLowerBound(int userId, int storeId, int productId, int lowerBound) {
+        realSession.setProductPurchasePriceLowerBound(userId, storeId, productId, lowerBound);
+    }
+
+    @Override
+    public void setProductPurchasePriceBounds(int userId, int storeId, int productId, int lowerBound, int upperBound) {
+        realSession.setProductPurchasePriceBounds(userId, storeId, productId, lowerBound, upperBound);
+    }
 }

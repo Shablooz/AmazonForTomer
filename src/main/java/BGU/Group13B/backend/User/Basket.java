@@ -4,6 +4,7 @@ import BGU.Group13B.backend.Repositories.Interfaces.IBasketProductRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductHistoryRepository;
 import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
+import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
 import BGU.Group13B.service.SingletonCollection;
 
@@ -145,7 +146,7 @@ public class Basket {
         }
     }
 
-    private double getTotalAmount(HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons) {
+    private double getTotalAmount(HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons) throws PurchaseExceedsPolicyException {
         double totalAmount = 0.0;//store.calculatePrice(successfulProducts);
         for (BasketProduct basketProduct : successfulProducts) {//Hidden assumption we are first calculating the discount of the products
             //calculate price remembering the discount policies

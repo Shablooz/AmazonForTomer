@@ -667,6 +667,141 @@ public interface ISession {
 
 
 
+    /**
+     * #33
+     * require 4.3
+     * @param userId    the user id
+     * @param storeId   the store id
+     * */
+    void allowPurchasePolicyConflicts(int userId, int storeId);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId    the user id
+     * @param storeId   the store id
+     * */
+    void disallowPurchasePolicyConflicts(int userId, int storeId);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param upperBound    the upper bound of the quantity
+     * */
+    void setStorePurchaseQuantityUpperBound(int userId, int storeId, int upperBound);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param lowerBound    the lower bound of the quantity
+     * */
+    void setStorePurchaseQuantityLowerBound(int userId, int storeId, int lowerBound);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param lowerBound    the lower bound of the quantity
+     * @param upperBound    the upper bound of the quantity
+     * */
+    void setStorePurchaseQuantityBounds(int userId, int storeId, int lowerBound, int upperBound);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param upperBound    the upper bound of the price
+     * */
+    void setStorePurchasePriceUpperBound(int userId, int storeId, int upperBound);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param lowerBound    the lower bound of the price
+     * */
+    void setStorePurchasePriceLowerBound(int userId, int storeId, int lowerBound);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param lowerBound    the lower bound of the price
+     * @param upperBound    the upper bound of the price
+     * */
+    void setStorePurchasePriceBounds(int userId, int storeId, int lowerBound, int upperBound);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param productId     the product id
+     * @param upperBound    the upper bound of the quantity
+     * */
+    void setProductPurchaseQuantityUpperBound(int userId, int storeId, int productId, int upperBound);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param productId     the product id
+     * @param lowerBound    the lower bound of the quantity
+     * */
+    void setProductPurchaseQuantityLowerBound(int userId, int storeId, int productId, int lowerBound);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param productId     the product id
+     * @param lowerBound    the lower bound of the quantity
+     * @param upperBound    the upper bound of the quantity
+     * */
+    void setProductPurchaseQuantityBounds(int userId, int storeId, int productId, int lowerBound, int upperBound);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param productId     the product id
+     * @param upperBound    the upper bound of the price
+     * */
+    void setProductPurchasePriceUpperBound(int userId, int storeId, int productId, int upperBound);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param productId     the product id
+     * @param lowerBound    the lower bound of the price
+     * */
+    void setProductPurchasePriceLowerBound(int userId, int storeId, int productId, int lowerBound);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param productId     the product id
+     * @param lowerBound    the lower bound of the price
+     * @param upperBound    the upper bound of the price
+     * */
+    void setProductPurchasePriceBounds(int userId, int storeId, int productId, int lowerBound, int upperBound);
+
+
 
 
     /**
