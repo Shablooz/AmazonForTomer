@@ -109,13 +109,12 @@ public class User {
 
     public void login(String userName, String password, String answer1,String answer2,String answer3) {
         //second username check is for security
-        if (this.userName.equals(userName) && this.password.equals(password)) {
-            this.isLoggedIn = true;
-        }else {
+        if (!((this.userName.equals(userName) && this.password.equals(password)))){
             throw new IllegalArgumentException("incorrect username or password");
         }
+        this.isLoggedIn = true;
         if(!this.answer1.equals(answer1) || !this.answer2.equals(answer2) || !this.answer3.equals(answer3)){
-            throw new IllegalArgumentException("wrong answers on secuirity questions!");
+            throw new IllegalArgumentException("wrong answers on security questions!");
         }
     }
 

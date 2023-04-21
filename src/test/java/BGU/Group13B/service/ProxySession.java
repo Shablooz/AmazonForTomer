@@ -269,4 +269,24 @@ public class ProxySession implements ISession {
     public void removeProduct(int userId, int storeId, int productId) {
         realSession.removeProduct(userId, storeId, productId);
     }
+
+    @Override
+    public boolean SecurityAnswer1Exists(int userId) {
+        return realSession.SecurityAnswer1Exists(userId);
+    }
+
+    @Override
+    public boolean SecurityAnswer2Exists(int userId) {
+        return realSession.SecurityAnswer2Exists(userId);
+    }
+
+    @Override
+    public boolean SecurityAnswer3Exists(int userId) {
+        return realSession.SecurityAnswer3Exists(userId);
+    }
+
+    @Override
+    public boolean checkIfQuestionsExist(int userId) {
+        return false;
+    }
 }
