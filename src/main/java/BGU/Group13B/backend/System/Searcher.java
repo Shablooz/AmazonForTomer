@@ -67,6 +67,10 @@ public class Searcher {
         return products;
     }
 
+    public Product getProductById(int productId) {
+        return productRepository.getProductById(productId);
+    }
+
 }
 
 

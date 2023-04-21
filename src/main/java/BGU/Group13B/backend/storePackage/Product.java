@@ -7,6 +7,7 @@ import java.util.LinkedList;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IRepositoryReview;
 import BGU.Group13B.service.SingletonCollection;
+import BGU.Group13B.service.info.ProductInfo;
 
 public class Product {
 
@@ -133,5 +134,8 @@ public class Product {
         return stockQuantity <= 0; //should not be negative
     }
 
+    public ProductInfo getProductInfo() {
+        return new ProductInfo(this);
+    }
 
 }

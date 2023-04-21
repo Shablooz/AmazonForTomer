@@ -5,10 +5,13 @@ import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
+import BGU.Group13B.service.info.ProductInfo;
+import BGU.Group13B.service.info.StoreInfo;
 
 import java.time.LocalDateTime;
 
 import java.util.List;
+import java.util.Set;
 
 public interface ISession {
     /**
@@ -475,6 +478,84 @@ public interface ISession {
 
 
     /**
+
+     * #17
+     * require 2.1
+     * @param storeId   the store id
+     */
+    StoreInfo getStoreInfo(int storeId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param storeId   the store id
+     */
+    String getStoreName(int storeId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param storeId   the store id
+     */
+    String getStoreCategory(int storeId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param storeId   the store id
+     * @param productId the product id
+     */
+    ProductInfo getStoreProductInfo(int storeId, int productId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param productId the product id
+     */
+    ProductInfo getProductInfo(int productId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param productId the product id
+     */
+    String getProductName(int productId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param productId the product id
+     */
+    String getProductCategory(int productId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param productId the product id
+     */
+    double getProductPrice(int productId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param productId the product id
+     */
+    int getProductStockQuantity(int productId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param productId the product id
+     */
+    float getProductScore(int productId);
+
+    /**
+     * #17
+     * require 2.1
+     * @param storeId the store id
+     */
+    Set<ProductInfo> getAllStoreProductsInfo(int storeId);
+=======
      * #31
      * require 3.9
      * @param userId
