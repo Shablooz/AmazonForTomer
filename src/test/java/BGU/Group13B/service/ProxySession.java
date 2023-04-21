@@ -22,10 +22,11 @@ public class ProxySession implements ISession {
             this.realSession = realSession;
     }
 
+
     @Override
-    public void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity){
+    public void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) {
         if (realSession != null)
-            realSession.addProduct(userId, storeId, productName, category, price, stockQuantity);
+            realSession.addProduct(userId, storeId, productName, category, price, stockQuantity, description);
     }
 
     @Override
@@ -146,107 +147,122 @@ public class ProxySession implements ISession {
 
     @Override
     public void openComplaint(int userId, String header, String complaint) {
-
+        realSession.openComplaint(userId,header,complaint);
     }
 
     @Override
     public Message getComplaint(int userId) {
-        return null;
+        return realSession.getComplaint(userId);
     }
 
     @Override
     public void markMessageAsRead(int userId, String receiverId, String senderId, int messageId) {
-
+        realSession.markMessageAsRead(userId, receiverId, senderId, messageId);
     }
 
     @Override
     public void sendMassageAdmin(int userId, String receiverId, String header, String massage) {
-
+        realSession.sendMassageAdmin(userId, receiverId, header, massage);
     }
 
     @Override
     public void answerComplaint(int userId, String answer) {
-
+        realSession.answerComplaint(userId, answer);
     }
 
     @Override
     public Message readMassage(int userId, String receiverId) {
-        return null;
+        return realSession.readMassage(userId, receiverId);
     }
 
     @Override
     public void sendMassageStore(int userId, String header, String massage, int storeId) {
-
+        realSession.sendMassageStore(userId, header, massage, storeId);
     }
 
     @Override
     public Message readUnreadMassageStore(int userId, int storeId) {
-        return null;
+        return realSession.readUnreadMassageStore(userId, storeId);
     }
 
     @Override
     public Message readReadMassageStore(int userId, int storeId) {
-        return null;
+        return realSession.readReadMassageStore(userId, storeId);
     }
 
     @Override
     public void answerQuestionStore(int userId, String answer) {
-
+        realSession.answerQuestionStore(userId, answer);
     }
 
     @Override
     public void refreshOldMessageStore(int userId, int storeId) {
-
+        realSession.refreshOldMessageStore(userId, storeId);
     }
 
     @Override
     public void addReview(int userId, String review, int storeId, int productId) {
-
+        realSession.addReview(userId, review, storeId, productId);
     }
 
     @Override
     public void removeReview(int userId, int storeId, int productId) {
-
+        realSession.removeReview(userId, storeId, productId);
     }
 
     @Override
     public Review getReview(int userId, int storeId, int productId) {
-        return null;
+        return realSession.getReview(userId, storeId, productId);
     }
 
     @Override
     public float getProductScore(int userId, int storeId, int productId) {
-        return 0;
+        return realSession.getProductScore(userId, storeId, productId);
     }
 
     @Override
     public void addAndSetProductScore(int userId, int storeId, int productId, int score) {
-
+        realSession.addAndSetProductScore(userId, storeId, productId, score);
     }
 
     @Override
     public void removeProductScore(int userId, int storeId, int productId) {
-
+        realSession.removeProductScore(userId, storeId, productId);
     }
 
     @Override
     public void addStoreScore(int userId, int storeId, int score) {
-
+        realSession.addStoreScore(userId, storeId, score);
     }
 
     @Override
     public void removeStoreScore(int userId, int storeId) {
-
+        realSession.removeStoreScore(userId, storeId);
     }
 
     @Override
     public void modifyStoreScore(int userId, int storeId, int score) {
-
+        realSession.modifyStoreScore(userId, storeId, score);
     }
 
     @Override
     public float getStoreScore(int userId, int storeId) {
-        return 0;
+        return realSession.getStoreScore(userId, storeId);
+    }
+
+    @Override
+    public void getCartContent(int userId) {
+        realSession.getCartContent(userId);
+    }
+
+    @Override
+    public void removeProductFromCart(int userId, int storeId, int productId) {
+        realSession.removeProductFromCart(userId, storeId, productId);
+    }
+
+    @Override
+    public void changeProductQuantityInCart(int userId, int storeId, int productId, int quantity) {
+        realSession.changeProductQuantityInCart(userId, storeId, productId, quantity);
     }
 
     @Override
@@ -351,7 +367,7 @@ public class ProxySession implements ISession {
     @Override
     public Set<ProductInfo> getAllStoreProductsInfo(int storeId) {
         return realSession.getAllStoreProductsInfo(storeId);
-        
+    }
     public boolean SecurityAnswer1Exists(int userId) {
         return realSession.SecurityAnswer1Exists(userId);
     }
