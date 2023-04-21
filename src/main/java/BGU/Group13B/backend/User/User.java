@@ -97,7 +97,7 @@ public class User {
     }
 
     //#47
-    public Message getComplaint() throws NoPermissionException{
+    public synchronized Message getComplaint() throws NoPermissionException{
         if(!isAdmin())
             throw new NoPermissionException("Only admin can read complaints");
        return messageRepository.readUnreadMassage(adminIdentifier);

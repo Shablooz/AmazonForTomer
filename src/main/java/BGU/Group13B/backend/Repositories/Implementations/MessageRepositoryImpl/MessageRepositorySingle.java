@@ -52,7 +52,9 @@ public class MessageRepositorySingle implements IMessageRepository {
 
         Message first = unreadMessages.get(receiverId).peek();
         if(first==null) throw new IllegalArgumentException("No unread messages");
-        if((!first.getSenderId().equals(senderId) || first.getMessageId()!=messageId)|| !unreadMessages.get(receiverId).remove(first))
+        if((!first.getSenderId().equals(senderId) || first.getMessageId()!=messageId))
+            throw new IllegalArgumentException("fail to mark message as read");
+        if(!unreadMessages.get(receiverId).remove(first))
             throw new IllegalArgumentException("fail to mark message as read");
 
         readMessages.get(receiverId).add(first);
