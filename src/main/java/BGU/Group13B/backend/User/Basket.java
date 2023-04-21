@@ -172,7 +172,7 @@ public class Basket {
         try {
             BasketProduct basketProduct = basketProductRepository.getBasketProduct(storeId, userId, productId);
             if(basketProduct != null){
-                basketProductRepository.removeStoreProduct(productId, userId, storeId);
+                basketProductRepository.removeBasketProduct(productId, userId, storeId);
             }
             else
                 throw new Exception("Product not in basket");

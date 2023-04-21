@@ -1,9 +1,7 @@
 package BGU.Group13B.service;
 
-import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepositoryAsHashmap;
 import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
 import BGU.Group13B.backend.System.SystemInfo;
-import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepositoryAsHashmap;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.User.User;
 import BGU.Group13B.backend.User.UserPermissions;
@@ -628,13 +626,13 @@ class Session implements ISession {
 
     @Override
     public Set<ProductInfo> getAllStoreProductsInfo(int storeId) {
-        try{
+        try {
             return market.getAllStoreProductsInfo(storeId);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
             return null;
         }
+    }
 
     public boolean SecurityAnswer1Exists(int userId) {
         return userRepositoryAsHashmap.getUser(userId).SecurityAnswer1Exists();

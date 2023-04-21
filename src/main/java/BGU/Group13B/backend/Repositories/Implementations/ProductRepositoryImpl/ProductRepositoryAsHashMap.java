@@ -30,17 +30,16 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
     }
 
   
-    public int addProduct(int storeId, String name, String category, double price, int maxAmount, String description) {
+    public int addProduct(int storeId, String name, String category, double price, int stockQuantity, String description) {
         if (!storeProducts.containsKey(storeId))
             storeProducts.put(storeId, new ConcurrentSkipListSet<>(Comparator.comparingInt(Product::getProductId)));
         synchronized (this) {
             int productId = productIdCounter.getAndIncrement();
-            storeProducts.get(storeId).add(new Product(productId, storeId, name, category, price, maxAmount));
+            storeProducts.get(storeId).add(new Product(productId, storeId, name, category, price, stockQuantity, description));
             return productId;
         }
     }
 
-    }
 
     @Override
     public Product getStoreProductById(int productId, int storeId) {
@@ -74,10 +73,9 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
     @Override
     public List<Product> getProductByName(String name) {
         List<Product> products = new LinkedList<>();
-        storeProducts.entrySet().stream().forEach(entry -> {
-            Set<Product> storeProducts = entry.getValue();
-            for(Product product : storeProducts){
-                if(product.getName().toLowerCase().contains(name.toLowerCase())){
+        storeProducts.forEach((key, value) -> {
+            for (Product product : value) {
+                if (product.getName().toLowerCase().contains(name.toLowerCase())) {
                     products.add(product);
                 }
             }
@@ -88,7 +86,7 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
     @Override
     public List<Product> getProductByCategory(String category) {
         List<Product> products = new LinkedList<>();
-        storeProducts.entrySet().stream().forEach(entry -> {
+        storeProducts.entrySet().forEach(entry -> {
             Set<Product> storeProducts = entry.getValue();
             for(Product product : storeProducts){
                 if(product.getCategory().toLowerCase().contains(category.toLowerCase())){
@@ -113,7 +111,7 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
     @Override
     public List<Product> getProductByKeywords(List<String> keywords) {
         List<Product> products = new LinkedList<>();
-        storeProducts.entrySet().stream().forEach(entry -> {
+        storeProducts.entrySet().forEach(entry -> {
             Set<Product> storeProducts = entry.getValue();
             for(Product product : storeProducts){
                 if(checkIfContainsSomeKeywords(keywords, product.getDescription())){

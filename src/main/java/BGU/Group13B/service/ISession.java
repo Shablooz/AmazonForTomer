@@ -246,6 +246,10 @@ public interface ISession {
      */
     void addProductToCart(int userId, int productId, int storeId);
 
+
+
+    void getUserPurchaseHistory(int userId);
+
     /**
      * [#28]
      * @param userId   the user id
@@ -544,7 +548,7 @@ public interface ISession {
     List<Pair<Integer,String>> getStoresOfUser(int userId);
 
 
-     * #17
+     /** #17
      * require 2.1
      * @param storeId   the store id
      */
@@ -621,7 +625,7 @@ public interface ISession {
      */
     Set<ProductInfo> getAllStoreProductsInfo(int storeId);
 
-     * #31
+     /** #31
      * require 3.9
      * @param userId
      * */
