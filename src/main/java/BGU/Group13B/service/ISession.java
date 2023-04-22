@@ -314,7 +314,7 @@ public interface ISession {
      * @param userId     the user id
      * @return the message
      */
-    public Message readMassage(int userId);
+    public Message readMessage(int userId);
 
 
     /**
