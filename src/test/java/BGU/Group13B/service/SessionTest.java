@@ -10,9 +10,7 @@ class SessionTest extends ProjectTest{
 
 
 
-    @AfterEach
-    void tearDown() {
-    }
+
 
     @Test
     void addProduct_test() {

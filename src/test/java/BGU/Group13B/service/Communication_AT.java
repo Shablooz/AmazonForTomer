@@ -10,11 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class Communication_AT extends ProjectTest{
 
-    @BeforeEach
-    public void setUp() {
-        super.setUp();
 
-    }
     @Test
     public void openComplaint_Valid()
     {
