@@ -9,6 +9,7 @@ import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.service.SingletonCollection;
 import org.springframework.data.util.Pair;
 //eyal import
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -263,8 +264,13 @@ public class User {
         return market.getStoreScore(storeId);
     }
 
-    void purchaseCart(String address, String creditCardNumber, String creditCardMonth, String creditCardYear, String creditCardHolderFirstName, String creditCardHolderLastName, String creditCardCcv, String id, String creditCardType) {
-        cart.purchaseCart(address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType);
+    public void purchaseCart(String address, String creditCardNumber, String creditCardMonth, String creditCardYear, String creditCardHolderFirstName,
+                      String creditCardHolderLastName, String creditCardCcv, String id, String creditCardType,
+                      HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                      String/*store coupons*/ storeCoupon) throws PurchaseFailedException {
+        cart.purchaseCart(address, creditCardNumber, creditCardMonth, creditCardYear,
+                creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType,
+                productsCoupons, storeCoupon);
     }
 
 
@@ -329,4 +335,7 @@ public class User {
     }
 
 
+    public void addToCart(int storeId, int productId) {
+        cart.addProductToCart(storeId, productId);
+    }
 }

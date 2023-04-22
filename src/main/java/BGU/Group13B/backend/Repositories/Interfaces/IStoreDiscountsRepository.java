@@ -14,5 +14,5 @@ public interface IStoreDiscountsRepository {
                                     double totalAmountThresholdForDiscount, int quantityForDiscount);
     int addStoreHiddenDiscount(int storeId, double discountPercentage, LocalDateTime discountLastDate, String code);
     void removeStoreDiscount(int storeId, int discountId);
-
+    void removeStoreDiscounts(int storeId);
 }

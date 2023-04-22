@@ -68,4 +68,9 @@ public class ProductDiscountsRepositoryAsHashMap implements IProductDiscountsRep
             throw new IllegalArgumentException("Product " + productId + " discount " + discountId + " does not exist");
         discounts.remove(discount.get());
     }
+
+    @Override
+    public void removeProductDiscount(int storeId) {
+        productDiscounts.remove(storeId);
+    }
 }

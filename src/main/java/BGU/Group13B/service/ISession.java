@@ -3,7 +3,6 @@ package BGU.Group13B.service;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.storePackage.Review;
-import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import org.springframework.data.util.Pair;
 import BGU.Group13B.service.info.ProductInfo;
@@ -11,6 +10,7 @@ import BGU.Group13B.service.info.StoreInfo;
 
 import java.time.LocalDateTime;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -35,9 +35,8 @@ public interface ISession {
      * @param userId    the user id
      * @param storeId   the store id
      * @param productId the product id
-     * @param quantity  the quantity
      */
-    void addToCart(int userId, int storeId, int productId, int quantity);
+    void addToCart(int userId, int storeId, int productId);
 
     /**
      * #22
@@ -54,7 +53,11 @@ public interface ISession {
      * @param id                        the id of the card owner
      * @param creditCardType            the credit card type
      */
-    void purchaseProductCart(int userId, String address, String creditCardNumber, String creditCardMonth, String creditCardYear, String creditCardHolderFirstName, String creditCardHolderLastName, String creditCardCcv, String id, String creditCardType);
+    void purchaseProductCart(int userId, String address, String creditCardNumber, String creditCardMonth,
+                             String creditCardYear, String creditCardHolderFirstName,
+                             String creditCardHolderLastName, String creditCardCcv, String id,
+                             String creditCardType, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                             String/*store coupons*/ storeCoupon);
 
     /**
      * #50

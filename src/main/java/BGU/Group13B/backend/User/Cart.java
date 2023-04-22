@@ -5,6 +5,7 @@ import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
 import BGU.Group13B.service.SingletonCollection;
 
+import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
@@ -26,15 +27,16 @@ public class Cart {
                       String creditCardMonth, String creditCardYear,
                       String creditCardHolderFirstName, String creditCardHolderLastName,
                       String creditCardCcv, String id,
-                      String creditCardType) {
+                      String creditCardType, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                      String/*store coupons*/ storeCoupon) throws PurchaseFailedException {
         var userBaskets = basketRepository.getUserBaskets(userId);
         if (userBaskets.isEmpty()) {
             throw new NoSuchElementException("No baskets in cart");
         }
         for (var basket : userBaskets) {
-            //basket.purchaseBasket(address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType, calculatePriceOfBasket);
-            throw new RuntimeException("Not implemented");
-            //fixme
+            basket.purchaseBasket(address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType,
+                    productsCoupons, storeCoupon);
+
         }
     }
 
@@ -45,11 +47,10 @@ public class Cart {
         for (var basket : userBaskets) {
             if (basket.getStoreId() == storeId) {
                 basket.addProduct(productId);
-                added= true;
+                added = true;
             }
         }
-        if(!added)
-        {
+        if (!added) {
             basketRepository.addUserBasket(userId, storeId).addProduct(productId);
         }
     }
@@ -58,7 +59,7 @@ public class Cart {
         String cartContent = "";
         var userBaskets = basketRepository.getUserBaskets(userId);
         for (var basket : userBaskets) {
-            cartContent+= "Store id " + basket.getStoreId() + " : " + basket.getBasketContent();
+            cartContent += "Store id " + basket.getStoreId() + " : " + basket.getBasketContent();
         }
         return cartContent;
     }

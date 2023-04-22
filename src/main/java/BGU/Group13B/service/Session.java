@@ -1,9 +1,9 @@
 package BGU.Group13B.service;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
-import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.User.Message;
+import BGU.Group13B.backend.User.PurchaseFailedException;
 import BGU.Group13B.backend.User.User;
 import BGU.Group13B.backend.User.UserPermissions;
 import BGU.Group13B.backend.storePackage.Market;
@@ -16,6 +16,7 @@ import BGU.Group13B.service.info.StoreInfo;
 
 import java.time.LocalDateTime;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -25,7 +26,7 @@ import java.util.logging.Logger;
 
 class Session implements ISession {
     private final Market market;
-
+    private final IUserRepository userRepository = SingletonCollection.getUserRepository();
     private static final Logger LOGGER = Logger.getLogger(Session.class.getName());
 
     static {
@@ -38,7 +39,7 @@ class Session implements ISession {
     public Session(Market market) {
         this.market = market;
         //callbacks initialization
-        SingletonCollection.setAddToUserCart(this::addToCart);
+        SingletonCollection.setAddToUserCart((userId, storeId, productId) -> addToCart(userId, storeId, productId));
         this.userRepositoryAsHashmap = SingletonCollection.getUserRepository();
 
         //IMPORTANT need to initialize the session AFTER loading first user (id = 1) from database
@@ -63,13 +64,25 @@ class Session implements ISession {
     }
 
     @Override
-    public void addToCart(int userId, int storeId, int productId, int quantity) {
-
+    public void addToCart(int userId, int storeId, int productId) {
+        userRepository.getUser(userId).addToCart(storeId, productId);
     }
 
     @Override
-    public void purchaseProductCart(int userId, String address, String creditCardNumber, String creditCardMonth, String creditCardYear, String creditCardHolderFirstName, String creditCardHolderLastName, String creditCardCcv, String id, String creditCardType) {
-
+    public void purchaseProductCart(int userId, String address, String creditCardNumber,
+                                    String creditCardMonth, String creditCardYear,
+                                    String creditCardHolderFirstName, String creditCardHolderLastName,
+                                    String creditCardCcv, String id, String creditCardType,
+                                    HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                                    String/*store coupons*/ storeCoupon)  {
+        try {
+            userRepository.getUser(userId).
+                    purchaseCart(address, creditCardNumber, creditCardMonth,
+                            creditCardYear, creditCardHolderFirstName, creditCardHolderLastName,
+                            creditCardCcv, id, creditCardType, productsCoupons, storeCoupon);
+        } catch (PurchaseFailedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

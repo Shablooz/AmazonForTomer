@@ -8,8 +8,8 @@ import java.util.Optional;
 
 public interface IAuctionRepository {
     void addNewAuctionForAProduct(int productId, double startingPrice, int storeId, LocalDateTime endTime);
-    void removeAuction(int productId, int storeId);
+    void endAuction(int productId, int storeId);
     void updateAuction(int productId,int storeId, double newPrice, int newUserId);
     Optional<PublicAuctionInfo> getAuctionInfo(int productId, int storeId);
-    void setAddToCartLambda(AddToUserCart addToUserCart);
+
 }

@@ -65,4 +65,10 @@ public class StoreDiscountsRepositoryAsHashMap implements IStoreDiscountsReposit
             throw new IllegalArgumentException("store " + storeId + " discount " + discountId + " does not exist");
         discounts.remove(discount.get());
     }
+
+    /*used for tests*/
+    @Override
+    public void removeStoreDiscounts(int storeId) {
+        storeDiscounts.remove(storeId);
+    }
 }
