@@ -133,8 +133,8 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void addStore(int userId, String storeName, String category) {
-        realSession.addStore(userId, storeName, category);
+    public int addStore(int userId, String storeName, String category) {
+        return realSession.addStore(userId, storeName, category);
     }
 
     @Override
