@@ -1,12 +1,7 @@
 package BGU.Group13B.backend.storePackage;
 
-import BGU.Group13B.backend.Repositories.Interfaces.IProductDiscountsRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductPurchasePolicyRepository;
-import BGU.Group13B.backend.storePackage.Discounts.Discount;
-
 import java.time.LocalDateTime;
-import java.util.LinkedList;
-
 import BGU.Group13B.backend.Repositories.Interfaces.IRepositoryReview;
 import BGU.Group13B.backend.storePackage.discountPolicies.ProductDiscountPolicy;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
@@ -26,7 +21,6 @@ public class Product {
     private final IProductPurchasePolicyRepository productPurchasePolicy;
     private final ProductDiscountPolicy discountPolicy;
     private final IRepositoryReview repositoryReview;
-    private final IProductDiscountsRepository productDiscounts;
 
 
     public Product(int productId, int storeId, String name, String category, double price, int stockQuantity, String description) {
@@ -41,7 +35,6 @@ public class Product {
         this.productPurchasePolicy = SingletonCollection.getProductPurchasePolicyRepository();
         this.discountPolicy = new ProductDiscountPolicy(productId);
         this.repositoryReview = SingletonCollection.getReviewRepository();
-        this.productDiscounts = SingletonCollection.getProductDiscountsRepository();
 
         this.productPurchasePolicy.insertPurchasePolicy(storeId, new PurchasePolicy(productId));
     }
