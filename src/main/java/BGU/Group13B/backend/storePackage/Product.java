@@ -35,7 +35,6 @@ public class Product {
         this.productPurchasePolicy = SingletonCollection.getProductPurchasePolicyRepository();
         this.discountPolicy = new ProductDiscountPolicy(productId);
         this.repositoryReview = SingletonCollection.getReviewRepository();
-        this.productDiscounts = SingletonCollection.getProductDiscountsRepository();
 
         this.productPurchasePolicy.insertPurchasePolicy(storeId, new PurchasePolicy(productId));
     }
