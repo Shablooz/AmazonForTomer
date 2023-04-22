@@ -542,6 +542,16 @@ public interface ISession {
      */
     String getUserStatus(int userId);
 
+
+    /**
+     * #30
+     * require 3.8
+     * @param userId    the user id
+     * returns the user status
+     */
+    String getUserEmail(int userId);
+
+
     /**
      * #30
      * require 3.8

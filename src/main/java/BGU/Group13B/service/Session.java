@@ -137,6 +137,8 @@ class Session implements ISession {
         User user = userRepositoryAsHashmap.getUser(userId);
         try {
             //the first "if" might not be necessary when we will connect to web
+            if(this.userRepositoryAsHashmap.checkIfUserWithEmailExists(user.getEmail()))
+                System.out.println("user with this email already exists!");
             if (!user.isRegistered()) {
                 if (userRepositoryAsHashmap.checkIfUserExists(username) != null) {
                     user.register(username, password, email,answer1,answer2,answer3);
@@ -533,6 +535,11 @@ class Session implements ISession {
             return "Admin";
         else
             return "Guest";
+    }
+
+    @Override
+    public String getUserEmail(int userId) {
+        return userRepositoryAsHashmap.getUser(userId).getEmail();
     }
 
     @Override

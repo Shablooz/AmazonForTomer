@@ -313,6 +313,11 @@ public class ProxySession implements ISession {
     }
 
     @Override
+    public String getUserEmail(int userId) {
+        return realSession.getUserEmail(userId);
+    }
+
+    @Override
     public List<Pair<Integer, String>> getStoresOfUser(int userId) {
         return realSession.getStoresOfUser(userId);
         }
