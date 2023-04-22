@@ -1,18 +1,18 @@
 package BGU.Group13B.service;
 
 import BGU.Group13B.backend.User.Message;
+import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.storePackage.Review;
+import BGU.Group13B.backend.storePackage.Store;
 import org.springframework.data.util.Pair;
 import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
 
 import java.time.LocalDateTime;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class ProxySession implements ISession {
     private ISession realSession;
@@ -44,363 +44,467 @@ public class ProxySession implements ISession {
 
     @Override
     public void purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount) {
-
+        if (realSession != null)
+            realSession.purchaseProposalSubmit(userId, storeId, productId, proposedPrice, amount);
     }
 
     @Override
     public void immediatePurchase(int userId, int storeId, int productId, int quantity) {
-
+        if (realSession != null)
+            realSession.immediatePurchase(userId, storeId, productId, quantity);
     }
 
     @Override
     public void createLotteryPurchaseForProduct(int storeManagerId, int storeId, int productId) {
-
+        if (realSession != null)
+            realSession.createLotteryPurchaseForProduct(storeManagerId, storeId, productId);
     }
 
     @Override
     public void participateInLotteryPurchase(int userId, int storeId, int productId, double fraction) {
-
+        if (realSession != null)
+            realSession.participateInLotteryPurchase(userId, storeId, productId, fraction);
     }
 
     @Override
     public void createAuctionForProduct(int storeManagerId, int storeId, int productId, double startingPrice, LocalDateTime lastDate) {
-
+        if (realSession != null)
+            realSession.createAuctionForProduct(storeManagerId, storeId, productId, startingPrice, lastDate);
     }
 
     @Override
     public void auctionPurchase(int userId, int storeId, int productId, double price) {
-
+        if (realSession != null)
+            realSession.auctionPurchase(userId, storeId, productId, price);
     }
 
     @Override
     public PublicAuctionInfo getAuctionInfo(int userId, int storeId, int productId) {
-        return null;
+        if (realSession != null)
+            return realSession.getAuctionInfo(userId, storeId, productId);
+        return new PublicAuctionInfo(0, 0, null);
     }
 
     @Override
     public SystemInfo getSystemInformation(int adminId) {
-        return null;
+        if (realSession != null)
+            return realSession.getSystemInformation(adminId);
+        return new SystemInfo();
     }
 
     @Override
-    public void register(int userId, String username, String password, String email,String answer1,String answer2,String answer3) {
-
+    public void register(int userId, String username, String password, String email, String answer1, String answer2, String answer3) {
+        if (realSession != null)
+            realSession.register(userId, username, password, email, answer1, answer2, answer3);
     }
 
     @Override
     public void searchProductByName(String productName) {
-        realSession.searchProductByName(productName);
+        if (realSession != null)
+            realSession.searchProductByName(productName);
     }
 
     @Override
     public void searchProductByCategory(String category) {
-        realSession.searchProductByCategory(category);
+        if (realSession != null)
+            realSession.searchProductByCategory(category);
     }
 
     @Override
     public void searchProductByKeywords(List<String> keywords) {
-        realSession.searchProductByKeywords(keywords);
+        if (realSession != null)
+            realSession.searchProductByKeywords(keywords);
     }
 
     @Override
     public void filterByPriceRange(int minPrice, int maxPrice) {
-        realSession.filterByPriceRange(minPrice, maxPrice);
+        if (realSession != null)
+            realSession.filterByPriceRange(minPrice, maxPrice);
     }
 
     @Override
     public void filterByProductRank(int minRating, int maxRating) {
-        realSession.filterByProductRank(minRating, maxRating);
+        if (realSession != null)
+            realSession.filterByProductRank(minRating, maxRating);
     }
 
     @Override
     public void filterByCategory(String category) {
-        realSession.filterByCategory(category);
+        if (realSession != null)
+            realSession.filterByCategory(category);
     }
 
     @Override
     public void filterByStoreRank(int minRating, int maxRating) {
-        realSession.filterByStoreRank(minRating, maxRating);
+        if (realSession != null)
+            realSession.filterByStoreRank(minRating, maxRating);
     }
 
     @Override
-    public int login(int userID, String username, String password,String answer1,String answer2, String answer3) {
-        return realSession.login(userID, username, password, answer1, answer2 ,answer3);
+    public int login(int userID, String username, String password, String answer1, String answer2, String answer3) {
+        if (realSession != null)
+            return realSession.login(userID, username, password, answer1, answer2, answer3);
+        return -1;
     }
 
     @Override
     public void logout(int userID) {
-        realSession.logout(userID);
+        if (realSession != null)
+            realSession.logout(userID);
     }
 
     @Override
     public void addStore(int userId, String storeName, String category) {
-        realSession.addStore(userId, storeName, category);
+        if (realSession != null)
+            realSession.addStore(userId, storeName, category);
     }
 
     @Override
     public void addProductToCart(int userId, int productId, int storeId) {
-        realSession.addProductToCart(userId, productId, storeId);
+        if (realSession != null)
+            realSession.addProductToCart(userId, productId, storeId);
     }
 
     @Override
     public void getUserPurchaseHistory(int userId) {
-        realSession.getUserPurchaseHistory(userId);
+        if (realSession != null)
+            realSession.getUserPurchaseHistory(userId);
     }
 
     @Override
     public void openComplaint(int userId, String header, String complaint) {
-        realSession.openComplaint(userId,header,complaint);
+        if (realSession != null)
+            realSession.openComplaint(userId, header, complaint);
     }
 
     @Override
     public Message getComplaint(int userId) {
-        return realSession.getComplaint(userId);
+        if (realSession != null)
+            return realSession.getComplaint(userId);
+        return Message.constractMessage("", -1, "", "", "");
     }
 
     @Override
     public void markMessageAsRead(int userId, String receiverId, String senderId, int messageId) {
-        realSession.markMessageAsRead(userId, receiverId, senderId, messageId);
+        if (realSession != null)
+            realSession.markMessageAsRead(userId, receiverId, senderId, messageId);
     }
 
     @Override
     public void sendMassageAdmin(int userId, String receiverId, String header, String massage) {
-        realSession.sendMassageAdmin(userId, receiverId, header, massage);
+        if (realSession != null)
+            realSession.sendMassageAdmin(userId, receiverId, header, massage);
     }
 
     @Override
     public void answerComplaint(int userId, String answer) {
-        realSession.answerComplaint(userId, answer);
+        if (realSession != null)
+            realSession.answerComplaint(userId, answer);
     }
 
     @Override
     public Message readMassage(int userId, String receiverId) {
-        return realSession.readMassage(userId, receiverId);
+        if (realSession != null)
+            return realSession.readMassage(userId, receiverId);
+        return Message.constractMessage("", -1, "", "", "");
     }
 
     @Override
     public void sendMassageStore(int userId, String header, String massage, int storeId) {
-        realSession.sendMassageStore(userId, header, massage, storeId);
+        if (realSession != null)
+            realSession.sendMassageStore(userId, header, massage, storeId);
     }
 
     @Override
     public Message readUnreadMassageStore(int userId, int storeId) {
-        return realSession.readUnreadMassageStore(userId, storeId);
+        if (realSession != null)
+            return realSession.readUnreadMassageStore(userId, storeId);
+        return Message.constractMessage("", -1, "", "", "");
     }
 
     @Override
     public Message readReadMassageStore(int userId, int storeId) {
-        return realSession.readReadMassageStore(userId, storeId);
+        if (realSession != null)
+            return realSession.readReadMassageStore(userId, storeId);
+        return Message.constractMessage("", -1, "", "", "");
     }
 
     @Override
     public void answerQuestionStore(int userId, String answer) {
-        realSession.answerQuestionStore(userId, answer);
+        if (realSession != null)
+            realSession.answerQuestionStore(userId, answer);
     }
 
     @Override
     public void refreshOldMessageStore(int userId, int storeId) {
-        realSession.refreshOldMessageStore(userId, storeId);
+        if (realSession != null)
+            realSession.refreshOldMessageStore(userId, storeId);
     }
 
     @Override
     public void addReview(int userId, String review, int storeId, int productId) {
-        realSession.addReview(userId, review, storeId, productId);
+        if (realSession != null)
+            realSession.addReview(userId, review, storeId, productId);
     }
 
     @Override
     public void removeReview(int userId, int storeId, int productId) {
-        realSession.removeReview(userId, storeId, productId);
+        if (realSession != null)
+            realSession.removeReview(userId, storeId, productId);
     }
 
     @Override
     public Review getReview(int userId, int storeId, int productId) {
-        return realSession.getReview(userId, storeId, productId);
+        if (realSession != null)
+            return realSession.getReview(userId, storeId, productId);
+        return new Review("", -1, -1, -1);
     }
 
     @Override
     public float getProductScore(int userId, int storeId, int productId) {
-        return realSession.getProductScore(userId, storeId, productId);
+        if (realSession != null)
+            return realSession.getProductScore(userId, storeId, productId);
+        return -1;
     }
 
     @Override
     public void addAndSetProductScore(int userId, int storeId, int productId, int score) {
-        realSession.addAndSetProductScore(userId, storeId, productId, score);
+        if (realSession != null)
+            realSession.addAndSetProductScore(userId, storeId, productId, score);
     }
 
     @Override
     public void removeProductScore(int userId, int storeId, int productId) {
-        realSession.removeProductScore(userId, storeId, productId);
+        if (realSession != null)
+            realSession.removeProductScore(userId, storeId, productId);
     }
 
     @Override
     public void addStoreScore(int userId, int storeId, int score) {
-        realSession.addStoreScore(userId, storeId, score);
+        if (realSession != null)
+            realSession.addStoreScore(userId, storeId, score);
     }
 
     @Override
     public void removeStoreScore(int userId, int storeId) {
-        realSession.removeStoreScore(userId, storeId);
+        if (realSession != null)
+            realSession.removeStoreScore(userId, storeId);
     }
 
     @Override
     public void modifyStoreScore(int userId, int storeId, int score) {
-        realSession.modifyStoreScore(userId, storeId, score);
+        if (realSession != null)
+            realSession.modifyStoreScore(userId, storeId, score);
     }
 
     @Override
     public float getStoreScore(int userId, int storeId) {
-        return realSession.getStoreScore(userId, storeId);
+        if (realSession != null)
+            return realSession.getStoreScore(userId, storeId);
+        return -1;
     }
 
     @Override
     public void getCartContent(int userId) {
-        realSession.getCartContent(userId);
+        if (realSession != null)
+            realSession.getCartContent(userId);
     }
 
     @Override
     public void removeProductFromCart(int userId, int storeId, int productId) {
-        realSession.removeProductFromCart(userId, storeId, productId);
+        if (realSession != null)
+            realSession.removeProductFromCart(userId, storeId, productId);
     }
 
     @Override
     public void changeProductQuantityInCart(int userId, int storeId, int productId, int quantity) {
-        realSession.changeProductQuantityInCart(userId, storeId, productId, quantity);
+        if (realSession != null)
+            realSession.changeProductQuantityInCart(userId, storeId, productId, quantity);
     }
 
     @Override
     public void setProductName(int userId, int storeId, int productId, String name) {
-        realSession.setProductName(userId, storeId, productId, name);
+        if (realSession != null)
+            realSession.setProductName(userId, storeId, productId, name);
     }
 
     @Override
     public void setProductCategory(int userId, int storeId, int productId, String category) {
-        realSession.setProductCategory(userId, storeId, productId, category);
+        if (realSession != null)
+            realSession.setProductCategory(userId, storeId, productId, category);
     }
 
     @Override
     public void setProductPrice(int userId, int storeId, int productId, double price) {
-        realSession.setProductPrice(userId, storeId, productId, price);
+        if (realSession != null)
+            realSession.setProductPrice(userId, storeId, productId, price);
     }
 
     @Override
     public void setProductStockQuantity(int userId, int storeId, int productId, int stockQuantity) {
-        realSession.setProductStockQuantity(userId, storeId, productId, stockQuantity);
+        if (realSession != null)
+            realSession.setProductStockQuantity(userId, storeId, productId, stockQuantity);
     }
 
     @Override
     public void removeProduct(int userId, int storeId, int productId) {
-        realSession.removeProduct(userId, storeId, productId);
+        if (realSession != null)
+            realSession.removeProduct(userId, storeId, productId);
     }
 
     @Override
     public String getUserName(int userId) {
-        return realSession.getUserName(userId);
+        if (realSession != null)
+            return realSession.getUserName(userId);
+        return "";
     }
 
     @Override
     public void setUsername(int userId, String newUsername) {
-        realSession.setUsername(userId,newUsername);
+        if (realSession != null)
+            realSession.setUsername(userId, newUsername);
     }
 
     @Override
     public void setUserStatus(int userId, int newStatus) {
-        realSession.setUserStatus(userId,newStatus);
+        if (realSession != null)
+            realSession.setUserStatus(userId, newStatus);
     }
 
     @Override
     public String getUserStatus(int userId) {
-        return realSession.getUserStatus(userId);
+        if (realSession != null)
+            return realSession.getUserStatus(userId);
+        return "";
     }
 
     @Override
     public String getUserEmail(int userId) {
-        return realSession.getUserEmail(userId);
+        if (realSession != null)
+            return realSession.getUserEmail(userId);
+        return "";
     }
 
     @Override
     public List<Pair<Integer, String>> getStoresOfUser(int userId) {
-        return realSession.getStoresOfUser(userId);
-        }
+        if (realSession != null)
+            return realSession.getStoresOfUser(userId);
+        return new ArrayList<>();
+    }
 
     public StoreInfo getStoreInfo(int storeId) {
-        return realSession.getStoreInfo(storeId);
+        if (realSession != null)
+            return realSession.getStoreInfo(storeId);
+        return new StoreInfo(new Store(1, 1, "", ""));
     }
 
     @Override
     public String getStoreName(int storeId) {
-        return realSession.getStoreName(storeId);
+        if (realSession != null)
+            return realSession.getStoreName(storeId);
+        return "";
     }
 
     @Override
     public String getStoreCategory(int storeId) {
-        return realSession.getStoreCategory(storeId);
+        if (realSession != null)
+            return realSession.getStoreCategory(storeId);
+        return "";
     }
 
     @Override
     public ProductInfo getStoreProductInfo(int storeId, int productId) {
-        return realSession.getStoreProductInfo(storeId, productId);
+        if (realSession != null)
+            return realSession.getStoreProductInfo(storeId, productId);
+        return new ProductInfo(new Product(1, 1, "", "", -1, -1, ""));
     }
 
     @Override
     public ProductInfo getProductInfo(int productId) {
-        return realSession.getProductInfo(productId);
+        if (realSession != null)
+            return realSession.getProductInfo(productId);
+        return new ProductInfo(new Product(1, 1, "", "", -1, -1, ""));
     }
 
     @Override
     public String getProductName(int productId) {
-        return realSession.getProductName(productId);
+        if (realSession != null)
+            return realSession.getProductName(productId);
+        return "";
     }
 
     @Override
     public String getProductCategory(int productId) {
-        return realSession.getProductCategory(productId);
+        if (realSession != null)
+            return realSession.getProductCategory(productId);
+        return "";
     }
 
     @Override
     public double getProductPrice(int productId) {
-        return realSession.getProductPrice(productId);
+        if (realSession != null)
+            return realSession.getProductPrice(productId);
+        return -1;
     }
 
     @Override
     public int getProductStockQuantity(int productId) {
-        return realSession.getProductStockQuantity(productId);
+        if (realSession != null)
+            return realSession.getProductStockQuantity(productId);
+        return -1;
     }
 
     @Override
     public float getProductScore(int productId) {
-        return realSession.getProductScore(productId);
+        if (realSession != null)
+            return realSession.getProductScore(productId);
+        return -1;
     }
 
     @Override
     public Set<ProductInfo> getAllStoreProductsInfo(int storeId) {
-        return realSession.getAllStoreProductsInfo(storeId);
+        if (realSession != null)
+            return realSession.getAllStoreProductsInfo(storeId);
+        return new HashSet<>();
     }
+
     public boolean SecurityAnswer1Exists(int userId) {
-        return realSession.SecurityAnswer1Exists(userId);
+        if (realSession != null)
+            return realSession.SecurityAnswer1Exists(userId);
+        return false;
     }
 
     @Override
     public boolean SecurityAnswer2Exists(int userId) {
-        return realSession.SecurityAnswer2Exists(userId);
+        if (realSession != null)
+            return realSession.SecurityAnswer2Exists(userId);
+        return false;
     }
 
     @Override
     public boolean SecurityAnswer3Exists(int userId) {
-        return realSession.SecurityAnswer3Exists(userId);
+        if (realSession != null)
+            return realSession.SecurityAnswer3Exists(userId);
+        return false;
     }
 
     @Override
     public boolean checkIfQuestionsExist(int userId) {
+        if (realSession != null)
+            return realSession.checkIfQuestionsExist(userId);
         return false;
     }
 
     @Override
     public int enterAsGuest() {
-        return realSession.enterAsGuest();
+        if (realSession != null)
+            return realSession.enterAsGuest();
+        return -1;
     }
 
     @Override
     public void exitSystemAsGuest(int userId) {
-        realSession.exitSystemAsGuest(userId);
+        if (realSession != null)
+            realSession.exitSystemAsGuest(userId);
     }
 }

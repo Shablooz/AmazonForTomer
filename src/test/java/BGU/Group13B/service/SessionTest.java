@@ -19,6 +19,7 @@ class SessionTest extends ProjectTest{
     }
 
     @Test
-    void addProduct() {
+    void addProduct_test() {
+
     }
 }
