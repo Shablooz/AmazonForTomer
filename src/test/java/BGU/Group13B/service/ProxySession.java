@@ -205,9 +205,9 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public Message readMassage(int userId) {
+    public Message readMessage(int userId) {
         if (realSession != null)
-            return realSession.readMassage(userId);
+            return realSession.readMessage(userId);
         return Message.constractMessage("", -1, "", "", "");
     }
 

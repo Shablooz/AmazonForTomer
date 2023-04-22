@@ -283,6 +283,8 @@ class Session implements ISession {
     @Override
     public void sendMassageAdmin(int userId, String receiverId, String header, String massage) {
         try {
+            if(userRepository.checkIfUserExists(receiverId)==null)
+                throw new RuntimeException("receiver Id not found");
             userRepositoryAsHashmap.getUser(userId).sendMassageAdmin(receiverId, header, massage);
         } catch (NoPermissionException e) {
             throw new RuntimeException(e);
@@ -299,7 +301,7 @@ class Session implements ISession {
     }
 
     @Override
-    public Message readMassage(int userId) {
+    public Message readMessage(int userId) {
         try {
             return userRepositoryAsHashmap.getUser(userId).readMassage();
         } catch (NoPermissionException e) {

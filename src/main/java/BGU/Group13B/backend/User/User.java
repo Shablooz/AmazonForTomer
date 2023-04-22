@@ -155,7 +155,9 @@ public class User {
     public synchronized Message getComplaint() throws NoPermissionException {
         if (!isAdmin())
             throw new NoPermissionException("Only admin can read complaints");
-        return messageRepository.readUnreadMassage(adminIdentifier);
+        Message message= messageRepository.readUnreadMassage(adminIdentifier);
+        currentMessageToReply = message;
+        return message;
     }
 
     //#47
@@ -177,8 +179,11 @@ public class User {
     public void answerComplaint(String answer) throws NoPermissionException {
         if (!isAdmin())
             throw new NoPermissionException("Only admin can answer complaints");
+        if(currentMessageToReply==null)
+            throw new IllegalArgumentException("no complaint to answer");
         messageRepository.markAsRead(currentMessageToReply.getReceiverId(), currentMessageToReply.getSenderId(), currentMessageToReply.getMessageId());
         messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), "RE: " + currentMessageToReply.getHeader(), answer, currentMessageToReply.getSenderId()));
+        currentMessageToReply=null;
     }
 
     public Message readMassage() throws NoPermissionException {
@@ -217,9 +222,12 @@ public class User {
 
     //42
     public void answerQuestionStore(String answer) throws NoPermissionException {
+        if(currentMessageToReply==null)
+            throw new IllegalArgumentException("no message to reply to");
         assert currentMessageToReply.getReceiverId().matches("-?\\d+");
         market.markAsCompleted(currentMessageToReply.getSenderId(), currentMessageToReply.getMessageId(), this.userId, Integer.parseInt(currentMessageToReply.getReceiverId()));
         messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), "RE: " + currentMessageToReply.getHeader(), answer, currentMessageToReply.getSenderId()));
+        currentMessageToReply=null;
     }
 
     //42
