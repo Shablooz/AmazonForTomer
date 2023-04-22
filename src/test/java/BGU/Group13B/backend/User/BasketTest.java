@@ -24,15 +24,15 @@ import java.util.concurrent.atomic.AtomicReference;
 
 class BasketTest {
     private Basket basket;
-    private int userId;
-    private int storeId;
-    private IBasketProductRepository basketProductRepository;
+    private static int userId;
+    private static int storeId;
+    private static IBasketProductRepository basketProductRepository;
     private PaymentAdapter paymentAdapter;
     private IProductHistoryRepository productHistoryRepository;
     private CalculatePriceOfBasket calculatePriceOfBasket = SingletonCollection.getCalculatePriceOfBasket();
-    private IProductRepository productRepository;
-    private int productId1;
-    private int productId2;
+    private static IProductRepository productRepository;
+    private static int productId1;
+    private static int productId2;
 
     @BeforeEach
     void setUp() {
@@ -266,5 +266,19 @@ class BasketTest {
 
     @Test
     void addProduct() {
+    }
+    @AfterAll
+    static void afterAll() {
+        try {
+            productRepository.removeStoreProducts(storeId);
+            basketProductRepository.removeBasketProducts(storeId, userId);
+            SingletonCollection.getStoreRepository().removeStore(storeId);
+            SingletonCollection.getProductDiscountsRepository().removeProductDiscount(productId1);
+            SingletonCollection.getProductDiscountsRepository().removeProductDiscount(productId2);
+            SingletonCollection.getStoreDiscountsRepository().removeStoreDiscounts(storeId);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

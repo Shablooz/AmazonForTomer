@@ -3,6 +3,8 @@ package BGU.Group13B.service;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 
+import java.util.HashMap;
+
 public abstract class ProjectTest {
     private ISession session;
     protected final String[] products = {"PC", "Laptop", "Phone", "Tablet", "TV", "Headphones", "Mouse", "Keyboard", "Printer", "Monitor"};
@@ -19,12 +21,21 @@ public abstract class ProjectTest {
         setUpProducts();
     }
 
-    protected void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description){
-        session.addProduct(userId, storeId, productName, category, price, stockQuantity,description);
+    protected void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) {
+        session.addProduct(userId, storeId, productName, category, price, stockQuantity, description);
     }
 
-    protected void purchaseProductCart(int userId, String address, String creditCardNumber, String creditCardMonth, String creditCardYear, String creditCardHolderFirstName, String creditCardHolderLastName, String creditCardCcv, String id, String creditCardType) {
-        session.purchaseProductCart(userId, address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType);
+    protected void purchaseProductCart(int userId, String address, String creditCardNumber, String creditCardMonth,
+                                       String creditCardYear, String creditCardHolderFirstName,
+                                       String creditCardHolderLastName, String creditCardCcv,
+                                       String id, String creditCardType,
+                                       HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                                       String/*store coupons*/ storeCoupon) {
+        session.purchaseProductCart(userId, address, creditCardNumber,
+                creditCardMonth, creditCardYear,
+                creditCardHolderFirstName, creditCardHolderLastName,
+                creditCardCcv, id, creditCardType,
+                productsCoupons, storeCoupon);
     }
 
     protected void purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount) {
