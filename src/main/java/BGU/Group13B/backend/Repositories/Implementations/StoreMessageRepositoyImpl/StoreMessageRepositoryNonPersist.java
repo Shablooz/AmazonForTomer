@@ -11,18 +11,24 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class StoreMessageRepositoryNonPersist implements IStoreMessagesRepository{
 
-    ConcurrentLinkedDeque<Message> unreadMessages = new ConcurrentLinkedDeque<>();
-    ConcurrentHashMap<Integer,Message> oldMessages = new ConcurrentHashMap<>();
-    ConcurrentHashMap<String,Integer> placeInOldMessages = new ConcurrentHashMap<>();
-    AtomicInteger counter = new AtomicInteger(1);
+    ConcurrentLinkedDeque<Message> unreadMessages;
+    ConcurrentHashMap<Integer,Message> oldMessages;
+    ConcurrentHashMap<Integer/*userId*/,Integer> placeInOldMessages;
+    AtomicInteger counter;
 
+    public StoreMessageRepositoryNonPersist() {
+        unreadMessages = new ConcurrentLinkedDeque<>();
+        oldMessages = new ConcurrentHashMap<>();
+        placeInOldMessages = new ConcurrentHashMap<>();
+        counter = new AtomicInteger(1);
+    }
     @Override
-    public void sendMassage(Message message, int storeId, String userName) {
+    public void sendMassage(Message message, int storeId, int userId) {
         unreadMessages.add(message);
     }
 
     @Override
-    public Message readUnreadMassage(int storeId, String userName) {
+    public Message readUnreadMassage(int storeId, int userId) {
         if(unreadMessages.isEmpty()) throw new IllegalArgumentException("No unread messages");
         return unreadMessages.peek();
     }
@@ -32,36 +38,42 @@ public class StoreMessageRepositoryNonPersist implements IStoreMessagesRepositor
     * This function will return the next unread message Per user If there is no more old messages it will throw an exception
      */
     @Override
-    public Message readReadMassage(int storeId, String userName) {
-        placeInOldMessages.putIfAbsent(userName,1);
-        if(counter.get()<=placeInOldMessages.get(userName)) throw new IllegalArgumentException("You have no more old massages to read");
+    public Message readReadMassage(int storeId, int userId) {
+        placeInOldMessages.putIfAbsent(userId,1);
+        if(counter.get()<=placeInOldMessages.get(userId)) throw new IllegalArgumentException("You have no more old massages to read");
 
-        Message message = oldMessages.get(placeInOldMessages.get(userName));
-        placeInOldMessages.put(userName,placeInOldMessages.get(userName)+1);
+        Message message = oldMessages.get(placeInOldMessages.get(userId));
+        placeInOldMessages.put(userId,placeInOldMessages.get(userId)+1);
         return message;
     }
 
     @Override
-    public void markAsRead(String senderId, int messageId, String userName) {
+    public void markAsRead(int storeId,String senderId, int messageId, int userId) {
         Message first= unreadMessages.peek();
 
         if(first==null) throw new IllegalArgumentException("No unread messages");
-        if((first.getSenderId()!=senderId || first.getMessageId()!=messageId)|| !unreadMessages.remove(first))
-            throw new IllegalArgumentException("Not able to mark message as read");
+        if((!first.getSenderId().equals(senderId) || first.getMessageId()!=messageId))
+            throw new IllegalArgumentException("The message you are trying to mark as read is not the first message");
+        if(!unreadMessages.remove(first))
+            throw new IllegalArgumentException("The message already marked as read");
 
         oldMessages.put(counter.getAndIncrement(),first);
     }
 
     @Override
-    public void refreshOldMassage(int storeId, String userName) {
-        placeInOldMessages.put(userName,1);
+    public void refreshOldMassage(int storeId, int userId) {
+        placeInOldMessages.put(userId,1);
     }
 
+    @Override
+    public int getUnreadMessagesSize(int storeId, int userId) {
+        return unreadMessages.size();
+    }
 
-
-
-
-
+    @Override
+    public int getReadMessagesSize(int storeId, int userId) {
+        return oldMessages.size();
+    }
 
 
 }

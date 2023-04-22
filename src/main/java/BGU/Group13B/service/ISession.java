@@ -3,7 +3,6 @@ package BGU.Group13B.service;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.storePackage.Review;
-import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import org.springframework.data.util.Pair;
 import BGU.Group13B.service.info.ProductInfo;
@@ -11,6 +10,7 @@ import BGU.Group13B.service.info.StoreInfo;
 
 import java.time.LocalDateTime;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -35,9 +35,8 @@ public interface ISession {
      * @param userId    the user id
      * @param storeId   the store id
      * @param productId the product id
-     * @param quantity  the quantity
      */
-    void addToCart(int userId, int storeId, int productId, int quantity);
+    void addToCart(int userId, int storeId, int productId);
 
     /**
      * #22
@@ -54,7 +53,11 @@ public interface ISession {
      * @param id                        the id of the card owner
      * @param creditCardType            the credit card type
      */
-    void purchaseProductCart(int userId, String address, String creditCardNumber, String creditCardMonth, String creditCardYear, String creditCardHolderFirstName, String creditCardHolderLastName, String creditCardCcv, String id, String creditCardType);
+    void purchaseProductCart(int userId, String address, String creditCardNumber, String creditCardMonth,
+                             String creditCardYear, String creditCardHolderFirstName,
+                             String creditCardHolderLastName, String creditCardCcv, String id,
+                             String creditCardType, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                             String/*store coupons*/ storeCoupon);
 
     /**
      * #50
@@ -429,14 +432,14 @@ public interface ISession {
      * @return the score
      **/
     public float getStoreScore( int userId,int storeId);
-    
+
     /**
      * #20
      * require 2.4
      * @param userId    the user id
      * */
     void getCartContent(int userId);
-    
+
     /**
      * #20
      * require 2.4
@@ -445,7 +448,7 @@ public interface ISession {
      * @param productId   the product id
      * */
     void removeProductFromCart(int userId, int storeId, int productId);
-    
+
     /**
      * #20
      * require 2.4
@@ -498,8 +501,8 @@ public interface ISession {
     void setProductStockQuantity(int userId, int storeId, int productId, int stockQuantity);
 
     /**
-     * #32
-     * require 4.1
+     * #13
+     * require 1.1
      * @param userId    the user id
      * @param storeId   the store id
      * @param productId the product id to remove
@@ -538,6 +541,16 @@ public interface ISession {
      * returns the user status
      */
     String getUserStatus(int userId);
+
+
+    /**
+     * #30
+     * require 3.8
+     * @param userId    the user id
+     * returns the user status
+     */
+    String getUserEmail(int userId);
+
 
     /**
      * #30
@@ -657,5 +670,21 @@ public interface ISession {
 
 
 
+
+
+    /**
+     * #13
+     * require 1.1
+     * returns the new user id
+     */
+    int enterAsGuest();
+
+    /**
+     * #13
+     * require 1.1
+     * @param userId the user id
+     * as a guess u can exit the system and delete all ur related data
+     */
+    void exitSystemAsGuest(int userId);
 
 }

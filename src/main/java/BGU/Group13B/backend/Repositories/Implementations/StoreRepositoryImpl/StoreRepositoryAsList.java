@@ -30,4 +30,10 @@ public class StoreRepositoryAsList implements IStoreRepository {
         this.stores.add(new Store(storeId, founderId, storeName, category));
         return storeId;
     }
+
+    @Override
+    public synchronized void removeStore(int storeId ) {
+        this.stores.remove(stores.stream().filter(store -> store.getStoreId() == storeId).findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("there is not store with the id " + storeId)));
+    }
 }

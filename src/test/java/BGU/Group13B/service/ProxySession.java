@@ -4,13 +4,13 @@ import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.storePackage.Review;
-import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import org.springframework.data.util.Pair;
 import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
 
 import java.time.LocalDateTime;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -30,15 +30,17 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void addToCart(int userId, int storeId, int productId, int quantity) {
+    public void addToCart(int userId, int storeId, int productId) {
         if (realSession != null)
-            realSession.addToCart(userId, storeId, productId, quantity);
+            realSession.addToCart(userId, storeId, productId);
     }
 
     @Override
-    public void purchaseProductCart(int userId, String address, String creditCardNumber, String creditCardMonth, String creditCardYear, String creditCardHolderFirstName, String creditCardHolderLastName, String creditCardCcv, String id, String creditCardType) {
-
+    public void purchaseProductCart(int userId, String address, String creditCardNumber, String creditCardMonth, String creditCardYear, String creditCardHolderFirstName, String creditCardHolderLastName, String creditCardCcv, String id, String creditCardType, HashMap<Integer, String> productsCoupons, String storeCoupon) {
+        if (realSession != null)
+            realSession.purchaseProductCart(userId, address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType, productsCoupons, storeCoupon);
     }
+
 
     @Override
     public void purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount) {
@@ -311,6 +313,11 @@ public class ProxySession implements ISession {
     }
 
     @Override
+    public String getUserEmail(int userId) {
+        return realSession.getUserEmail(userId);
+    }
+
+    @Override
     public List<Pair<Integer, String>> getStoresOfUser(int userId) {
         return realSession.getStoresOfUser(userId);
         }
@@ -385,5 +392,15 @@ public class ProxySession implements ISession {
     @Override
     public boolean checkIfQuestionsExist(int userId) {
         return false;
+    }
+
+    @Override
+    public int enterAsGuest() {
+        return realSession.enterAsGuest();
+    }
+
+    @Override
+    public void exitSystemAsGuest(int userId) {
+        realSession.exitSystemAsGuest(userId);
     }
 }

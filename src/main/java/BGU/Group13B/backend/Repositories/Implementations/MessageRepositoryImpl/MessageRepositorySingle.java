@@ -1,21 +1,27 @@
 package BGU.Group13B.backend.Repositories.Implementations.MessageRepositoryImpl;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IMessageRepository;
-import BGU.Group13B.backend.Repositories.Interfaces.IStoreMessagesRepository;
 import BGU.Group13B.backend.User.Message;
 
 import java.util.Iterator;
-import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ConcurrentMap;
 
-public class MessageRepositoryAsList implements IMessageRepository {
-    ConcurrentMap<String, ConcurrentLinkedDeque<Message>> unreadMessages;
-    ConcurrentMap<String, ConcurrentLinkedQueue<Message>> readMessages;
+public class MessageRepositorySingle implements IMessageRepository {
+
+    ConcurrentHashMap<String, ConcurrentLinkedDeque<Message>> unreadMessages;
+    ConcurrentHashMap<String, ConcurrentLinkedQueue<Message>> readMessages;
 
 
-    ConcurrentMap<String, Iterator<Message>> readMessagesIterator;
+    ConcurrentHashMap<String, Iterator<Message>> readMessagesIterator;
+
+
+    public MessageRepositorySingle() {
+        unreadMessages = new ConcurrentHashMap<>();
+        readMessages = new ConcurrentHashMap<>();
+        readMessagesIterator = new ConcurrentHashMap<>();
+    }
 
     @Override
     public void sendMassage(Message message) {
@@ -46,7 +52,9 @@ public class MessageRepositoryAsList implements IMessageRepository {
 
         Message first = unreadMessages.get(receiverId).peek();
         if(first==null) throw new IllegalArgumentException("No unread messages");
-        if((!first.getSenderId().equals(senderId) || first.getMessageId()!=messageId)|| !unreadMessages.get(receiverId).remove(first))
+        if((!first.getSenderId().equals(senderId) || first.getMessageId()!=messageId))
+            throw new IllegalArgumentException("fail to mark message as read");
+        if(!unreadMessages.get(receiverId).remove(first))
             throw new IllegalArgumentException("fail to mark message as read");
 
         readMessages.get(receiverId).add(first);
@@ -65,9 +73,7 @@ public class MessageRepositoryAsList implements IMessageRepository {
     }
     private void addEntryIfNotExist(String receiverId)
     {
-        if(!checkIfExist(receiverId)) {
-            unreadMessages.put(receiverId, new ConcurrentLinkedDeque<>());
-            readMessages.put(receiverId, new ConcurrentLinkedQueue<>());
-        }
+            unreadMessages.putIfAbsent(receiverId, new ConcurrentLinkedDeque<>());
+            readMessages.putIfAbsent(receiverId, new ConcurrentLinkedQueue<>());
     }
 }

@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface IStoreDiscountsRepository {
     Optional<List<Discount>> getStoreDiscounts(int storeId);
     void addStoreDiscount(int storeId, Discount discount);
+
+    void removeStoreDiscounts(int storeId);
 }

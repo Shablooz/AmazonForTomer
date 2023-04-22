@@ -10,21 +10,21 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class ReviewRepositoryAsList implements IRepositoryReview {
 
+
+
     ConcurrentHashMap<Integer, Review> reviews;
     ConcurrentHashMap<Integer, Integer> scores;
-    float score;
+
 
     public ReviewRepositoryAsList() {
         reviews = new ConcurrentHashMap<>();
         scores = new ConcurrentHashMap<>();
-        score = 5;
     }
 
     @Override
     public void addReview(String review, int storeId, int productId, int userId) {
-        if (reviews.containsKey(userId))
+        if (reviews.putIfAbsent(userId, new Review(review, storeId, productId, userId))!=null)
             throw new IllegalArgumentException("User already reviewed this product");
-        reviews.put(userId, new Review(review, storeId, productId, userId));
     }
 
     @Override
@@ -32,6 +32,7 @@ public class ReviewRepositoryAsList implements IRepositoryReview {
         if (!reviews.containsKey(userId))
             throw new IllegalArgumentException("User didn't review this product");
         reviews.remove(userId);
+
     }
 
     @Override
@@ -43,24 +44,26 @@ public class ReviewRepositoryAsList implements IRepositoryReview {
 
     @Override
     public float getProductScore(int storeId, int productId) {
-        return score;
+        Integer sum = scores.reduceValues(0, Integer::sum);
+        if(sum!=null)
+            return (float) sum /scores.size();
+        return 0;
     }
 
     @Override
-    public synchronized void addAndSetProductScore(int storeId, int productId, int userId, int score) {
+    public void addAndSetProductScore(int storeId, int productId, int userId, int score) {
         if (scores.containsKey(userId))
             throw new IllegalArgumentException("User already scored this product");
-        this.score= (this.score*reviews.size()+score)/(reviews.size()+1);
-        scores.put(userId, userId);
+        if (score < 0 || score > 5)
+            throw new IllegalArgumentException("Score must be between 0 to 5");
+        scores.put(userId, score);
 
     }
 
     @Override
-    public synchronized void removeProductScore(int storeId, int productId, int userId) {
+    public void removeProductScore(int storeId, int productId, int userId) {
         if (!scores.containsKey(userId))
             throw new IllegalArgumentException("User didn't score this product");
-
-        this.score = (this.score * reviews.size() - scores.get(userId)) / (reviews.size() - 1);
         scores.remove(userId);
     }
 }

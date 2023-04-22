@@ -28,4 +28,10 @@ public class StoreDiscountsRepositoryAsHashMap implements IStoreDiscountsReposit
         if(storeDiscounts.putIfAbsent(storeId, discounts) != null)
             storeDiscounts.get(storeId).add(discount);
     }
+
+    /*used for tests*/
+    @Override
+    public void removeStoreDiscounts(int storeId) {
+        storeDiscounts.remove(storeId);
+    }
 }
