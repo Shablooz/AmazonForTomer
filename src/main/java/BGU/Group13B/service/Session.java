@@ -520,7 +520,10 @@ class Session implements ISession {
     }
 
     @Override
-    public void setUserStatus(int userId, int newStatus) {
+    public void setUserStatus(int admin_id,int userId, int newStatus) {
+        if(!getUserStatus(admin_id).equals("Admin"))
+            //should throw an exception
+            System.out.println("isnt an admin");
         if(newStatus == 1 && userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.MEMBER)
             userRepositoryAsHashmap.getUser(userId).setPermissions(UserPermissions.UserPermissionStatus.ADMIN);
 

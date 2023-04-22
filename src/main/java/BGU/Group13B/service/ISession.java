@@ -572,7 +572,7 @@ public interface ISession {
      * @param userId the user id
      *               to turn the user from member into admin put 1, to turn it from admin into a member put 2
      */
-    void setUserStatus(int userId, int newStatus);
+    void setUserStatus(int admin_id,int userId, int newStatus);
 
     /**
      * #30

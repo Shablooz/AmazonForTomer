@@ -395,6 +395,7 @@ public class Store {
         Product product = this.productRepository.getStoreProductById(productId, storeId);
         synchronized (product) {
             this.productRepository.removeStoreProduct(productId, storeId);
+            product.markAsDeleted();
         }
     }
 
@@ -738,6 +739,4 @@ public class Store {
 
         getStoreProduct(productId).removeDiscount(discountId);
     }
-
-
 }
