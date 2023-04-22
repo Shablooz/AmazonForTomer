@@ -39,7 +39,7 @@ class Session implements ISession {
     public Session(Market market) {
         this.market = market;
         //callbacks initialization
-        SingletonCollection.setAddToUserCart((userId, storeId, productId) -> addToCart(userId, storeId, productId));
+        SingletonCollection.setAddToUserCart(this::addToCart);
         this.userRepositoryAsHashmap = SingletonCollection.getUserRepository();
 
         //IMPORTANT need to initialize the session AFTER loading first user (id = 1) from database
@@ -219,17 +219,18 @@ class Session implements ISession {
     }
 
     @Override
-    public void addStore(int userId, String storeName, String category) {
+    public int addStore(int userId, String storeName, String category) {
         User user = userRepositoryAsHashmap.getUser(userId);
         synchronized (user) {
             if (user.isRegistered()) {
                 try {
-                    market.addStore(userId, storeName, category);
+                    return market.addStore(userId, storeName, category);
                 } catch (Exception e) {
                     //TODO: handle exception
                 }
             }
         }
+        return -1;
     }
 
     @Override

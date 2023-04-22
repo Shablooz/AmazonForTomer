@@ -52,11 +52,11 @@ class UserTest {
         user3 = new User(3);
         user4 = new User(4);
         user5 = new User(5);
-        userRepository.addUser(1,user1);
-        userRepository.addUser(2,user2);
-        userRepository.addUser(3,user3);
-        userRepository.addUser(4,user4);
-        userRepository.addUser(5,user5);
+        userRepository.addUser(1, user1);
+        userRepository.addUser(2, user2);
+        userRepository.addUser(3, user3);
+        userRepository.addUser(4, user4);
+        userRepository.addUser(5, user5);
     }
 
     @AfterEach
@@ -73,40 +73,40 @@ class UserTest {
         //user1
         try {
             user1.register(goodUsername1, goodPassword1, goodEmail1, "", "", "");
-        }catch(Exception e){
+        } catch (Exception e) {
             Assertions.fail(e.getMessage());
         }
 
         try {
-            user2.register(goodUsername2,goodPassword2,goodEmail2,"","","");
-        }catch(Exception e){
+            user2.register(goodUsername2, goodPassword2, goodEmail2, "", "", "");
+        } catch (Exception e) {
             Assertions.fail(e.getMessage());
         }
 
         try {
-            user3.register(goodUsername3,goodPassword3,goodEmail3,"","","");
-        }catch(Exception e){
+            user3.register(goodUsername3, goodPassword3, goodEmail3, "", "", "");
+        } catch (Exception e) {
             Assertions.fail(e.getMessage());
         }
 
         try {
-            user4.register(badUsername1,badPassword1,badEmail1,"","","");
+            user4.register(badUsername1, badPassword1, badEmail1, "", "", "");
             Assertions.fail();
-        }catch(Exception e){
+        } catch (Exception e) {
 
         }
 
         try {
-            user5.register(badUsername2,badPassword2,badEmail2,"","","");
+            user5.register(badUsername2, badPassword2, badEmail2, "", "", "");
             Assertions.fail();
-        }catch(Exception e){
+        } catch (Exception e) {
 
         }
 
         //now lets check that we cant register twice!
         try {
             user1.register(goodUsername1, goodPassword1, goodEmail1, "", "", "");
-        }catch(Exception e){
+        } catch (Exception e) {
             Assertions.fail();
         }
     }
@@ -114,34 +114,34 @@ class UserTest {
     @Test
     void testLogin() {
         user1.register(goodUsername1, goodPassword1, goodEmail1, "yellow", "", "");
-        user2.register(goodUsername2,goodPassword2,goodEmail2,"","yak","");
-        user3.register(goodUsername3,goodPassword3,goodEmail3,"","","");
+        user2.register(goodUsername2, goodPassword2, goodEmail2, "", "yak", "");
+        user3.register(goodUsername3, goodPassword3, goodEmail3, "", "", "");
 
         user4.register("orangesLove", goodPassword1, "orangeslover@gmail.com", "yellow", "", "");
 
         try {
             user1.login(goodUsername1, goodPassword1, "yellow", "", "");
-        }catch(Exception e){
+        } catch (Exception e) {
             Assertions.fail(e.getMessage());
         }
 
         try {
-            user2.login(goodUsername2,goodPassword2,"","yak","");
-        }catch(Exception e){
+            user2.login(goodUsername2, goodPassword2, "", "yak", "");
+        } catch (Exception e) {
             Assertions.fail(e.getMessage());
         }
 
         try {
-            user3.login(goodUsername3,goodPassword3,"","","");
-        }catch(Exception e){
+            user3.login(goodUsername3, goodPassword3, "", "", "");
+        } catch (Exception e) {
             Assertions.fail(e.getMessage());
         }
 
         //should fail because he didnt answer the questions
         try {
-            user4.login("orangesLove",goodPassword1,"","","");
+            user4.login("orangesLove", goodPassword1, "", "", "");
             Assertions.fail();
-        }catch(Exception e){
+        } catch (Exception e) {
         }
     }
 
@@ -178,10 +178,6 @@ class UserTest {
     void hasSecurityQuestions(){
 
     }
-
-
-
-
 
 
 
