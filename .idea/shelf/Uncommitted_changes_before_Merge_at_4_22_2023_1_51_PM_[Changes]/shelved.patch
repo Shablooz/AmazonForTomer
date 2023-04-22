@@ -1,0 +1,290 @@
+Index: src/main/java/BGU/Group13B/backend/User/User.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package BGU.Group13B.backend.User;\r\n\r\n\r\nimport BGU.Group13B.backend.Repositories.Interfaces.IMessageRepository;\r\nimport BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;\r\nimport BGU.Group13B.backend.storePackage.Market;\r\nimport BGU.Group13B.backend.storePackage.Review;\r\nimport BGU.Group13B.backend.storePackage.permissions.NoPermissionException;\r\nimport BGU.Group13B.service.SingletonCollection;\r\nimport org.springframework.data.util.Pair;\r\n//eyal import\r\nimport java.util.List;\r\nimport java.util.regex.Pattern;\r\n\r\npublic class User {\r\n    private final IPurchaseHistoryRepository purchaseHistoryRepository;\r\n\r\n    private final int userId;\r\n    private final IMessageRepository messageRepository;\r\n    private final UserPermissions userPermissions;\r\n    private final Cart cart;\r\n    private final Market market;\r\n    private int messageId;\r\n    private String userName;\r\n    private Message currentMessageToReply;\r\n    private String password;\r\n\r\n    private String email;\r\n\r\n    private String answer1;\r\n    private String answer2;\r\n    private String answer3;\r\n\r\n    //TODO: show the messages upon registering\r\n    private static final String question1 = \"What is your favorite color?\";\r\n    private static final String question2 = \"What is your favorite food?\";\r\n    private static final String question3 = \"What is your favorite book or movie?\";\r\n    //eyal addition\r\n    private volatile boolean isLoggedIn;\r\n\r\n    private final String adminIdentifier = \"admin\";\r\n\r\n\r\n    public User(int userId) {\r\n\r\n        this.purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();\r\n        this.userId = userId;\r\n        this.messageRepository = SingletonCollection.getMessageRepository();\r\n        this.userPermissions = new UserPermissions();\r\n        this.cart = new Cart(userId);\r\n        this.market = SingletonCollection.getMarket();\r\n        this.userName = \"\";\r\n        this.password = \"\";\r\n        this.email = \"\";\r\n\r\n        //do not change those fields!\r\n        this.answer1 = \"\";\r\n        this.answer2 = \"\";\r\n        this.answer3 = \"\";\r\n\r\n        this.isLoggedIn = false;\r\n    }\r\n\r\n\r\n    public boolean isLoggedIn() {\r\n        return isLoggedIn;\r\n    }\r\n\r\n\r\n    public boolean isRegistered() {\r\n        return this.userPermissions.getUserPermissionStatus() == UserPermissions.UserPermissionStatus.MEMBER ||\r\n                this.userPermissions.getUserPermissionStatus() == UserPermissions.UserPermissionStatus.ADMIN;\r\n    }\r\n\r\n    public boolean isAdmin() {\r\n        return this.userPermissions.getUserPermissionStatus() == UserPermissions.UserPermissionStatus.ADMIN;\r\n    }\r\n\r\n    //#15\r\n    //returns User on success (for future functionalities)\r\n    public User register(String userName, String password, String email,String answer1,String answer2,String answer3) {\r\n        checkRegisterInfo(userName,password,email);\r\n        //updates the user info upon registration - no longer a guest\r\n        updateUserDetail(userName, password, email,answer1,answer2,answer3);\r\n        this.userPermissions.register();\r\n        return this;\r\n    }\r\n    private void checkRegisterInfo(String userName,String password, String email){\r\n        String usernameRegex = \"^[a-zA-Z0-9_-]{4,16}$\"; // 4-16 characters, letters/numbers/underscore/hyphen\r\n        String passwordRegex = \"^(?=.*[A-Z])(?=.*[a-z])(?=.*\\\\d)[A-Za-z\\\\d]{8,}$\"; // need at least 8 characters, 1 uppercase, 1 lowercase, 1 number)\r\n        String emailRegex = \"^\\\\w+([\\\\.-]?\\\\w+)*@\\\\w+([\\\\.-]?\\\\w+)*(\\\\.\\\\w{2,3})+$\"; // checks email validation\r\n        if (!Pattern.matches(usernameRegex, userName)) {\r\n            throw new IllegalArgumentException(\"Invalid username. Username must be 4-16 characters long and can only contain letters, numbers, underscores, or hyphens.\");\r\n        }\r\n        if (!Pattern.matches(passwordRegex, password)) {\r\n            throw new IllegalArgumentException(\"Invalid password. at least 8 characters, 1 uppercase, 1 lowercase, 1 number\");\r\n        }\r\n        if (!Pattern.matches(emailRegex, email)) {\r\n            throw new IllegalArgumentException(\"Invalid email.\");\r\n        }\r\n    }\r\n\r\n    //function that currently only used in register, but is cna function as a setter\r\n    //TODO change following fields in the database\r\n    private void updateUserDetail(String userName, String password, String email,String answer1,String answer2,String answer3) {\r\n        this.answer1 = answer1;\r\n        this.answer2 = answer2;\r\n        this.answer3 = answer3;\r\n        this.userName = userName;\r\n        this.password = password;\r\n    }\r\n\r\n\r\n    public void login(String userName, String password, String answer1,String answer2,String answer3) {\r\n        //second username check is for security\r\n        if (!((this.userName.equals(userName) && this.password.equals(password)))){\r\n            throw new IllegalArgumentException(\"incorrect username or password\");\r\n        }\r\n        this.isLoggedIn = true;\r\n        if(!this.answer1.equals(answer1) || !this.answer2.equals(answer2) || !this.answer3.equals(answer3)){\r\n            throw new IllegalArgumentException(\"wrong answers on security questions!\");\r\n        }\r\n    }\r\n\r\n    public String getUserName() {\r\n        return userName;\r\n    }\r\n\r\n\r\n\r\n    //#28\r\n    public void openComplaint(String header,String complaint) throws NoPermissionException {\r\n        if (!isRegistered())\r\n            throw new NoPermissionException(\"Only registered users can open complaints\");\r\n        messageRepository.sendMassage( Message.constractMessage(this.userName,messageId, header,complaint , \"Admin\"));\r\n    }\r\n\r\n    //#47\r\n    public synchronized Message getComplaint() throws NoPermissionException{\r\n        if(!isAdmin())\r\n            throw new NoPermissionException(\"Only admin can read complaints\");\r\n       return messageRepository.readUnreadMassage(adminIdentifier);\r\n    }\r\n    //#47\r\n    public void markMessageAsRead(String receiverId,String senderId,int messageId)  throws NoPermissionException{\r\n        if(!isAdmin())\r\n            throw new NoPermissionException(\"Only admin can mark as read complaints\");\r\n\r\n        messageRepository.markAsRead(receiverId,senderId,messageId);\r\n    }\r\n    //#47\r\n    public void sendMassageAdmin(String receiverId,String header,String massage) throws NoPermissionException {\r\n        if(!isAdmin())\r\n            throw new NoPermissionException(\"Only admin can send massages\");\r\n        messageRepository.sendMassage(Message.constractMessage(this.userName,messageId, header,massage , receiverId));\r\n    }\r\n    //#47\r\n    public void answerComplaint(String answer) throws NoPermissionException{\r\n        if(!isAdmin())\r\n            throw new NoPermissionException(\"Only admin can answer complaints\");\r\n        messageRepository.markAsRead(currentMessageToReply.getReceiverId(),currentMessageToReply.getSenderId(),currentMessageToReply.getMessageId());\r\n        messageRepository.sendMassage(Message.constractMessage(this.userName,messageId, \"RE: \"+ currentMessageToReply.getHeader(),answer , currentMessageToReply.getSenderId()));\r\n    }\r\n\r\n    public Message readMassage(String receiverId) throws NoPermissionException {\r\n        if(!isRegistered())\r\n            throw new NoPermissionException(\"Only registered users can read massages\");\r\n\r\n        Message message=  messageRepository.readReadMassage(receiverId);\r\n        messageRepository.markAsRead(message.getReceiverId(),message.getSenderId(),message.getMessageId());\r\n        currentMessageToReply=message;\r\n        return message;\r\n    }\r\n\r\n    //27\r\n    public void logout(){\r\n        if(isLoggedIn == false)\r\n            throw new IllegalArgumentException(\"already logged out!\");\r\n        this.isLoggedIn = false;\r\n    }\r\n\r\n\r\n    public void sendMassageStore(String header,String massage,int storeId) {\r\n        market.sendMassage(Message.constractMessage(this.userName,getAndIncrementMessageId(), header,massage , String.valueOf(storeId)),userId,storeId);\r\n    }\r\n    //42\r\n    public Message readUnreadMassageStore(int storeId) throws NoPermissionException {\r\n        Message message= market.getUnreadMessages(this.userId,storeId);\r\n        currentMessageToReply=message;\r\n        return message;\r\n    }\r\n    //42\r\n\r\n    public Message readReadMassageStore(int storeId)throws NoPermissionException {\r\n        return market.getUnreadMessages(this.userId,storeId);\r\n    }\r\n    //42\r\n    public void answerQuestionStore(String answer)throws NoPermissionException\r\n    {\r\n        assert currentMessageToReply.getReceiverId().matches(\"-?\\\\d+\");\r\n        market.markAsCompleted(currentMessageToReply.getSenderId(), currentMessageToReply.getMessageId(),this.userId,Integer.parseInt(currentMessageToReply.getReceiverId()));\r\n        messageRepository.sendMassage(Message.constractMessage(this.userName,getAndIncrementMessageId(), \"RE: \"+ currentMessageToReply.getHeader(),answer , currentMessageToReply.getSenderId()));\r\n    }\r\n    //42\r\n    public void refreshOldMessageStore(int storeId)throws NoPermissionException {\r\n        market.refreshMessages(this.userId,storeId);\r\n    }\r\n\r\n    private int getAndIncrementMessageId() {\r\n        return messageId++;\r\n    }\r\n\r\n    //#25\r\n    public void addReview(String review, int storeId, int productId) throws NoPermissionException{\r\n        if(!isRegistered())\r\n            throw new NoPermissionException(\"Only registered users can add reviews\");\r\n        market.addReview(review,storeId,productId,this.userId);\r\n    }\r\n    //#25\r\n    public void removeReview(int storeId, int productId)throws NoPermissionException{\r\n        if(!isRegistered())\r\n            throw new NoPermissionException(\"Only registered users can remove reviews\");\r\n        market.removeReview(storeId,productId,this.userId);\r\n    }\r\n    //#25\r\n    public Review getReview(int storeId, int productId){\r\n        return market.getReview(storeId,productId,this.userId);\r\n    }\r\n    //#26\r\n    public float getProductScore(int storeId,int productId){\r\n        return market.getProductScore(storeId,productId);\r\n    }\r\n\r\n    public void addAndSetProductScore(int storeId, int productId, int score) throws NoPermissionException{\r\n        if(!isRegistered())\r\n            throw new NoPermissionException(\"Only registered users can add scores\");\r\n        market.addAndSetProductScore(storeId,productId,this.userId,score);\r\n    }\r\n    public void removeProductScore(int storeId, int productId)throws NoPermissionException{\r\n        if(!isRegistered())\r\n            throw new NoPermissionException(\"Only registered users can remove scores\");\r\n        market.removeProductScore(storeId,productId,userId);\r\n    }\r\n    public void addStoreScore(int storeId ,int score) throws NoPermissionException{\r\n        if(!isRegistered())\r\n            throw new NoPermissionException(\"Only registered users can add scores to stores\");\r\n        market.addStoreScore(userId,storeId,score);\r\n    }\r\n\r\n    public void removeStoreScore(int storeId) throws NoPermissionException{\r\n        if(!isRegistered())\r\n            throw new NoPermissionException(\"Only registered users can remove scores from stores\");\r\n        market.removeStoreScore(userId,storeId);\r\n    }\r\n\r\n    public void modifyStoreScore(int storeId, int score)throws NoPermissionException{\r\n        if(!isRegistered())\r\n            throw new NoPermissionException(\"Only registered users can modify scores of stores\");\r\n        market.modifyStoreScore(userId,storeId,score);\r\n    }\r\n\r\n    public float getStoreScore(int storeId){\r\n        return market.getStoreScore(storeId);\r\n    }\r\n\r\n    void purchaseCart(String address, String creditCardNumber, String creditCardMonth, String creditCardYear, String creditCardHolderFirstName, String creditCardHolderLastName, String creditCardCcv, String id, String creditCardType) {\r\n        cart.purchaseCart(address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType);\r\n    }\r\n\r\n\r\n    public String getCartContent() {\r\n        return cart.getCartContent();\r\n    }\r\n\r\n\r\n    public boolean SecurityAnswer1Exists(){\r\n        return answer1.equals(\"\") == false;\r\n    }\r\n    public boolean SecurityAnswer2Exists(){\r\n        return answer2.equals(\"\") == false;\r\n    }\r\n    public boolean SecurityAnswer3Exists(){\r\n        return answer3.equals(\"\") == false;\r\n    }\r\n\r\n\r\n\r\n    public Cart getCart() {\r\n        return cart;\r\n    }\r\n\r\n    public void addProductToCart(int productId, int storeId) throws Exception {\r\n        market.isProductAvailable(productId, storeId);\r\n        cart.addProductToCart(productId, storeId);\r\n    }\r\n\r\n\r\n    public void removeProductFromCart(int storeId, int productId) throws Exception {\r\n        cart.removeProduct(storeId, productId);\r\n    }\r\n\r\n    public void changeProductQuantityInCart(int storeId, int productId, int quantity) throws Exception {\r\n        cart.changeProductQuantity(storeId, productId, quantity);\r\n    }\r\n\r\n    public void setPermissions(UserPermissions.UserPermissionStatus status){\r\n        this.userPermissions.setUserPermissionStatus(status);\r\n    }\r\n\r\n    public UserPermissions.UserPermissionStatus getStatus(){\r\n        return this.userPermissions.getUserPermissionStatus();\r\n    }\r\n\r\n    public int getUserId() {\r\n        return userId;\r\n    }\r\n\r\n    public void setUserName(String userName) {\r\n        this.userName = userName;\r\n    }\r\n\r\n\r\n    public String getEmail() {\r\n        return email;\r\n    }\r\n\r\n    public List<Pair<Integer, String>> getStoresAndRoles() {\r\n        return this.userPermissions.getStoresAndRoles();\r\n    }\r\n\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/BGU/Group13B/backend/User/User.java b/src/main/java/BGU/Group13B/backend/User/User.java
+--- a/src/main/java/BGU/Group13B/backend/User/User.java	(revision fe4df7a94c08c7db6500c0229db14833be172dce)
++++ b/src/main/java/BGU/Group13B/backend/User/User.java	(date 1682160546392)
+@@ -1,6 +1,5 @@
+ package BGU.Group13B.backend.User;
+-
+-
++import org.mindrot.jbcrypt.BCrypt;
+ import BGU.Group13B.backend.Repositories.Interfaces.IMessageRepository;
+ import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
+ import BGU.Group13B.backend.storePackage.Market;
+@@ -13,6 +12,7 @@
+ import java.util.regex.Pattern;
+ 
+ public class User {
++
+     private final IPurchaseHistoryRepository purchaseHistoryRepository;
+ 
+     private final int userId;
+@@ -42,7 +42,6 @@
+ 
+ 
+     public User(int userId) {
+-
+         this.purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
+         this.userId = userId;
+         this.messageRepository = SingletonCollection.getMessageRepository();
+@@ -52,7 +51,6 @@
+         this.userName = "";
+         this.password = "";
+         this.email = "";
+-
+         //do not change those fields!
+         this.answer1 = "";
+         this.answer2 = "";
+@@ -107,14 +105,20 @@
+         this.answer2 = answer2;
+         this.answer3 = answer3;
+         this.userName = userName;
+-        this.password = password;
++        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
+     }
+ 
++    public static boolean verifyPassword(String password, String hashedPassword) {
++        return BCrypt.checkpw(password, hashedPassword);
++    }
+ 
+     public void login(String userName, String password, String answer1,String answer2,String answer3) {
+         //second username check is for security
+-        if (!((this.userName.equals(userName) && this.password.equals(password)))){
+-            throw new IllegalArgumentException("incorrect username or password");
++        if (!((this.userName.equals(userName)))){
++            throw new IllegalArgumentException("incorrect username");
++        }
++        if(!verifyPassword(password,this.password)){
++            throw new IllegalArgumentException("incorrect password");
+         }
+         this.isLoggedIn = true;
+         if(!this.answer1.equals(answer1) || !this.answer2.equals(answer2) || !this.answer3.equals(answer3)){
+Index: pom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\r\n         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\r\n    <modelVersion>4.0.0</modelVersion>\r\n\r\n    <groupId>BGU.Grpup13B</groupId>\r\n    <artifactId>TradingSystemProject</artifactId>\r\n    <version>1.0-SNAPSHOT</version>\r\n\r\n    <properties>\r\n        <maven.compiler.source>17</maven.compiler.source>\r\n        <maven.compiler.target>17</maven.compiler.target>\r\n        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>\r\n    </properties>\r\n    <dependencies>\r\n        <!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->\r\n        <dependency>\r\n            <groupId>org.mockito</groupId>\r\n            <artifactId>mockito-core</artifactId>\r\n            <version>5.2.0</version>\r\n            <scope>test</scope>\r\n        </dependency>\r\n\r\n        <dependency>\r\n            <groupId>org.junit.jupiter</groupId>\r\n            <artifactId>junit-jupiter-engine</artifactId>\r\n            <version>5.9.2</version>\r\n            <scope>test</scope>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>org.springframework.data</groupId>\r\n            <artifactId>spring-data-jpa</artifactId>\r\n            <version>2.4.0</version>\r\n        </dependency>\r\n    </dependencies>\r\n\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pom.xml b/pom.xml
+--- a/pom.xml	(revision fe4df7a94c08c7db6500c0229db14833be172dce)
++++ b/pom.xml	(date 1682160210958)
+@@ -21,7 +21,11 @@
+             <version>5.2.0</version>
+             <scope>test</scope>
+         </dependency>
+-
++        <dependency>
++            <groupId>org.mindrot</groupId>
++            <artifactId>jbcrypt</artifactId>
++            <version>0.4</version>
++        </dependency>
+         <dependency>
+             <groupId>org.junit.jupiter</groupId>
+             <artifactId>junit-jupiter-engine</artifactId>
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"5ac43427-cf4f-4815-b259-3dcd3c1ae58a\" name=\"Changes\" comment=\"UnitTests #22 tests\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/User.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/User.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/User/UserTest.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/User/UserTest.java\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"GithubProjectSettings\">\r\n    <option name=\"branchProtectionPatterns\">\r\n      <list>\r\n        <option value=\"master\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"HighlightingSettingsPerFile\">\r\n    <setting file=\"jar://$MAVEN_REPOSITORY$/org/springframework/data/spring-data-commons/2.4.0/spring-data-commons-2.4.0.jar!/org/springframework/data/util/Pair.class\" root0=\"SKIP_INSPECTION\" />\r\n  </component>\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\" />\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;\r\n  }\r\n}</component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"CreateTestDialog.Recents.Supers\">\r\n      <recent name=\"\" />\r\n    </key>\r\n    <key name=\"CreateTestDialog.RecentsKey\">\r\n      <recent name=\"BGU.Group13B.backend.User\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"RunManager\" selected=\"JUnit.UserTest.testLogout\">\r\n    <configuration name=\"All in TradingSystemProject\" type=\"JUnit\" factoryName=\"JUnit\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"TradingSystemProject\" />\r\n      <option name=\"PACKAGE_NAME\" value=\"\" />\r\n      <option name=\"TEST_OBJECT\" value=\"package\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"All in trading-system\" type=\"JUnit\" factoryName=\"JUnit\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"trading-system\" />\r\n      <option name=\"PACKAGE_NAME\" value=\"\" />\r\n      <option name=\"TEST_OBJECT\" value=\"package\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"UserTest.login\" type=\"JUnit\" factoryName=\"JUnit\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"TradingSystemProject\" />\r\n      <extension name=\"coverage\">\r\n        <pattern>\r\n          <option name=\"PATTERN\" value=\"BGU.Group13B.backend.User.*\" />\r\n          <option name=\"ENABLED\" value=\"true\" />\r\n        </pattern>\r\n      </extension>\r\n      <option name=\"PACKAGE_NAME\" value=\"BGU.Group13B.backend.User\" />\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"BGU.Group13B.backend.User.UserTest\" />\r\n      <option name=\"METHOD_NAME\" value=\"login\" />\r\n      <option name=\"TEST_OBJECT\" value=\"method\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"UserTest.register\" type=\"JUnit\" factoryName=\"JUnit\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"TradingSystemProject\" />\r\n      <extension name=\"coverage\">\r\n        <pattern>\r\n          <option name=\"PATTERN\" value=\"BGU.Group13B.backend.User.*\" />\r\n          <option name=\"ENABLED\" value=\"true\" />\r\n        </pattern>\r\n      </extension>\r\n      <option name=\"PACKAGE_NAME\" value=\"BGU.Group13B.backend.User\" />\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"BGU.Group13B.backend.User.UserTest\" />\r\n      <option name=\"METHOD_NAME\" value=\"register\" />\r\n      <option name=\"TEST_OBJECT\" value=\"method\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"UserTest.testLogout\" type=\"JUnit\" factoryName=\"JUnit\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"TradingSystemProject\" />\r\n      <extension name=\"coverage\">\r\n        <pattern>\r\n          <option name=\"PATTERN\" value=\"BGU.Group13B.backend.User.*\" />\r\n          <option name=\"ENABLED\" value=\"true\" />\r\n        </pattern>\r\n      </extension>\r\n      <option name=\"PACKAGE_NAME\" value=\"BGU.Group13B.backend.User\" />\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"BGU.Group13B.backend.User.UserTest\" />\r\n      <option name=\"METHOD_NAME\" value=\"testLogout\" />\r\n      <option name=\"TEST_OBJECT\" value=\"method\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <recent_temporary>\r\n      <list>\r\n        <item itemvalue=\"JUnit.UserTest.testLogout\" />\r\n        <item itemvalue=\"JUnit.UserTest.login\" />\r\n        <item itemvalue=\"JUnit.UserTest.register\" />\r\n        <item itemvalue=\"JUnit.All in trading-system\" />\r\n        <item itemvalue=\"JUnit.All in TradingSystemProject\" />\r\n      </list>\r\n    </recent_temporary>\r\n  </component>\r\n  <component name=\"TaskManager\">\r\n    <servers />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State>\r\n              <option name=\"FILTERS\">\r\n                <map>\r\n                  <entry key=\"branch\">\r\n                    <value>\r\n                      <list>\r\n                        <option value=\"master\" />\r\n                      </list>\r\n                    </value>\r\n                  </entry>\r\n                </map>\r\n              </option>\r\n            </State>\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"com.intellij.coverage.CoverageDataManagerImpl\">\r\n    <SUITE FILE_PATH=\"coverage/trading_system$StoreTest.ic\" NAME=\"StoreTest Coverage Results\" MODIFIED=\"1680968615168\" SOURCE_PROVIDER=\"com.intellij.coverage.DefaultCoverageFileProvider\" RUNNER=\"idea\" COVERAGE_BY_TEST_ENABLED=\"false\" COVERAGE_TRACING_ENABLED=\"false\">\r\n      <FILTER>BGU.Group13B.backend.storePackage.*</FILTER>\r\n    </SUITE>\r\n    <SUITE FILE_PATH=\"coverage/trading_system$Main.ic\" NAME=\"Main Coverage Results\" MODIFIED=\"1680682126010\" SOURCE_PROVIDER=\"com.intellij.coverage.DefaultCoverageFileProvider\" RUNNER=\"idea\" COVERAGE_BY_TEST_ENABLED=\"false\" COVERAGE_TRACING_ENABLED=\"false\">\r\n      <FILTER>BGU.Group13B.*</FILTER>\r\n    </SUITE>\r\n    <SUITE FILE_PATH=\"coverage/trading_system$UserTest_register.ic\" NAME=\"UserTest.register Coverage Results\" MODIFIED=\"1682105252713\" SOURCE_PROVIDER=\"com.intellij.coverage.DefaultCoverageFileProvider\" RUNNER=\"idea\" COVERAGE_BY_TEST_ENABLED=\"false\" COVERAGE_TRACING_ENABLED=\"false\">\r\n      <FILTER>BGU.Group13B.backend.User.*</FILTER>\r\n    </SUITE>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision fe4df7a94c08c7db6500c0229db14833be172dce)
++++ b/.idea/workspace.xml	(date 1682160622624)
+@@ -5,7 +5,16 @@
+   </component>
+   <component name="ChangeListManager">
+     <list default="true" id="5ac43427-cf4f-4815-b259-3dcd3c1ae58a" name="Changes" comment="UnitTests #22 tests">
++      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_20_2023_5_33_PM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_20_2023_5_33_PM__Changes_.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_21_2023_11_16_AM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_21_2023_11_16_AM__Changes_.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_21_2023_5_17_PM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_21_2023_5_17_PM__Changes_.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_21_2023_7_22_PM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_21_2023_7_22_PM__Changes_.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_21_2023_9_56_AM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_21_2023_9_56_AM__Changes_.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_4_21_2023_5_17_PM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_4_21_2023_5_17_PM__Changes_.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_4_21_2023_5_20_PM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_4_21_2023_5_20_PM__Changes_.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_4_21_2023_7_52_PM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_4_21_2023_7_52_PM__Changes_.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/User.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/User/UserTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/User/UserTest.java" afterDir="false" />
+     </list>
+@@ -16,23 +25,17 @@
+   </component>
+   <component name="Git.Settings">
+     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+-  </component>
+-  <component name="GithubProjectSettings">
+-    <option name="branchProtectionPatterns">
+-      <list>
+-        <option value="master" />
+-      </list>
+-    </option>
+   </component>
+   <component name="HighlightingSettingsPerFile">
+     <setting file="jar://$MAVEN_REPOSITORY$/org/springframework/data/spring-data-commons/2.4.0/spring-data-commons-2.4.0.jar!/org/springframework/data/util/Pair.class" root0="SKIP_INSPECTION" />
+   </component>
+   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+-  <component name="PropertiesComponent">{
+-  &quot;keyToString&quot;: {
+-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;
++  <component name="PropertiesComponent"><![CDATA[{
++  "keyToString": {
++    "node.js.selected.package.tslint": "(autodetect)",
++    "settings.editor.selected.configurable": "reference.settings.project.maven.repository.indices"
+   }
+-}</component>
++}]]></component>
+   <component name="RecentsManager">
+     <key name="CreateTestDialog.Recents.Supers">
+       <recent name="" />
+@@ -41,56 +44,67 @@
+       <recent name="BGU.Group13B.backend.User" />
+     </key>
+   </component>
+-  <component name="RunManager" selected="JUnit.UserTest.testLogout">
+-    <configuration name="All in TradingSystemProject" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
++  <component name="RunManager" selected="JUnit.UserTest">
++    <configuration name="BGU.Group13B.backend.Repositories.Interfaces in TradingSystemProject" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+       <module name="TradingSystemProject" />
+-      <option name="PACKAGE_NAME" value="" />
++      <extension name="coverage">
++        <pattern>
++          <option name="PATTERN" value="BGU.Group13B.backend.Repositories.Interfaces.*" />
++          <option name="ENABLED" value="true" />
++        </pattern>
++      </extension>
++      <option name="PACKAGE_NAME" value="BGU.Group13B.backend.Repositories.Interfaces" />
+       <option name="TEST_OBJECT" value="package" />
+       <method v="2">
+         <option name="Make" enabled="true" />
+       </method>
+     </configuration>
+-    <configuration name="All in trading-system" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+-      <module name="trading-system" />
+-      <option name="PACKAGE_NAME" value="" />
+-      <option name="TEST_OBJECT" value="package" />
++    <configuration name="IMessageRepositoryTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
++      <module name="TradingSystemProject" />
++      <extension name="coverage">
++        <pattern>
++          <option name="PATTERN" value="BGU.Group13B.backend.Repositories.Interfaces.*" />
++          <option name="ENABLED" value="true" />
++        </pattern>
++      </extension>
++      <option name="PACKAGE_NAME" value="BGU.Group13B.backend.Repositories.Interfaces" />
++      <option name="MAIN_CLASS_NAME" value="BGU.Group13B.backend.Repositories.Interfaces.IMessageRepositoryTest" />
++      <option name="TEST_OBJECT" value="class" />
+       <method v="2">
+         <option name="Make" enabled="true" />
+       </method>
+     </configuration>
+-    <configuration name="UserTest.login" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
++    <configuration name="IRepositoryReviewTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+       <module name="TradingSystemProject" />
+       <extension name="coverage">
+         <pattern>
+-          <option name="PATTERN" value="BGU.Group13B.backend.User.*" />
++          <option name="PATTERN" value="BGU.Group13B.backend.Repositories.Interfaces.*" />
+           <option name="ENABLED" value="true" />
+         </pattern>
+       </extension>
+-      <option name="PACKAGE_NAME" value="BGU.Group13B.backend.User" />
+-      <option name="MAIN_CLASS_NAME" value="BGU.Group13B.backend.User.UserTest" />
+-      <option name="METHOD_NAME" value="login" />
+-      <option name="TEST_OBJECT" value="method" />
++      <option name="PACKAGE_NAME" value="BGU.Group13B.backend.Repositories.Interfaces" />
++      <option name="MAIN_CLASS_NAME" value="BGU.Group13B.backend.Repositories.Interfaces.IRepositoryReviewTest" />
++      <option name="TEST_OBJECT" value="class" />
+       <method v="2">
+         <option name="Make" enabled="true" />
+       </method>
+     </configuration>
+-    <configuration name="UserTest.register" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
++    <configuration name="StoreTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+       <module name="TradingSystemProject" />
+       <extension name="coverage">
+         <pattern>
+-          <option name="PATTERN" value="BGU.Group13B.backend.User.*" />
++          <option name="PATTERN" value="BGU.Group13B.backend.storePackage.*" />
+           <option name="ENABLED" value="true" />
+         </pattern>
+       </extension>
+-      <option name="PACKAGE_NAME" value="BGU.Group13B.backend.User" />
+-      <option name="MAIN_CLASS_NAME" value="BGU.Group13B.backend.User.UserTest" />
+-      <option name="METHOD_NAME" value="register" />
+-      <option name="TEST_OBJECT" value="method" />
++      <option name="PACKAGE_NAME" value="BGU.Group13B.backend.storePackage" />
++      <option name="MAIN_CLASS_NAME" value="BGU.Group13B.backend.storePackage.StoreTest" />
++      <option name="TEST_OBJECT" value="class" />
+       <method v="2">
+         <option name="Make" enabled="true" />
+       </method>
+     </configuration>
+-    <configuration name="UserTest.testLogout" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
++    <configuration name="UserTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+       <module name="TradingSystemProject" />
+       <extension name="coverage">
+         <pattern>
+@@ -100,19 +114,18 @@
+       </extension>
+       <option name="PACKAGE_NAME" value="BGU.Group13B.backend.User" />
+       <option name="MAIN_CLASS_NAME" value="BGU.Group13B.backend.User.UserTest" />
+-      <option name="METHOD_NAME" value="testLogout" />
+-      <option name="TEST_OBJECT" value="method" />
++      <option name="TEST_OBJECT" value="class" />
+       <method v="2">
+         <option name="Make" enabled="true" />
+       </method>
+     </configuration>
+     <recent_temporary>
+       <list>
+-        <item itemvalue="JUnit.UserTest.testLogout" />
+-        <item itemvalue="JUnit.UserTest.login" />
+-        <item itemvalue="JUnit.UserTest.register" />
+-        <item itemvalue="JUnit.All in trading-system" />
+-        <item itemvalue="JUnit.All in TradingSystemProject" />
++        <item itemvalue="JUnit.UserTest" />
++        <item itemvalue="JUnit.BGU.Group13B.backend.Repositories.Interfaces in TradingSystemProject" />
++        <item itemvalue="JUnit.IRepositoryReviewTest" />
++        <item itemvalue="JUnit.IMessageRepositoryTest" />
++        <item itemvalue="JUnit.StoreTest" />
+       </list>
+     </recent_temporary>
+   </component>
+Index: src/test/java/BGU/Group13B/backend/User/UserTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package BGU.Group13B.backend.User;\r\n\r\nimport BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;\r\nimport BGU.Group13B.service.SingletonCollection;\r\nimport org.junit.jupiter.api.AfterEach;\r\nimport org.junit.jupiter.api.Assertions;\r\nimport org.junit.jupiter.api.BeforeEach;\r\nimport org.junit.jupiter.api.Test;\r\n\r\nclass UserTest {\r\n\r\n    private User user1;\r\n    private User user2;\r\n    private User user3;\r\n    private User user4;\r\n    private User user5;\r\n\r\n    private IUserRepository userRepository = SingletonCollection.getUserRepository();\r\n\r\n    private final String goodUsername1 = \"goodUsername1\";\r\n    private final String goodUsername2 = \"greatname\";\r\n    private final String goodUsername3 = \"bestname\";\r\n\r\n\r\n    private final String badUsername1 = \"goo)(*&^%$dU%ser#n!ame1\";\r\n    private final String badUsername2 = \"-+!@#$helloimbad\";\r\n    private final String badUsername3 = \"awful  name\";\r\n\r\n\r\n    private final String badPassword1 = \"ihavenocapslock123\";\r\n    private final String badPassword2 = \"HELLO\";\r\n    private final String badPassword3 = \"123458797654321\";\r\n\r\n    private final String goodPassword1 = \"goodPassword1\";\r\n    private final String goodPassword2 = \"Ookodoo1234\";\r\n    private final String goodPassword3 = \"ShtrudelEater420\";\r\n\r\n\r\n    private final String goodEmail1 = \"eylalozof123@gmail.com\";\r\n    private final String goodEmail2 = \"eyalthegever@gmail.com\";\r\n    private final String goodEmail3 = \"eyalisthebest123@gmail.com\";\r\n\r\n    private final String badEmail1 = \"tefsadgvnspoiseropgesrgpoe123542@gmail.com\";\r\n    private final String badEmail2 = \"hello@gmail.lmao\";\r\n    private final String badEmail3 = \"a@waaaail.com\";\r\n\r\n\r\n    @BeforeEach\r\n    void setUp() {\r\n        user1 = new User(1);\r\n        user2 = new User(2);\r\n        user3 = new User(3);\r\n        user4 = new User(4);\r\n        user5 = new User(5);\r\n        userRepository.addUser(1,user1);\r\n        userRepository.addUser(2,user2);\r\n        userRepository.addUser(3,user3);\r\n        userRepository.addUser(4,user4);\r\n        userRepository.addUser(5,user5);\r\n    }\r\n\r\n    @AfterEach\r\n    void tearDown() {\r\n        userRepository.removeUser(1);\r\n        userRepository.removeUser(2);\r\n        userRepository.removeUser(3);\r\n        userRepository.removeUser(4);\r\n        userRepository.removeUser(5);\r\n    }\r\n\r\n    @Test\r\n    void testRegister() {\r\n        //user1\r\n        try {\r\n            user1.register(goodUsername1, goodPassword1, goodEmail1, \"\", \"\", \"\");\r\n        }catch(Exception e){\r\n            Assertions.fail(e.getMessage());\r\n        }\r\n\r\n        try {\r\n            user2.register(goodUsername2,goodPassword2,goodEmail2,\"\",\"\",\"\");\r\n        }catch(Exception e){\r\n            Assertions.fail(e.getMessage());\r\n        }\r\n\r\n        try {\r\n            user3.register(goodUsername3,goodPassword3,goodEmail3,\"\",\"\",\"\");\r\n        }catch(Exception e){\r\n            Assertions.fail(e.getMessage());\r\n        }\r\n\r\n        try {\r\n            user4.register(badUsername1,badPassword1,badEmail1,\"\",\"\",\"\");\r\n            Assertions.fail();\r\n        }catch(Exception e){\r\n\r\n        }\r\n\r\n        try {\r\n            user5.register(badUsername2,badPassword2,badEmail2,\"\",\"\",\"\");\r\n            Assertions.fail();\r\n        }catch(Exception e){\r\n\r\n        }\r\n\r\n        //now lets check that we cant register twice!\r\n        try {\r\n            user1.register(goodUsername1, goodPassword1, goodEmail1, \"\", \"\", \"\");\r\n        }catch(Exception e){\r\n            Assertions.fail();\r\n        }\r\n\r\n\r\n    }\r\n\r\n    @Test\r\n    void testLogin() {\r\n        user1.register(goodUsername1, goodPassword1, goodEmail1, \"yellow\", \"\", \"\");\r\n        user2.register(goodUsername2,goodPassword2,goodEmail2,\"\",\"yak\",\"\");\r\n        user3.register(goodUsername3,goodPassword3,goodEmail3,\"\",\"\",\"\");\r\n\r\n        user4.register(\"orangesLove\", goodPassword1, \"orangeslover@gmail.com\", \"yellow\", \"\", \"\");\r\n\r\n        try {\r\n            user1.login(goodUsername1, goodPassword1, \"yellow\", \"\", \"\");\r\n        }catch(Exception e){\r\n            Assertions.fail(e.getMessage());\r\n        }\r\n\r\n        try {\r\n            user2.login(goodUsername2,goodPassword2,\"\",\"yak\",\"\");\r\n        }catch(Exception e){\r\n            Assertions.fail(e.getMessage());\r\n        }\r\n\r\n        try {\r\n            user3.login(goodUsername3,goodPassword3,\"\",\"\",\"\");\r\n        }catch(Exception e){\r\n            Assertions.fail(e.getMessage());\r\n        }\r\n\r\n        //should fail because he didnt answer the questions\r\n        try {\r\n            user4.login(\"orangesLove\",goodPassword1,\"\",\"\",\"\");\r\n            Assertions.fail();\r\n        }catch(Exception e){\r\n        }\r\n    }\r\n\r\n    @Test\r\n    void testLogout() {\r\n        user1.register(goodUsername1, goodPassword1, goodEmail1, \"yellow\", \"\", \"\");\r\n        user2.register(goodUsername2, goodPassword2, goodEmail2, \"\", \"yak\", \"\");\r\n        user3.register(goodUsername3, goodPassword3, goodEmail3, \"\", \"\", \"\");\r\n\r\n        user1.login(goodUsername1, goodPassword1, \"yellow\", \"\", \"\");\r\n        user2.login(goodUsername2, goodPassword2, \"\", \"yak\", \"\");\r\n        user3.login(goodUsername3, goodPassword3, \"\", \"\", \"\");\r\n\r\n        Assertions.assertTrue(user1.isLoggedIn());\r\n        user1.logout();\r\n        Assertions.assertFalse(user1.isLoggedIn());\r\n\r\n        Assertions.assertTrue(user2.isLoggedIn());\r\n        user2.logout();\r\n        Assertions.assertFalse(user2.isLoggedIn());\r\n\r\n        Assertions.assertTrue(user3.isLoggedIn());\r\n        user3.logout();\r\n        Assertions.assertFalse(user3.isLoggedIn());\r\n\r\n        try {\r\n            user3.logout();\r\n            Assertions.fail(\"should have failed - cant log out twice!\");\r\n        } catch (Exception e) {\r\n\r\n        }\r\n    }\r\n\r\n\r\n\r\n\r\n\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/test/java/BGU/Group13B/backend/User/UserTest.java b/src/test/java/BGU/Group13B/backend/User/UserTest.java
+--- a/src/test/java/BGU/Group13B/backend/User/UserTest.java	(revision fe4df7a94c08c7db6500c0229db14833be172dce)
++++ b/src/test/java/BGU/Group13B/backend/User/UserTest.java	(date 1682160670381)
+@@ -109,8 +109,6 @@
+         }catch(Exception e){
+             Assertions.fail();
+         }
+-
+-
+     }
+ 
+     @Test
+@@ -176,6 +174,11 @@
+ 
+         }
+     }
++    @Test
++    void hasSecurityQuestions(){
++
++    }
++
+ 
+ 
+ 
