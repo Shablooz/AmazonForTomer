@@ -34,6 +34,7 @@ import java.util.logging.Logger;
 //(#61)
 public class SingletonCollection {
 
+
     /**
      * <h1>repositories</h1>
      */
@@ -81,6 +82,7 @@ public class SingletonCollection {
 
     //static initializer
     static {
+
         //repositories
         bidRepository = new BIDRepositoryAsList();
         productRepository = new ProductRepositoryAsHashMap();
@@ -119,6 +121,7 @@ public class SingletonCollection {
     /**
      * <h1>getters</h1>
      */
+
     public static AddToUserCart getAddToUserCart() {
         return addToUserCart;
     }

@@ -9,7 +9,7 @@ import java.util.List;
 public class UserPermissions {
 
     public List<Pair<Integer, String>> getStoresAndRoles() {
-        List<Pair<Integer,String>> lst = new LinkedList();
+        List<Pair<Integer,String>> lst = new LinkedList<>();
         for (Integer storeId : userStoreRole.keySet()) {
             lst.add(Pair.of(storeId, userStoreRole.get(storeId).toString()));
         }
@@ -45,8 +45,11 @@ public class UserPermissions {
     }
 
 
-    public void register() {
+    public void register(int id) {
         this.setUserPermissionStatus(UserPermissionStatus.MEMBER);
+        if(id == 1) {
+            this.setUserPermissionStatus(UserPermissionStatus.ADMIN);
+        }
     }
 }
 

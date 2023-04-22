@@ -1,63 +1,3 @@
-Index: .idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_42_PM__Changes_.xml
-===================================================================
-diff --git a/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_42_PM__Changes_.xml b/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_42_PM__Changes_.xml
-deleted file mode 100644
---- a/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_42_PM__Changes_.xml	(revision 24d8e789c9ea291b3f6c712fd542b8c6291ca84a)
-+++ /dev/null	(revision 24d8e789c9ea291b3f6c712fd542b8c6291ca84a)
-@@ -1,4 +0,0 @@
--<changelist name="Uncommitted_changes_before_Checkout_at_4_16_2023_7_42_PM_[Changes]" date="1681663327084" recycled="true" deleted="true">
--  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_42_PM_[Changes]/shelved.patch" />
--  <option name="DESCRIPTION" value="Uncommitted changes before Checkout at 4/16/2023 7:42 PM [Changes]" />
--</changelist>
-\ No newline at end of file
-Index: .idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_44_PM__Changes_.xml
-===================================================================
-diff --git a/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_44_PM__Changes_.xml b/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_44_PM__Changes_.xml
-deleted file mode 100644
---- a/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_44_PM__Changes_.xml	(revision 24d8e789c9ea291b3f6c712fd542b8c6291ca84a)
-+++ /dev/null	(revision 24d8e789c9ea291b3f6c712fd542b8c6291ca84a)
-@@ -1,4 +0,0 @@
--<changelist name="Uncommitted_changes_before_Checkout_at_4_16_2023_7_44_PM_[Changes]" date="1681663489364" recycled="false" toDelete="true">
--  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_44_PM_[Changes]/shelved.patch" />
--  <option name="DESCRIPTION" value="Uncommitted changes before Checkout at 4/16/2023 7:44 PM [Changes]" />
--</changelist>
-\ No newline at end of file
-Index: .idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_.xml
-===================================================================
-diff --git a/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_.xml b/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_.xml
-deleted file mode 100644
---- a/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_.xml	(revision 24d8e789c9ea291b3f6c712fd542b8c6291ca84a)
-+++ /dev/null	(revision 24d8e789c9ea291b3f6c712fd542b8c6291ca84a)
-@@ -1,4 +0,0 @@
--<changelist name="Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM_[Changes]" date="1681663838881" recycled="true" deleted="true">
--  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM_[Changes]/shelved.patch" />
--  <option name="DESCRIPTION" value="Uncommitted changes before Checkout at 4/16/2023 7:50 PM [Changes]" />
--</changelist>
-\ No newline at end of file
-Index: .idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_39_PM__Changes_.xml
-===================================================================
-diff --git a/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_39_PM__Changes_.xml b/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_39_PM__Changes_.xml
-deleted file mode 100644
---- a/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_39_PM__Changes_.xml	(revision 24d8e789c9ea291b3f6c712fd542b8c6291ca84a)
-+++ /dev/null	(revision 24d8e789c9ea291b3f6c712fd542b8c6291ca84a)
-@@ -1,4 +0,0 @@
--<changelist name="Uncommitted_changes_before_Checkout_at_4_16_2023_7_39_PM_[Changes]" date="1681663233292" recycled="true" deleted="true">
--  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_39_PM_[Changes]/shelved.patch" />
--  <option name="DESCRIPTION" value="Uncommitted changes before Checkout at 4/16/2023 7:39 PM [Changes]" />
--</changelist>
-\ No newline at end of file
-Index: .idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_1.xml
-===================================================================
-diff --git a/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_1.xml b/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_1.xml
-deleted file mode 100644
---- a/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_1.xml	(revision 24d8e789c9ea291b3f6c712fd542b8c6291ca84a)
-+++ /dev/null	(revision 24d8e789c9ea291b3f6c712fd542b8c6291ca84a)
-@@ -1,4 +0,0 @@
--<changelist name="Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM_[Changes]1" date="1681663851703" recycled="true" deleted="true">
--  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM_[Changes]1/shelved.patch" />
--  <option name="DESCRIPTION" value="Uncommitted changes before Checkout at 4/16/2023 7:50 PM [Changes]" />
--</changelist>
-\ No newline at end of file
 Index: .idea/workspace.xml
 IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
@@ -66,19 +6,19 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/.idea/workspace.xml b/.idea/workspace.xml
---- a/.idea/workspace.xml	(revision 24d8e789c9ea291b3f6c712fd542b8c6291ca84a)
-+++ b/.idea/workspace.xml	(date 1682084765829)
-@@ -4,14 +4,14 @@
+--- a/.idea/workspace.xml	(revision 7b908ea131d90ffc05aeb36d600537665c0f478c)
++++ b/.idea/workspace.xml	(date 1681935780516)
+@@ -4,14 +4,13 @@
      <option name="autoReloadType" value="SELECTIVE" />
    </component>
    <component name="ChangeListManager">
 -    <list default="true" id="3436d65a-5e76-4e77-818d-f39d961d7bb1" name="Changes" comment="Done (#53) WITHOUT TESTS.">
-+    <list default="true" id="3436d65a-5e76-4e77-818d-f39d961d7bb1" name="Changes" comment="finish UnitTests #22 tests">
-+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_39_PM__Changes_.xml" beforeDir="false" />
-+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_42_PM__Changes_.xml" beforeDir="false" />
-+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_44_PM__Changes_.xml" beforeDir="false" />
-+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_.xml" beforeDir="false" />
-+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_1.xml" beforeDir="false" />
++    <list default="true" id="3436d65a-5e76-4e77-818d-f39d961d7bb1" name="Changes" comment="fixing gitignore file">
++      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_39_PM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_39_PM__Changes_.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_42_PM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_42_PM__Changes_.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_44_PM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_44_PM__Changes_.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_1.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_1.xml" afterDir="false" />
        <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
 -      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductRepositoryImpl/ProductRepositoryAsHashMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductRepositoryImpl/ProductRepositoryAsHashMap.java" afterDir="false" />
 -      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/PurchaseHistoryRepositoryImpl/PurchaseHistoryRepositoryAsList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/PurchaseHistoryRepositoryImpl/PurchaseHistoryRepositoryAsList.java" afterDir="false" />
@@ -86,23 +26,23 @@ diff --git a/.idea/workspace.xml b/.idea/workspace.xml
 -      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Market.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Market.java" afterDir="false" />
 -      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Store.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Store.java" afterDir="false" />
 -      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/storePackage/StoreTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/storePackage/StoreTest.java" afterDir="false" />
-+      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/User/BasketTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/User/BasketTest.java" afterDir="false" />
      </list>
      <option name="SHOW_DIALOG" value="false" />
      <option name="HIGHLIGHT_CONFLICTS" value="true" />
-@@ -21,10 +21,10 @@
-   <component name="FileTemplateManagerImpl">
-     <option name="RECENT_TEMPLATES">
-       <list>
--        <option value="JUnit5 Test Class" />
-         <option value="Record" />
-         <option value="Interface" />
-         <option value="Class" />
-+        <option value="JUnit5 Test Class" />
-       </list>
+@@ -31,11 +30,10 @@
+   <component name="Git.Settings">
+     <option name="RECENT_BRANCH_BY_REPOSITORY">
+       <map>
+-        <entry key="$PROJECT_DIR$" value="master" />
++        <entry key="$PROJECT_DIR$" value="LOGGER" />
+       </map>
      </option>
+     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+-    <option name="RESET_MODE" value="HARD" />
    </component>
-@@ -56,29 +56,29 @@
+   <component name="GithubProjectSettings">
+     <option name="branchProtectionPatterns">
+@@ -56,29 +54,28 @@
      <option name="hideEmptyMiddlePackages" value="true" />
      <option name="showLibraryContents" value="true" />
    </component>
@@ -136,7 +76,6 @@ diff --git a/.idea/workspace.xml b/.idea/workspace.xml
 +    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
 +    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
 +    &quot;create.test.in.the.same.root&quot;: &quot;true&quot;,
-+    &quot;git-widget-placeholder&quot;: &quot;rateProduct__#25&quot;,
 +    &quot;last_opened_file_path&quot;: &quot;C:/Users/Shust/OneDrive/Documents/First Degree/Semester 5/Fundamentals of software engineering/Assignment2&quot;,
 +    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
 +    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -154,181 +93,90 @@ diff --git a/.idea/workspace.xml b/.idea/workspace.xml
    <component name="RecentsManager">
      <key name="CreateClassDialog.RecentsKey">
        <recent name="BGU.Group13B.backend.storePackage" />
-@@ -94,54 +94,91 @@
-       <recent name="" />
-     </key>
-     <key name="CreateTestDialog.RecentsKey">
-+      <recent name="BGU.Group13B.backend.User" />
-       <recent name="BGU.Group13B.service" />
-       <recent name="BGU.Group13B.backend.storePackage" />
+@@ -99,15 +96,7 @@
        <recent name="BGU.Group13B" />
      </key>
    </component>
 -  <component name="RunManager" selected="JUnit.StoreTest">
 -    <configuration name="All in TradingSystemProject" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
 -      <module name="TradingSystemProject" />
-+  <component name="RunManager" selected="JUnit.BasketTest.twoThreadsTryToPurchaseTheLastProduct">
-+    <configuration name="All in trading-system" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-+      <module name="trading-system" />
-       <option name="PACKAGE_NAME" value="" />
-       <option name="TEST_OBJECT" value="package" />
-       <method v="2">
-         <option name="Make" enabled="true" />
-       </method>
-     </configuration>
--    <configuration name="BGU.Group13B.backend.storePackage in trading-system" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-+    <configuration name="BasketTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+-      <option name="PACKAGE_NAME" value="" />
+-      <option name="TEST_OBJECT" value="package" />
+-      <method v="2">
+-        <option name="Make" enabled="true" />
+-      </method>
+-    </configuration>
++  <component name="RunManager">
+     <configuration name="BGU.Group13B.backend.storePackage in trading-system" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
        <module name="trading-system" />
        <extension name="coverage">
-         <pattern>
--          <option name="PATTERN" value="BGU.Group13B.backend.storePackage.*" />
-+          <option name="PATTERN" value="BGU.Group13B.backend.User.*" />
-           <option name="ENABLED" value="true" />
-         </pattern>
-       </extension>
--      <option name="PACKAGE_NAME" value="BGU.Group13B.backend.storePackage" />
--      <option name="TEST_OBJECT" value="package" />
-+      <option name="PACKAGE_NAME" value="BGU.Group13B.backend.User" />
-+      <option name="MAIN_CLASS_NAME" value="BGU.Group13B.backend.User.BasketTest" />
-+      <option name="TEST_OBJECT" value="class" />
-+      <method v="2">
-+        <option name="Make" enabled="true" />
-+      </method>
-+    </configuration>
-+    <configuration name="BasketTest.purchaseBasketSimpleTest_externalPaySuccess" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-+      <module name="trading-system" />
-+      <extension name="coverage">
-+        <pattern>
-+          <option name="PATTERN" value="BGU.Group13B.backend.User.*" />
-+          <option name="ENABLED" value="true" />
-+        </pattern>
-+      </extension>
-+      <option name="PACKAGE_NAME" value="BGU.Group13B.backend.User" />
-+      <option name="MAIN_CLASS_NAME" value="BGU.Group13B.backend.User.BasketTest" />
-+      <option name="METHOD_NAME" value="purchaseBasketSimpleTest_externalPaySuccess" />
-+      <option name="TEST_OBJECT" value="method" />
-       <method v="2">
+@@ -122,25 +111,9 @@
          <option name="Make" enabled="true" />
        </method>
      </configuration>
 -    <configuration name="StoreTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
 -      <module name="TradingSystemProject" />
-+    <configuration name="BasketTest.purchaseBasketSimpleTest_notInStockFail" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-+      <module name="trading-system" />
-       <extension name="coverage">
-         <pattern>
+-      <extension name="coverage">
+-        <pattern>
 -          <option name="PATTERN" value="BGU.Group13B.backend.storePackage.*" />
-+          <option name="PATTERN" value="BGU.Group13B.backend.User.*" />
-           <option name="ENABLED" value="true" />
-         </pattern>
-       </extension>
+-          <option name="ENABLED" value="true" />
+-        </pattern>
+-      </extension>
 -      <option name="PACKAGE_NAME" value="BGU.Group13B.backend.storePackage" />
 -      <option name="MAIN_CLASS_NAME" value="BGU.Group13B.backend.storePackage.StoreTest" />
 -      <option name="TEST_OBJECT" value="class" />
-+      <option name="PACKAGE_NAME" value="BGU.Group13B.backend.User" />
-+      <option name="MAIN_CLASS_NAME" value="BGU.Group13B.backend.User.BasketTest" />
-+      <option name="METHOD_NAME" value="purchaseBasketSimpleTest_notInStockFail" />
-+      <option name="TEST_OBJECT" value="method" />
-+      <method v="2">
-+        <option name="Make" enabled="true" />
-+      </method>
-+    </configuration>
-+    <configuration name="BasketTest.twoThreadsTryToPurchaseTheLastProduct" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-+      <module name="trading-system" />
-+      <extension name="coverage">
-+        <pattern>
-+          <option name="PATTERN" value="BGU.Group13B.backend.User.*" />
-+          <option name="ENABLED" value="true" />
-+        </pattern>
-+      </extension>
-+      <option name="PACKAGE_NAME" value="BGU.Group13B.backend.User" />
-+      <option name="MAIN_CLASS_NAME" value="BGU.Group13B.backend.User.BasketTest" />
-+      <option name="METHOD_NAME" value="twoThreadsTryToPurchaseTheLastProduct" />
-+      <option name="TEST_OBJECT" value="method" />
-       <method v="2">
-         <option name="Make" enabled="true" />
-       </method>
-     </configuration>
+-      <method v="2">
+-        <option name="Make" enabled="true" />
+-      </method>
+-    </configuration>
      <recent_temporary>
        <list>
 -        <item itemvalue="JUnit.StoreTest" />
 -        <item itemvalue="JUnit.All in TradingSystemProject" />
--        <item itemvalue="JUnit.BGU.Group13B.backend.storePackage in trading-system" />
-+        <item itemvalue="JUnit.BasketTest.twoThreadsTryToPurchaseTheLastProduct" />
-+        <item itemvalue="JUnit.All in trading-system" />
-+        <item itemvalue="JUnit.BasketTest" />
-+        <item itemvalue="JUnit.BasketTest.purchaseBasketSimpleTest_notInStockFail" />
-+        <item itemvalue="JUnit.BasketTest.purchaseBasketSimpleTest_externalPaySuccess" />
++        <item itemvalue="JUnit.BGU.Group13B.backend.storePackage in trading-system" />
+         <item itemvalue="JUnit.BGU.Group13B.backend.storePackage in trading-system" />
        </list>
      </recent_temporary>
-   </component>
-@@ -203,7 +240,35 @@
+@@ -203,7 +176,21 @@
        <option name="project" value="LOCAL" />
        <updated>1681392081418</updated>
      </task>
 -    <option name="localTasksCounter" value="7" />
-+    <task id="LOCAL-00007" summary="fixing a few bugs">
-+      <created>1681943383119</created>
++    <task id="LOCAL-00007" summary="Adding logger">
++      <created>1681934530581</created>
 +      <option name="number" value="00007" />
 +      <option name="presentableId" value="LOCAL-00007" />
 +      <option name="project" value="LOCAL" />
-+      <updated>1681943383119</updated>
++      <updated>1681934530582</updated>
 +    </task>
-+    <task id="LOCAL-00008" summary="saving word #22 tests">
-+      <created>1681980677449</created>
++    <task id="LOCAL-00008" summary="fixing gitignore file">
++      <created>1681935355899</created>
 +      <option name="number" value="00008" />
 +      <option name="presentableId" value="LOCAL-00008" />
 +      <option name="project" value="LOCAL" />
-+      <updated>1681980677449</updated>
++      <updated>1681935355899</updated>
 +    </task>
-+    <task id="LOCAL-00009" summary="updating branch #22 tests">
-+      <created>1681993159133</created>
-+      <option name="number" value="00009" />
-+      <option name="presentableId" value="LOCAL-00009" />
-+      <option name="project" value="LOCAL" />
-+      <updated>1681993159133</updated>
-+    </task>
-+    <task id="LOCAL-00010" summary="finish UnitTests #22 tests">
-+      <created>1682017267478</created>
-+      <option name="number" value="00010" />
-+      <option name="presentableId" value="LOCAL-00010" />
-+      <option name="project" value="LOCAL" />
-+      <updated>1682017267478</updated>
-+    </task>
-+    <option name="localTasksCounter" value="11" />
++    <option name="localTasksCounter" value="9" />
      <servers />
    </component>
    <component name="TypeScriptGeneratedFilesManager">
-@@ -220,7 +285,7 @@
+@@ -220,7 +207,7 @@
                    <entry key="branch">
                      <value>
                        <list>
 -                        <option value="bid_purchase_2.5.4_#53" />
-+                        <option value="master" />
++                        <option value="LOGGER" />
                        </list>
                      </value>
                    </entry>
-@@ -239,7 +304,22 @@
+@@ -239,7 +226,9 @@
      <MESSAGE value="adding Discount.java for the use of calculating the price." />
      <MESSAGE value="save work 2" />
      <MESSAGE value="Done (#53) WITHOUT TESTS." />
 -    <option name="LAST_COMMIT_MESSAGE" value="Done (#53) WITHOUT TESTS." />
-+    <MESSAGE value="fixing a few bugs" />
-+    <MESSAGE value="saving word #22 tests" />
-+    <MESSAGE value="updating branch #22 tests" />
-+    <MESSAGE value="finish UnitTests #22 tests" />
-+    <option name="LAST_COMMIT_MESSAGE" value="finish UnitTests #22 tests" />
-+  </component>
-+  <component name="XDebuggerManager">
-+    <breakpoint-manager>
-+      <breakpoints>
-+        <line-breakpoint enabled="true" type="java-line">
-+          <url>file://$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/User/BasketTest.java</url>
-+          <line>207</line>
-+          <option name="timeStamp" value="10" />
-+        </line-breakpoint>
-+      </breakpoints>
-+    </breakpoint-manager>
++    <MESSAGE value="Adding logger" />
++    <MESSAGE value="fixing gitignore file" />
++    <option name="LAST_COMMIT_MESSAGE" value="fixing gitignore file" />
    </component>
    <component name="XSLT-Support.FileAssociations.UIState">
      <expand />

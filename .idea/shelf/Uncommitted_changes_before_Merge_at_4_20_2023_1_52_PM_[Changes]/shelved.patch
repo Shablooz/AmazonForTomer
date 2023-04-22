@@ -1,9 +1,108 @@
+Index: src/test/java/BGU/Group13B/backend/User/BasketTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package BGU.Group13B.backend.User;\r\n\r\nimport BGU.Group13B.backend.Repositories.Implementations.BasketProductRepositoryImpl.BasketProductRepositoryAsHashMap;\r\nimport BGU.Group13B.backend.Repositories.Implementations.ProductHistoryRepositoryImpl.ProductHistoryRepositoryAsList;\r\nimport BGU.Group13B.backend.Repositories.Interfaces.IBasketProductRepository;\r\nimport BGU.Group13B.backend.Repositories.Interfaces.IProductHistoryRepository;\r\nimport BGU.Group13B.backend.storePackage.Market;\r\nimport BGU.Group13B.backend.storePackage.payment.PaymentAdapter;\r\nimport BGU.Group13B.service.callbacks.CalculatePriceOfBasket;\r\nimport org.junit.jupiter.api.AfterEach;\r\nimport org.junit.jupiter.api.BeforeEach;\r\nimport org.junit.jupiter.api.Test;\r\nimport org.mockito.Mockito;\r\n\r\nimport java.lang.reflect.InvocationTargetException;\r\nimport java.lang.reflect.Method;\r\nimport java.util.concurrent.ConcurrentLinkedQueue;\r\n\r\nimport static org.junit.jupiter.api.Assertions.*;\r\n\r\nclass BasketTest {\r\n\r\n    private static Basket basket;\r\n    private static int userId;\r\n    private static IBasketProductRepository basketProductRepository;\r\n    private static PaymentAdapter paymentAdapter;\r\n    private IProductHistoryRepository productHistoryRepository;\r\n    private CalculatePriceOfBasket calculatePriceOfBasket;\r\n\r\n    @BeforeEach\r\n    void setUp() {\r\n        initCalculatePriceOfBasket();\r\n        userId = 1;\r\n        basketProductRepository = new BasketProductRepositoryAsHashMap();\r\n        paymentAdapter = Mockito.mock(PaymentAdapter.class);\r\n        productHistoryRepository = new ProductHistoryRepositoryAsList();\r\n        //get calculatePriceOfBasket from Market class\r\n        /*public Basket(int userId, int storeId, IBasketProductRepository productRepository,\r\n                  PaymentAdapter paymentAdapter, IProductHistoryRepository productHistoryRepository,\r\n                  CalculatePriceOfBasket calculatePriceOfBasket)*/\r\n        basket = new Basket()\r\n    }\r\n\r\n    private void initCalculatePriceOfBasket() {\r\n        final Method method;//effective final\r\n        try {\r\n            method = Market.class.getDeclaredMethod(\"calculatePriceOfBasket\", double.class, ConcurrentLinkedQueue.class, int.class, String.class);\r\n        } catch (NoSuchMethodException e) {\r\n            throw new RuntimeException(e);\r\n        }\r\n        method.setAccessible(true);\r\n\r\n        calculatePriceOfBasket = ((totalAmount, successfulProducts, storeId, storeCoupons) -> {\r\n            try {\r\n                return (double) method.invoke(null, totalAmount, successfulProducts, storeId, storeCoupons);\r\n            } catch (IllegalAccessException | InvocationTargetException e) {\r\n                throw new RuntimeException(e);\r\n            }\r\n        });\r\n    }\r\n\r\n    @AfterEach\r\n    void tearDown() {\r\n    }\r\n\r\n    @Test\r\n    void purchaseBasket() {\r\n    }\r\n\r\n    @Test\r\n    void cancelPurchase() {\r\n    }\r\n\r\n    @Test\r\n    void addProduct() {\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/test/java/BGU/Group13B/backend/User/BasketTest.java b/src/test/java/BGU/Group13B/backend/User/BasketTest.java
+--- a/src/test/java/BGU/Group13B/backend/User/BasketTest.java	(revision 11d3207d1404a7930c296351e26dcb3f9852511e)
++++ b/src/test/java/BGU/Group13B/backend/User/BasketTest.java	(date 1681983336593)
+@@ -4,7 +4,9 @@
+ import BGU.Group13B.backend.Repositories.Implementations.ProductHistoryRepositoryImpl.ProductHistoryRepositoryAsList;
+ import BGU.Group13B.backend.Repositories.Interfaces.IBasketProductRepository;
+ import BGU.Group13B.backend.Repositories.Interfaces.IProductHistoryRepository;
++import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
+ import BGU.Group13B.backend.storePackage.Market;
++import BGU.Group13B.backend.storePackage.Product;
+ import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
+ import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
+ import org.junit.jupiter.api.AfterEach;
+@@ -19,29 +21,40 @@
+ import static org.junit.jupiter.api.Assertions.*;
+ 
+ class BasketTest {
+-
++    private static Market market;
+     private static Basket basket;
+     private static int userId;
++    private static int storeId;
+     private static IBasketProductRepository basketProductRepository;
+     private static PaymentAdapter paymentAdapter;
+-    private IProductHistoryRepository productHistoryRepository;
+-    private CalculatePriceOfBasket calculatePriceOfBasket;
++    private static IProductHistoryRepository productHistoryRepository;
++    private static CalculatePriceOfBasket calculatePriceOfBasket;
++    private static IProductRepository productRepository;
+ 
+     @BeforeEach
+     void setUp() {
+-        initCalculatePriceOfBasket();
++        market = Mockito.mock(Market.class);
++        initCalculatePriceOfBasket(market);
+         userId = 1;
++        storeId = 1;
+         basketProductRepository = new BasketProductRepositoryAsHashMap();
++        //    public Product(String name, int productId, int storeId, double price, int maxAmount) {
++        Product product1 = new Product("product1", 1, 1, 10, 1);
++        Product product2 = new Product("product2", 2, 1, 20, 1);
++
++
++
++
+         paymentAdapter = Mockito.mock(PaymentAdapter.class);
+-        productHistoryRepository = new ProductHistoryRepositoryAsList();
+-        //get calculatePriceOfBasket from Market class
+-        /*public Basket(int userId, int storeId, IBasketProductRepository productRepository,
+-                  PaymentAdapter paymentAdapter, IProductHistoryRepository productHistoryRepository,
+-                  CalculatePriceOfBasket calculatePriceOfBasket)*/
+-        basket = new Basket()
++        productHistoryRepository = Mockito.mock(IProductHistoryRepository.class);
++        basket = new Basket(userId, storeId, basketProductRepository, paymentAdapter,
++                productHistoryRepository, calculatePriceOfBasket);
++
++        Mockito.when(paymentAdapter.pay(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
++                Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), )
+     }
+ 
+-    private void initCalculatePriceOfBasket() {
++    private void initCalculatePriceOfBasket(Market market) {
+         final Method method;//effective final
+         try {
+             method = Market.class.getDeclaredMethod("calculatePriceOfBasket", double.class, ConcurrentLinkedQueue.class, int.class, String.class);
+@@ -52,7 +65,7 @@
+ 
+         calculatePriceOfBasket = ((totalAmount, successfulProducts, storeId, storeCoupons) -> {
+             try {
+-                return (double) method.invoke(null, totalAmount, successfulProducts, storeId, storeCoupons);
++                return (double) method.invoke(market, totalAmount, successfulProducts, storeId, storeCoupons);
+             } catch (IllegalAccessException | InvocationTargetException e) {
+                 throw new RuntimeException(e);
+             }
+Index: src/main/java/BGU/Group13B/backend/Repositories/Implementations/BasketProductRepositoryImpl/BasketProductRepositoryAsHashMap.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package BGU.Group13B.backend.Repositories.Implementations.BasketProductRepositoryImpl;\r\n\r\nimport BGU.Group13B.backend.Repositories.Interfaces.IBasketProductRepository;\r\nimport BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;\r\nimport BGU.Group13B.backend.User.BasketProduct;\r\nimport BGU.Group13B.backend.storePackage.Product;\r\nimport BGU.Group13B.service.SingletonCollection;\r\nimport org.springframework.data.util.Pair;\r\n\r\nimport java.util.NoSuchElementException;\r\nimport java.util.Optional;\r\nimport java.util.Set;\r\nimport java.util.concurrent.ConcurrentHashMap;\r\nimport java.util.stream.Collectors;\r\n\r\npublic class BasketProductRepositoryAsHashMap implements IBasketProductRepository {\r\n    private final ConcurrentHashMap<Pair<Integer/*storeId*/, Integer/*userId*/>, Optional<Set<BasketProduct>>> basketProducts;\r\n    private final IProductRepository productRepository;\r\n\r\n    public BasketProductRepositoryAsHashMap() {\r\n        this.basketProducts = new ConcurrentHashMap<>();\r\n        this.productRepository = SingletonCollection.getProductRepository();\r\n    }\r\n\r\n    @Override\r\n    public Optional<Set<BasketProduct>> getBasketProducts(int storeId, int userId) {\r\n        return basketProducts.getOrDefault(Pair.of(storeId, userId), Optional.empty());\r\n    }\r\n\r\n    @Override\r\n    public void removeStoreProduct(int productId, int storeId, int userId) {\r\n        basketProducts.remove(Pair.of(storeId, userId)).orElseThrow(\r\n                () -> new IllegalArgumentException(\"Product with id: \" + productId + \" does not exist in the basket\"));\r\n    }\r\n\r\n    //1 - get the products of the store\r\n    //2 - put the products in the basket\r\n    @Override\r\n    public void addNewProductToBasket(int productId, int storeId, int userId) {\r\n        if (!basketProducts.containsKey(Pair.of(storeId, userId))) {\r\n\r\n            var productsFromStore = productRepository.getStoreProducts(storeId).orElseThrow(\r\n                            () -> new IllegalArgumentException(\"Products of store with id: \" + storeId + \" does not exist\"))\r\n                    .stream().map(BasketProduct::new).collect(Collectors.toSet());\r\n            basketProducts.putIfAbsent(Pair.of(storeId, userId), Optional.of(productsFromStore));\r\n        } else {\r\n            throw new IllegalArgumentException(\"Product with id: \" + productId + \" already exist in store with id: \" + storeId);\r\n        }\r\n\r\n\r\n    }\r\n\r\n    @Override\r\n    public void changeProductQuantity(int productId, int storeId, int userId, int addedQuantity) {\r\n\r\n        var basketProducts = getBasketProducts(storeId, userId).orElseThrow(\r\n                () -> new IllegalArgumentException(\"Products of store with id: \" + storeId + \" does not exist\"));\r\n\r\n        basketProducts.stream().filter(basketProduct -> basketProduct.getProductId() == productId).findFirst().\r\n                orElseThrow(\r\n                        () -> new IllegalArgumentException(\"Product with id: \" + productId + \" does not exist in this basket\")\r\n                ).addQuantity(addedQuantity);\r\n    }\r\n\r\n    @Override\r\n    public BasketProduct getBasketProduct(int productId, int storeId, int userId) throws IllegalArgumentException{\r\n        for (BasketProduct basketProduct : getBasketProducts(storeId, userId).orElseThrow(\r\n                () -> new IllegalArgumentException(\"There is no basket of store with id: \" + storeId))) {\r\n            if (basketProduct.getProductId() == productId) {\r\n                return basketProduct;\r\n            }\r\n        }\r\n        return null;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/BGU/Group13B/backend/Repositories/Implementations/BasketProductRepositoryImpl/BasketProductRepositoryAsHashMap.java b/src/main/java/BGU/Group13B/backend/Repositories/Implementations/BasketProductRepositoryImpl/BasketProductRepositoryAsHashMap.java
+--- a/src/main/java/BGU/Group13B/backend/Repositories/Implementations/BasketProductRepositoryImpl/BasketProductRepositoryAsHashMap.java	(revision 11d3207d1404a7930c296351e26dcb3f9852511e)
++++ b/src/main/java/BGU/Group13B/backend/Repositories/Implementations/BasketProductRepositoryImpl/BasketProductRepositoryAsHashMap.java	(date 1681983336603)
+@@ -50,6 +50,7 @@
+ 
+     }
+ 
++
+     @Override
+     public void changeProductQuantity(int productId, int storeId, int userId, int addedQuantity) {
+ 
 Index: .idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_42_PM__Changes_.xml
 ===================================================================
 diff --git a/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_42_PM__Changes_.xml b/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_42_PM__Changes_.xml
 deleted file mode 100644
---- a/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_42_PM__Changes_.xml	(revision 24d8e789c9ea291b3f6c712fd542b8c6291ca84a)
-+++ /dev/null	(revision 24d8e789c9ea291b3f6c712fd542b8c6291ca84a)
+--- a/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_42_PM__Changes_.xml	(revision 11d3207d1404a7930c296351e26dcb3f9852511e)
++++ /dev/null	(revision 11d3207d1404a7930c296351e26dcb3f9852511e)
 @@ -1,4 +0,0 @@
 -<changelist name="Uncommitted_changes_before_Checkout_at_4_16_2023_7_42_PM_[Changes]" date="1681663327084" recycled="true" deleted="true">
 -  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_42_PM_[Changes]/shelved.patch" />
@@ -14,8 +113,8 @@ Index: .idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_44_PM__Cha
 ===================================================================
 diff --git a/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_44_PM__Changes_.xml b/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_44_PM__Changes_.xml
 deleted file mode 100644
---- a/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_44_PM__Changes_.xml	(revision 24d8e789c9ea291b3f6c712fd542b8c6291ca84a)
-+++ /dev/null	(revision 24d8e789c9ea291b3f6c712fd542b8c6291ca84a)
+--- a/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_44_PM__Changes_.xml	(revision 11d3207d1404a7930c296351e26dcb3f9852511e)
++++ /dev/null	(revision 11d3207d1404a7930c296351e26dcb3f9852511e)
 @@ -1,4 +0,0 @@
 -<changelist name="Uncommitted_changes_before_Checkout_at_4_16_2023_7_44_PM_[Changes]" date="1681663489364" recycled="false" toDelete="true">
 -  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_44_PM_[Changes]/shelved.patch" />
@@ -26,8 +125,8 @@ Index: .idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Cha
 ===================================================================
 diff --git a/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_.xml b/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_.xml
 deleted file mode 100644
---- a/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_.xml	(revision 24d8e789c9ea291b3f6c712fd542b8c6291ca84a)
-+++ /dev/null	(revision 24d8e789c9ea291b3f6c712fd542b8c6291ca84a)
+--- a/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_.xml	(revision 11d3207d1404a7930c296351e26dcb3f9852511e)
++++ /dev/null	(revision 11d3207d1404a7930c296351e26dcb3f9852511e)
 @@ -1,4 +0,0 @@
 -<changelist name="Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM_[Changes]" date="1681663838881" recycled="true" deleted="true">
 -  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM_[Changes]/shelved.patch" />
@@ -38,8 +137,8 @@ Index: .idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_39_PM__Cha
 ===================================================================
 diff --git a/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_39_PM__Changes_.xml b/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_39_PM__Changes_.xml
 deleted file mode 100644
---- a/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_39_PM__Changes_.xml	(revision 24d8e789c9ea291b3f6c712fd542b8c6291ca84a)
-+++ /dev/null	(revision 24d8e789c9ea291b3f6c712fd542b8c6291ca84a)
+--- a/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_39_PM__Changes_.xml	(revision 11d3207d1404a7930c296351e26dcb3f9852511e)
++++ /dev/null	(revision 11d3207d1404a7930c296351e26dcb3f9852511e)
 @@ -1,4 +0,0 @@
 -<changelist name="Uncommitted_changes_before_Checkout_at_4_16_2023_7_39_PM_[Changes]" date="1681663233292" recycled="true" deleted="true">
 -  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_39_PM_[Changes]/shelved.patch" />
@@ -50,8 +149,8 @@ Index: .idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Cha
 ===================================================================
 diff --git a/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_1.xml b/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_1.xml
 deleted file mode 100644
---- a/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_1.xml	(revision 24d8e789c9ea291b3f6c712fd542b8c6291ca84a)
-+++ /dev/null	(revision 24d8e789c9ea291b3f6c712fd542b8c6291ca84a)
+--- a/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM__Changes_1.xml	(revision 11d3207d1404a7930c296351e26dcb3f9852511e)
++++ /dev/null	(revision 11d3207d1404a7930c296351e26dcb3f9852511e)
 @@ -1,4 +0,0 @@
 -<changelist name="Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM_[Changes]1" date="1681663851703" recycled="true" deleted="true">
 -  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_50_PM_[Changes]1/shelved.patch" />
@@ -66,14 +165,14 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/.idea/workspace.xml b/.idea/workspace.xml
---- a/.idea/workspace.xml	(revision 24d8e789c9ea291b3f6c712fd542b8c6291ca84a)
-+++ b/.idea/workspace.xml	(date 1682084765829)
-@@ -4,14 +4,14 @@
+--- a/.idea/workspace.xml	(revision 11d3207d1404a7930c296351e26dcb3f9852511e)
++++ b/.idea/workspace.xml	(date 1681986852132)
+@@ -4,14 +4,15 @@
      <option name="autoReloadType" value="SELECTIVE" />
    </component>
    <component name="ChangeListManager">
 -    <list default="true" id="3436d65a-5e76-4e77-818d-f39d961d7bb1" name="Changes" comment="Done (#53) WITHOUT TESTS.">
-+    <list default="true" id="3436d65a-5e76-4e77-818d-f39d961d7bb1" name="Changes" comment="finish UnitTests #22 tests">
++    <list default="true" id="3436d65a-5e76-4e77-818d-f39d961d7bb1" name="Changes" comment="saving word #22 tests">
 +      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_39_PM__Changes_.xml" beforeDir="false" />
 +      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_42_PM__Changes_.xml" beforeDir="false" />
 +      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_4_16_2023_7_44_PM__Changes_.xml" beforeDir="false" />
@@ -86,11 +185,12 @@ diff --git a/.idea/workspace.xml b/.idea/workspace.xml
 -      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Market.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Market.java" afterDir="false" />
 -      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Store.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Store.java" afterDir="false" />
 -      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/storePackage/StoreTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/storePackage/StoreTest.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/BasketProductRepositoryImpl/BasketProductRepositoryAsHashMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/BasketProductRepositoryImpl/BasketProductRepositoryAsHashMap.java" afterDir="false" />
 +      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/User/BasketTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/User/BasketTest.java" afterDir="false" />
      </list>
      <option name="SHOW_DIALOG" value="false" />
      <option name="HIGHLIGHT_CONFLICTS" value="true" />
-@@ -21,10 +21,10 @@
+@@ -21,10 +22,10 @@
    <component name="FileTemplateManagerImpl">
      <option name="RECENT_TEMPLATES">
        <list>
@@ -102,7 +202,7 @@ diff --git a/.idea/workspace.xml b/.idea/workspace.xml
        </list>
      </option>
    </component>
-@@ -56,29 +56,29 @@
+@@ -56,29 +57,29 @@
      <option name="hideEmptyMiddlePackages" value="true" />
      <option name="showLibraryContents" value="true" />
    </component>
@@ -154,7 +254,7 @@ diff --git a/.idea/workspace.xml b/.idea/workspace.xml
    <component name="RecentsManager">
      <key name="CreateClassDialog.RecentsKey">
        <recent name="BGU.Group13B.backend.storePackage" />
-@@ -94,54 +94,91 @@
+@@ -94,12 +95,13 @@
        <recent name="" />
      </key>
      <key name="CreateTestDialog.RecentsKey">
@@ -165,104 +265,38 @@ diff --git a/.idea/workspace.xml b/.idea/workspace.xml
      </key>
    </component>
 -  <component name="RunManager" selected="JUnit.StoreTest">
--    <configuration name="All in TradingSystemProject" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
--      <module name="TradingSystemProject" />
-+  <component name="RunManager" selected="JUnit.BasketTest.twoThreadsTryToPurchaseTheLastProduct">
++  <component name="RunManager" selected="JUnit.All in trading-system">
+     <configuration name="All in TradingSystemProject" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+       <module name="TradingSystemProject" />
+       <option name="PACKAGE_NAME" value="" />
+@@ -108,6 +110,14 @@
+         <option name="Make" enabled="true" />
+       </method>
+     </configuration>
 +    <configuration name="All in trading-system" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
 +      <module name="trading-system" />
-       <option name="PACKAGE_NAME" value="" />
-       <option name="TEST_OBJECT" value="package" />
-       <method v="2">
-         <option name="Make" enabled="true" />
-       </method>
-     </configuration>
--    <configuration name="BGU.Group13B.backend.storePackage in trading-system" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-+    <configuration name="BasketTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
++      <option name="PACKAGE_NAME" value="" />
++      <option name="TEST_OBJECT" value="package" />
++      <method v="2">
++        <option name="Make" enabled="true" />
++      </method>
++    </configuration>
+     <configuration name="BGU.Group13B.backend.storePackage in trading-system" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
        <module name="trading-system" />
        <extension name="coverage">
-         <pattern>
--          <option name="PATTERN" value="BGU.Group13B.backend.storePackage.*" />
-+          <option name="PATTERN" value="BGU.Group13B.backend.User.*" />
-           <option name="ENABLED" value="true" />
-         </pattern>
-       </extension>
--      <option name="PACKAGE_NAME" value="BGU.Group13B.backend.storePackage" />
--      <option name="TEST_OBJECT" value="package" />
-+      <option name="PACKAGE_NAME" value="BGU.Group13B.backend.User" />
-+      <option name="MAIN_CLASS_NAME" value="BGU.Group13B.backend.User.BasketTest" />
-+      <option name="TEST_OBJECT" value="class" />
-+      <method v="2">
-+        <option name="Make" enabled="true" />
-+      </method>
-+    </configuration>
-+    <configuration name="BasketTest.purchaseBasketSimpleTest_externalPaySuccess" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-+      <module name="trading-system" />
-+      <extension name="coverage">
-+        <pattern>
-+          <option name="PATTERN" value="BGU.Group13B.backend.User.*" />
-+          <option name="ENABLED" value="true" />
-+        </pattern>
-+      </extension>
-+      <option name="PACKAGE_NAME" value="BGU.Group13B.backend.User" />
-+      <option name="MAIN_CLASS_NAME" value="BGU.Group13B.backend.User.BasketTest" />
-+      <option name="METHOD_NAME" value="purchaseBasketSimpleTest_externalPaySuccess" />
-+      <option name="TEST_OBJECT" value="method" />
-       <method v="2">
-         <option name="Make" enabled="true" />
-       </method>
-     </configuration>
--    <configuration name="StoreTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
--      <module name="TradingSystemProject" />
-+    <configuration name="BasketTest.purchaseBasketSimpleTest_notInStockFail" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-+      <module name="trading-system" />
-       <extension name="coverage">
-         <pattern>
--          <option name="PATTERN" value="BGU.Group13B.backend.storePackage.*" />
-+          <option name="PATTERN" value="BGU.Group13B.backend.User.*" />
-           <option name="ENABLED" value="true" />
-         </pattern>
-       </extension>
--      <option name="PACKAGE_NAME" value="BGU.Group13B.backend.storePackage" />
--      <option name="MAIN_CLASS_NAME" value="BGU.Group13B.backend.storePackage.StoreTest" />
--      <option name="TEST_OBJECT" value="class" />
-+      <option name="PACKAGE_NAME" value="BGU.Group13B.backend.User" />
-+      <option name="MAIN_CLASS_NAME" value="BGU.Group13B.backend.User.BasketTest" />
-+      <option name="METHOD_NAME" value="purchaseBasketSimpleTest_notInStockFail" />
-+      <option name="TEST_OBJECT" value="method" />
-+      <method v="2">
-+        <option name="Make" enabled="true" />
-+      </method>
-+    </configuration>
-+    <configuration name="BasketTest.twoThreadsTryToPurchaseTheLastProduct" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-+      <module name="trading-system" />
-+      <extension name="coverage">
-+        <pattern>
-+          <option name="PATTERN" value="BGU.Group13B.backend.User.*" />
-+          <option name="ENABLED" value="true" />
-+        </pattern>
-+      </extension>
-+      <option name="PACKAGE_NAME" value="BGU.Group13B.backend.User" />
-+      <option name="MAIN_CLASS_NAME" value="BGU.Group13B.backend.User.BasketTest" />
-+      <option name="METHOD_NAME" value="twoThreadsTryToPurchaseTheLastProduct" />
-+      <option name="TEST_OBJECT" value="method" />
-       <method v="2">
-         <option name="Make" enabled="true" />
-       </method>
-     </configuration>
+@@ -140,8 +150,10 @@
      <recent_temporary>
        <list>
--        <item itemvalue="JUnit.StoreTest" />
+         <item itemvalue="JUnit.StoreTest" />
 -        <item itemvalue="JUnit.All in TradingSystemProject" />
--        <item itemvalue="JUnit.BGU.Group13B.backend.storePackage in trading-system" />
-+        <item itemvalue="JUnit.BasketTest.twoThreadsTryToPurchaseTheLastProduct" />
+         <item itemvalue="JUnit.BGU.Group13B.backend.storePackage in trading-system" />
++        <item itemvalue="JUnit.All in TradingSystemProject" />
 +        <item itemvalue="JUnit.All in trading-system" />
-+        <item itemvalue="JUnit.BasketTest" />
-+        <item itemvalue="JUnit.BasketTest.purchaseBasketSimpleTest_notInStockFail" />
-+        <item itemvalue="JUnit.BasketTest.purchaseBasketSimpleTest_externalPaySuccess" />
++        <item itemvalue="JUnit.All in trading-system" />
        </list>
      </recent_temporary>
    </component>
-@@ -203,7 +240,35 @@
+@@ -203,7 +215,21 @@
        <option name="project" value="LOCAL" />
        <updated>1681392081418</updated>
      </task>
@@ -281,25 +315,11 @@ diff --git a/.idea/workspace.xml b/.idea/workspace.xml
 +      <option name="project" value="LOCAL" />
 +      <updated>1681980677449</updated>
 +    </task>
-+    <task id="LOCAL-00009" summary="updating branch #22 tests">
-+      <created>1681993159133</created>
-+      <option name="number" value="00009" />
-+      <option name="presentableId" value="LOCAL-00009" />
-+      <option name="project" value="LOCAL" />
-+      <updated>1681993159133</updated>
-+    </task>
-+    <task id="LOCAL-00010" summary="finish UnitTests #22 tests">
-+      <created>1682017267478</created>
-+      <option name="number" value="00010" />
-+      <option name="presentableId" value="LOCAL-00010" />
-+      <option name="project" value="LOCAL" />
-+      <updated>1682017267478</updated>
-+    </task>
-+    <option name="localTasksCounter" value="11" />
++    <option name="localTasksCounter" value="9" />
      <servers />
    </component>
    <component name="TypeScriptGeneratedFilesManager">
-@@ -220,7 +285,7 @@
+@@ -220,7 +246,7 @@
                    <entry key="branch">
                      <value>
                        <list>
@@ -308,27 +328,14 @@ diff --git a/.idea/workspace.xml b/.idea/workspace.xml
                        </list>
                      </value>
                    </entry>
-@@ -239,7 +304,22 @@
+@@ -239,7 +265,9 @@
      <MESSAGE value="adding Discount.java for the use of calculating the price." />
      <MESSAGE value="save work 2" />
      <MESSAGE value="Done (#53) WITHOUT TESTS." />
 -    <option name="LAST_COMMIT_MESSAGE" value="Done (#53) WITHOUT TESTS." />
 +    <MESSAGE value="fixing a few bugs" />
 +    <MESSAGE value="saving word #22 tests" />
-+    <MESSAGE value="updating branch #22 tests" />
-+    <MESSAGE value="finish UnitTests #22 tests" />
-+    <option name="LAST_COMMIT_MESSAGE" value="finish UnitTests #22 tests" />
-+  </component>
-+  <component name="XDebuggerManager">
-+    <breakpoint-manager>
-+      <breakpoints>
-+        <line-breakpoint enabled="true" type="java-line">
-+          <url>file://$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/User/BasketTest.java</url>
-+          <line>207</line>
-+          <option name="timeStamp" value="10" />
-+        </line-breakpoint>
-+      </breakpoints>
-+    </breakpoint-manager>
++    <option name="LAST_COMMIT_MESSAGE" value="saving word #22 tests" />
    </component>
    <component name="XSLT-Support.FileAssociations.UIState">
      <expand />
