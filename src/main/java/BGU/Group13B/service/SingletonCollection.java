@@ -107,6 +107,8 @@ public class SingletonCollection {
         messageRepository = new MessageRepositorySingle();
         storeScoreRepository = new StoreScoreSingle();
 
+        userPermissionRepository = new UserPermissionRepositoryAsHashmap();
+        storePermissionRepository = new StorePermissionsRepositoryAsHashmap();
 
         //adapters
         deliveryAdapter = null; //TODO

@@ -69,9 +69,8 @@ public abstract class ProjectTest {
         }
         int i = 0;
         for (var user : users) {
-
-            session.register(userIds[i], user.getFirst(), user.getSecond(), userEmails[i],
-                    "BLACK LIVES MATTER " + i, "because i never go back " + i, "YEAH " + i);
+                session.register(userIds[i], user.getFirst(), user.getSecond(), userEmails[i],
+                        "BLACK LIVES MATTER " + i, "because i never go back " + i, "YEAH " + i);
             i++;
         }
         for (int j = 0; j < users.size(); j++) {
