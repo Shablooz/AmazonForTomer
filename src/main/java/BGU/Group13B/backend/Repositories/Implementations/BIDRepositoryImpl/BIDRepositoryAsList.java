@@ -46,4 +46,10 @@ public class BIDRepositoryAsList implements IBIDRepository {
         return this.bids.stream().anyMatch(bid -> bid.getProductId() == productId);
     }
 
+    @Override
+    public void reset() {
+        this.bids.clear();
+        this.maxBidId = new AtomicInteger(0);
+    }
+
 }

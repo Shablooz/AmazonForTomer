@@ -5,15 +5,21 @@ import BGU.Group13B.backend.Repositories.Implementations.BIDRepositoryImpl.BIDRe
 import BGU.Group13B.backend.Repositories.Implementations.BasketProductRepositoryImpl.BasketProductRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.BasketReposistoryImpl.BasketRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.IStoreScoreRepository.StoreScoreImplNotPer;
-import BGU.Group13B.backend.Repositories.Implementations.MessageRepositoryImpl.MessageRepositoryAsList;
+import BGU.Group13B.backend.Repositories.Implementations.IStoreScoreRepository.StoreScoreSingle;
+import BGU.Group13B.backend.Repositories.Implementations.MessageRepositoryImpl.MessageRepositorySingle;
 import BGU.Group13B.backend.Repositories.Implementations.ProductDiscountsRepositoryImpl.ProductDiscountsRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.ProductHistoryRepositoryImpl.ProductHistoryRepositoryAsList;
+import BGU.Group13B.backend.Repositories.Implementations.ProductPurchasePolicyRepositoryImpl.ProductPurchasePolicyRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl.ProductRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.PurchaseHistoryRepositoryImpl.PurchaseHistoryRepositoryAsList;
-import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepositoryAsList;
+import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepoSingle;
 import BGU.Group13B.backend.Repositories.Implementations.StoreDiscountsRepositoryImpl.StoreDiscountsRepositoryAsHashMap;
+import BGU.Group13B.backend.Repositories.Implementations.StorePurchasePolicyRepositoryImpl.StorePurchasePolicyRepositoryAsList;
+import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyImpl.StoreMessageSingle;
 import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyImpl.StoreMessageRepositoryNonPersist;
+import BGU.Group13B.backend.Repositories.Implementations.StorePermissionsRepositoryImpl.StorePermissionsRepositoryAsHashmap;
 import BGU.Group13B.backend.Repositories.Implementations.StoreRepositoryImpl.StoreRepositoryAsList;
+import BGU.Group13B.backend.Repositories.Implementations.UserPemissionRepositoryImpl.UserPermissionRepositoryAsHashmap;
 import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepositoryAsHashmap;
 import BGU.Group13B.backend.Repositories.Interfaces.*;
 import BGU.Group13B.backend.System.Searcher;
@@ -31,24 +37,29 @@ import java.util.logging.Logger;
 //(#61)
 public class SingletonCollection {
 
+
     /**
      * <h1>repositories</h1>
      */
-    private static final IBIDRepository bidRepository;
-    private static final IMessageRepository messageRepository;
-    private static final IProductRepository productRepository;
-    private static final IPurchaseHistoryRepository purchaseHistoryRepository;
-    private static final IRepositoryReview reviewRepository;
-    private static final IStoreMessagesRepository storeMessagesRepository;
-    private static final IStoreRepository storeRepository;
-    private static final IUserRepository userRepository;
-    private static final IBasketRepository basketRepository;
-    private static final IBasketProductRepository basketProductRepository;
-    private static final IStoreDiscountsRepository storeDiscountsRepository;
-    private static final IAuctionRepository auctionRepository;
-    private static final IProductHistoryRepository productHistoryRepository;
-    private static final IProductDiscountsRepository productDiscountsRepository;
-    private static final IStoreScore storeScoreRepository;
+    private static IBIDRepository bidRepository;
+    private static IMessageRepository messageRepository;
+    private static IProductRepository productRepository;
+    private static IPurchaseHistoryRepository purchaseHistoryRepository;
+    private static IRepositoryReview reviewRepository;
+    private static IStoreMessagesRepository storeMessagesRepository;
+    private static IStoreRepository storeRepository;
+    private static IUserRepository userRepository;
+    private static IBasketRepository basketRepository;
+    private static IBasketProductRepository basketProductRepository;
+    private static IStoreDiscountsRepository storeDiscountsRepository;
+    private static IAuctionRepository auctionRepository;
+    private static IProductHistoryRepository productHistoryRepository;
+    private static IProductDiscountsRepository productDiscountsRepository;
+    private static IStoreScore storeScoreRepository;
+    private static IProductPurchasePolicyRepository productPurchasePolicyRepository;
+    private static IStorePurchasePolicyRepository storePurchasePolicyRepository;
+    private static IUserPermissionRepository userPermissionRepository;
+    private static IStorePermissionsRepository storePermissionRepository;
 
 
     /**
@@ -61,28 +72,26 @@ public class SingletonCollection {
     /**
      * <h1>adapters</h1>
      */
-    private static final DeliveryAdapter deliveryAdapter;
-    private static final PaymentAdapter paymentAdapter;
+    private static DeliveryAdapter deliveryAdapter;
+    private static PaymentAdapter paymentAdapter;
 
 
     /**
      * <h1>additional classes</h1>
      */
-    private static final AlertManager alertManager;
-    private static final Searcher searcher;
-    private static final Market market;
+    private static AlertManager alertManager;
+    private static Searcher searcher;
+    private static Market market;
 
     private static final String LOG_FILE_NAME = "logger_output.txt";
 
     //static initializer
     static {
+
         //repositories
         bidRepository = new BIDRepositoryAsList();
-        messageRepository = new MessageRepositoryAsList();
         productRepository = new ProductRepositoryAsHashMap();
         purchaseHistoryRepository = new PurchaseHistoryRepositoryAsList();
-        reviewRepository = new ReviewRepositoryAsList();
-        storeMessagesRepository = new StoreMessageRepositoryNonPersist();
         storeRepository = new StoreRepositoryAsList();
         userRepository = new UserRepositoryAsHashmap();
         basketRepository = new BasketRepositoryAsHashMap();
@@ -91,7 +100,49 @@ public class SingletonCollection {
         basketProductRepository = new BasketProductRepositoryAsHashMap();
         productHistoryRepository = new ProductHistoryRepositoryAsList();
         productDiscountsRepository = new ProductDiscountsRepositoryAsHashMap();
-        storeScoreRepository = new StoreScoreImplNotPer();
+        productPurchasePolicyRepository = new ProductPurchasePolicyRepositoryAsHashMap();
+        storePurchasePolicyRepository = new StorePurchasePolicyRepositoryAsList();
+        storeMessagesRepository = new StoreMessageSingle();
+        reviewRepository = new ReviewRepoSingle();
+        messageRepository = new MessageRepositorySingle();
+        storeScoreRepository = new StoreScoreSingle();
+
+        userPermissionRepository = new UserPermissionRepositoryAsHashmap();
+        storePermissionRepository = new StorePermissionsRepositoryAsHashmap();
+
+        //adapters
+        deliveryAdapter = null; //TODO
+        paymentAdapter = null;  //TODO
+
+
+        //additional classes
+        alertManager = new AlertManager(userRepository);
+        searcher = new Searcher(productRepository, storeRepository);
+        market = new Market();
+    }
+
+    public static void reset_system()
+    {
+        //repositories
+        bidRepository = new BIDRepositoryAsList();
+        productRepository = new ProductRepositoryAsHashMap();
+        purchaseHistoryRepository = new PurchaseHistoryRepositoryAsList();
+        storeRepository = new StoreRepositoryAsList();
+        userRepository = new UserRepositoryAsHashmap();
+        basketRepository = new BasketRepositoryAsHashMap();
+        storeDiscountsRepository = new StoreDiscountsRepositoryAsHashMap();
+        auctionRepository = new AuctionRepositoryAsHashMap();
+        basketProductRepository = new BasketProductRepositoryAsHashMap();
+        productHistoryRepository = new ProductHistoryRepositoryAsList();
+        productDiscountsRepository = new ProductDiscountsRepositoryAsHashMap();
+        productPurchasePolicyRepository = new ProductPurchasePolicyRepositoryAsHashMap();
+        storePurchasePolicyRepository = new StorePurchasePolicyRepositoryAsList();
+        storeMessagesRepository = new StoreMessageSingle();
+        reviewRepository = new ReviewRepoSingle();
+        messageRepository = new MessageRepositorySingle();
+        storeScoreRepository = new StoreScoreSingle();
+        userPermissionRepository = new UserPermissionRepositoryAsHashmap();
+        storePermissionRepository = new StorePermissionsRepositoryAsHashmap();
 
 
         //adapters
@@ -112,6 +163,7 @@ public class SingletonCollection {
     /**
      * <h1>getters</h1>
      */
+
     public static AddToUserCart getAddToUserCart() {
         return addToUserCart;
     }
@@ -195,6 +247,22 @@ public class SingletonCollection {
         return SingletonCollection.productDiscountsRepository;
     }
 
+    public static IProductPurchasePolicyRepository getProductPurchasePolicyRepository() {
+        return productPurchasePolicyRepository;
+    }
+
+    public static IStorePurchasePolicyRepository getStorePurchasePolicyRepository() {
+        return storePurchasePolicyRepository;
+    }
+
+    public static IStorePermissionsRepository getStorePermissionRepository(){
+        return storePermissionRepository;
+    }
+
+    public static IUserPermissionRepository getUserPermissionRepository(){
+        return userPermissionRepository;
+    }
+
     /**
      * <h1>setters (for callbacks)</h1>
      */
@@ -219,6 +287,32 @@ public class SingletonCollection {
         }
     }
 
+
+    /**
+     * <h1>reset</h1>
+     *
+     * */
+    public static void resetAll(){
+        /*bidRepository.reset();
+        productRepository.reset();
+        purchaseHistoryRepository.reset();
+        storeRepository.reset();
+        userRepository.reset();
+        basketRepository.reset();
+        storeDiscountsRepository.reset();
+        auctionRepository.reset();
+        basketProductRepository.reset();
+        productHistoryRepository.reset();
+        productDiscountsRepository.reset();
+        productPurchasePolicyRepository.reset();
+        storePurchasePolicyRepository.reset();
+        storeMessagesRepository.reset();
+        reviewRepository.reset();
+        messageRepository.reset();
+        storeScoreRepository.reset();
+        userPermissionRepository.reset();
+        storePermissionRepository.reset();*/
+    }
 
 }
 

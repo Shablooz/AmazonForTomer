@@ -20,9 +20,11 @@ public interface IProductRepository {//deeded because it contains the product qu
 
     List<Product> getProductByKeywords(List<String> keywords);
 
-     Product getStoreProductById(int productId,int storeId);
+    Product getStoreProductById(int productId, int storeId);
 
-     Product getProductById(int productId);
+    Product getProductById(int productId);
 
+    void removeStoreProducts(int storeId);
 
+    void reset();
 }

@@ -1,0 +1,187 @@
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"3436d65a-5e76-4e77-818d-f39d961d7bb1\" name=\"Changes\" comment=\"adding Discount.java for the use of calculating the price.\">\r\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IProductCouponRepository.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.gitignore\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.gitignore\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductDiscountsRepositoryImpl/ProductDiscountsRepositoryAsHashMap.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductDiscountsRepositoryImpl/ProductDiscountsRepositoryAsHashMap.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductRepositoryImpl/ProductRepositoryAsHashMap.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductRepositoryImpl/ProductRepositoryAsHashMap.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IProductDiscountsRepository.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IProductDiscountsRepository.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IProductRepository.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IProductRepository.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/Basket.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/Basket.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/Cart.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/Cart.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/User.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/User.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Discounts/ConditionalDiscount.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Discounts/ConditionalDiscount.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Discounts/Discount.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Discounts/Discount.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Discounts/HiddenDiscount.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Discounts/HiddenDiscount.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Discounts/VisibleDiscount.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Discounts/VisibleDiscount.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Market.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Market.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Product.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Product.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/PurchasePolicy.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/PurchasePolicy.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Store.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Store.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/payment/PaymentAdapter.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/payment/PaymentAdapter.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/service/CalculatePriceOfBasket.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/service/CalculatePriceOfBasket.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/service/Session.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/BGU/Group13B/service/Session.java\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"JUnit5 Test Class\" />\r\n        <option value=\"Interface\" />\r\n        <option value=\"Class\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_BRANCH_BY_REPOSITORY\">\r\n      <map>\r\n        <entry key=\"$PROJECT_DIR$\" value=\"auction_house_bidding_2.5.1_#50\" />\r\n      </map>\r\n    </option>\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"GithubProjectSettings\">\r\n    <option name=\"branchProtectionPatterns\">\r\n      <list>\r\n        <option value=\"master\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"HighlightingSettingsPerFile\">\r\n    <setting file=\"jar://$MAVEN_REPOSITORY$/org/springframework/data/spring-data-commons/2.4.0/spring-data-commons-2.4.0.jar!/org/springframework/data/util/Pair.class\" root0=\"SKIP_INSPECTION\" />\r\n  </component>\r\n  <component name=\"MarkdownSettingsMigration\">\r\n    <option name=\"stateVersion\" value=\"1\" />\r\n  </component>\r\n  <component name=\"ProjectId\" id=\"2NVL9aAg74nFCBYGHK0CdSKGYHb\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\r\n    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,\r\n    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,\r\n    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,\r\n    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,\r\n    &quot;create.test.in.the.same.root&quot;: &quot;true&quot;,\r\n    &quot;last_opened_file_path&quot;: &quot;C:/Users/Shust/OneDrive/Documents/First Degree/Semester 5/Fundamentals of software engineering/Assignment2&quot;,\r\n    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,\r\n    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,\r\n    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,\r\n    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,\r\n    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,\r\n    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,\r\n    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,\r\n    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;,\r\n    &quot;spring.configuration.checksum&quot;: &quot;0bff9c3a4f5bac17f71b3dede1d050f7&quot;,\r\n    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;\r\n  }\r\n}</component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"CreateClassDialog.RecentsKey\">\r\n      <recent name=\"BGU.Group13B.backend.Repositories.Interfaces\" />\r\n      <recent name=\"BGU.Group13B.backend\" />\r\n      <recent name=\"BGU.Group13B.backend.storePackage\" />\r\n      <recent name=\"BGU.Group13B.backend.User\" />\r\n      <recent name=\"BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl\" />\r\n    </key>\r\n    <key name=\"CopyFile.RECENT_KEYS\">\r\n      <recent name=\"C:\\Users\\Shust\\OneDrive\\Documents\\First Degree\\Semester6\\Sadna\\trading-system\\src\\main\\java\\BGU\\Group13B\\backend\\Repositories\\Implementations\\StoreRepositoryImpl\" />\r\n    </key>\r\n    <key name=\"CreateTestDialog.Recents.Supers\">\r\n      <recent name=\"\" />\r\n    </key>\r\n    <key name=\"CreateTestDialog.RecentsKey\">\r\n      <recent name=\"BGU.Group13B.service\" />\r\n      <recent name=\"BGU.Group13B.backend.storePackage\" />\r\n      <recent name=\"BGU.Group13B\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"RunManager\">\r\n    <configuration name=\"HiddenDiscount\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"BGU.Group13B.backend.storePackage.Discounts.HiddenDiscount\" />\r\n      <module name=\"trading-system\" />\r\n      <extension name=\"coverage\">\r\n        <pattern>\r\n          <option name=\"PATTERN\" value=\"BGU.Group13B.backend.storePackage.Discounts.*\" />\r\n          <option name=\"ENABLED\" value=\"true\" />\r\n        </pattern>\r\n      </extension>\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <recent_temporary>\r\n      <list>\r\n        <item itemvalue=\"Application.HiddenDiscount\" />\r\n      </list>\r\n    </recent_temporary>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"3436d65a-5e76-4e77-818d-f39d961d7bb1\" name=\"Changes\" comment=\"\" />\r\n      <created>1679744156433</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1679744156433</updated>\r\n      <workItem from=\"1679744157803\" duration=\"222000\" />\r\n      <workItem from=\"1679745042519\" duration=\"232000\" />\r\n      <workItem from=\"1679745836554\" duration=\"107000\" />\r\n      <workItem from=\"1680599750928\" duration=\"13707000\" />\r\n      <workItem from=\"1680681882942\" duration=\"16736000\" />\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"save work\">\r\n      <created>1680688726166</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1680688726166</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"updating  interfaces in order to create the tests infrastructure\">\r\n      <created>1680812708684</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1680812708684</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00003\" summary=\"please review :)\">\r\n      <created>1680813374544</created>\r\n      <option name=\"number\" value=\"00003\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1680813374544</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00004\" summary=\"adding Discount.java for the use of calculating the price.\">\r\n      <created>1680879711169</created>\r\n      <option name=\"number\" value=\"00004\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00004\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1680879711169</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"5\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State>\r\n              <option name=\"FILTERS\">\r\n                <map>\r\n                  <entry key=\"branch\">\r\n                    <value>\r\n                      <list>\r\n                        <option value=\"interfaces_for_discount\" />\r\n                      </list>\r\n                    </value>\r\n                  </entry>\r\n                </map>\r\n              </option>\r\n            </State>\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"save work\" />\r\n    <MESSAGE value=\"updating  interfaces in order to create the tests infrastructure\" />\r\n    <MESSAGE value=\"please review :)\" />\r\n    <MESSAGE value=\"adding Discount.java for the use of calculating the price.\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"adding Discount.java for the use of calculating the price.\" />\r\n  </component>\r\n  <component name=\"XSLT-Support.FileAssociations.UIState\">\r\n    <expand />\r\n    <select />\r\n  </component>\r\n  <component name=\"com.intellij.coverage.CoverageDataManagerImpl\">\r\n    <SUITE FILE_PATH=\"coverage/trading_system$StoreTest.ic\" NAME=\"StoreTest Coverage Results\" MODIFIED=\"1680968615168\" SOURCE_PROVIDER=\"com.intellij.coverage.DefaultCoverageFileProvider\" RUNNER=\"idea\" COVERAGE_BY_TEST_ENABLED=\"false\" COVERAGE_TRACING_ENABLED=\"false\">\r\n      <FILTER>BGU.Group13B.backend.storePackage.*</FILTER>\r\n    </SUITE>\r\n    <SUITE FILE_PATH=\"coverage/trading_system$Main.ic\" NAME=\"Main Coverage Results\" MODIFIED=\"1680682126010\" SOURCE_PROVIDER=\"com.intellij.coverage.DefaultCoverageFileProvider\" RUNNER=\"idea\" COVERAGE_BY_TEST_ENABLED=\"false\" COVERAGE_TRACING_ENABLED=\"false\">\r\n      <FILTER>BGU.Group13B.*</FILTER>\r\n    </SUITE>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 818c2eee7b97d95dee449b443e7bdefdb7c0cfdb)
++++ b/.idea/workspace.xml	(date 1681938917618)
+@@ -4,28 +4,8 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="3436d65a-5e76-4e77-818d-f39d961d7bb1" name="Changes" comment="adding Discount.java for the use of calculating the price.">
+-      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IProductCouponRepository.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
++    <list default="true" id="3436d65a-5e76-4e77-818d-f39d961d7bb1" name="Changes" comment="fixing gitignore file">
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductDiscountsRepositoryImpl/ProductDiscountsRepositoryAsHashMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductDiscountsRepositoryImpl/ProductDiscountsRepositoryAsHashMap.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductRepositoryImpl/ProductRepositoryAsHashMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductRepositoryImpl/ProductRepositoryAsHashMap.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IProductDiscountsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IProductDiscountsRepository.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IProductRepository.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/Basket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/Basket.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/Cart.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/Cart.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/User.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Discounts/ConditionalDiscount.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Discounts/ConditionalDiscount.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Discounts/Discount.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Discounts/Discount.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Discounts/HiddenDiscount.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Discounts/HiddenDiscount.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Discounts/VisibleDiscount.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Discounts/VisibleDiscount.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Market.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Market.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Product.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/PurchasePolicy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/PurchasePolicy.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Store.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Store.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/payment/PaymentAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/payment/PaymentAdapter.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/CalculatePriceOfBasket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/CalculatePriceOfBasket.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/Session.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/Session.java" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -36,6 +16,7 @@
+     <option name="RECENT_TEMPLATES">
+       <list>
+         <option value="JUnit5 Test Class" />
++        <option value="Record" />
+         <option value="Interface" />
+         <option value="Class" />
+       </list>
+@@ -44,10 +25,11 @@
+   <component name="Git.Settings">
+     <option name="RECENT_BRANCH_BY_REPOSITORY">
+       <map>
+-        <entry key="$PROJECT_DIR$" value="auction_house_bidding_2.5.1_#50" />
++        <entry key="$PROJECT_DIR$" value="master" />
+       </map>
+     </option>
+     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
++    <option name="RESET_MODE" value="HARD" />
+   </component>
+   <component name="GithubProjectSettings">
+     <option name="branchProtectionPatterns">
+@@ -77,6 +59,7 @@
+     &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
+     &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
+     &quot;create.test.in.the.same.root&quot;: &quot;true&quot;,
++    &quot;git-widget-placeholder&quot;: &quot;rateProduct__#25&quot;,
+     &quot;last_opened_file_path&quot;: &quot;C:/Users/Shust/OneDrive/Documents/First Degree/Semester 5/Fundamentals of software engineering/Assignment2&quot;,
+     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+@@ -92,9 +75,9 @@
+ }</component>
+   <component name="RecentsManager">
+     <key name="CreateClassDialog.RecentsKey">
++      <recent name="BGU.Group13B.backend.storePackage" />
+       <recent name="BGU.Group13B.backend.Repositories.Interfaces" />
+       <recent name="BGU.Group13B.backend" />
+-      <recent name="BGU.Group13B.backend.storePackage" />
+       <recent name="BGU.Group13B.backend.User" />
+       <recent name="BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl" />
+     </key>
+@@ -110,23 +93,49 @@
+       <recent name="BGU.Group13B" />
+     </key>
+   </component>
+-  <component name="RunManager">
+-    <configuration name="HiddenDiscount" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+-      <option name="MAIN_CLASS_NAME" value="BGU.Group13B.backend.storePackage.Discounts.HiddenDiscount" />
++  <component name="RunManager" selected="JUnit.StoreTest">
++    <configuration name="All in TradingSystemProject" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
++      <module name="TradingSystemProject" />
++      <option name="PACKAGE_NAME" value="" />
++      <option name="TEST_OBJECT" value="package" />
++      <method v="2">
++        <option name="Make" enabled="true" />
++      </method>
++    </configuration>
++    <configuration name="BGU.Group13B.backend.storePackage in trading-system" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+       <module name="trading-system" />
+       <extension name="coverage">
+         <pattern>
+-          <option name="PATTERN" value="BGU.Group13B.backend.storePackage.Discounts.*" />
++          <option name="PATTERN" value="BGU.Group13B.backend.storePackage.*" />
+           <option name="ENABLED" value="true" />
+         </pattern>
+       </extension>
++      <option name="PACKAGE_NAME" value="BGU.Group13B.backend.storePackage" />
++      <option name="TEST_OBJECT" value="package" />
++      <method v="2">
++        <option name="Make" enabled="true" />
++      </method>
++    </configuration>
++    <configuration name="StoreTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
++      <module name="TradingSystemProject" />
++      <extension name="coverage">
++        <pattern>
++          <option name="PATTERN" value="BGU.Group13B.backend.storePackage.*" />
++          <option name="ENABLED" value="true" />
++        </pattern>
++      </extension>
++      <option name="PACKAGE_NAME" value="BGU.Group13B.backend.storePackage" />
++      <option name="MAIN_CLASS_NAME" value="BGU.Group13B.backend.storePackage.StoreTest" />
++      <option name="TEST_OBJECT" value="class" />
+       <method v="2">
+         <option name="Make" enabled="true" />
+       </method>
+     </configuration>
+     <recent_temporary>
+       <list>
+-        <item itemvalue="Application.HiddenDiscount" />
++        <item itemvalue="JUnit.StoreTest" />
++        <item itemvalue="JUnit.All in TradingSystemProject" />
++        <item itemvalue="JUnit.BGU.Group13B.backend.storePackage in trading-system" />
+       </list>
+     </recent_temporary>
+   </component>
+@@ -143,6 +152,8 @@
+       <workItem from="1679745836554" duration="107000" />
+       <workItem from="1680599750928" duration="13707000" />
+       <workItem from="1680681882942" duration="16736000" />
++      <workItem from="1681475547708" duration="1108000" />
++      <workItem from="1681476828448" duration="49000" />
+     </task>
+     <task id="LOCAL-00001" summary="save work">
+       <created>1680688726166</created>
+@@ -172,7 +183,21 @@
+       <option name="project" value="LOCAL" />
+       <updated>1680879711169</updated>
+     </task>
+-    <option name="localTasksCounter" value="5" />
++    <task id="LOCAL-00005" summary="save work 2">
++      <created>1681378394670</created>
++      <option name="number" value="00005" />
++      <option name="presentableId" value="LOCAL-00005" />
++      <option name="project" value="LOCAL" />
++      <updated>1681378394670</updated>
++    </task>
++    <task id="LOCAL-00006" summary="Done (#53) WITHOUT TESTS.">
++      <created>1681392081418</created>
++      <option name="number" value="00006" />
++      <option name="presentableId" value="LOCAL-00006" />
++      <option name="project" value="LOCAL" />
++      <updated>1681392081418</updated>
++    </task>
++    <option name="localTasksCounter" value="7" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+@@ -189,7 +214,7 @@
+                   <entry key="branch">
+                     <value>
+                       <list>
+-                        <option value="interfaces_for_discount" />
++                        <option value="bid_purchase_2.5.4_#53" />
+                       </list>
+                     </value>
+                   </entry>
+@@ -206,7 +231,9 @@
+     <MESSAGE value="updating  interfaces in order to create the tests infrastructure" />
+     <MESSAGE value="please review :)" />
+     <MESSAGE value="adding Discount.java for the use of calculating the price." />
+-    <option name="LAST_COMMIT_MESSAGE" value="adding Discount.java for the use of calculating the price." />
++    <MESSAGE value="save work 2" />
++    <MESSAGE value="Done (#53) WITHOUT TESTS." />
++    <option name="LAST_COMMIT_MESSAGE" value="Done (#53) WITHOUT TESTS." />
+   </component>
+   <component name="XSLT-Support.FileAssociations.UIState">
+     <expand />

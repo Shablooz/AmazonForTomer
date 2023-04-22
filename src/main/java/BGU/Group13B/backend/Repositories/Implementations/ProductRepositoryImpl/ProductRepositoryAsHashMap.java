@@ -30,19 +30,17 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
     }
 
   
-    public int addProduct(int storeId, String name, String category, double price, int stockQuantity, String description) {
+    public synchronized int addProduct(int storeId, String name, String category, double price, int stockQuantity, String description) {
         if (!storeProducts.containsKey(storeId))
             storeProducts.put(storeId, new ConcurrentSkipListSet<>(Comparator.comparingInt(Product::getProductId)));
-        synchronized (this) {
-            int productId = productIdCounter.getAndIncrement();
-            storeProducts.get(storeId).add(new Product(productId, storeId, name, category, price, stockQuantity, description));
-            return productId;
-        }
+        int productId = productIdCounter.getAndIncrement();
+        storeProducts.get(storeId).add(new Product(productId, storeId, name, category, price, stockQuantity, description));
+        return productId;
     }
 
 
     @Override
-    public Product getStoreProductById(int productId, int storeId) {
+    public synchronized Product getStoreProductById(int productId, int storeId) {
         return getStoreProducts(storeId).orElseThrow(
                         () -> new IllegalArgumentException("Store " + storeId + " not found or has no products")
                 ).stream().filter(product -> product.getProductId() == productId).
@@ -57,6 +55,13 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
                 findFirst().orElseThrow(
                         () -> new IllegalArgumentException("Product " + productId + " not found")
                 );
+    }
+
+
+    /*user for tests*/
+    @Override
+    public void removeStoreProducts(int storeId) {
+        storeProducts.remove(storeId);
     }
 
 /*    @Override
@@ -120,5 +125,11 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
             }
         });
         return products;
+    }
+
+    @Override
+    public void reset() {
+        storeProducts.clear();
+        productIdCounter.set(0);
     }
 }
