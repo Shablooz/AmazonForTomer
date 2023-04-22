@@ -49,14 +49,11 @@ class BasketTest {
 
         initProducts();
         //total price before 25.0
-        SingletonCollection.getProductDiscountsRepository().addProductDiscount(productId1,
-                new VisibleDiscount(, 0.2, LocalDateTime.now().plus(5, ChronoUnit.MINUTES)));
-        SingletonCollection.getProductDiscountsRepository().addProductDiscount(productId2,
-                new VisibleDiscount(, 0.2, LocalDateTime.now().plus(5, ChronoUnit.MINUTES)));
+        SingletonCollection.getProductDiscountsRepository().addProductVisibleDiscount(productId1, 0.2, LocalDateTime.now().plus(5, ChronoUnit.MINUTES));
+        SingletonCollection.getProductDiscountsRepository().addProductVisibleDiscount(productId2, 0.2, LocalDateTime.now().plus(5, ChronoUnit.MINUTES));
 
         //total price after product discount 20.0
-        SingletonCollection.getStoreDiscountsRepository().addStoreDiscount(storeId,
-                new VisibleDiscount(, 0.1, LocalDateTime.now().plus(5, ChronoUnit.MINUTES)));
+        SingletonCollection.getStoreDiscountsRepository().addStoreVisibleDiscount(storeId, 0.1, LocalDateTime.now().plus(5, ChronoUnit.MINUTES));
         //total price after store discount 18.0
 
         paymentAdapter = Mockito.mock(PaymentAdapter.class);

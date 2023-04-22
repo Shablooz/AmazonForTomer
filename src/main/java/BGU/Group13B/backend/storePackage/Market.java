@@ -6,6 +6,7 @@ import BGU.Group13B.backend.System.Searcher;
 import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
+import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.AddToUserCart;
 import BGU.Group13B.service.info.ProductInfo;
@@ -171,7 +172,7 @@ public class Market {
     }
 
     private double calculatePriceOfBasket(double totalAmountBeforeStoreDiscountPolicy, ConcurrentLinkedQueue<BasketProduct> successfulProducts, int storeId,
-                                          String storeCoupon) {
+                                          String storeCoupon) throws PurchaseExceedsPolicyException {
         return Optional.of(storeRepository.getStore(storeId)).orElseThrow(
                 () -> new RuntimeException("Store with id " + storeId + " does not exist")
         ).calculatePriceOfBasket(totalAmountBeforeStoreDiscountPolicy, successfulProducts, storeCoupon);
@@ -300,6 +301,38 @@ public class Market {
 
     public void setProductPurchasePriceBounds(int userId, int storeId, int productId, int lowerBound, int upperBound) throws NoPermissionException {
         storeRepository.getStore(storeId).setProductPurchasePriceBounds(userId, productId, lowerBound, upperBound);
+    }
+
+    public int addStoreVisibleDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate) throws NoPermissionException {
+        return storeRepository.getStore(storeId).addStoreVisibleDiscount(userId, discountPercentage, discountLastDate);
+    }
+
+    public int addStoreConditionalDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount) throws NoPermissionException {
+        return storeRepository.getStore(storeId).addStoreConditionalDiscount(userId, discountPercentage, discountLastDate, minPriceForDiscount, quantityForDiscount);
+    }
+
+    public int addStoreHiddenDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate, String code) throws NoPermissionException {
+        return storeRepository.getStore(storeId).addStoreHiddenDiscount(userId, discountPercentage, discountLastDate, code);
+    }
+
+    public void removeStoreDiscount(int userId, int storeId, int discountId) throws NoPermissionException {
+        storeRepository.getStore(storeId).removeStoreDiscount(userId, discountId);
+    }
+
+    public int addProductVisibleDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate) throws NoPermissionException{
+        return storeRepository.getStore(storeId).addProductVisibleDiscount(userId, productId, discountPercentage, discountLastDate);
+    }
+
+    public int addProductConditionalDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount) throws NoPermissionException{
+        return storeRepository.getStore(storeId).addProductConditionalDiscount(userId, productId, discountPercentage, discountLastDate, minPriceForDiscount, quantityForDiscount);
+    }
+
+    public int addProductHiddenDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate, String code) throws NoPermissionException {
+        return storeRepository.getStore(storeId).addProductHiddenDiscount(userId, productId, discountPercentage, discountLastDate, code);
+    }
+
+    public void removeProductDiscount(int userId, int storeId, int productId, int discountId) throws NoPermissionException{
+        storeRepository.getStore(storeId).removeProductDiscount(userId, productId, discountId);
     }
 
 

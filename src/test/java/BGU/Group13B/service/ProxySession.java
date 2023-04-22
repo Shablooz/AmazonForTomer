@@ -473,4 +473,44 @@ public class ProxySession implements ISession {
     public void setProductPurchasePriceBounds(int userId, int storeId, int productId, int lowerBound, int upperBound) {
         realSession.setProductPurchasePriceBounds(userId, storeId, productId, lowerBound, upperBound);
     }
+
+    @Override
+    public int addStoreVisibleDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate) {
+        return realSession.addStoreVisibleDiscount(userId, storeId, discountPercentage, discountLastDate);
+    }
+
+    @Override
+    public int addStoreConditionalDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount) {
+        return realSession.addStoreConditionalDiscount(userId, storeId, discountPercentage, discountLastDate, minPriceForDiscount, quantityForDiscount);
+    }
+
+    @Override
+    public int addStoreHiddenDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate, String code) {
+        return realSession.addStoreHiddenDiscount(userId, storeId, discountPercentage, discountLastDate, code);
+    }
+
+    @Override
+    public void removeStoreDiscount(int userId, int storeId, int discountId) {
+        realSession.removeStoreDiscount(userId, storeId, discountId);
+    }
+
+    @Override
+    public int addProductVisibleDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate) {
+        return realSession.addProductVisibleDiscount(userId, storeId, productId, discountPercentage, discountLastDate);
+    }
+
+    @Override
+    public int addProductConditionalDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount) {
+        return realSession.addProductConditionalDiscount(userId, storeId, productId, discountPercentage, discountLastDate, minPriceForDiscount, quantityForDiscount);
+    }
+
+    @Override
+    public int addProductHiddenDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate, String code) {
+        return realSession.addProductHiddenDiscount(userId, storeId, productId, discountPercentage, discountLastDate, code);
+    }
+
+    @Override
+    public void removeProductDiscount(int userId, int storeId, int productId, int discountId) {
+        realSession.removeProductDiscount(userId, storeId, productId, discountId);
+    }
 }

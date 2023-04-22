@@ -120,7 +120,7 @@ public class Basket {
         }
     }
 
-    private double calculateStoreDiscount(double totalAmountAfterProductDiscounts, String storeCoupon) {
+    private double calculateStoreDiscount(double totalAmountAfterProductDiscounts, String storeCoupon) throws PurchaseExceedsPolicyException {
         return calculatePriceOfBasket.apply(totalAmountAfterProductDiscounts, successfulProducts, storeId, storeCoupon);
     }
 

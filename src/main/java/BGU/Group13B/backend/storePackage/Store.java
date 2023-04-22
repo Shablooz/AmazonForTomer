@@ -7,12 +7,14 @@ import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.storePackage.Discounts.Discount;
 import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
+import BGU.Group13B.backend.storePackage.discountPolicies.StoreDiscountPolicy;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
 import BGU.Group13B.backend.storePackage.permissions.DefaultManagerFunctionality;
 import BGU.Group13B.backend.storePackage.permissions.DefaultOwnerFunctionality;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.permissions.StorePermission;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseBounder;
+import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.AddToUserCart;
 import BGU.Group13B.service.info.StoreInfo;
@@ -28,12 +30,11 @@ public class Store {
     private final IProductRepository productRepository;
     private final IStorePurchasePolicyRepository storePurchasePolicyRepository;
     private final IProductPurchasePolicyRepository productPurchasePolicyRepository;
-    private final DiscountPolicy discountPolicy;
+    private final StoreDiscountPolicy discountPolicy;
     private final DeliveryAdapter deliveryAdapter;
     private final PaymentAdapter paymentAdapter;
     private final AlertManager alertManager;
     private final StorePermission storePermission;
-    private final IStoreDiscountsRepository storeDiscounts;
     private final IStoreMessagesRepository storeMessagesRepository;
     private final AddToUserCart addToUserCart;
     private final IBIDRepository bidRepository;
@@ -64,10 +65,9 @@ public class Store {
         this.alertManager = SingletonCollection.getAlertManager();
         this.addToUserCart = SingletonCollection.getAddToUserCart();
         this.storeMessagesRepository = SingletonCollection.getStoreMessagesRepository();
-        this.storeDiscounts = SingletonCollection.getStoreDiscountsRepository();
         this.storePurchasePolicyRepository = SingletonCollection.getStorePurchasePolicyRepository();
         this.productPurchasePolicyRepository = SingletonCollection.getProductPurchasePolicyRepository();
-        this.discountPolicy = new DiscountPolicy();
+        this.discountPolicy = new StoreDiscountPolicy(storeId);
         this.storeId = storeId;
         this.storeName = storeName;
         this.category = category;
@@ -81,20 +81,18 @@ public class Store {
 
     //used only for testing
     public Store(int storeId, String storeName, String category, IProductRepository productRepository,
-                 PurchasePolicy purchasePolicy, DiscountPolicy discountPolicy, DeliveryAdapter deliveryAdapter,
-                 PaymentAdapter paymentAdapter, AlertManager alertManager, StorePermission storePermission,
-                 IStoreDiscountsRepository storeDiscounts, AddToUserCart addToUserCart, IBIDRepository bidRepository,
+                 DeliveryAdapter deliveryAdapter, PaymentAdapter paymentAdapter, AlertManager alertManager, StorePermission storePermission,
+                 AddToUserCart addToUserCart, IBIDRepository bidRepository,
                  StoreMessageRepositoryNonPersist storeMessagesRepository, IAuctionRepository auctionRepository, IPurchaseHistoryRepository purchaseHistoryRepository,
                  IStoreScore storeScore, IStorePurchasePolicyRepository storePurchasePolicyRepository, IProductPurchasePolicyRepository productPurchasePolicyRepository) {
         this.productRepository = productRepository;
         this.storePurchasePolicyRepository = storePurchasePolicyRepository;
         this.productPurchasePolicyRepository = productPurchasePolicyRepository;
-        this.discountPolicy = discountPolicy;
+        this.discountPolicy = new StoreDiscountPolicy(storeId);
         this.deliveryAdapter = deliveryAdapter;
         this.paymentAdapter = paymentAdapter;
         this.alertManager = alertManager;
         this.storePermission = storePermission;
-        this.storeDiscounts = storeDiscounts;
         this.storeMessagesRepository = storeMessagesRepository;
         this.addToUserCart = addToUserCart;
         this.bidRepository = bidRepository;
@@ -220,13 +218,11 @@ public class Store {
 
     public double calculatePriceOfBasket(double totalAmountBeforeStoreDiscountPolicy,
                                          ConcurrentLinkedQueue<BasketProduct> successfulProducts,
-                                         String storeCoupon) {
-        double totalAmount = totalAmountBeforeStoreDiscountPolicy;
-        for (Discount discount : storeDiscounts.getStoreDiscounts(storeId).orElseGet(ArrayList::new)) {
-            totalAmount = discount.applyStoreDiscount(totalAmount, successfulProducts, storeCoupon);
-        }
-        return totalAmount;
-
+                                         String storeCoupon) throws PurchaseExceedsPolicyException {
+        int quantity = successfulProducts.stream().mapToInt(BasketProduct::getQuantity).sum();
+        double finalPrice = discountPolicy.applyAllDiscounts(totalAmountBeforeStoreDiscountPolicy, successfulProducts, storeCoupon);
+        getPurchasePolicy().checkPolicy(quantity, finalPrice);
+        return finalPrice;
     }
 
 
@@ -677,6 +673,70 @@ public class Store {
                     lowerBound, upperBound, this.getPurchasePolicy().getPriceBounder()
             );
         }
+    }
+
+    //only the store founder can do this function
+    public int addStoreVisibleDiscount(int userId, double discountPercentage, LocalDateTime discountLastDate) throws NoPermissionException {
+        if(!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userId + " has no permission to add store visible discount in the store: " + this.storeId);
+
+        return this.discountPolicy.addVisibleDiscount(discountPercentage, discountLastDate);
+    }
+
+    //only the store founder can do this function
+    public int addStoreConditionalDiscount(int userId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount) throws NoPermissionException {
+        if(!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userId + " has no permission to add store conditional discount in the store: " + this.storeId);
+
+        return this.discountPolicy.addConditionalDiscount(discountPercentage, discountLastDate, minPriceForDiscount, quantityForDiscount);
+    }
+
+    //only the store founder can do this function
+    public int addStoreHiddenDiscount(int userId, double discountPercentage, LocalDateTime discountLastDate, String code) throws NoPermissionException {
+        if (!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userId + " has no permission to add store hidden discount in the store: " + this.storeId);
+
+        return this.discountPolicy.addHiddenDiscount(discountPercentage, discountLastDate, code);
+    }
+
+    //only the store founder can do this function
+    public void removeStoreDiscount(int userId, int discountId) throws NoPermissionException {
+        if (!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userId + " has no permission to remove store discount in the store: " + this.storeId);
+
+        this.discountPolicy.removeDiscount(discountId);
+    }
+
+    //only the store founder can do this function
+    public int addProductVisibleDiscount(int userId, int productId, double discountPercentage, LocalDateTime discountLastDate) throws NoPermissionException{
+        if(!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userId + " has no permission to add product visible discount in the store: " + this.storeId);
+
+        return getStoreProduct(productId).addVisibleDiscount(discountPercentage, discountLastDate);
+    }
+
+    //only the store founder can do this function
+    public int addProductConditionalDiscount(int userId, int productId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount) throws NoPermissionException{
+        if(!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userId + " has no permission to add product conditional discount in the store: " + this.storeId);
+
+        return getStoreProduct(productId).addConditionalDiscount(discountPercentage, discountLastDate, minPriceForDiscount, quantityForDiscount);
+    }
+
+    //only the store founder can do this function
+    public int addProductHiddenDiscount(int userId, int productId, double discountPercentage, LocalDateTime discountLastDate, String code) throws NoPermissionException {
+        if (!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userId + " has no permission to add product hidden discount in the store: " + this.storeId);
+
+        return getStoreProduct(productId).addHiddenDiscount(discountPercentage, discountLastDate, code);
+    }
+
+    //only the store founder can do this function
+    public void removeProductDiscount(int userId, int productId, int discountId) throws NoPermissionException{
+        if(!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userId + " has no permission to remove product discount in the store: " + this.storeId);
+
+        getStoreProduct(productId).removeDiscount(discountId);
     }
 
 

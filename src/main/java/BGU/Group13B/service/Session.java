@@ -838,4 +838,90 @@ class Session implements ISession {
         }
     }
 
+    @Override
+    public int addStoreVisibleDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate) {
+        try{
+            return market.addStoreVisibleDiscount(userId, storeId, discountPercentage, discountLastDate);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+            return -1;
+        }
+    }
+
+    @Override
+    public int addStoreConditionalDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount) {
+        try{
+            return market.addStoreConditionalDiscount(userId, storeId, discountPercentage, discountLastDate, minPriceForDiscount, quantityForDiscount);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+            return -1;
+        }
+    }
+
+    @Override
+    public int addStoreHiddenDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate, String code) {
+        try{
+            return market.addStoreHiddenDiscount(userId, storeId, discountPercentage, discountLastDate, code);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+            return -1;
+        }
+    }
+
+    @Override
+    public void removeStoreDiscount(int userId, int storeId, int discountId) {
+        try{
+            market.removeStoreDiscount(userId, storeId, discountId);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+        }
+    }
+
+    @Override
+    public int addProductVisibleDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate) {
+        try{
+            return market.addProductVisibleDiscount(userId, storeId, productId, discountPercentage, discountLastDate);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+            return -1;
+        }
+    }
+
+    @Override
+    public int addProductConditionalDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount) {
+        try{
+            return market.addProductConditionalDiscount(userId, storeId, productId, discountPercentage, discountLastDate, minPriceForDiscount, quantityForDiscount);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+            return -1;
+        }
+    }
+
+    @Override
+    public int addProductHiddenDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate, String code) {
+        try{
+            return market.addProductHiddenDiscount(userId, storeId, productId, discountPercentage, discountLastDate, code);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+            return -1;
+        }
+    }
+
+    @Override
+    public void removeProductDiscount(int userId, int storeId, int productId, int discountId) {
+        try{
+            market.removeProductDiscount(userId, storeId, productId, discountId);
+        }
+        catch (Exception e){
+            //TODO: handle exception
+        }
+    }
+
 }

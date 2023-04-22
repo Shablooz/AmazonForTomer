@@ -4,9 +4,11 @@ import BGU.Group13B.backend.Repositories.Interfaces.IProductDiscountsRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductPurchasePolicyRepository;
 import BGU.Group13B.backend.storePackage.Discounts.Discount;
 
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IRepositoryReview;
+import BGU.Group13B.backend.storePackage.discountPolicies.ProductDiscountPolicy;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.info.ProductInfo;
@@ -22,7 +24,7 @@ public class Product {
     private int rank;
     private int stockQuantity;
     private final IProductPurchasePolicyRepository productPurchasePolicy;
-    private final DiscountPolicy discountPolicy;
+    private final ProductDiscountPolicy discountPolicy;
     private final IRepositoryReview repositoryReview;
     private final IProductDiscountsRepository productDiscounts;
 
@@ -37,7 +39,7 @@ public class Product {
         this.rank = 0;
         this.description=description;
         this.productPurchasePolicy = SingletonCollection.getProductPurchasePolicyRepository();
-        this.discountPolicy = new DiscountPolicy();
+        this.discountPolicy = new ProductDiscountPolicy(productId);
         this.repositoryReview = SingletonCollection.getReviewRepository();
         this.productDiscounts = SingletonCollection.getProductDiscountsRepository();
 
@@ -87,14 +89,7 @@ public class Product {
     }
 
     public synchronized double calculatePrice(int productQuantity, String couponCodes) throws PurchaseExceedsPolicyException {
-        double finalPrice = price;
-        for (Discount discount :
-                productDiscounts.getProductDiscounts(productId).orElseGet(LinkedList::new))
-            if(discount.isExpired())
-                productDiscounts.removeProductDiscount(productId, discount);
-            else
-                finalPrice = discount.applyProductDiscount(finalPrice, productQuantity, couponCodes);
-
+        double finalPrice = discountPolicy.applyAllDiscounts(price, productQuantity, couponCodes);
         finalPrice *= productQuantity; //added by shaun in the night of 20/04/2023 and changed by Lior in 21/04/20223
         getPurchasePolicy().checkPolicy(productQuantity, finalPrice);
         return finalPrice ;
@@ -146,5 +141,23 @@ public class Product {
     public ProductInfo getProductInfo() {
         return new ProductInfo(this);
     }
+
+    public int addVisibleDiscount(double discountPercentage, LocalDateTime discountLastDate){
+        return this.discountPolicy.addVisibleDiscount(discountPercentage,discountLastDate);
+    }
+
+    public int addConditionalDiscount(double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount){
+        return this.discountPolicy.addConditionalDiscount(discountPercentage,discountLastDate,minPriceForDiscount,quantityForDiscount);
+    }
+
+    public int addHiddenDiscount(double discountPercentage, LocalDateTime discountLastDate, String code) {
+        return this.discountPolicy.addHiddenDiscount(discountPercentage,discountLastDate,code);
+    }
+
+    public void removeDiscount(int discountId){
+        this.discountPolicy.removeDiscount(discountId);
+    }
+
+
 
 }
