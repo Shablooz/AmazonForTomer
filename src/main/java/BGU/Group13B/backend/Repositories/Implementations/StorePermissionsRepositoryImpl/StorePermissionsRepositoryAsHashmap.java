@@ -21,4 +21,9 @@ public class StorePermissionsRepositoryAsHashmap implements IStorePermissionsRep
     public void addStorePermission(int storeId, StorePermission storePermission){
         integerStorePermissionConcurrentHashMap.put(storeId, storePermission);
     }
+
+    @Override
+    public void reset() {
+        integerStorePermissionConcurrentHashMap.clear();
+    }
 }

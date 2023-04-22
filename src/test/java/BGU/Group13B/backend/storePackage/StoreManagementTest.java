@@ -16,6 +16,7 @@ public class StoreManagementTest {
     private static IProductRepository productRepository;
     private static IProductPurchasePolicyRepository productPurchasePolicyRepository;
     private static IProductDiscountsRepository productDiscountsRepository;
+    private static IStorePermissionsRepository storePermissionsRepository;
 
     @BeforeAll
     static void setUp() {
@@ -25,6 +26,7 @@ public class StoreManagementTest {
         productRepository = SingletonCollection.getProductRepository();
         productPurchasePolicyRepository = SingletonCollection.getProductPurchasePolicyRepository();
         productDiscountsRepository = SingletonCollection.getProductDiscountsRepository();
+        storePermissionsRepository = SingletonCollection.getStorePermissionRepository();
     }
 
     @AfterEach
@@ -35,6 +37,7 @@ public class StoreManagementTest {
         productRepository.reset();
         productPurchasePolicyRepository.reset();
         productDiscountsRepository.reset();
+        storePermissionsRepository.reset();
     }
 
     @Test
