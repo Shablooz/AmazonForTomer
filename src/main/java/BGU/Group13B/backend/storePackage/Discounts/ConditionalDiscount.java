@@ -14,20 +14,18 @@ public class ConditionalDiscount extends Discount {
     /*
     * for use of products
     * */
-    public ConditionalDiscount(Integer priority, double discountPercentage,
-                               LocalDateTime discountLastDate, double minPriceForDiscount
-            , int quantityForDiscount) {
-        super(priority, discountPercentage, discountLastDate);
+    public ConditionalDiscount(int discountId, int productId, double discountPercentage, LocalDateTime discountLastDate,
+                               double minPriceForDiscount, int quantityForDiscount) {
+        super(discountId, productId, discountPercentage, discountLastDate);
         this.minPriceForDiscount = minPriceForDiscount;
         this.quantityForDiscount = quantityForDiscount;
     }
     /*
     * for use of stores
     * */
-    public ConditionalDiscount(double discountPercentage,
-                               LocalDateTime discountLastDate,
-                               double totalAmountThresholdForDiscount, int quantityForDiscount, Integer priority) {
-        super(priority, discountPercentage, discountLastDate);
+    public ConditionalDiscount(LocalDateTime discountLastDate, int discountId, int storeId, double discountPercentage,
+                               double totalAmountThresholdForDiscount, int quantityForDiscount) {
+        super(discountId, storeId, discountPercentage, discountLastDate);
         this.totalAmountThresholdForDiscount = totalAmountThresholdForDiscount;
         this.quantityForDiscount = quantityForDiscount;
     }

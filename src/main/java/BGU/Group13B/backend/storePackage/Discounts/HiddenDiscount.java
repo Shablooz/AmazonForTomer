@@ -10,8 +10,8 @@ public class HiddenDiscount extends Discount {
     private final String realCode;
 
 
-    public HiddenDiscount(String code, Integer priority, double discountPercentage, LocalDateTime discountLastDate) {
-        super(priority, discountPercentage, discountLastDate);
+    public HiddenDiscount(int discountId, int parentId, double discountPercentage, LocalDateTime discountLastDate, String code) {
+        super(discountId, parentId, discountPercentage, discountLastDate);
         // code must be not null
         Objects.requireNonNull(code);
         this.realCode = code;
