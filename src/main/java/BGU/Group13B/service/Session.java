@@ -21,7 +21,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
-/**IMPORTANT need to initialize the session AFTER loading first user (id = 1) from database
+/**
+ * IMPORTANT need to initialize the session AFTER loading first user (id = 1) from database
  */
 
 class Session implements ISession {
@@ -32,6 +33,7 @@ class Session implements ISession {
     static {
         SingletonCollection.setFileHandler(LOGGER);
     }
+
     IUserRepository userRepositoryAsHashmap;
 
 
@@ -47,17 +49,15 @@ class Session implements ISession {
         //This should do nothing if the system was initialized in the past - making first admin
         int id = 1;
         userRepositoryAsHashmap.addUser(id, new User(id));
-        register(id, "kingOfTheSheep","SheePLover420",
-                "mrsheep@gmail.com","054-1234567","1234","answer3");
-        setUserStatus(id,1);
+        register(id, "kingOfTheSheep", "SheePLover420",
+                "mrsheep@gmail.com", "054-1234567", "1234", "answer3");
     }
 
     @Override
-    public void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description){
-        try{
+    public void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) {
+        try {
             market.addProduct(userId, storeId, productName, category, price, stockQuantity, description);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
         }
 
@@ -74,7 +74,7 @@ class Session implements ISession {
                                     String creditCardHolderFirstName, String creditCardHolderLastName,
                                     String creditCardCcv, String id, String creditCardType,
                                     HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                    String/*store coupons*/ storeCoupon)  {
+                                    String/*store coupons*/ storeCoupon) {
         try {
             userRepository.getUser(userId).
                     purchaseCart(address, creditCardNumber, creditCardMonth,
@@ -133,15 +133,17 @@ class Session implements ISession {
 
     @Override
     public synchronized void register(int userId, String username, String password,
-                                      String email,String answer1,String answer2,String answer3) {
+                                      String email, String answer1, String answer2, String answer3) {
         User user = userRepositoryAsHashmap.getUser(userId);
         try {
             //the first "if" might not be necessary when we will connect to web
-            if(this.userRepositoryAsHashmap.checkIfUserWithEmailExists(user.getEmail()))
+            if (this.userRepositoryAsHashmap.checkIfUserWithEmailExists(email)) {
                 System.out.println("user with this email already exists!");
+                return;//temporary
+            }
             if (!user.isRegistered()) {
-                if (userRepositoryAsHashmap.checkIfUserExists(username) != null) {
-                    user.register(username, password, email,answer1,answer2,answer3);
+                if (userRepositoryAsHashmap.checkIfUserExists(username) == null) {
+                    user.register(username, password, email, answer1, answer2, answer3);
                 } else {
                     System.out.println("user with this username already exists!");
                 }
@@ -191,12 +193,12 @@ class Session implements ISession {
 
 
     @Override
-    public int login(int userID, String username, String password,String answer1,String answer2,String answer3) {
+    public int login(int userID, String username, String password, String answer1, String answer2, String answer3) {
         try {
             //gets the user that we want to log into
             User user = userRepositoryAsHashmap.checkIfUserExists(username);
             synchronized (user) {
-                user.login(username, password,answer1,answer2,answer3);
+                user.login(username, password, answer1, answer2, answer3);
                 /*example of use*/
                 LOGGER.info("user " + username + " logged in");
                 //removes the current guest profile to swap to the existing member one
@@ -259,7 +261,7 @@ class Session implements ISession {
 
     public Message getComplaint(int userId) {
         try {
-           return  userRepositoryAsHashmap.getUser(userId).getComplaint();
+            return userRepositoryAsHashmap.getUser(userId).getComplaint();
         } catch (NoPermissionException e) {
             throw new RuntimeException(e);
         }
@@ -443,67 +445,61 @@ class Session implements ISession {
 
     @Override
     public void removeProductFromCart(int userId, int storeId, int productId) {
-        try{
+        try {
             userRepositoryAsHashmap.getUser(userId).removeProductFromCart(storeId, productId);
         } catch (Exception e) {
             throw new RuntimeException(e);
-            }
         }
+    }
 
     public void setProductName(int userId, int storeId, int productId, String name) {
-        try{
+        try {
             market.setProductName(userId, storeId, productId, name);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
         }
     }
 
     @Override
     public void setProductCategory(int userId, int storeId, int productId, String category) {
-        try{
+        try {
             market.setProductCategory(userId, storeId, productId, category);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
         }
     }
 
     @Override
     public void setProductPrice(int userId, int storeId, int productId, double price) {
-        try{
+        try {
             market.setProductPrice(userId, storeId, productId, price);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
         }
     }
 
     @Override
     public void setProductStockQuantity(int userId, int storeId, int productId, int stockQuantity) {
-        try{
+        try {
             market.setProductStockQuantity(userId, storeId, productId, stockQuantity);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
         }
     }
 
     @Override
     public int enterAsGuest() {
-        int id =  userRepositoryAsHashmap.getNewUserId();
+        int id = userRepositoryAsHashmap.getNewUserId();
         userRepositoryAsHashmap.addUser(id, new User(id));
         return id;
     }
 
 
-
     @Override
     public void removeProduct(int userId, int storeId, int productId) {
-        try{
+        try {
             market.removeProduct(userId, storeId, productId);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
         }
     }
@@ -520,22 +516,24 @@ class Session implements ISession {
     }
 
     @Override
-    public void setUserStatus(int admin_id,int userId, int newStatus) {
-        if(!getUserStatus(admin_id).equals("Admin"))
+    public void setUserStatus(int admin_id, int userId, int newStatus) {
+        if (!getUserStatus(admin_id).equals("Admin")) {
             //should throw an exception
             System.out.println("isnt an admin");
-        if(newStatus == 1 && userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.MEMBER)
+            return;
+        }
+        if (newStatus == 1 && userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.MEMBER)
             userRepositoryAsHashmap.getUser(userId).setPermissions(UserPermissions.UserPermissionStatus.ADMIN);
 
-        if(newStatus == 2 && userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.ADMIN)
+        if (newStatus == 2 && userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.ADMIN)
             userRepositoryAsHashmap.getUser(userId).setPermissions(UserPermissions.UserPermissionStatus.MEMBER);
     }
 
     @Override
     public String getUserStatus(int userId) {
-        if(userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.MEMBER)
+        if (userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.MEMBER)
             return "Member";
-        else if(userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.ADMIN)
+        else if (userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.ADMIN)
             return "Admin";
         else
             return "Guest";
@@ -549,13 +547,12 @@ class Session implements ISession {
     @Override
     public List<Pair<Integer, String>> getStoresOfUser(int userId) {
         return userRepositoryAsHashmap.getUser(userId).getStoresAndRoles();
-        }
+    }
 
     public StoreInfo getStoreInfo(int storeId) {
-        try{
+        try {
             return market.getStoreInfo(storeId);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
             return null;
         }
@@ -563,10 +560,9 @@ class Session implements ISession {
 
     @Override
     public String getStoreName(int storeId) {
-        try{
+        try {
             return market.getStoreName(storeId);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
             return null;
         }
@@ -574,10 +570,9 @@ class Session implements ISession {
 
     @Override
     public String getStoreCategory(int storeId) {
-        try{
+        try {
             return market.getStoreCategory(storeId);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
             return null;
         }
@@ -585,10 +580,9 @@ class Session implements ISession {
 
     @Override
     public ProductInfo getStoreProductInfo(int storeId, int productId) {
-        try{
+        try {
             return market.getStoreProductInfo(storeId, productId);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
             return null;
         }
@@ -596,10 +590,9 @@ class Session implements ISession {
 
     @Override
     public ProductInfo getProductInfo(int productId) {
-        try{
+        try {
             return market.getProductInfo(productId);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
             return null;
         }
@@ -607,10 +600,9 @@ class Session implements ISession {
 
     @Override
     public String getProductName(int productId) {
-        try{
+        try {
             return market.getProductName(productId);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
             return null;
         }
@@ -618,10 +610,9 @@ class Session implements ISession {
 
     @Override
     public String getProductCategory(int productId) {
-        try{
+        try {
             return market.getProductCategory(productId);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
             return null;
         }
@@ -629,7 +620,7 @@ class Session implements ISession {
 
     @Override
     public void changeProductQuantityInCart(int userId, int storeId, int productId, int quantity) {
-        try{
+        try {
             userRepositoryAsHashmap.getUser(userId).changeProductQuantityInCart(storeId, productId, quantity);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -637,10 +628,9 @@ class Session implements ISession {
     }
 
     public double getProductPrice(int productId) {
-        try{
+        try {
             return market.getProductPrice(productId);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
             return -1;
         }
@@ -648,10 +638,9 @@ class Session implements ISession {
 
     @Override
     public int getProductStockQuantity(int productId) {
-        try{
+        try {
             return market.getProductStockQuantity(productId);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
             return -1;
         }
@@ -659,10 +648,9 @@ class Session implements ISession {
 
     @Override
     public float getProductScore(int productId) {
-        try{
+        try {
             return market.getProductScore(productId);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
             return -1;
         }
@@ -704,150 +692,135 @@ class Session implements ISession {
 
     @Override
     public void allowPurchasePolicyConflicts(int userId, int storeId) {
-        try{
+        try {
             market.allowPurchasePolicyConflicts(userId, storeId);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
         }
     }
 
     @Override
     public void disallowPurchasePolicyConflicts(int userId, int storeId) {
-        try{
+        try {
             market.disallowPurchasePolicyConflicts(userId, storeId);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
         }
     }
 
     @Override
     public void setStorePurchaseQuantityUpperBound(int userId, int storeId, int upperBound) {
-        try{
+        try {
             market.setStorePurchaseQuantityUpperBound(userId, storeId, upperBound);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
         }
     }
 
     @Override
     public void setStorePurchaseQuantityLowerBound(int userId, int storeId, int lowerBound) {
-        try{
+        try {
             market.setStorePurchaseQuantityLowerBound(userId, storeId, lowerBound);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
         }
     }
 
     @Override
     public void setStorePurchaseQuantityBounds(int userId, int storeId, int lowerBound, int upperBound) {
-        try{
+        try {
             market.setStorePurchaseQuantityBounds(userId, storeId, lowerBound, upperBound);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
         }
     }
 
     @Override
     public void setStorePurchasePriceUpperBound(int userId, int storeId, int upperBound) {
-        try{
+        try {
             market.setStorePurchasePriceUpperBound(userId, storeId, upperBound);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
         }
     }
 
     @Override
     public void setStorePurchasePriceLowerBound(int userId, int storeId, int lowerBound) {
-        try{
+        try {
             market.setStorePurchasePriceLowerBound(userId, storeId, lowerBound);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
         }
     }
 
     @Override
     public void setStorePurchasePriceBounds(int userId, int storeId, int lowerBound, int upperBound) {
-        try{
+        try {
             market.setStorePurchasePriceBounds(userId, storeId, lowerBound, upperBound);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
         }
     }
 
     @Override
     public void setProductPurchaseQuantityUpperBound(int userId, int storeId, int productId, int upperBound) {
-        try{
+        try {
             market.setProductPurchaseQuantityUpperBound(userId, storeId, productId, upperBound);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
         }
     }
 
     @Override
     public void setProductPurchaseQuantityLowerBound(int userId, int storeId, int productId, int lowerBound) {
-        try{
+        try {
             market.setProductPurchaseQuantityLowerBound(userId, storeId, productId, lowerBound);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
         }
     }
 
     @Override
     public void setProductPurchaseQuantityBounds(int userId, int storeId, int productId, int lowerBound, int upperBound) {
-        try{
+        try {
             market.setProductPurchaseQuantityBounds(userId, storeId, productId, lowerBound, upperBound);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
         }
     }
 
     @Override
     public void setProductPurchasePriceUpperBound(int userId, int storeId, int productId, int upperBound) {
-        try{
+        try {
             market.setProductPurchasePriceUpperBound(userId, storeId, productId, upperBound);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
         }
     }
 
     @Override
     public void setProductPurchasePriceLowerBound(int userId, int storeId, int productId, int lowerBound) {
-        try{
+        try {
             market.setProductPurchasePriceLowerBound(userId, storeId, productId, lowerBound);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
         }
     }
 
     @Override
     public void setProductPurchasePriceBounds(int userId, int storeId, int productId, int lowerBound, int upperBound) {
-        try{
+        try {
             market.setProductPurchasePriceBounds(userId, storeId, productId, lowerBound, upperBound);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
         }
     }
 
     @Override
     public int addStoreVisibleDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate) {
-        try{
+        try {
             return market.addStoreVisibleDiscount(userId, storeId, discountPercentage, discountLastDate);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
             return -1;
         }
@@ -855,10 +828,9 @@ class Session implements ISession {
 
     @Override
     public int addStoreConditionalDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount) {
-        try{
+        try {
             return market.addStoreConditionalDiscount(userId, storeId, discountPercentage, discountLastDate, minPriceForDiscount, quantityForDiscount);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
             return -1;
         }
@@ -866,10 +838,9 @@ class Session implements ISession {
 
     @Override
     public int addStoreHiddenDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate, String code) {
-        try{
+        try {
             return market.addStoreHiddenDiscount(userId, storeId, discountPercentage, discountLastDate, code);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
             return -1;
         }
@@ -877,20 +848,18 @@ class Session implements ISession {
 
     @Override
     public void removeStoreDiscount(int userId, int storeId, int discountId) {
-        try{
+        try {
             market.removeStoreDiscount(userId, storeId, discountId);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
         }
     }
 
     @Override
     public int addProductVisibleDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate) {
-        try{
+        try {
             return market.addProductVisibleDiscount(userId, storeId, productId, discountPercentage, discountLastDate);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
             return -1;
         }
@@ -898,10 +867,9 @@ class Session implements ISession {
 
     @Override
     public int addProductConditionalDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount) {
-        try{
+        try {
             return market.addProductConditionalDiscount(userId, storeId, productId, discountPercentage, discountLastDate, minPriceForDiscount, quantityForDiscount);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
             return -1;
         }
@@ -909,10 +877,9 @@ class Session implements ISession {
 
     @Override
     public int addProductHiddenDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate, String code) {
-        try{
+        try {
             return market.addProductHiddenDiscount(userId, storeId, productId, discountPercentage, discountLastDate, code);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
             return -1;
         }
@@ -920,10 +887,9 @@ class Session implements ISession {
 
     @Override
     public void removeProductDiscount(int userId, int storeId, int productId, int discountId) {
-        try{
+        try {
             market.removeProductDiscount(userId, storeId, productId, discountId);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //TODO: handle exception
         }
     }

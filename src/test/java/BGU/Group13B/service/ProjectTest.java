@@ -9,7 +9,8 @@ import java.util.List;
 public abstract class ProjectTest {
     private final List<Pair<String, String>> users = List.of(
             Pair.of("adminUser", "Qwerty12345"),
-            Pair.of("storeOwnerUser", "KingBIBI69420"),
+            Pair.of("storeOwnerUser1", "KingBIBI69420"),
+            Pair.of("storeOwnerUser2", "KingBIBI69420"),
             Pair.of("guestUser", "SuperSecuredPassword123"),
             Pair.of("badUser", "BadPas"));
     protected final int[] userIds = new int[users.size()];
@@ -19,28 +20,30 @@ public abstract class ProjectTest {
     protected final String[] categories = {"Electronics", "Computers", "Phones", "Tablets", "TVs", "Audio", "Peripherals"};
 
     protected final Object[][] stores = {
-            {userIds[UsersIndex.STORE_OWNER_1.ordinal()], "store1", "category1"},
-            {userIds[UsersIndex.STORE_OWNER_2.ordinal()], "store2", "category2"}
+            {0, "store1", "category1"},
+            {0, "store2", "category2"}
     };
 
 
     protected enum UsersIndex {
-        ADMIN, STORE_OWNER_1, STORE_OWNER_2, GUEST, BAD,
-        STORE_MANAGER_1, STORE_MANAGER_2
+        ADMIN_CREATOR_MASTER_ID, ADMIN, STORE_OWNER_1, STORE_OWNER_2, GUEST, BAD
+        // STORE_MANAGER_1, STORE_MANAGER_2
 
     }
 
     // README:
     // Example: int adminId = userIds[UsersIndex.ADMIN.ordinal()]
     private final String[] userEmails = {
-            "adminUser@gmail.com", "storeOwner@gmail.com",
+            "adminUser@gmail.com", "storeOwner1@gmail.com",
+            "storeOwner2@gmail.com",
             "guestUser@gmail.com", "bad@gmail.scam.com"};
-
+    protected final int ADMIN_CREATOR_MASTER_ID = 1;
     protected final int[] storeIds = new int[stores.length];
 
     public void setUp() {
         this.session = Driver.getSession();
         setUpUsers();
+        setUpAdmin();
         setUpStores();
         setUpStoresManagers();
         setUpProducts();
@@ -69,8 +72,9 @@ public abstract class ProjectTest {
                         "BLACK LIVES MATTER " + i, "because i never go back " + i, "YEAH " + i);
         }
     }
-    public void setUpAdmins(){
-        session.setUserStatus();
+
+    public void setUpAdmin() {
+        session.setUserStatus(ADMIN_CREATOR_MASTER_ID, userIds[UsersIndex.ADMIN.ordinal()], 1);
     }
 
     protected void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) {
@@ -119,6 +123,8 @@ public abstract class ProjectTest {
     }
 
     private void setUpStores() {
+        stores[0][0] = userIds[UsersIndex.STORE_OWNER_1.ordinal()];
+        stores[1][0] = userIds[UsersIndex.STORE_OWNER_2.ordinal()];
         for (int i = 0; i < stores.length; i++) {
             storeIds[i] = session.addStore((int) stores[i][0], (String) stores[i][1], (String) stores[i][2]);
         }

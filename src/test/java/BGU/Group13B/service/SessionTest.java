@@ -20,6 +20,6 @@ class SessionTest extends ProjectTest{
 
     @Test
     void addProduct_test() {
-
+        addProduct(1,1,"","",1,1,"");
     }
 }
