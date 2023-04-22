@@ -15,4 +15,6 @@ public interface IProductDiscountsRepository {
     int addProductHiddenDiscount(int productId, double discountPercentage, LocalDateTime discountLastDate, String code);
     void removeProductDiscount(int productId, int discountId);
     void removeProductDiscount(int productId);
+
+    void reset();
 }

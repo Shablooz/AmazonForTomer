@@ -36,4 +36,10 @@ public class StoreRepositoryAsList implements IStoreRepository {
         this.stores.remove(stores.stream().filter(store -> store.getStoreId() == storeId).findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("there is not store with the id " + storeId)));
     }
+
+    @Override
+    public void reset() {
+        this.stores.clear();
+        this.storeIdCounter.set(0);
+    }
 }

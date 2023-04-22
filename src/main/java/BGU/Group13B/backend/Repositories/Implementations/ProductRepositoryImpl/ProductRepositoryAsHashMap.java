@@ -128,4 +128,10 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
         });
         return products;
     }
+
+    @Override
+    public void reset() {
+        storeProducts.clear();
+        productIdCounter.set(0);
+    }
 }
