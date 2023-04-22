@@ -16,7 +16,10 @@ import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.Re
 import BGU.Group13B.backend.Repositories.Implementations.StoreDiscountsRepositoryImpl.StoreDiscountsRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.StorePurchasePolicyRepositoryImpl.StorePurchasePolicyRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyImpl.StoreMessageSingle;
+import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyImpl.StoreMessageRepositoryNonPersist;
+import BGU.Group13B.backend.Repositories.Implementations.StorePermissionsRepositoryImpl.StorePermissionsRepositoryAsHashmap;
 import BGU.Group13B.backend.Repositories.Implementations.StoreRepositoryImpl.StoreRepositoryAsList;
+import BGU.Group13B.backend.Repositories.Implementations.UserPemissionRepositoryImpl.UserPermissionRepositoryAsHashmap;
 import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepositoryAsHashmap;
 import BGU.Group13B.backend.Repositories.Interfaces.*;
 import BGU.Group13B.backend.System.Searcher;
@@ -55,6 +58,8 @@ public class SingletonCollection {
     private static final IStoreScore storeScoreRepository;
     private static final IProductPurchasePolicyRepository productPurchasePolicyRepository;
     private static final IStorePurchasePolicyRepository storePurchasePolicyRepository;
+    private static final IUserPermissionRepository userPermissionRepository;
+    private static final IStorePermissionsRepository storePermissionRepository;
 
 
     /**
@@ -101,6 +106,8 @@ public class SingletonCollection {
         reviewRepository = new ReviewRepoSingle();
         messageRepository = new MessageRepositorySingle();
         storeScoreRepository = new StoreScoreSingle();
+        userPermissionRepository = new UserPermissionRepositoryAsHashmap();
+        storePermissionRepository = new StorePermissionsRepositoryAsHashmap();
 
 
         //adapters
@@ -211,6 +218,14 @@ public class SingletonCollection {
 
     public static IStorePurchasePolicyRepository getStorePurchasePolicyRepository() {
         return storePurchasePolicyRepository;
+    }
+
+    public static IStorePermissionsRepository getStorePermissionRepository(){
+        return storePermissionRepository;
+    }
+
+    public static IUserPermissionRepository getUserPermissionRepository(){
+        return userPermissionRepository;
     }
 
     /**
