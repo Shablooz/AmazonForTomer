@@ -23,4 +23,9 @@ public class PurchaseHistoryRepositoryAsList implements IPurchaseHistoryReposito
     public boolean isPurchaseFromStore(int userId, int storeId) {
         return false;
     }
+
+    @Override
+    public void reset() {
+        purchaseHistories.clear();
+    }
 }

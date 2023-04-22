@@ -234,6 +234,7 @@ class StoreTest {
         omTestStore.getStorePermission().clearForTest();
         tUser.getUserPermissions().clearForTest();
         tUser2.getUserPermissions().clearForTest();
+        SingletonCollection.getStorePurchasePolicyRepository().reset();
     }
 
 

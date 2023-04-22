@@ -16,6 +16,7 @@ class IStoreRepositoryTest {
     @BeforeEach
     void setUp() {
         storeRepository = SingletonCollection.getStoreRepository();
+        storeRepository.reset();
     }
 
     @AfterEach

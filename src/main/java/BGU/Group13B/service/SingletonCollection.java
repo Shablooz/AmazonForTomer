@@ -253,5 +253,31 @@ public class SingletonCollection {
     }
 
 
+    /**
+     * <h1>reset</h1>
+     *
+     * */
+    public static void resetAll(){
+        /*bidRepository.reset();
+        productRepository.reset();
+        purchaseHistoryRepository.reset();
+        storeRepository.reset();
+        userRepository.reset();
+        basketRepository.reset();
+        storeDiscountsRepository.reset();
+        auctionRepository.reset();
+        basketProductRepository.reset();
+        productHistoryRepository.reset();
+        productDiscountsRepository.reset();
+        productPurchasePolicyRepository.reset();
+        storePurchasePolicyRepository.reset();
+        storeMessagesRepository.reset();
+        reviewRepository.reset();
+        messageRepository.reset();
+        storeScoreRepository.reset();
+        userPermissionRepository.reset();
+        storePermissionRepository.reset();*/
+    }
+
 }
 

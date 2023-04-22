@@ -193,7 +193,7 @@ public class User {
 
     //27
     public void logout() {
-        if (isLoggedIn == false)
+        if (!isLoggedIn)
             throw new IllegalArgumentException("already logged out!");
         this.isLoggedIn = false;
     }
@@ -305,15 +305,15 @@ public class User {
 
 
     public boolean SecurityAnswer1Exists() {
-        return answer1.equals("") == false;
+        return !answer1.equals("");
     }
 
     public boolean SecurityAnswer2Exists() {
-        return answer2.equals("") == false;
+        return !answer2.equals("");
     }
 
     public boolean SecurityAnswer3Exists() {
-        return answer3.equals("") == false;
+        return !answer3.equals("");
     }
 
 
