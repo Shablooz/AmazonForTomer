@@ -671,7 +671,233 @@ public interface ISession {
 
 
 
+    /**
+     * #33
+     * require 4.3
+     * @param userId    the user id
+     * @param storeId   the store id
+     * */
+    void allowPurchasePolicyConflicts(int userId, int storeId);
 
+    /**
+     * #33
+     * require 4.3
+     * @param userId    the user id
+     * @param storeId   the store id
+     * */
+    void disallowPurchasePolicyConflicts(int userId, int storeId);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param upperBound    the upper bound of the quantity
+     * */
+    void setStorePurchaseQuantityUpperBound(int userId, int storeId, int upperBound);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param lowerBound    the lower bound of the quantity
+     * */
+    void setStorePurchaseQuantityLowerBound(int userId, int storeId, int lowerBound);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param lowerBound    the lower bound of the quantity
+     * @param upperBound    the upper bound of the quantity
+     * */
+    void setStorePurchaseQuantityBounds(int userId, int storeId, int lowerBound, int upperBound);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param upperBound    the upper bound of the price
+     * */
+    void setStorePurchasePriceUpperBound(int userId, int storeId, int upperBound);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param lowerBound    the lower bound of the price
+     * */
+    void setStorePurchasePriceLowerBound(int userId, int storeId, int lowerBound);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param lowerBound    the lower bound of the price
+     * @param upperBound    the upper bound of the price
+     * */
+    void setStorePurchasePriceBounds(int userId, int storeId, int lowerBound, int upperBound);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param productId     the product id
+     * @param upperBound    the upper bound of the quantity
+     * */
+    void setProductPurchaseQuantityUpperBound(int userId, int storeId, int productId, int upperBound);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param productId     the product id
+     * @param lowerBound    the lower bound of the quantity
+     * */
+    void setProductPurchaseQuantityLowerBound(int userId, int storeId, int productId, int lowerBound);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param productId     the product id
+     * @param lowerBound    the lower bound of the quantity
+     * @param upperBound    the upper bound of the quantity
+     * */
+    void setProductPurchaseQuantityBounds(int userId, int storeId, int productId, int lowerBound, int upperBound);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param productId     the product id
+     * @param upperBound    the upper bound of the price
+     * */
+    void setProductPurchasePriceUpperBound(int userId, int storeId, int productId, int upperBound);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param productId     the product id
+     * @param lowerBound    the lower bound of the price
+     * */
+    void setProductPurchasePriceLowerBound(int userId, int storeId, int productId, int lowerBound);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param productId     the product id
+     * @param lowerBound    the lower bound of the price
+     * @param upperBound    the upper bound of the price
+     * */
+    void setProductPurchasePriceBounds(int userId, int storeId, int productId, int lowerBound, int upperBound);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId                the user id
+     * @param storeId               the store id
+     * @param discountPercentage    the discount percentage
+     * @param discountLastDate      the discount last date. when expired, the discount will be removed
+     * @return                      the discount id
+     * */
+    int addStoreVisibleDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId                the user id
+     * @param storeId               the store id
+     * @param discountPercentage    the discount percentage
+     * @param discountLastDate      the discount last date. when expired, the discount will be removed
+     * @param minPriceForDiscount   the minimum price for the discount to be applied
+     * @param quantityForDiscount   the quantity for the discount to be applied
+     * @return                      the discount id
+     * */
+    int addStoreConditionalDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId                the user id
+     * @param storeId               the store id
+     * @param discountPercentage    the discount percentage
+     * @param discountLastDate      the discount last date. when expired, the discount will be removed
+     * @param code                  the code for the discount
+     * @return                      the discount id
+     * */
+    int addStoreHiddenDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate, String code);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param discountId    the discount id to be removed
+     * */
+    void removeStoreDiscount(int userId, int storeId, int discountId);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId                the user id
+     * @param storeId               the store id
+     * @param productId             the product id
+     * @param discountPercentage    the discount percentage
+     * @param discountLastDate      the discount last date. when expired, the discount will be removed
+     * @return                      the discount id
+     * */
+    int addProductVisibleDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId                the user id
+     * @param storeId               the store id
+     * @param productId             the product id
+     * @param discountPercentage    the discount percentage
+     * @param discountLastDate      the discount last date. when expired, the discount will be removed
+     * @param minPriceForDiscount   the minimum price for the discount to be applied
+     * @param quantityForDiscount   the quantity for the discount to be applied
+     * @return                      the discount id
+     * */
+    int addProductConditionalDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId                the user id
+     * @param storeId               the store id
+     * @param productId             the product id
+     * @param discountPercentage    the discount percentage
+     * @param discountLastDate      the discount last date. when expired, the discount will be removed
+     * @param code                  the code for the discount
+     * @return                      the discount id
+     * */
+    int addProductHiddenDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate, String code);
+
+    /**
+     * #33
+     * require 4.3
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param productId     the product id
+     * @param discountId    the discount id to be removed
+     * */
+    void removeProductDiscount(int userId, int storeId, int productId, int discountId);
 
     /**
      * #13

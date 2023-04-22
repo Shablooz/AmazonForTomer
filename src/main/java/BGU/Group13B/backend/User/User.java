@@ -1,6 +1,5 @@
 package BGU.Group13B.backend.User;
-
-
+import org.mindrot.jbcrypt.BCrypt;
 import BGU.Group13B.backend.Repositories.Interfaces.IMessageRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
 import BGU.Group13B.backend.storePackage.Market;
@@ -14,6 +13,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class User {
+
     private final IPurchaseHistoryRepository purchaseHistoryRepository;
 
     private final int userId;
@@ -43,7 +43,6 @@ public class User {
 
 
     public User(int userId) {
-
         this.purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
         this.userId = userId;
         this.messageRepository = SingletonCollection.getMessageRepository();
@@ -53,7 +52,6 @@ public class User {
         this.userName = "";
         this.password = "";
         this.email = "";
-
         //do not change those fields!
         this.answer1 = "";
         this.answer2 = "";
@@ -108,14 +106,20 @@ public class User {
         this.answer2 = answer2;
         this.answer3 = answer3;
         this.userName = userName;
-        this.password = password;
+        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
+    public static boolean verifyPassword(String password, String hashedPassword) {
+        return BCrypt.checkpw(password, hashedPassword);
+    }
 
     public void login(String userName, String password, String answer1,String answer2,String answer3) {
         //second username check is for security
-        if (!((this.userName.equals(userName) && this.password.equals(password)))){
-            throw new IllegalArgumentException("incorrect username or password");
+        if (!((this.userName.equals(userName)))){
+            throw new IllegalArgumentException("incorrect username");
+        }
+        if(!verifyPassword(password,this.password)){
+            throw new IllegalArgumentException("incorrect password");
         }
         this.isLoggedIn = true;
         if(!this.answer1.equals(answer1) || !this.answer2.equals(answer2) || !this.answer3.equals(answer3)){

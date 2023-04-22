@@ -109,8 +109,6 @@ class UserTest {
         } catch (Exception e) {
             Assertions.fail();
         }
-
-
     }
 
     @Test
@@ -176,6 +174,11 @@ class UserTest {
 
         }
     }
+    @Test
+    void hasSecurityQuestions(){
+
+    }
+
 
 
 }

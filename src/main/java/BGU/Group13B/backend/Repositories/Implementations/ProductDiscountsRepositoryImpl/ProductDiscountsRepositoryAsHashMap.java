@@ -1,51 +1,72 @@
 package BGU.Group13B.backend.Repositories.Implementations.ProductDiscountsRepositoryImpl;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IProductDiscountsRepository;
+import BGU.Group13B.backend.storePackage.Discounts.ConditionalDiscount;
 import BGU.Group13B.backend.storePackage.Discounts.Discount;
+import BGU.Group13B.backend.storePackage.Discounts.HiddenDiscount;
+import BGU.Group13B.backend.storePackage.Discounts.VisibleDiscount;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ProductDiscountsRepositoryAsHashMap implements IProductDiscountsRepository {
 
-    private final ConcurrentHashMap<Integer/*productId*/, List<Discount>> productDiscounts;
+    private final ConcurrentHashMap<Integer/*productId*/, ConcurrentSkipListSet<Discount>> productDiscounts;
+    private final AtomicInteger discountIdCounter = new AtomicInteger(0);
 
     public ProductDiscountsRepositoryAsHashMap() {
         this.productDiscounts = new ConcurrentHashMap<>();
     }
 
     @Override
-    public Optional<List<Discount>> getProductDiscounts(int productId) {
-        if (!productDiscounts.containsKey(productId))
-            return Optional.empty();
-        return Optional.of(productDiscounts.get(productId));
+    public Set<Discount> getProductDiscounts(int productId) {
+        //if the product has no discounts, return an empty set
+        return productDiscounts.getOrDefault(productId, new ConcurrentSkipListSet<>());
     }
 
     @Override
-    public void addProductDiscount(int productId, Discount discount) {
-        if (!productDiscounts.containsKey(productId)) {
-            List<Discount> discounts = new LinkedList<>();
-            discounts.add(discount);
-            productDiscounts.put(productId, discounts);
+    public int addProductVisibleDiscount(int productId, double discountPercentage, LocalDateTime discountLastDate) {
+        int discountId = discountIdCounter.getAndIncrement();
+        if(!productDiscounts.containsKey(productId))
+            productDiscounts.put(productId, new ConcurrentSkipListSet<>());
 
-        }else {
-            var discounts = productDiscounts.get(productId);
-            if (discounts.contains(discount))
-                throw new IllegalArgumentException("Discount already exists");
-            discounts.add(discount);
-        }
+        productDiscounts.get(productId).add(new VisibleDiscount(discountId, productId, discountPercentage, discountLastDate));
+        return discountId;
     }
 
     @Override
-    public void removeProductDiscount(int productId, Discount discount) {
+    public int addProductConditionalDiscount(int productId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount) {
+        int discountId = discountIdCounter.getAndIncrement();
+        if(!productDiscounts.containsKey(productId))
+            productDiscounts.put(productId, new ConcurrentSkipListSet<>());
+
+        productDiscounts.get(productId).add(new ConditionalDiscount(discountId, productId, discountPercentage, discountLastDate, minPriceForDiscount, quantityForDiscount));
+        return discountId;
+    }
+
+    @Override
+    public int addProductHiddenDiscount(int productId, double discountPercentage, LocalDateTime discountLastDate, String code) {
+        int discountId = discountIdCounter.getAndIncrement();
+        if(!productDiscounts.containsKey(productId))
+            productDiscounts.put(productId, new ConcurrentSkipListSet<>());
+
+        productDiscounts.get(productId).add(new HiddenDiscount(discountId, productId, discountPercentage, discountLastDate, code));
+        return discountId;
+    }
+
+    @Override
+    public void removeProductDiscount(int productId, int discountId) {
         if (!productDiscounts.containsKey(productId))
-            throw new IllegalArgumentException("Product does not exist");
-        var discounts = productDiscounts.get(productId);
-        if (!discounts.contains(discount))
-            throw new IllegalArgumentException("Discount does not exist");
-        discounts.remove(discount);
+            throw new IllegalArgumentException("Product " + productId + " discount " + discountId + " does not exist");
+
+        var discounts =  productDiscounts.get(productId);
+        Optional<Discount> discount = discounts.stream().filter(d -> d.getDiscountId() == discountId).findFirst();
+        if (discount.isEmpty())
+            throw new IllegalArgumentException("Product " + productId + " discount " + discountId + " does not exist");
+        discounts.remove(discount.get());
     }
 
     @Override
