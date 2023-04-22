@@ -1,6 +1,9 @@
 package BGU.Group13B.service;
 
 import BGU.Group13B.backend.System.SystemInfo;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.data.util.Pair;
 
 import java.util.HashMap;
@@ -14,7 +17,7 @@ public abstract class ProjectTest {
             Pair.of("guestUser", "SuperSecuredPassword123"),
             Pair.of("badUser", "BadPas"));
     protected final int[] userIds = new int[users.size()];
-    private ISession session;
+    protected ISession session; //TODO: change to private ask shaun
     protected final String[] products = {"PC", "Laptop", "Phone", "Tablet", "TV", "Headphones",
             "Mouse", "Keyboard", "Printer", "Monitor"};
     protected final String[] categories = {"Electronics", "Computers", "Phones", "Tablets", "TVs", "Audio", "Peripherals"};
@@ -40,6 +43,7 @@ public abstract class ProjectTest {
     protected final int ADMIN_CREATOR_MASTER_ID = 1;
     protected final int[] storeIds = new int[stores.length];
 
+    @BeforeEach
     public void setUp() {
         this.session = Driver.getSession();
         setUpUsers();
@@ -47,6 +51,10 @@ public abstract class ProjectTest {
         setUpStores();
         setUpStoresManagers();
         setUpProducts();
+    }
+    @AfterEach
+    public void teardown() {
+        SingletonCollection.reset_system();
     }
 
     private void setUpStoresManagers() {

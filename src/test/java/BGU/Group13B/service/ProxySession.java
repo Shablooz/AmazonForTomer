@@ -186,9 +186,9 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void markMessageAsRead(int userId, String receiverId, String senderId, int messageId) {
+    public void markMessageAsReadAdmin(int userId, String receiverId, String senderId, int messageId) {
         if (realSession != null)
-            realSession.markMessageAsRead(userId, receiverId, senderId, messageId);
+            realSession.markMessageAsReadAdmin(userId, receiverId, senderId, messageId);
     }
 
     @Override
@@ -204,9 +204,9 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public Message readMassage(int userId, String receiverId) {
+    public Message readMassage(int userId) {
         if (realSession != null)
-            return realSession.readMassage(userId, receiverId);
+            return realSession.readMassage(userId);
         return Message.constractMessage("", -1, "", "", "");
     }
 

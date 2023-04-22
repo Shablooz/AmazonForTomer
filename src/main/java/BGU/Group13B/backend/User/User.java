@@ -40,7 +40,7 @@ public class User {
     //eyal addition
     private volatile boolean isLoggedIn;
 
-    private final String adminIdentifier = "admin";
+    private final String adminIdentifier = "Admin";
 
 
     public User(int userId) {
@@ -57,7 +57,7 @@ public class User {
         this.answer1 = "";
         this.answer2 = "";
         this.answer3 = "";
-
+        this.messageId = 1;
         this.isLoggedIn = false;
     }
 
@@ -140,7 +140,7 @@ public class User {
     public void openComplaint(String header, String complaint) throws NoPermissionException {
         if (!isRegistered())
             throw new NoPermissionException("Only registered users can open complaints");
-        messageRepository.sendMassage(Message.constractMessage(this.userName, messageId, header, complaint, "Admin"));
+        messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), header, complaint, adminIdentifier));
     }
 
     //#47
@@ -151,7 +151,7 @@ public class User {
     }
 
     //#47
-    public void markMessageAsRead(String receiverId, String senderId, int messageId) throws NoPermissionException {
+    public void markMessageAsReadAdmin(String receiverId, String senderId, int messageId) throws NoPermissionException {
         if (!isAdmin())
             throw new NoPermissionException("Only admin can mark as read complaints");
 
@@ -162,7 +162,7 @@ public class User {
     public void sendMassageAdmin(String receiverId, String header, String massage) throws NoPermissionException {
         if (!isAdmin())
             throw new NoPermissionException("Only admin can send massages");
-        messageRepository.sendMassage(Message.constractMessage(this.userName, messageId, header, massage, receiverId));
+        messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), header, massage, receiverId));
     }
 
     //#47
@@ -170,14 +170,14 @@ public class User {
         if (!isAdmin())
             throw new NoPermissionException("Only admin can answer complaints");
         messageRepository.markAsRead(currentMessageToReply.getReceiverId(), currentMessageToReply.getSenderId(), currentMessageToReply.getMessageId());
-        messageRepository.sendMassage(Message.constractMessage(this.userName, messageId, "RE: " + currentMessageToReply.getHeader(), answer, currentMessageToReply.getSenderId()));
+        messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), "RE: " + currentMessageToReply.getHeader(), answer, currentMessageToReply.getSenderId()));
     }
 
-    public Message readMassage(String receiverId) throws NoPermissionException {
+    public Message readMassage() throws NoPermissionException {
         if (!isRegistered())
             throw new NoPermissionException("Only registered users can read massages");
 
-        Message message = messageRepository.readReadMassage(receiverId);
+        Message message = messageRepository.readUnreadMassage(this.userName);
         messageRepository.markAsRead(message.getReceiverId(), message.getSenderId(), message.getMessageId());
         currentMessageToReply = message;
         return message;
