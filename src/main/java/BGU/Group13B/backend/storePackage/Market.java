@@ -199,6 +199,10 @@ public class Market {
         storeRepository.getStore(storeId).setProductStockQuantity(userId, productId, stockQuantity);
     }
 
+    public void setProductDescription(int userId, int storeId, int productId, String description) throws NoPermissionException {
+        storeRepository.getStore(storeId).setProductDescription(userId, productId, description);
+    }
+
     public void removeProduct(int userId, int storeId, int productId) throws NoPermissionException {
         storeRepository.getStore(storeId).removeProduct(userId, productId);
     }

@@ -539,6 +539,17 @@ public interface ISession {
     void setProductStockQuantity(int userId, int storeId, int productId, int stockQuantity);
 
     /**
+     * #32
+     * require 4.1
+     *
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param productId     the product id
+     * @param description   the product description
+     */
+    void setProductDescription(int userId, int storeId, int productId, String description);
+
+    /**
      * #13
      * require 1.1
      *

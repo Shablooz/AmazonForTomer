@@ -349,6 +349,12 @@ public class ProxySession implements ISession {
     }
 
     @Override
+    public void setProductDescription(int userId, int storeId, int productId, String description) {
+        if (realSession != null)
+            realSession.setProductDescription(userId, storeId, productId, description);
+    }
+
+    @Override
     public void removeProduct(int userId, int storeId, int productId) {
         if (realSession != null)
             realSession.removeProduct(userId, storeId, productId);

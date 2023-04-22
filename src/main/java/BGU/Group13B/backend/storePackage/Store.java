@@ -470,6 +470,17 @@ public class Store {
     }
 
     @DefaultOwnerFunctionality
+    public void setProductDescription(int userId, int productId, String description) throws NoPermissionException {
+        if(!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userId + " has no permission to set product description in the store: " + this.storeId);
+
+        Product product = this.productRepository.getStoreProductById(productId, storeId);
+        synchronized (product) {
+            product.setDescription(description);
+        }
+    }
+
+    @DefaultOwnerFunctionality
     public void removeProduct(int userId, int productId) throws NoPermissionException {
         if(!this.storePermission.checkPermission(userId))
             throw new NoPermissionException("User " + userId + " has no permission to remove product in the store: " + this.storeId);

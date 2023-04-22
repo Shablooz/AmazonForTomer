@@ -492,6 +492,15 @@ class Session implements ISession {
     }
 
     @Override
+    public void setProductDescription(int userId, int storeId, int productId, String description) {
+        try {
+            market.setProductDescription(userId, storeId, productId, description);
+        } catch (Exception e) {
+            //TODO: handle exception
+        }
+    }
+
+    @Override
     public int enterAsGuest() {
         int id = userRepositoryAsHashmap.getNewUserId();
         userRepositoryAsHashmap.addUser(id, new User(id));
