@@ -154,9 +154,10 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void addStore(int userId, String storeName, String category) {
+    public int addStore(int userId, String storeName, String category) {
         if (realSession != null)
-            realSession.addStore(userId, storeName, category);
+            return realSession.addStore(userId, storeName, category);
+        return -1;
     }
 
     @Override

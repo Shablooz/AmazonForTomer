@@ -139,8 +139,8 @@ public class Market {
     }
 
     //(#24) open store - requirement 3.2
-    public void addStore(int founderId, String storeName, String category) {
-        storeRepository.addStore(founderId, storeName, category);
+    public int addStore(int founderId, String storeName, String category) {
+        return storeRepository.addStore(founderId, storeName, category);
     }
 
     public List<Product> searchProductByName(String productName) {
