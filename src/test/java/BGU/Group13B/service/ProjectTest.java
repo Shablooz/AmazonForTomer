@@ -18,13 +18,26 @@ public abstract class ProjectTest {
             Pair.of("badUser", "BadPas"));
     protected final int[] userIds = new int[users.size()];
     protected ISession session; //TODO: change to private ask shaun
-    protected final String[] products = {"PC", "Laptop", "Phone", "Tablet", "TV", "Headphones",
-            "Mouse", "Keyboard", "Printer", "Monitor"};
+
     protected final String[] categories = {"Electronics", "Computers", "Phones", "Tablets", "TVs", "Audio", "Peripherals"};
 
+    //String productName, String category, double price, int stockQuantity, String description
+    protected final Object[][] products = {
+            {-1 /*productId*/, -1 /*storeId*/, -1 /*store founderId*/, "PC" /*name*/, categories[0], 100.0 /*price*/, 10 /*stock quantity*/, "PC description"},
+            {-1 , -1, -1, "Laptop", categories[1], 100.0, 10, "Laptop description"},
+            {-1 , -1, -1, "Phone", categories[2], 100.0, 10, "Phone description"},
+            {-1 , -1, -1, "Tablet", categories[3], 100.0, 10, "Tablet description"},
+            {-1 , -1, -1, "TV", categories[4], 100.0, 10, "TV description"},
+            {-1 , -1, -1, "Headphones", categories[5], 100.0, 10, "Headphones description"},
+            {-1 , -1, -1, "Mouse", categories[6], 100.0, 10, "Mouse description"},
+            {-1 , -1, -1, "Keyboard", categories[6], 100.0, 10, "Keyboard description"},
+            {-1 , -1, -1, "Printer", categories[6], 100.0, 10, "Printer description"},
+            {-1 , -1, -1, "Monitor", categories[6], 100.0, 10, "Monitor description"}
+    };
+
     protected final Object[][] stores = {
-            {0, "store1", "category1"},
-            {0, "store2", "category2"}
+            {-1 /*storeId*/, -1 /*founderId*/, "store1", "category1"},
+            {-1, -1, "store2", "category2"}
     };
 
 
@@ -41,7 +54,6 @@ public abstract class ProjectTest {
             "storeOwner2@gmail.com",
             "guestUser@gmail.com", "bad@gmail.scam.com"};
     protected final int ADMIN_CREATOR_MASTER_ID = 1;
-    protected final int[] storeIds = new int[stores.length];
 
     @BeforeEach
     public void setUp() {
@@ -76,7 +88,7 @@ public abstract class ProjectTest {
         for (int j = 0; j < users.size(); j++) {
             if (i != UsersIndex.BAD.ordinal())
                 session.login(userIds[j], users.get(j).getFirst(), users.get(j).getSecond(),
-                        "BLACK LIVES MATTER " + i, "because i never go back " + i, "YEAH " + i);
+                        "BLACK LIVES MATTER " + i, "https://www.youtube.com/watch?v=xvFZjo5PgG0" + i, "YEAH " + i);
         }
     }
 
@@ -84,8 +96,8 @@ public abstract class ProjectTest {
         session.setUserStatus(ADMIN_CREATOR_MASTER_ID, userIds[UsersIndex.ADMIN.ordinal()], 1);
     }
 
-    protected void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) {
-        session.addProduct(userId, storeId, productName, category, price, stockQuantity, description);
+    protected int addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) {
+        return session.addProduct(userId, storeId, productName, category, price, stockQuantity, description);
     }
 
     protected void purchaseProductCart(int userId, String address, String creditCardNumber, String creditCardMonth,
@@ -126,16 +138,20 @@ public abstract class ProjectTest {
     }
 
     private void setUpProducts() {
-
+        for(int i = 0; i < products.length; i++) {
+            products[i][1] = stores[i % stores.length][0]; //storeId
+            products[i][2] = stores[i % stores.length][1]; //founder
+            products[i][0] = session.addProduct((int) stores[i % stores.length][1],
+                    (int) products[i][1], (String) products[i][3], (String) products[i][4],
+                    (double) products[i][5], (int) products[i][6], (String) products[i][7]);
+        }
     }
 
     private void setUpStores() {
-        stores[0][0] = userIds[UsersIndex.STORE_OWNER_1.ordinal()];
-        stores[1][0] = userIds[UsersIndex.STORE_OWNER_2.ordinal()];
         for (int i = 0; i < stores.length; i++) {
-            storeIds[i] = session.addStore((int) stores[i][0], (String) stores[i][1], (String) stores[i][2]);
+            stores[i][1] = userIds[UsersIndex.STORE_OWNER_1.ordinal() + i];
+            stores[i][0] = session.addStore(userIds[UsersIndex.STORE_OWNER_1.ordinal() + i], (String) stores[i][2], (String) stores[i][3]);
         }
-
     }
 
 

@@ -1006,4 +1006,10 @@ public interface ISession {
      */
     void exitSystemAsGuest(int userId);
 
+    /**
+     *
+     * @param userId
+     * @return weather the user is logged or not
+     */
+    boolean isUserLogged(int userId);
 }
