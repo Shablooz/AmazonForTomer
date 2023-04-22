@@ -9,7 +9,9 @@ import BGU.Group13B.backend.Repositories.Implementations.PurchaseHistoryReposito
 import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.StoreDiscountsRepositoryImpl.StoreDiscountsRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyImpl.StoreMessageRepositoryNonPersist;
+import BGU.Group13B.backend.Repositories.Implementations.StorePermissionsRepositoryImpl.StorePermissionsRepositoryAsHashmap;
 import BGU.Group13B.backend.Repositories.Implementations.StoreRepositoryImpl.StoreRepositoryAsList;
+import BGU.Group13B.backend.Repositories.Implementations.UserPemissionRepositoryImpl.UserPermissionRepositoryAsHashmap;
 import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepositoryAsHashmap;
 import BGU.Group13B.backend.Repositories.Interfaces.*;
 import BGU.Group13B.backend.System.Searcher;
@@ -37,6 +39,8 @@ public class SingletonCollection {
     private static final IBasketRepository basketRepository;
     private static final IStoreDiscountsRepository storeDiscountsRepository;
     private static final IAuctionRepository auctionRepository;
+    private static final IUserPermissionRepository userPermissionRepository;
+    private static final IStorePermissionsRepository storePermissionRepository;
 
 
     /**
@@ -75,6 +79,8 @@ public class SingletonCollection {
         basketRepository = new BasketRepositoryAsHashMap();
         storeDiscountsRepository = new StoreDiscountsRepositoryAsHashMap();
         auctionRepository = new AuctionRepositoryAsHashMap();
+        userPermissionRepository = new UserPermissionRepositoryAsHashmap();
+        storePermissionRepository = new StorePermissionsRepositoryAsHashmap();
 
 
         //adapters
@@ -166,6 +172,14 @@ public class SingletonCollection {
 
     public static IAuctionRepository getAuctionRepository() {
         return auctionRepository;
+    }
+
+    public static IStorePermissionsRepository getStorePermissionRepository(){
+        return storePermissionRepository;
+    }
+
+    public static IUserPermissionRepository getUserPermissionRepository(){
+        return userPermissionRepository;
     }
 
     /**

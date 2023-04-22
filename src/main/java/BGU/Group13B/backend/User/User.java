@@ -2,6 +2,7 @@ package BGU.Group13B.backend.User;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IMessageRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
+import BGU.Group13B.backend.Repositories.Interfaces.IUserPermissionRepository;
 import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.service.SingletonCollection;
@@ -13,6 +14,7 @@ public class User {
 
     private final int userId;
     private final IMessageRepository messageRepository;
+    private final IUserPermissionRepository userPermissionRepository;
     private final UserPermissions userPermissions;
     private final Cart cart;
     private final Market market;
@@ -26,11 +28,16 @@ public class User {
     private final String adminIdentifier = "admin";
 
     public User(int userId) {
-
         this.purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
         this.userId = userId;
         this.messageRepository = SingletonCollection.getMessageRepository();
-        this.userPermissions = new UserPermissions();
+        this.userPermissionRepository = SingletonCollection.getUserPermissionRepository();
+        UserPermissions userPermissions1 = userPermissionRepository.getUserPermission(userId);
+        if (userPermissions1 == null){
+            userPermissions1 = new UserPermissions();
+            userPermissionRepository.addUserPermission(userId, userPermissions1);
+        }
+        this.userPermissions = userPermissions1;
         this.cart = new Cart(userId);
         this.market = SingletonCollection.getMarket();
         this.isLoggedIn = false;
@@ -174,4 +181,15 @@ public class User {
         cart.purchaseCart(address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType);
     }
 
+    public void addPermission(int storeId, UserPermissions.StoreRole storeRole){
+        userPermissions.updateRoleInStore(storeId, storeRole);
+    }
+
+    public void deletePermission(int storeId){
+        userPermissions.deletePermission(storeId);
+    }
+
+    public UserPermissions getUserPermissions(){
+        return userPermissions;
+    }
 }
