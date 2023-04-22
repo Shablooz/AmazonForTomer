@@ -237,7 +237,6 @@ class Session implements ISession {
             //TODO: handle exception
             return -1;
         }
-        return -1;
     }
 
     @Override

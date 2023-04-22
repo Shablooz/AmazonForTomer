@@ -104,5 +104,10 @@ public class ProductPurchasePolicyRepositoryAsHashMap implements IProductPurchas
         return new PurchaseBounder(maxPriceLowerBound, minPriceUpperBound);
     }
 
+    @Override
+    public void reset() {
+        storeProductPolicies.clear();
+    }
+
 
 }

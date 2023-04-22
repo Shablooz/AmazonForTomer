@@ -37,4 +37,9 @@ public class StorePurchasePolicyRepositoryAsList implements IStorePurchasePolicy
         return storePurchasePolicies.stream().filter(p -> p.getParentId() == storeId)
                 .findFirst().orElseThrow(() -> new IllegalArgumentException("Purchase policy not found for store" + storeId));
     }
+
+    @Override
+    public void reset() {
+        storePurchasePolicies.clear();
+    }
 }

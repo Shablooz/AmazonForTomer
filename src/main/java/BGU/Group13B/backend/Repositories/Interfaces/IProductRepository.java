@@ -25,4 +25,6 @@ public interface IProductRepository {//deeded because it contains the product qu
     Product getProductById(int productId);
 
     void removeStoreProducts(int storeId);
+
+    void reset();
 }
