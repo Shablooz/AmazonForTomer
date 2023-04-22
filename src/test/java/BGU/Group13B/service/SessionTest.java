@@ -8,15 +8,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SessionTest extends ProjectTest{
 
-    @BeforeEach
-    public void setUp() {
-        super.setUp();
 
-    }
 
-    @AfterEach
-    void tearDown() {
-    }
+
 
     @Test
     void addProduct_test() {

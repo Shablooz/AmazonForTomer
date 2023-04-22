@@ -289,7 +289,7 @@ public interface ISession {
      * @param senderId   the sender id
      * @param messageId  the message id
      */
-    public void markMessageAsRead(int userId, String receiverId, String senderId, int messageId);
+    public void markMessageAsReadAdmin(int userId, String receiverId, String senderId, int messageId);
 
     /**
      * [#47]
@@ -312,10 +312,9 @@ public interface ISession {
 
     /**
      * @param userId     the user id
-     * @param receiverId the receiver id
      * @return the message
      */
-    public Message readMassage(int userId, String receiverId);
+    public Message readMassage(int userId);
 
 
     /**

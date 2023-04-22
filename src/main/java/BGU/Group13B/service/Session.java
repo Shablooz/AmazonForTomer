@@ -272,9 +272,9 @@ class Session implements ISession {
     }
 
     @Override
-    public void markMessageAsRead(int userId, String receiverId, String senderId, int messageId) {
+    public void markMessageAsReadAdmin(int userId, String receiverId, String senderId, int messageId) {
         try {
-            userRepositoryAsHashmap.getUser(userId).markMessageAsRead(receiverId, senderId, messageId);
+            userRepositoryAsHashmap.getUser(userId).markMessageAsReadAdmin(receiverId, senderId, messageId);
         } catch (NoPermissionException e) {
             throw new RuntimeException(e);
         }
@@ -299,9 +299,9 @@ class Session implements ISession {
     }
 
     @Override
-    public Message readMassage(int userId, String receiverId) {
+    public Message readMassage(int userId) {
         try {
-            return userRepositoryAsHashmap.getUser(userId).readMassage(receiverId);
+            return userRepositoryAsHashmap.getUser(userId).readMassage();
         } catch (NoPermissionException e) {
             throw new RuntimeException(e);
         }
