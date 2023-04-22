@@ -3,6 +3,7 @@ package BGU.Group13B.backend.User;
 import org.mindrot.jbcrypt.BCrypt;
 import BGU.Group13B.backend.Repositories.Interfaces.IMessageRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
+import BGU.Group13B.backend.Repositories.Interfaces.IUserPermissionRepository;
 import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
@@ -19,6 +20,7 @@ public class User {
 
     private final int userId;
     private final IMessageRepository messageRepository;
+    private final IUserPermissionRepository userPermissionRepository;
     private final UserPermissions userPermissions;
     private final Cart cart;
     private final Market market;
@@ -47,7 +49,13 @@ public class User {
         this.purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
         this.userId = userId;
         this.messageRepository = SingletonCollection.getMessageRepository();
-        this.userPermissions = new UserPermissions();
+        this.userPermissionRepository = SingletonCollection.getUserPermissionRepository();
+        UserPermissions userPermissions1 = userPermissionRepository.getUserPermission(userId);
+        if (userPermissions1 == null){
+            userPermissions1 = new UserPermissions();
+            userPermissionRepository.addUserPermission(userId, userPermissions1);
+        }
+        this.userPermissions = userPermissions1;
         this.cart = new Cart(userId);
         this.market = SingletonCollection.getMarket();
         this.userName = "";
@@ -185,7 +193,7 @@ public class User {
 
     //27
     public void logout() {
-        if (isLoggedIn == false)
+        if (!isLoggedIn)
             throw new IllegalArgumentException("already logged out!");
         this.isLoggedIn = false;
     }
@@ -297,15 +305,15 @@ public class User {
 
 
     public boolean SecurityAnswer1Exists() {
-        return answer1.equals("") == false;
+        return !answer1.equals("");
     }
 
     public boolean SecurityAnswer2Exists() {
-        return answer2.equals("") == false;
+        return !answer2.equals("");
     }
 
     public boolean SecurityAnswer3Exists() {
-        return answer3.equals("") == false;
+        return !answer3.equals("");
     }
 
 
@@ -355,5 +363,16 @@ public class User {
 
     public void addToCart(int storeId, int productId) {
         cart.addProductToCart(storeId, productId);
+    }
+    public void addPermission(int storeId, UserPermissions.StoreRole storeRole){
+        userPermissions.updateRoleInStore(storeId, storeRole);
+    }
+
+    public void deletePermission(int storeId){
+        userPermissions.deletePermission(storeId);
+    }
+
+    public UserPermissions getUserPermissions(){
+        return userPermissions;
     }
 }

@@ -21,4 +21,9 @@ public class PurchaseHistoryRepositoryAsJPA implements IPurchaseHistoryRepositor
     public boolean isPurchaseFromStore(int userId, int storeId) {
         return false;
     }
+
+    @Override
+    public void reset() {
+
+    }
 }

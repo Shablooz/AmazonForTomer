@@ -227,7 +227,7 @@ class Session implements ISession {
             if (user.isRegistered()) {
                 try {
                     int storeId = market.addStore(userId, storeName, category);
-                    //user.grantFounderRole(storeId); TODO
+                    user.addPermission(storeId, UserPermissions.StoreRole.FOUNDER);
                     return storeId;
                 } catch (Exception e) {
                     //TODO: handle exception

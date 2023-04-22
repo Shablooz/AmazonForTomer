@@ -175,8 +175,16 @@ class UserTest {
         }
     }
     @Test
-    void hasSecurityQuestions(){
+    void passwordEncryption(){
+        user1.register(goodUsername1, goodPassword1, goodEmail1, "yellow", "", "");
+        user2.register(goodUsername2, goodPassword1, goodEmail2, "", "yak", "");
+        Assertions.assertTrue(user1.SecurityAnswer1Exists());
+        Assertions.assertFalse(user1.SecurityAnswer2Exists());
+        Assertions.assertFalse(user1.SecurityAnswer3Exists());
 
+        Assertions.assertFalse(user2.SecurityAnswer1Exists());
+        Assertions.assertFalse(user2.SecurityAnswer3Exists());
+        Assertions.assertTrue(user2.SecurityAnswer2Exists());
     }
 
 

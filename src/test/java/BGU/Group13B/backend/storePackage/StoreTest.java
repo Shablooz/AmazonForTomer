@@ -1,8 +1,12 @@
 package BGU.Group13B.backend.storePackage;
 
 import BGU.Group13B.backend.Repositories.Implementations.BIDRepositoryImpl.BIDRepositoryAsList;
+import BGU.Group13B.backend.User.User;
+import BGU.Group13B.backend.User.UserPermissions;
+import BGU.Group13B.backend.storePackage.permissions.ChangePermissionException;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.permissions.StorePermission;
+import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.AddToUserCart;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
@@ -214,5 +218,142 @@ class StoreTest {
         }
     }
 
+    public void customSetUp(){
+        tUser = new User(102);
+        tUser2 = new User(103);
+        omTestStore = new Store(101, 101, "hireTestStore", "time travel");
+        SingletonCollection.getUserRepository().addUser(102, tUser);
+        SingletonCollection.getUserRepository().addUser(103, tUser2);
+    }
+
+    private static User tUser;
+    private static Store omTestStore;
+    private static User tUser2;
+
+    public void customTearDown(){
+        omTestStore.getStorePermission().clearForTest();
+        tUser.getUserPermissions().clearForTest();
+        tUser2.getUserPermissions().clearForTest();
+        SingletonCollection.getStorePurchasePolicyRepository().reset();
+    }
+
+
+    @Test
+    void addOwnerSuccess(){
+        customSetUp();
+        try {
+            omTestStore.addOwner(101,102);
+            Assertions.assertEquals(omTestStore.getStorePermission().getUserPermission(102), UserPermissions.StoreRole.OWNER);
+            Assertions.assertEquals(tUser.getUserPermissions().getStoreRole(101), UserPermissions.StoreRole.OWNER);
+        } catch (NoPermissionException | ChangePermissionException e) {
+            fail(e);
+        }
+        finally {
+            customTearDown();
+        }
+    }
+
+    @Test
+    void addOwnerFail(){
+        customSetUp();
+        try {
+            omTestStore.addOwner(101,102);
+            Assertions.assertThrows(ChangePermissionException.class, () -> omTestStore.addOwner(101,102));
+        } catch (NoPermissionException | ChangePermissionException e) {
+            fail(e);
+        }
+        finally {
+            customTearDown();
+        }
+    }
+
+    @Test
+    void removeOwnerSuccess(){
+        customSetUp();
+        try {
+            omTestStore.addOwner(101,102);
+            omTestStore.removeOwner(101,102);
+            assertNull(omTestStore.getStorePermission().getUserPermission(102));
+            assertNull(tUser.getUserPermissions().getStoreRole(101));
+        } catch (NoPermissionException | ChangePermissionException e) {
+            fail(e);
+        }
+        finally {
+            customTearDown();
+        }
+    }
+
+    @Test
+    void removeOwnerFail(){
+        customSetUp();
+        try {
+            omTestStore.addOwner(101,102);
+            omTestStore.addOwner(101,103);
+            Assertions.assertThrows(ChangePermissionException.class, () -> omTestStore.removeOwner(103,102));
+        } catch (NoPermissionException | ChangePermissionException e) {
+            fail(e);
+        }
+        finally {
+            customTearDown();
+        }
+    }
+
+    @Test
+    void addManagerSuccess(){
+        customSetUp();
+        try {
+            omTestStore.addManager(101,102);
+            Assertions.assertEquals(omTestStore.getStorePermission().getUserPermission(102), UserPermissions.StoreRole.MANAGER);
+            Assertions.assertEquals(tUser.getUserPermissions().getStoreRole(101), UserPermissions.StoreRole.MANAGER);
+        } catch (NoPermissionException | ChangePermissionException e) {
+            fail(e);
+        }
+        finally {
+            customTearDown();
+        }
+    }
+
+    @Test
+    void addManagerFail(){
+        customSetUp();
+        try {
+            omTestStore.addManager(101,102);
+            Assertions.assertThrows(ChangePermissionException.class, () -> omTestStore.addManager(101,102));
+        } catch (NoPermissionException | ChangePermissionException e) {
+            fail(e);
+        }
+        finally {
+            customTearDown();
+        }
+    }
+
+    @Test
+    void removeManagerSuccess(){
+        customSetUp();
+        try {
+            omTestStore.addManager(101,102);
+            omTestStore.removeManager(101,102);
+            assertNull(omTestStore.getStorePermission().getUserPermission(102));
+            assertNull(tUser.getUserPermissions().getStoreRole(101));
+        } catch (NoPermissionException | ChangePermissionException e) {
+            fail(e);
+        }
+        customTearDown();
+    }
+
+    @Test
+    void removeManagerFail(){
+        customSetUp();
+        try {
+            omTestStore.addManager(101,102);
+            omTestStore.addOwner(101,103);
+            Assertions.assertThrows(ChangePermissionException.class, () -> omTestStore.removeManager(103,102));
+        } catch (NoPermissionException | ChangePermissionException e) {
+            fail(e);
+        }
+        finally {
+            customTearDown();
+        }
+    }
 
 }
