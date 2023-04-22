@@ -1,11 +1,8 @@
 package BGU.Group13B.service;
 
 import BGU.Group13B.backend.System.SystemInfo;
-import BGU.Group13B.backend.User.User;
-import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import org.springframework.data.util.Pair;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -22,13 +19,14 @@ public abstract class ProjectTest {
     protected final String[] categories = {"Electronics", "Computers", "Phones", "Tablets", "TVs", "Audio", "Peripherals"};
 
     protected final Object[][] stores = {
-            {userIds[UsersIndex.STORE_OWNER.ordinal()], "store1", "category1"},
-            {userIds[UsersIndex.STORE_OWNER.ordinal()], "store2", "category2"}
+            {userIds[UsersIndex.STORE_OWNER_1.ordinal()], "store1", "category1"},
+            {userIds[UsersIndex.STORE_OWNER_2.ordinal()], "store2", "category2"}
     };
 
 
     protected enum UsersIndex {
-        ADMIN, STORE_OWNER, GUEST, BAD;
+        ADMIN, STORE_OWNER_1, STORE_OWNER_2, GUEST, BAD,
+        STORE_MANAGER_1, STORE_MANAGER_2
 
     }
 
@@ -44,7 +42,14 @@ public abstract class ProjectTest {
         this.session = Driver.getSession();
         setUpUsers();
         setUpStores();
+        setUpStoresManagers();
         setUpProducts();
+    }
+
+    private void setUpStoresManagers() {
+        //TODO: add stores managers
+        //TODO: store manager 1 to store 1
+        //TODO: store manager 2 to store 2
     }
 
     private void setUpUsers() {
@@ -59,9 +64,13 @@ public abstract class ProjectTest {
             i++;
         }
         for (int j = 0; j < users.size(); j++) {
-            session.login(userIds[j], users.get(j).getFirst(), users.get(j).getSecond(),
-                    "BLACK LIVES MATTER " + i, "because i never go back " + i, "YEAH " + i);
+            if (i != UsersIndex.BAD.ordinal())
+                session.login(userIds[j], users.get(j).getFirst(), users.get(j).getSecond(),
+                        "BLACK LIVES MATTER " + i, "because i never go back " + i, "YEAH " + i);
         }
+    }
+    public void setUpAdmins(){
+        session.setUserStatus();
     }
 
     protected void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) {
