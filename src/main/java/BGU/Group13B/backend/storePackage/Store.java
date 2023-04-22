@@ -76,12 +76,9 @@ public class Store {
         this.storePurchasePolicyRepository = SingletonCollection.getStorePurchasePolicyRepository();
         this.productPurchasePolicyRepository = SingletonCollection.getProductPurchasePolicyRepository();
         this.discountPolicy = new StoreDiscountPolicy(storeId);
-        this.storeDiscounts = SingletonCollection.getStoreDiscountsRepository();
         this.userRepository = SingletonCollection.getUserRepository();
         this.storePermissionsRepository = SingletonCollection.getStorePermissionRepository();
         this.userPermissionRepository = SingletonCollection.getUserPermissionRepository();
-        this.discountPolicy = new DiscountPolicy();
-        this.purchasePolicy = new PurchasePolicy();
         this.storeId = storeId;
         this.storeName = storeName;
         this.category = category;
