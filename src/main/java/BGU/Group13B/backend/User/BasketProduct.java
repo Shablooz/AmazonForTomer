@@ -15,6 +15,7 @@ public class BasketProduct  {
         return product;
     }
 
+    //gets product id
     public int getQuantity() {
         return quantity;
     }
