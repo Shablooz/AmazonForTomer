@@ -51,5 +51,21 @@ public class UserPermissions {
             this.setUserPermissionStatus(UserPermissionStatus.ADMIN);
         }
     }
+
+    public void updateRoleInStore(int storeId, StoreRole storeRole){
+        userStoreRole.put(storeId, storeRole);
+    }
+
+    public void deletePermission(int storeId){
+        userStoreRole.remove(storeId);
+    }
+
+    public StoreRole getStoreRole(int storeId){
+        return userStoreRole.get(storeId);
+    }
+
+    public void clearForTest(){
+        userStoreRole.clear();
+    }
 }
 
