@@ -442,6 +442,98 @@ public class StoreManagementTest {
         catch (Exception ignored){}
     }
 
+    @Test
+    void editProductThreadTest_editingTheSameProduct(){
+        AtomicBoolean failed = new AtomicBoolean(false);
+        int productId = -1;
+
+        try {
+            productId = store.addProduct(founderId, productName, category, price, stockQuantity, description);
+        } catch (NoPermissionException e) {
+            fail();
+        }
+
+        int numOfThreads = 100;
+        Thread[] threads = new Thread[numOfThreads];
+        String[] newNames = new String[numOfThreads];
+        String[] newCategories = new String[numOfThreads];
+        double[] newPrices = new double[numOfThreads];
+        int[] newStockQuantities = new int[numOfThreads];
+        String[] newDescriptions = new String[numOfThreads];
+
+        for (int i = 0; i < numOfThreads; i++) {
+            int finalI = i;
+            int finalProductId = productId;
+            threads[i] = new Thread(() -> {
+                try{
+                    String newName = "new name" + finalI;
+                    String newCategory = "new category" + finalI;
+                    double newPrice = 100 + finalI;
+                    int newStockQuantity = 100 + finalI;
+                    String newDescription = "new description" + finalI;
+
+                    newNames[finalI] = newName;
+                    newCategories[finalI] = newCategory;
+                    newPrices[finalI] = newPrice;
+                    newStockQuantities[finalI] = newStockQuantity;
+                    newDescriptions[finalI] = newDescription;
+
+                    store.setProductName(founderId, finalProductId, newName);
+                    store.setProductCategory(founderId, finalProductId, newCategory);
+                    store.setProductPrice(founderId, finalProductId, newPrice);
+                    store.setProductStockQuantity(founderId, finalProductId, newStockQuantity);
+                    store.setProductDescription(founderId, finalProductId, newDescription);
+                }
+                catch (Exception e){
+                    System.out.println("Exception in thread " + finalI + ": " + e.getMessage());
+                    failed.set(true);
+                }
+            });
+        }
+
+        for (int i = 0; i < numOfThreads; i++) {
+            threads[i].start();
+        }
+        for (int i = 0; i < numOfThreads; i++) {
+            try {
+                threads[i].join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        if(failed.get())
+            fail();
+
+
+        boolean foundName = false;
+        boolean foundCategory = false;
+        boolean foundPrice = false;
+        boolean foundStockQuantity = false;
+        boolean foundDescription = false;
+
+        //check that the product has been edited correctly
+        Product product = productRepository.getStoreProductById(productId, storeId);
+        for(int i = 0; i < numOfThreads; i++){
+            if(product.getName().equals(newNames[i]))
+                foundName = true;
+            if(product.getCategory().equals(newCategories[i]))
+                foundCategory = true;
+            if(product.getPrice() == newPrices[i])
+                foundPrice = true;
+            if(product.getStockQuantity() == newStockQuantities[i])
+                foundStockQuantity = true;
+            if(product.getDescription().equals(newDescriptions[i]))
+                foundDescription = true;
+        }
+
+        assertTrue(foundName);
+        assertTrue(foundCategory);
+        assertTrue(foundPrice);
+        assertTrue(foundStockQuantity);
+        assertTrue(foundDescription);
+
+    }
+
 
 
 
