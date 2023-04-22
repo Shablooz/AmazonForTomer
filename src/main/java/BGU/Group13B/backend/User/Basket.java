@@ -155,11 +155,11 @@ public class Basket {
     }
 
     public void addProduct(int productId) throws IllegalArgumentException {
-        BasketProduct basketProduct = basketProductRepository.getBasketProduct(storeId, userId, productId);
+        BasketProduct basketProduct = basketProductRepository.getBasketProduct(productId, storeId, userId);
         if (basketProduct != null) {
             basketProductRepository.changeProductQuantity(productId, userId, storeId, 1);
         } else
-            basketProductRepository.addNewProductToBasket(productId, userId, storeId);
+            basketProductRepository.addNewProductToBasket(productId, storeId, userId);
     }
 
     public String getBasketDescription() {

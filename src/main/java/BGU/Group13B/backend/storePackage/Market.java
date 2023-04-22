@@ -159,7 +159,6 @@ public class Market {
         ).calculatePriceOfBasket(totalAmountBeforeStoreDiscountPolicy, successfulProducts, storeCoupon);
     }
 
-
     public void isProductAvailable(int productId, int storeId) throws Exception {
          storeRepository.getStore(storeId).isProductAvailable(productId);
     }

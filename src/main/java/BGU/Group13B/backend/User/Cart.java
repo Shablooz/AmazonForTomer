@@ -48,19 +48,12 @@ public class Cart {
         //if user has basket with storeID, add product to it. else, create new basket and add product to it.
         boolean added = false;
         Set<Basket> userBaskets = basketRepository.getUserBaskets(userId);
-//        if(!isContainsBasket(storeId, userBaskets))
-//        {
-//            basketRepository.addUserBasket(userId, storeId).addProduct(productId);
-//            return;
-//        }
-//        else {
             for (var basket : userBaskets) {
                 if (basket.getStoreId() == storeId) {
                     basket.addProduct(productId);
                     added = true;
                 }
             }
-       // }
         if(!added)
         {
             basketRepository.addUserBasket(userId, storeId).addProduct(productId);
