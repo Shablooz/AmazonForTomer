@@ -22,6 +22,8 @@ public class Product {
     private final ProductDiscountPolicy discountPolicy;
     private final IRepositoryReview repositoryReview;
 
+    private boolean deleted = false;
+
 
     public Product(int productId, int storeId, String name, String category, double price, int stockQuantity, String description) {
         this.productId = productId;
@@ -149,6 +151,14 @@ public class Product {
 
     public void removeDiscount(int discountId){
         this.discountPolicy.removeDiscount(discountId);
+    }
+
+    public void markAsDeleted() {
+        this.deleted = true;
+    }
+
+    public boolean isDeleted() {
+        return this.deleted;
     }
 
 
