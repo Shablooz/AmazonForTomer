@@ -11,4 +11,6 @@ public interface IBIDRepository {
     Optional<BID> getBID(int bidId);
 
     boolean contains(int bidId);
+
+    void reset();
 }

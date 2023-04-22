@@ -246,8 +246,8 @@ public interface ISession {
      * @param userId    this user will become the founder of the store
      * @param storeName doesn't have to be unique
      * @param category  the store category, currently a free text
-     * @return the store id
-     */
+     * @return          the store id
+     * */
     int addStore(int userId, String storeName, String category);
 
 

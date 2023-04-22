@@ -8,4 +8,6 @@ public interface IStorePurchasePolicyRepository {
     void deletePurchasePolicy(int storeId);
 
     PurchasePolicy getPurchasePolicy(int storeId);
+
+    void reset();
 }

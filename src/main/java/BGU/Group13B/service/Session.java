@@ -226,13 +226,17 @@ class Session implements ISession {
         synchronized (user) {
             if (user.isRegistered()) {
                 try {
-                    return market.addStore(userId, storeName, category);
+                    int storeId = market.addStore(userId, storeName, category);
+                    user.addPermission(storeId, UserPermissions.StoreRole.FOUNDER);
+                    return storeId;
                 } catch (Exception e) {
                     //TODO: handle exception
+                    return -1;
                 }
             }
+            //TODO: handle exception
+            return -1;
         }
-        return -1;
     }
 
     @Override

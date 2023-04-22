@@ -23,4 +23,6 @@ public interface IProductPurchasePolicyRepository {
     //will return a NEW purchase bounder that is the merged price purchase bounder of all the products in the store
     PurchaseBounder getStoreProductsMergedPurchasePriceBounders(int storeId);
 
+    void reset();
+
 }

@@ -10,4 +10,6 @@ public interface IStoreRepository {
 
     //for testing
     void removeStore(int storeId);
+
+    void reset();
 }

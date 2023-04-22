@@ -73,4 +73,10 @@ public class ProductDiscountsRepositoryAsHashMap implements IProductDiscountsRep
     public void removeProductDiscount(int storeId) {
         productDiscounts.remove(storeId);
     }
+
+    @Override
+    public void reset() {
+        productDiscounts.clear();
+        discountIdCounter.set(0);
+    }
 }
