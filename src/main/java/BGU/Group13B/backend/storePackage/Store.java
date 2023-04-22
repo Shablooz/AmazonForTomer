@@ -206,14 +206,14 @@ public class Store {
 
 
     @DefaultOwnerFunctionality
-    public void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) throws NoPermissionException {
+    public int addProduct(int userId, String productName, String category, double price, int stockQuantity, String description) throws NoPermissionException {
         /*
          * check if the user has permission to add product
          * */
         if (!this.storePermission.checkPermission(userId))
             throw new NoPermissionException("User " + userId + " has no permission to add product to store " + this.storeId);
 
-        this.productRepository.addProduct(storeId, productName, category, price, stockQuantity, description);
+        return this.productRepository.addProduct(storeId, productName, category, price, stockQuantity, description);
     }
 
     public double calculatePriceOfBasket(double totalAmountBeforeStoreDiscountPolicy,

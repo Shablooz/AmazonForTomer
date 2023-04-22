@@ -88,8 +88,8 @@ public class Market {
     }
 
 
-    public void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) throws NoPermissionException {
-        storeRepository.getStore(storeId).addProduct(userId, storeId, productName, category, price, stockQuantity, description);
+    public int addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) throws NoPermissionException {
+        return storeRepository.getStore(storeId).addProduct(userId, productName, category, price, stockQuantity, description);
     }
 
     public void addStoreScore(int userId, int storeId, int score) {

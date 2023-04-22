@@ -25,8 +25,10 @@ public interface ISession {
      * @param category      the product category
      * @param price         the product price
      * @param stockQuantity the stock quantity
+     * @param description   the product description
+     * @return              the product id
      */
-    void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description);
+    int addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description);
 
     /**
      * #19
