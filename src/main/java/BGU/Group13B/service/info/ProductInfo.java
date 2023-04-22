@@ -9,10 +9,10 @@ import BGU.Group13B.backend.storePackage.Product;
  */
 
 public record ProductInfo(int productId, int storeId, String name, String category, double price,
-                          int stockQuantity, float score) {
+                          int stockQuantity, String description, float score) {
     public ProductInfo(Product product) {
         this(product.getProductId(), product.getStoreId(), product.getName(),
                 product.getCategory(), product.getPrice(), product.getStockQuantity(),
-                product.getProductScore());
+                product.getDescription(), product.getProductScore());
     }
 }

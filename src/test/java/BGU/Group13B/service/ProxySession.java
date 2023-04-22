@@ -24,9 +24,10 @@ public class ProxySession implements ISession {
 
 
     @Override
-    public void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) {
+    public int addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) {
         if (realSession != null)
-            realSession.addProduct(userId, storeId, productName, category, price, stockQuantity, description);
+            return realSession.addProduct(userId, storeId, productName, category, price, stockQuantity, description);
+        return -1;
     }
 
     @Override
@@ -345,6 +346,12 @@ public class ProxySession implements ISession {
     public void setProductStockQuantity(int userId, int storeId, int productId, int stockQuantity) {
         if (realSession != null)
             realSession.setProductStockQuantity(userId, storeId, productId, stockQuantity);
+    }
+
+    @Override
+    public void setProductDescription(int userId, int storeId, int productId, String description) {
+        if (realSession != null)
+            realSession.setProductDescription(userId, storeId, productId, description);
     }
 
     @Override

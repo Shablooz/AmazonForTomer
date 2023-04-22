@@ -54,13 +54,13 @@ class Session implements ISession {
     }
 
     @Override
-    public void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) {
+    public int addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) {
         try {
-            market.addProduct(userId, storeId, productName, category, price, stockQuantity, description);
+            return market.addProduct(userId, storeId, productName, category, price, stockQuantity, description);
         } catch (Exception e) {
             //TODO: handle exception
+            return -1;
         }
-
     }
 
     @Override
@@ -486,6 +486,15 @@ class Session implements ISession {
     public void setProductStockQuantity(int userId, int storeId, int productId, int stockQuantity) {
         try {
             market.setProductStockQuantity(userId, storeId, productId, stockQuantity);
+        } catch (Exception e) {
+            //TODO: handle exception
+        }
+    }
+
+    @Override
+    public void setProductDescription(int userId, int storeId, int productId, String description) {
+        try {
+            market.setProductDescription(userId, storeId, productId, description);
         } catch (Exception e) {
             //TODO: handle exception
         }

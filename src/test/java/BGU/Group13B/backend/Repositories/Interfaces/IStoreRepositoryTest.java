@@ -11,18 +11,20 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class IStoreRepositoryTest {
-    private IStoreRepository storeRepository;
+    private final IStoreRepository storeRepository = SingletonCollection.getStoreRepository();
 
     @BeforeEach
     void setUp() {
-        storeRepository = SingletonCollection.getStoreRepository();
         storeRepository.reset();
+        SingletonCollection.getStorePurchasePolicyRepository().reset();
+        SingletonCollection.getStorePermissionRepository().reset();
     }
 
     @AfterEach
     void tearDown() {
         storeRepository.reset();
         SingletonCollection.getStorePurchasePolicyRepository().reset();
+        SingletonCollection.getStorePermissionRepository().reset();
     }
 
     @Test
