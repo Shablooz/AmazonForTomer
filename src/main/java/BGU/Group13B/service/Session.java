@@ -25,7 +25,8 @@ import java.util.logging.Logger;
  * IMPORTANT need to initialize the session AFTER loading first user (id = 1) from database
  */
 
-class Session implements ISession {
+//made it public for testing purposes - should be private
+public class Session implements ISession {
     private final Market market;
     private final IUserRepository userRepository = SingletonCollection.getUserRepository();
     private static final Logger LOGGER = Logger.getLogger(Session.class.getName());
@@ -445,8 +446,8 @@ class Session implements ISession {
     }
 
     @Override
-    public void getCartContent(int userId) {
-        userRepositoryAsHashmap.getUser(userId).getCartContent();
+    public void getCartDescription(int userId) {
+        userRepositoryAsHashmap.getUser(userId).getCartDescription();
     }
 
     @Override

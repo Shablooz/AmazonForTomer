@@ -307,8 +307,8 @@ public class User {
     }
 
 
-    public String getCartContent() {
-        return cart.getCartContent();
+    public String getCartDescription() {
+        return cart.getCartDescription();
     }
 
 
@@ -383,4 +383,9 @@ public class User {
     public UserPermissions getUserPermissions(){
         return userPermissions;
     }
+    public void removeBasket(int basketId){
+        cart.removeBasket(basketId);
+    }
+
+
 }

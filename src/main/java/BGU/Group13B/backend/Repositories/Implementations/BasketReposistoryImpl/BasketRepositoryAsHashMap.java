@@ -17,8 +17,8 @@ public class BasketRepositoryAsHashMap implements IBasketRepository {
 
     public Set<Basket> getUserBaskets(int userId) {
         if (!baskets.containsKey(userId))
-            return baskets.get(userId);
-        throw new NoSuchElementException("User does not exist or does not have any baskets");
+            baskets.put(userId, ConcurrentHashMap.newKeySet());
+        return baskets.get(userId);
     }
 
     public void removeUserBasket(int userId, int storeId) {
