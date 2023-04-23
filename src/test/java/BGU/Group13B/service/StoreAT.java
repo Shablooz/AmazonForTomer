@@ -69,6 +69,15 @@ public class StoreAT extends ProjectTest{
     }
 
     @Test
+    void removeProduct_storeOwner_ProductNotExist_fail(){
+        try{
+            session.removeProduct((int) products[0][2], (int) products[0][1], 999);
+            fail();
+        }
+        catch (Exception ignore){}
+    }
+
+    @Test
     void setProductQuantity_storeOwner_success(){
         int stockQuantity = 42;
         session.setProductStockQuantity((int) products[0][2], (int) products[0][1], (int) products[0][0], stockQuantity);
