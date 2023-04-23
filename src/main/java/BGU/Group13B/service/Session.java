@@ -2,10 +2,7 @@ package BGU.Group13B.service;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
 import BGU.Group13B.backend.System.SystemInfo;
-import BGU.Group13B.backend.User.Message;
-import BGU.Group13B.backend.User.PurchaseFailedException;
-import BGU.Group13B.backend.User.User;
-import BGU.Group13B.backend.User.UserPermissions;
+import BGU.Group13B.backend.User.*;
 import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
@@ -54,12 +51,13 @@ class Session implements ISession {
     }
 
     @Override
-    public void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) {
+    public int addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) {
         try {
-            market.addProduct(userId, storeId, productName, category, price, stockQuantity, description);
+            return market.addProduct(userId, storeId, productName, category, price, stockQuantity, description);
         } catch (Exception e) {
             //TODO: handle exception
         }
+        return -1;
 
     }
 
@@ -69,14 +67,14 @@ class Session implements ISession {
     }
 
     @Override
-    public void purchaseProductCart(int userId, String address, String creditCardNumber,
+    public double purchaseProductCart(int userId, String address, String creditCardNumber,
                                     String creditCardMonth, String creditCardYear,
                                     String creditCardHolderFirstName, String creditCardHolderLastName,
                                     String creditCardCcv, String id, String creditCardType,
                                     HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
                                     String/*store coupons*/ storeCoupon) {
         try {
-            userRepository.getUser(userId).
+            return userRepository.getUser(userId).
                     purchaseCart(address, creditCardNumber, creditCardMonth,
                             creditCardYear, creditCardHolderFirstName, creditCardHolderLastName,
                             creditCardCcv, id, creditCardType, productsCoupons, storeCoupon);
@@ -898,4 +896,8 @@ class Session implements ISession {
         }
     }
 
+    @Override
+    public int getBasketProductQuantity(int userId, int storeId, int productId) throws Exception {
+        return userRepository.getUser(userId).getBasketProductQuantity(storeId, productId);
+    }
 }

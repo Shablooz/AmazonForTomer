@@ -24,9 +24,10 @@ public class ProxySession implements ISession {
 
 
     @Override
-    public void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) {
+    public int addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) {
         if (realSession != null)
-            realSession.addProduct(userId, storeId, productName, category, price, stockQuantity, description);
+            return realSession.addProduct(userId, storeId, productName, category, price, stockQuantity, description);
+        return -1;
     }
 
     @Override
@@ -36,9 +37,10 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void purchaseProductCart(int userId, String address, String creditCardNumber, String creditCardMonth, String creditCardYear, String creditCardHolderFirstName, String creditCardHolderLastName, String creditCardCcv, String id, String creditCardType, HashMap<Integer, String> productsCoupons, String storeCoupon) {
+    public double purchaseProductCart(int userId, String address, String creditCardNumber, String creditCardMonth, String creditCardYear, String creditCardHolderFirstName, String creditCardHolderLastName, String creditCardCcv, String id, String creditCardType, HashMap<Integer, String> productsCoupons, String storeCoupon) {
         if (realSession != null)
-            realSession.purchaseProductCart(userId, address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType, productsCoupons, storeCoupon);
+            return realSession.purchaseProductCart(userId, address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType, productsCoupons, storeCoupon);
+        return -1;
     }
 
 
@@ -507,6 +509,13 @@ public class ProxySession implements ISession {
     public void exitSystemAsGuest(int userId) {
         if (realSession != null)
             realSession.exitSystemAsGuest(userId);
+    }
+
+    @Override
+    public int getBasketProductQuantity(int userId, int storeId, int productId) throws Exception {
+        if (realSession != null)
+            return realSession.getBasketProductQuantity(userId, storeId, productId);
+        return -1;
     }
 
     @Override

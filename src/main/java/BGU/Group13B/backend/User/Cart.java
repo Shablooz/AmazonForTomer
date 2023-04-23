@@ -1,13 +1,11 @@
 package BGU.Group13B.backend.User;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IBasketRepository;
-import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
 import BGU.Group13B.service.SingletonCollection;
 
 import java.util.HashMap;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.Set;
 
 
@@ -23,7 +21,7 @@ public class Cart {
         this.calculatePriceOfBasket = SingletonCollection.getCalculatePriceOfBasket();
     }
 
-    void purchaseCart(String address, String creditCardNumber,
+    public double purchaseCart(String address, String creditCardNumber,
                       String creditCardMonth, String creditCardYear,
                       String creditCardHolderFirstName, String creditCardHolderLastName,
                       String creditCardCcv, String id,
@@ -33,11 +31,13 @@ public class Cart {
         if (userBaskets.isEmpty()) {
             throw new NoSuchElementException("No baskets in cart");
         }
+        double totalPrice = 0;
         for (var basket : userBaskets) {
-            basket.purchaseBasket(address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType,
+             totalPrice += basket.purchaseBasket(address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType,
                     productsCoupons, storeCoupon);
 
         }
+        return totalPrice;
     }
 
     public void addProductToCart(int productId, int storeId) {
@@ -80,5 +80,14 @@ public class Cart {
                 basket.changeProductQuantity(productId, quantity);
             }
         }
+    }
+    public int getBasketProductQuantity(int storeId, int productId) throws Exception {
+        var userBaskets = basketRepository.getUserBaskets(userId);
+        for (var basket : userBaskets) {
+            if (basket.getStoreId() == storeId) {
+                return basket.getBasketProduct(productId).getQuantity();
+            }
+        }
+        throw new Exception("No such product in cart");
     }
 }

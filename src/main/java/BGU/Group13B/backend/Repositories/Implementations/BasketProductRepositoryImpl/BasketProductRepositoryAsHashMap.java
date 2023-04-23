@@ -71,8 +71,7 @@ public class BasketProductRepositoryAsHashMap implements IBasketProductRepositor
 
     @Override
     public BasketProduct getBasketProduct(int productId, int storeId, int userId) throws IllegalArgumentException{
-        for (BasketProduct basketProduct : getBasketProducts(storeId, userId).orElseThrow(
-                () -> new IllegalArgumentException("There is no basket of store with id: " + storeId))) {
+        for (BasketProduct basketProduct : getBasketProducts(storeId, userId).orElseGet(LinkedList::new)) {
             if (basketProduct.getProductId() == productId) {
                 return basketProduct;
             }

@@ -88,8 +88,8 @@ public class Market {
     }
 
 
-    public void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) throws NoPermissionException {
-        storeRepository.getStore(storeId).addProduct(userId, storeId, productName, category, price, stockQuantity, description);
+    public int addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) throws NoPermissionException {
+        return storeRepository.getStore(storeId).addProduct(userId, storeId, productName, category, price, stockQuantity, description);
     }
 
     public void addStoreScore(int userId, int storeId, int score) {
@@ -319,11 +319,11 @@ public class Market {
         storeRepository.getStore(storeId).removeStoreDiscount(userId, discountId);
     }
 
-    public int addProductVisibleDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate) throws NoPermissionException{
+    public int addProductVisibleDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate) throws NoPermissionException {
         return storeRepository.getStore(storeId).addProductVisibleDiscount(userId, productId, discountPercentage, discountLastDate);
     }
 
-    public int addProductConditionalDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount) throws NoPermissionException{
+    public int addProductConditionalDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount) throws NoPermissionException {
         return storeRepository.getStore(storeId).addProductConditionalDiscount(userId, productId, discountPercentage, discountLastDate, minPriceForDiscount, quantityForDiscount);
     }
 
@@ -331,7 +331,7 @@ public class Market {
         return storeRepository.getStore(storeId).addProductHiddenDiscount(userId, productId, discountPercentage, discountLastDate, code);
     }
 
-    public void removeProductDiscount(int userId, int storeId, int productId, int discountId) throws NoPermissionException{
+    public void removeProductDiscount(int userId, int storeId, int productId, int discountId) throws NoPermissionException {
         storeRepository.getStore(storeId).removeProductDiscount(userId, productId, discountId);
     }
 

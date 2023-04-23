@@ -59,11 +59,11 @@ public class Basket {
     }
 
     public double purchaseBasket(String address, String creditCardNumber,
-                               String creditCardMonth, String creditCardYear,
-                               String creditCardHolderFirstName, String creditCardHolderLastName,
-                               String creditCardCVV, String id, String creditCardType,
-                               HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                               String/*store coupons*/ storeCoupon
+                                 String creditCardMonth, String creditCardYear,
+                                 String creditCardHolderFirstName, String creditCardHolderLastName,
+                                 String creditCardCVV, String id, String creditCardType,
+                                 HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                                 String/*store coupons*/ storeCoupon
     ) throws PurchaseFailedException {
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduledFuture = scheduler.schedule(this::restoreProductsStock, idealTime, unitsToRestore);
@@ -103,7 +103,7 @@ public class Basket {
 
     /*In case the user pressed on exit in the middle of the purchase or something like that*/
     public void cancelPurchase() {
-        if(scheduledFuture != null && !scheduledFuture.isDone()){
+        if (scheduledFuture != null && !scheduledFuture.isDone()) {
             scheduledFuture.cancel(true);
             scheduledFuture = null;
         }
@@ -135,7 +135,7 @@ public class Basket {
                 //try to decrease the quantity of the product in the store
                 //if succeeded, add the product to the successful products list
                 //if failed, add the product to the failed products list
-                if(basketProduct.getProduct().isDeleted())
+                if (basketProduct.getProduct().isDeleted())
                     failedProducts.add(basketProduct);
                 else if (basketProduct.getProduct().tryDecreaseQuantity(basketProduct.getQuantity())) {
                     successfulProducts.add(basketProduct);
@@ -158,11 +158,11 @@ public class Basket {
     }
 
     public void addProduct(int productId) throws IllegalArgumentException {
-        BasketProduct basketProduct = basketProductRepository.getBasketProduct(storeId, userId, productId);
+        BasketProduct basketProduct = basketProductRepository.getBasketProduct(productId, storeId, userId);
         if (basketProduct != null) {
-            basketProductRepository.changeProductQuantity(productId, userId, storeId, 1);
+            basketProductRepository.changeProductQuantity(productId, storeId, userId , 1);
         } else
-            basketProductRepository.addNewProductToBasket(productId, userId, storeId);
+            basketProductRepository.addNewProductToBasket(productId, storeId, userId);
     }
 
     public String getBasketContent() {
@@ -170,44 +170,47 @@ public class Basket {
         basketProductRepository.getBasketProducts(storeId, userId);
         for (BasketProduct basketProduct : basketProductRepository.getBasketProducts(storeId, userId).get()) {
             basketContent += basketProduct.toString();
-    }
+        }
         return basketContent;
     }
 
     public void removeProduct(int productId) throws Exception {
         try {
-            BasketProduct basketProduct = basketProductRepository.getBasketProduct(storeId, userId, productId);
-            if(basketProduct != null){
+            BasketProduct basketProduct = basketProductRepository.getBasketProduct(productId, storeId, userId);
+            if (basketProduct != null) {
                 basketProductRepository.removeBasketProduct(productId, userId, storeId);
-            }
-            else
+            } else
                 throw new Exception("Product not in basket");
-        }catch (Exception e){
+        } catch (Exception e) {
             throw e;
         }
     }
 
     public void changeProductQuantity(int productId, int quantity) throws Exception {
-        BasketProduct basketProduct = basketProductRepository.getBasketProduct(storeId, userId, productId);
-        if(basketProduct != null){
+        BasketProduct basketProduct = basketProductRepository.getBasketProduct(productId, storeId, userId);
+        if (basketProduct != null) {
             basketProductRepository.changeProductQuantity(productId, userId, storeId, quantity);
-        }
-        else
+        } else
             throw new Exception("Product not in basket");
     }
 
     public ConcurrentLinkedQueue<BasketProduct> getFailedProducts() {
         return failedProducts;
     }
+
     public ConcurrentLinkedQueue<BasketProduct> getSuccessfulProductsList() {
         return successfulProducts;
     }
 
+    public BasketProduct getBasketProduct(int productId) {
+        return basketProductRepository.getBasketProduct(productId, storeId, userId);
+    }
 
     /*used for testing*/
     public void setIdealTime(int idealTime) {
         this.idealTime = idealTime;
     }
+
     public void setUnitsToRestore(java.util.concurrent.TimeUnit unitsToRestore) {
         this.unitsToRestore = unitsToRestore;
     }
