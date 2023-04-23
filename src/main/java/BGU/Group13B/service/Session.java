@@ -26,10 +26,12 @@ import java.util.logging.Logger;
 public class Session implements ISession {
     private final Market market;
     private final IUserRepository userRepository = SingletonCollection.getUserRepository();
-    private static final Logger LOGGER = Logger.getLogger(Session.class.getName());
-
+    private static final Logger LOGGER_INFO = Logger.getLogger(Session.class.getName());
+    private static final Logger LOGGER_ERROR = Logger.getLogger(Session.class.getName());
     static {
-        SingletonCollection.setFileHandler(LOGGER);
+        SingletonCollection.setFileHandler(LOGGER_INFO, true);
+        SingletonCollection.setFileHandler(LOGGER_ERROR, false);
+
     }
 
     IUserRepository userRepositoryAsHashmap;
@@ -199,7 +201,7 @@ public class Session implements ISession {
             synchronized (user) {
                 user.login(username, password, answer1, answer2, answer3);
                 /*example of use*/
-                LOGGER.info("user " + username + " logged in");
+                LOGGER_INFO.info("user " + username + " logged in");
                 //removes the current guest profile to swap to the existing member one
                 userRepositoryAsHashmap.removeUser(userID);
                 //gets the new id - of the user we're logging into

@@ -85,7 +85,8 @@ public class SingletonCollection {
     private static Searcher searcher;
     private static Market market;
 
-    private static final String LOG_FILE_NAME = "logger_output.txt";
+    private static final String LOG_FILE_NAME = "info_logger.txt";
+    private static final String ERROR_LOG_FILE_NAME = "error_logger.txt";
 
     //static initializer
     static {
@@ -279,9 +280,9 @@ public class SingletonCollection {
     /**
      * <h1>LOGGER</h1>
      */
-    public static void setFileHandler(Logger LOGGER) {
+    public static void setFileHandler(Logger LOGGER, boolean info) {
         try {
-            FileHandler fileHandler = new FileHandler(LOG_FILE_NAME);
+            FileHandler fileHandler = new FileHandler(info ? LOG_FILE_NAME : ERROR_LOG_FILE_NAME);
             LOGGER.addHandler(fileHandler);
         } catch (IOException e) {
             System.out.println("Error setting the logger handler: " + e.getMessage());
@@ -315,5 +316,8 @@ public class SingletonCollection {
         storePermissionRepository.reset();*/
     }
 
+    public static void setPaymentFail() {
+        paymentAdapter = null;
+    }
 }
 
