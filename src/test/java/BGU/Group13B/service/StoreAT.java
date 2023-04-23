@@ -52,6 +52,11 @@ public class StoreAT extends ProjectTest{
     @Test
     void removeProduct_storeOwner_success(){
         session.removeProduct((int) products[0][2], (int) products[0][1], (int) products[0][0]);
+        try{
+            session.getProductInfo((int) products[0][0]);
+            fail();
+        }
+        catch (Exception ignore){}
     }
 
     @Test
