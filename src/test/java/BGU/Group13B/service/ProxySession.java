@@ -206,9 +206,9 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public Message readMassage(int userId) {
+    public Message readMessage(int userId) {
         if (realSession != null)
-            return realSession.readMassage(userId);
+            return realSession.readMessage(userId);
         return Message.constractMessage("", -1, "", "", "");
     }
 
@@ -308,9 +308,9 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void getCartContent(int userId) {
+    public void getCartDescription(int userId) {
         if (realSession != null)
-            realSession.getCartContent(userId);
+            realSession.getCartDescription(userId);
     }
 
     @Override
@@ -347,6 +347,12 @@ public class ProxySession implements ISession {
     public void setProductStockQuantity(int userId, int storeId, int productId, int stockQuantity) {
         if (realSession != null)
             realSession.setProductStockQuantity(userId, storeId, productId, stockQuantity);
+    }
+
+    @Override
+    public void setProductDescription(int userId, int storeId, int productId, String description) {
+        if (realSession != null)
+            realSession.setProductDescription(userId, storeId, productId, description);
     }
 
     @Override

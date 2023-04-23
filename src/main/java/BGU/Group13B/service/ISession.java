@@ -26,6 +26,8 @@ public interface ISession {
      * @param category      the product category
      * @param price         the product price
      * @param stockQuantity the stock quantity
+     * @param description   the product description
+     * @return              the product id
      */
     int addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description);
 
@@ -316,7 +318,7 @@ public interface ISession {
      * @param userId the user id
      * @return the message
      */
-    public Message readMassage(int userId);
+    public Message readMessage(int userId);
 
 
     /**
@@ -469,7 +471,7 @@ public interface ISession {
      *
      * @param userId the user id
      */
-    void getCartContent(int userId);
+    void getCartDescription(int userId);
 
     /**
      * #20
@@ -536,6 +538,17 @@ public interface ISession {
      * @param stockQuantity the stock quantity of the product
      */
     void setProductStockQuantity(int userId, int storeId, int productId, int stockQuantity);
+
+    /**
+     * #32
+     * require 4.1
+     *
+     * @param userId        the user id
+     * @param storeId       the store id
+     * @param productId     the product id
+     * @param description   the product description
+     */
+    void setProductDescription(int userId, int storeId, int productId, String description);
 
     /**
      * #13

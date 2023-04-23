@@ -288,7 +288,7 @@ public class Store {
        and 4.13: "get store purchase history feature"  **/
     @DefaultManagerFunctionality
     @DefaultOwnerFunctionality
-    public int addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) throws NoPermissionException {
+    public int addProduct(int userId, String productName, String category, double price, int stockQuantity, String description) throws NoPermissionException {
         /*
          * check if the user has permission to add product
          * */
@@ -466,6 +466,17 @@ public class Store {
         Product product = this.productRepository.getStoreProductById(productId, storeId);
         synchronized (product) {
             product.setStockQuantity(quantity);
+        }
+    }
+
+    @DefaultOwnerFunctionality
+    public void setProductDescription(int userId, int productId, String description) throws NoPermissionException {
+        if(!this.storePermission.checkPermission(userId))
+            throw new NoPermissionException("User " + userId + " has no permission to set product description in the store: " + this.storeId);
+
+        Product product = this.productRepository.getStoreProductById(productId, storeId);
+        synchronized (product) {
+            product.setDescription(description);
         }
     }
 

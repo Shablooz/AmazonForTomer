@@ -89,7 +89,7 @@ public class Market {
 
 
     public int addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) throws NoPermissionException {
-        return storeRepository.getStore(storeId).addProduct(userId, storeId, productName, category, price, stockQuantity, description);
+        return storeRepository.getStore(storeId).addProduct(userId, productName, category, price, stockQuantity, description);
     }
 
     public void addStoreScore(int userId, int storeId, int score) {
@@ -178,7 +178,6 @@ public class Market {
         ).calculatePriceOfBasket(totalAmountBeforeStoreDiscountPolicy, successfulProducts, storeCoupon);
     }
 
-
     public void isProductAvailable(int productId, int storeId) throws Exception {
         storeRepository.getStore(storeId).isProductAvailable(productId);
     }
@@ -197,6 +196,10 @@ public class Market {
 
     public void setProductStockQuantity(int userId, int storeId, int productId, int stockQuantity) throws NoPermissionException {
         storeRepository.getStore(storeId).setProductStockQuantity(userId, productId, stockQuantity);
+    }
+
+    public void setProductDescription(int userId, int storeId, int productId, String description) throws NoPermissionException {
+        storeRepository.getStore(storeId).setProductDescription(userId, productId, description);
     }
 
     public void removeProduct(int userId, int storeId, int productId) throws NoPermissionException {

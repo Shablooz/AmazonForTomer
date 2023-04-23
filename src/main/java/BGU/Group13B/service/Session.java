@@ -22,7 +22,8 @@ import java.util.logging.Logger;
  * IMPORTANT need to initialize the session AFTER loading first user (id = 1) from database
  */
 
-class Session implements ISession {
+//made it public for testing purposes - should be private
+public class Session implements ISession {
     private final Market market;
     private final IUserRepository userRepository = SingletonCollection.getUserRepository();
     private static final Logger LOGGER = Logger.getLogger(Session.class.getName());
@@ -56,6 +57,7 @@ class Session implements ISession {
             return market.addProduct(userId, storeId, productName, category, price, stockQuantity, description);
         } catch (Exception e) {
             //TODO: handle exception
+            return -1;
         }
         return -1;
 
@@ -281,6 +283,8 @@ class Session implements ISession {
     @Override
     public void sendMassageAdmin(int userId, String receiverId, String header, String massage) {
         try {
+            if(userRepository.checkIfUserExists(receiverId)==null)
+                throw new RuntimeException("receiver Id not found");
             userRepositoryAsHashmap.getUser(userId).sendMassageAdmin(receiverId, header, massage);
         } catch (NoPermissionException e) {
             throw new RuntimeException(e);
@@ -297,7 +301,7 @@ class Session implements ISession {
     }
 
     @Override
-    public Message readMassage(int userId) {
+    public Message readMessage(int userId) {
         try {
             return userRepositoryAsHashmap.getUser(userId).readMassage();
         } catch (NoPermissionException e) {
@@ -441,8 +445,8 @@ class Session implements ISession {
     }
 
     @Override
-    public void getCartContent(int userId) {
-        userRepositoryAsHashmap.getUser(userId).getCartContent();
+    public void getCartDescription(int userId) {
+        userRepositoryAsHashmap.getUser(userId).getCartDescription();
     }
 
     @Override
@@ -484,6 +488,15 @@ class Session implements ISession {
     public void setProductStockQuantity(int userId, int storeId, int productId, int stockQuantity) {
         try {
             market.setProductStockQuantity(userId, storeId, productId, stockQuantity);
+        } catch (Exception e) {
+            //TODO: handle exception
+        }
+    }
+
+    @Override
+    public void setProductDescription(int userId, int storeId, int productId, String description) {
+        try {
+            market.setProductDescription(userId, storeId, productId, description);
         } catch (Exception e) {
             //TODO: handle exception
         }

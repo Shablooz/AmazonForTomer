@@ -1,8 +1,6 @@
 package BGU.Group13B.service;
 
 import BGU.Group13B.backend.User.Message;
-import BGU.Group13B.backend.storePackage.Review;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -72,10 +70,52 @@ public class Communication_AT extends ProjectTest {
     @Test
     public void sendMassageAdmin_Valid() {
         session.sendMassageAdmin(userIds[UsersIndex.ADMIN.ordinal()], session.getUserName(userIds[UsersIndex.STORE_OWNER_2.ordinal()]), "massage", "massage");
-        Message message = session.readMassage(userIds[UsersIndex.STORE_OWNER_2.ordinal()]);
+        Message message = session.readMessage(userIds[UsersIndex.STORE_OWNER_2.ordinal()]);
         assertEquals("massage", message.getHeader());
         String name = session.getUserName(userIds[UsersIndex.STORE_OWNER_2.ordinal()]);
         assertEquals(name, message.getReceiverId());
+    }
+    @Test
+    public void sendMassageAdmin_NotValid()
+    {
+        Exception exception= assertThrows(Exception.class,()->session.sendMassageAdmin(userIds[UsersIndex.ADMIN.ordinal()], "Not EXIST", "massage","massage"));
+        assertEquals("receiver Id not found",exception.getMessage());
+    }
+    @Test
+    public void answerComplaint_Valid()
+    {
+        session.openComplaint(userIds[UsersIndex.STORE_OWNER_1.ordinal()], "complaint", "complaint");
+        Message message= session.getComplaint(userIds[UsersIndex.ADMIN.ordinal()]);
+        session.answerComplaint(userIds[UsersIndex.ADMIN.ordinal()],"answer");
+        message= session.readMessage(userIds[UsersIndex.STORE_OWNER_1.ordinal()]);
+        assertEquals("answer",message.getMessage());
+        String name= session.getUserName(userIds[UsersIndex.ADMIN.ordinal()]);
+        assertEquals(name,message.getSenderId());
+    }
+    @Test
+    public void answerComplaint_NotValid()
+    {
+        answerComplaint_Valid();
+        Exception exception= assertThrows(Exception.class,()->session.answerComplaint(userIds[UsersIndex.ADMIN.ordinal()],"answer"));
+        assertEquals("no complaint to answer",exception.getMessage());
+    }
+
+    @Test
+    public void readMessage_Valid()
+    {
+        session.sendMassageAdmin(userIds[UsersIndex.ADMIN.ordinal()], session.getUserName(userIds[UsersIndex.STORE_OWNER_2.ordinal()]), "massage","massage");
+        Message message= session.readMessage(userIds[UsersIndex.STORE_OWNER_2.ordinal()]);
+
+        assertEquals("massage",message.getHeader());
+        String name= session.getUserName(userIds[UsersIndex.STORE_OWNER_2.ordinal()]);
+        assertEquals(name,message.getReceiverId());
+    }
+    @Test
+    public void readMessage_NotValid()
+    {
+        session.sendMassageAdmin(userIds[UsersIndex.ADMIN.ordinal()], session.getUserName(userIds[UsersIndex.STORE_OWNER_2.ordinal()]), "massage","massage");
+        Exception exception= assertThrows(Exception.class ,()->session.readMessage(userIds[UsersIndex.STORE_OWNER_1.ordinal()]));
+        assertEquals("no unread messages",exception.getMessage());
     }
 
 

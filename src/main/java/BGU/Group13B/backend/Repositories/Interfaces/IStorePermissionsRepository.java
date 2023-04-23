@@ -6,4 +6,6 @@ public interface IStorePermissionsRepository {
     StorePermission getStorePermission(int storeId);
 
     void addStorePermission(int storeId, StorePermission storePermission);
+
+    void reset();
 }

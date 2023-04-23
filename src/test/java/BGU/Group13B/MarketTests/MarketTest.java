@@ -10,7 +10,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class marketTests {
+public class MarketTest {
 
     private static Market market;
     private static String productName1;

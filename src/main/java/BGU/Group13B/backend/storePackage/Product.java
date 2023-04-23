@@ -30,10 +30,10 @@ public class Product {
         this.storeId = storeId;
         this.name = name;
         this.category = category;
-        this.price = price;
-        this.stockQuantity = stockQuantity;
+        this.setPrice(price);
+        this.setStockQuantity(stockQuantity);
         this.rank = 0;
-        this.description=description;
+        this.description = description;
         this.productPurchasePolicy = SingletonCollection.getProductPurchasePolicyRepository();
         this.discountPolicy = new ProductDiscountPolicy(productId);
         this.repositoryReview = SingletonCollection.getReviewRepository();
@@ -161,6 +161,8 @@ public class Product {
         return this.deleted;
     }
 
-
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
 }
