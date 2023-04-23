@@ -385,12 +385,13 @@ public class User {
         return userPermissions;
     }
 
-    public int getBasketProductQuantity(int storeId, int productId) throws Exception {
-        return cart.getBasketProductQuantity(storeId, productId);
-    }
+
     public void removeBasket(int basketId){
-        cart.removeBasket(basketId);
+        cart.removeBasket(userId, basketId);
     }
 
 
+    public List<Integer> getFailedProducts(int storeId) {
+        return cart.getFailedProducts(storeId, userId);
+    }
 }
