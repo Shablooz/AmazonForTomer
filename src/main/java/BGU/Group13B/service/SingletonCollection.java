@@ -149,7 +149,6 @@ public class SingletonCollection {
 
         //adapters
         deliveryAdapter = null; //TODO
-        paymentAdapter = null;  //TODO
 
 
         //additional classes

@@ -86,7 +86,7 @@ public abstract class ProjectTest {
         }
         int i = 0;
         for (var user : users) {
-            if (!user.getFirst().equals("guestUser"))
+            if (!user.getFirst().equals("guestUser") && !user.getFirst().equals("badUser"))
                 session.register(userIds[i], user.getFirst(), user.getSecond(), userEmails[i],
                         "BLACK LIVES MATTER " + i, "because i never go back " + i, "YEAH " + i);
             i++;
@@ -100,47 +100,6 @@ public abstract class ProjectTest {
 
     public void setUpAdmin() {
         session.setUserStatus(ADMIN_CREATOR_MASTER_ID, userIds[UsersIndex.ADMIN.ordinal()], 1);
-    }
-
-    protected void addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) {
-        session.addProduct(userId, storeId, productName, category, price, stockQuantity, description);
-    }
-
-    protected void purchaseProductCart(int userId, String address, String creditCardNumber, String creditCardMonth,
-                                       String creditCardYear, String creditCardHolderFirstName,
-                                       String creditCardHolderLastName, String creditCardCcv,
-                                       String id, String creditCardType,
-                                       HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                       String/*store coupons*/ storeCoupon) {
-        session.purchaseProductCart(userId, address, creditCardNumber,
-                creditCardMonth, creditCardYear,
-                creditCardHolderFirstName, creditCardHolderLastName,
-                creditCardCcv, id, creditCardType,
-                productsCoupons, storeCoupon);
-    }
-
-    protected void purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount) {
-        session.purchaseProposalSubmit(userId, storeId, productId, proposedPrice, amount);
-    }
-
-    protected void immediatePurchase(int userId, int storeId, int productId, int quantity) {
-        session.immediatePurchase(userId, storeId, productId, quantity);
-    }
-
-    protected void createLotteryPurchaseForProduct(int storeManagerId, int storeId, int productId) {
-        session.createLotteryPurchaseForProduct(storeManagerId, storeId, productId);
-    }
-
-    protected void participateInLotteryPurchase(int userId, int storeId, int productId, double fraction) {
-        session.participateInLotteryPurchase(userId, storeId, productId, fraction);
-    }
-
-    protected void auctionPurchase(int userId, int storeId, int productId, double price) {
-        session.auctionPurchase(userId, storeId, productId, price);
-    }
-
-    protected SystemInfo getSystemInformation(int adminId) {
-        return session.getSystemInformation(adminId);
     }
 
     private void setUpProducts() {

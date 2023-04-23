@@ -518,10 +518,10 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public int getBasketProductQuantity(int userId, int storeId, int productId) throws Exception {
-        if (realSession != null)
-            return realSession.getBasketProductQuantity(userId, storeId, productId);
-        return -1;
+    public List<Integer> getFailedProducts(int userId, int storeId) {
+        if(realSession != null)
+            return realSession.getFailedProducts(userId, storeId);
+        return new ArrayList<>();
     }
 
     @Override

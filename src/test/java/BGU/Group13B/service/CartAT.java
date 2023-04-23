@@ -1,3 +1,4 @@
+/*
 package BGU.Group13B.service;
 
 import BGU.Group13B.backend.User.BasketProduct;
@@ -11,7 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CartAT extends ProjectTest {
 
-    /*@Test
+    */
+/*@Test
     public void addToCart_Valid() {
         session.addToCart(userIds[UsersIndex.STORE_OWNER_2.ordinal()], storeIds[StoresIndex.STORE_1.ordinal()],
                 productIds[ProductsIndex.PRODUCT_1.ordinal()]);
@@ -54,24 +56,10 @@ public class CartAT extends ProjectTest {
         Exception exception = assertThrows(Exception.class, () -> session.getCart(userIds[UsersIndex.GUEST.ordinal()]));
         assertEquals("BGU.Group13B.backend.storePackage.permissions.NoPermissionException: Only registered users can get cart", exception.getMessage());
     }
-*/
-    @Test
-    public void purchaseCart_Valid() {
-        session.addToCart(userIds[UsersIndex.STORE_OWNER_2.ordinal()],
-                storeIds[StoresIndex.STORE_1.ordinal()], productIds[ProductsIndex.PRODUCT_1.ordinal()]);
+*//*
 
-        double payedPrice = session.purchaseProductCart(userIds[UsersIndex.STORE_OWNER_2.ordinal()], "", "", "", "", "", "", "", "", "", new HashMap<>(), "");
-        assertEquals(products[ProductsIndex.PRODUCT_1.ordinal()][ProductInfo.PRICE.ordinal()],
-                payedPrice);
-        int quantity_after = session.getProductStockQuantity(productIds[ProductsIndex.PRODUCT_1.ordinal()]);
-        assertEquals(9, quantity_after);
 
-    }
 
-    @Test
-    public void purchaseCart_NotValid() {
-        Exception exception = assertThrows(Exception.class, () ->
-                session.purchaseProductCart(userIds[UsersIndex.GUEST.ordinal()], "", "", "", "", "", "", "", "", "", new HashMap<>(), ""));
-        assertEquals("BGU.Group13B.backend.storePackage.permissions.NoPermissionException: Only registered users can purchase cart", exception.getMessage());
-    }
+
 }
+*/

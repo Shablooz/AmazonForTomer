@@ -1,6 +1,7 @@
 package BGU.Group13B.backend.User;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IBasketRepository;
+import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
 import BGU.Group13B.service.SingletonCollection;
 
@@ -23,24 +24,25 @@ public class Cart {
     }
 
     public double purchaseCart(String address, String creditCardNumber,
-                      String creditCardMonth, String creditCardYear,
-                      String creditCardHolderFirstName, String creditCardHolderLastName,
-                      String creditCardCcv, String id,
-                      String creditCardType, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                      String/*store coupons*/ storeCoupon) throws PurchaseFailedException {
+                               String creditCardMonth, String creditCardYear,
+                               String creditCardHolderFirstName, String creditCardHolderLastName,
+                               String creditCardCcv, String id,
+                               String creditCardType, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                               String/*store coupons*/ storeCoupon) throws PurchaseFailedException {
         var userBaskets = basketRepository.getUserBaskets(userId);
         if (userBaskets.isEmpty()) {
             throw new NoSuchElementException("No baskets in cart");
         }
         double totalPrice = 0;
         for (var basket : userBaskets) {
-             totalPrice += basket.purchaseBasket(address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType,
+            totalPrice += basket.purchaseBasket(address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType,
                     productsCoupons, storeCoupon);
 
         }
         return totalPrice;
     }
-    private boolean isContainsBasket(int storeId, Set<Basket> userBaskets){
+
+    private boolean isContainsBasket(int storeId, Set<Basket> userBaskets) {
         for (var basket : userBaskets) {
             if (basket.getStoreId() == storeId) {
                 return true;
@@ -53,12 +55,12 @@ public class Cart {
         //if user has basket with storeID, add product to it. else, create new basket and add product to it.
         boolean added = false;
         Set<Basket> userBaskets = basketRepository.getUserBaskets(userId);
-            for (var basket : userBaskets) {
-                if (basket.getStoreId() == storeId) {
-                    basket.addProduct(productId);
-                    added = true;
-                }
+        for (var basket : userBaskets) {
+            if (basket.getStoreId() == storeId) {
+                basket.addProduct(productId);
+                added = true;
             }
+        }
         if (!added) {
             basketRepository.addUserBasket(userId, storeId).addProduct(productId);
         }
@@ -83,7 +85,6 @@ public class Cart {
     }
 
 
-
     public void removeProduct(int storeId, int productId) throws Exception {
         var userBaskets = basketRepository.getUserBaskets(userId);
         for (var basket : userBaskets) {
@@ -100,5 +101,15 @@ public class Cart {
                 basket.changeProductQuantity(productId, quantity);
             }
         }
+    }
+
+    public void removeBasket(int userId, int storeId) {
+        basketRepository.removeUserBasket(userId, storeId);
+    }
+
+    public List<Integer> getFailedProducts(int storeId, int userId) {
+        return basketRepository.getUserBaskets(userId).stream().
+                filter(basket -> basket.getStoreId() == storeId).findFirst().get().
+                getFailedProducts().stream().map(BasketProduct::getProductId).toList();
     }
 }

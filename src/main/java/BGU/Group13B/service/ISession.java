@@ -1011,10 +1011,16 @@ public interface ISession {
     /**
      * @param userId the user id
      * @param storeId the store id
+     * @return the list of the products that the user failed buy from the store
+     * */
+    List<Integer> getFailedProducts(int userId, int storeId);
+
+    /**
+     * @param userId the user id
+     * @param storeId the store id
      * @param productId the product id
      * @throws Exception if the product is not in the store
      *
      * */
-    int getBasketProductQuantity(int userId, int storeId, int productId) throws Exception;
 
 }

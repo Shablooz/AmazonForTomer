@@ -59,7 +59,6 @@ public class Session implements ISession {
             //TODO: handle exception
             return -1;
         }
-        return -1;
 
     }
 
@@ -706,6 +705,11 @@ public class Session implements ISession {
     }
 
     @Override
+    public List<Integer> getFailedProducts(int userId, int storeId) {
+        return userRepository.getUser(userId).getFailedProducts(storeId);
+    }
+
+    @Override
     public void allowPurchasePolicyConflicts(int userId, int storeId) {
         try {
             market.allowPurchasePolicyConflicts(userId, storeId);
@@ -909,8 +913,5 @@ public class Session implements ISession {
         }
     }
 
-    @Override
-    public int getBasketProductQuantity(int userId, int storeId, int productId) throws Exception {
-        return userRepository.getUser(userId).getBasketProductQuantity(storeId, productId);
-    }
+
 }

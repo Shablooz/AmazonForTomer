@@ -3,6 +3,8 @@ package BGU.Group13B.service;
 import BGU.Group13B.backend.User.Message;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -75,48 +77,76 @@ public class Communication_AT extends ProjectTest {
         String name = session.getUserName(userIds[UsersIndex.STORE_OWNER_2.ordinal()]);
         assertEquals(name, message.getReceiverId());
     }
+
     @Test
-    public void sendMassageAdmin_NotValid()
-    {
-        Exception exception= assertThrows(Exception.class,()->session.sendMassageAdmin(userIds[UsersIndex.ADMIN.ordinal()], "Not EXIST", "massage","massage"));
-        assertEquals("receiver Id not found",exception.getMessage());
+    public void sendMassageAdmin_NotValid() {
+        Exception exception = assertThrows(Exception.class, () -> session.sendMassageAdmin(userIds[UsersIndex.ADMIN.ordinal()], "Not EXIST", "massage", "massage"));
+        assertEquals("receiver Id not found", exception.getMessage());
     }
+
     @Test
-    public void answerComplaint_Valid()
-    {
+    public void answerComplaint_Valid() {
         session.openComplaint(userIds[UsersIndex.STORE_OWNER_1.ordinal()], "complaint", "complaint");
-        Message message= session.getComplaint(userIds[UsersIndex.ADMIN.ordinal()]);
-        session.answerComplaint(userIds[UsersIndex.ADMIN.ordinal()],"answer");
-        message= session.readMessage(userIds[UsersIndex.STORE_OWNER_1.ordinal()]);
-        assertEquals("answer",message.getMessage());
-        String name= session.getUserName(userIds[UsersIndex.ADMIN.ordinal()]);
-        assertEquals(name,message.getSenderId());
+        Message message = session.getComplaint(userIds[UsersIndex.ADMIN.ordinal()]);
+        session.answerComplaint(userIds[UsersIndex.ADMIN.ordinal()], "answer");
+        message = session.readMessage(userIds[UsersIndex.STORE_OWNER_1.ordinal()]);
+        assertEquals("answer", message.getMessage());
+        String name = session.getUserName(userIds[UsersIndex.ADMIN.ordinal()]);
+        assertEquals(name, message.getSenderId());
     }
+
     @Test
-    public void answerComplaint_NotValid()
-    {
+    public void answerComplaint_NotValid() {
         answerComplaint_Valid();
-        Exception exception= assertThrows(Exception.class,()->session.answerComplaint(userIds[UsersIndex.ADMIN.ordinal()],"answer"));
-        assertEquals("no complaint to answer",exception.getMessage());
+        Exception exception = assertThrows(Exception.class, () -> session.answerComplaint(userIds[UsersIndex.ADMIN.ordinal()], "answer"));
+        assertEquals("no complaint to answer", exception.getMessage());
     }
 
     @Test
-    public void readMessage_Valid()
-    {
-        session.sendMassageAdmin(userIds[UsersIndex.ADMIN.ordinal()], session.getUserName(userIds[UsersIndex.STORE_OWNER_2.ordinal()]), "massage","massage");
-        Message message= session.readMessage(userIds[UsersIndex.STORE_OWNER_2.ordinal()]);
+    public void readMessage_Valid() {
+        session.sendMassageAdmin(userIds[UsersIndex.ADMIN.ordinal()], session.getUserName(userIds[UsersIndex.STORE_OWNER_2.ordinal()]), "massage", "massage");
+        Message message = session.readMessage(userIds[UsersIndex.STORE_OWNER_2.ordinal()]);
 
-        assertEquals("massage",message.getHeader());
-        String name= session.getUserName(userIds[UsersIndex.STORE_OWNER_2.ordinal()]);
-        assertEquals(name,message.getReceiverId());
+        assertEquals("massage", message.getHeader());
+        String name = session.getUserName(userIds[UsersIndex.STORE_OWNER_2.ordinal()]);
+        assertEquals(name, message.getReceiverId());
     }
+
     @Test
-    public void readMessage_NotValid()
-    {
-        session.sendMassageAdmin(userIds[UsersIndex.ADMIN.ordinal()], session.getUserName(userIds[UsersIndex.STORE_OWNER_2.ordinal()]), "massage","massage");
-        Exception exception= assertThrows(Exception.class ,()->session.readMessage(userIds[UsersIndex.STORE_OWNER_1.ordinal()]));
-        assertEquals("no unread messages",exception.getMessage());
+    public void readMessage_NotValid() {
+        session.sendMassageAdmin(userIds[UsersIndex.ADMIN.ordinal()], session.getUserName(userIds[UsersIndex.STORE_OWNER_2.ordinal()]), "massage", "massage");
+        Exception exception = assertThrows(Exception.class, () -> session.readMessage(userIds[UsersIndex.STORE_OWNER_1.ordinal()]));
+        assertEquals("no unread messages", exception.getMessage());
     }
 
+    @Test
+    public void purchaseCart_Valid() {
+        session.addToCart(userIds[UsersIndex.STORE_OWNER_2.ordinal()],
+                storeIds[StoresIndex.STORE_1.ordinal()], productIds[ProductsIndex.PRODUCT_1.ordinal()]);
+
+        double payedPrice = session.purchaseProductCart(userIds[UsersIndex.STORE_OWNER_2.ordinal()], "", "", "", "", "", "", "", "", "", new HashMap<>(), "");
+        assertEquals(products[ProductsIndex.PRODUCT_1.ordinal()][ProductInfo.PRICE.ordinal()],
+                payedPrice);
+        int quantity_after = session.getProductStockQuantity(productIds[ProductsIndex.PRODUCT_1.ordinal()]);
+        assertEquals(9, quantity_after);
+
+    }
+
+    @Test
+    public void purchaseCart_NotValid_try_purchase_deleteProduct() {
+        session.addProductToCart(userIds[UsersIndex.STORE_OWNER_2.ordinal()],
+                productIds[ProductsIndex.PRODUCT_1.ordinal()],
+                storeIds[StoresIndex.STORE_1.ordinal()]);
+        session.removeProduct(userIds[UsersIndex.STORE_OWNER_1.ordinal()],
+                storeIds[StoresIndex.STORE_1.ordinal()],
+                productIds[ProductsIndex.PRODUCT_1.ordinal()]);
+        double totalPrice = session.purchaseProductCart(userIds[UsersIndex.STORE_OWNER_2.ordinal()], "", "", "", "", "", "", "", "", "", new HashMap<>(), "");
+        assertEquals(0, totalPrice);
+        var failedProducts = session.getFailedProducts(
+                userIds[UsersIndex.STORE_OWNER_2.ordinal()],
+                storeIds[StoresIndex.STORE_1.ordinal()]);
+        assertEquals(1, failedProducts.size());
+        assertEquals(productIds[ProductsIndex.PRODUCT_1.ordinal()], failedProducts.get(0));
+    }
 
 }
