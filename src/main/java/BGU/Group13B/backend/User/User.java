@@ -51,7 +51,7 @@ public class User {
         this.messageRepository = SingletonCollection.getMessageRepository();
         this.userPermissionRepository = SingletonCollection.getUserPermissionRepository();
         UserPermissions userPermissions1 = userPermissionRepository.getUserPermission(userId);
-        if (userPermissions1 == null){
+        if (userPermissions1 == null) {
             userPermissions1 = new UserPermissions();
             userPermissionRepository.addUserPermission(userId, userPermissions1);
         }
@@ -297,11 +297,11 @@ public class User {
         return market.getStoreScore(storeId);
     }
 
-    public void purchaseCart(String address, String creditCardNumber, String creditCardMonth, String creditCardYear, String creditCardHolderFirstName,
+    public double purchaseCart(String address, String creditCardNumber, String creditCardMonth, String creditCardYear, String creditCardHolderFirstName,
                              String creditCardHolderLastName, String creditCardCcv, String id, String creditCardType,
                              HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
                              String/*store coupons*/ storeCoupon) throws PurchaseFailedException {
-        cart.purchaseCart(address, creditCardNumber, creditCardMonth, creditCardYear,
+        return cart.purchaseCart(address, creditCardNumber, creditCardMonth, creditCardYear,
                 creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType,
                 productsCoupons, storeCoupon);
     }
@@ -372,20 +372,26 @@ public class User {
     public void addToCart(int storeId, int productId) {
         cart.addProductToCart(storeId, productId);
     }
-    public void addPermission(int storeId, UserPermissions.StoreRole storeRole){
+
+    public void addPermission(int storeId, UserPermissions.StoreRole storeRole) {
         userPermissions.updateRoleInStore(storeId, storeRole);
     }
 
-    public void deletePermission(int storeId){
+    public void deletePermission(int storeId) {
         userPermissions.deletePermission(storeId);
     }
 
-    public UserPermissions getUserPermissions(){
+    public UserPermissions getUserPermissions() {
         return userPermissions;
     }
+
+
     public void removeBasket(int basketId){
-        cart.removeBasket(basketId);
+        cart.removeBasket(userId, basketId);
     }
 
 
+    public List<Integer> getFailedProducts(int storeId) {
+        return cart.getFailedProducts(storeId, userId);
+    }
 }

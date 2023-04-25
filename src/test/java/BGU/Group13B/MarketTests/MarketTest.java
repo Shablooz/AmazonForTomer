@@ -34,50 +34,50 @@ public class MarketTest {
     private static int productId5;
 
 
-
     @BeforeEach
     void setUp() {
 
-       productName1 = "Dell computer";
-       productName2 = "computer";
-       productName3 = "Gaming laptop";
-       productName4 = "Mac laptop";
-       productCategory1= "electronics";
-       productCategory2= "gaming";
-       productKeywords = List.of("computer", "laptop", "pc");
-       minPrice = 1000;
-       maxPrice = 3000;
-       market = new Market();
-       productRepository = SingletonCollection.getProductRepository();
-       storeRepository = SingletonCollection.getStoreRepository();
+        productName1 = "Dell computer";
+        productName2 = "computer";
+        productName3 = "Gaming laptop";
+        productName4 = "Mac laptop";
+        productCategory1 = "electronics";
+        productCategory2 = "gaming";
+        productKeywords = List.of("computer", "laptop", "pc");
+        minPrice = 1000;
+        maxPrice = 3000;
+        market = new Market();
+        productRepository = SingletonCollection.getProductRepository();
+        storeRepository = SingletonCollection.getStoreRepository();
 
-       try {
-           storeId1 = storeRepository.addStore(2,"Electronics store", "electronics");
-           productId1 = productRepository.addProduct(storeId1,"Dell computer","electronics",1000,50, "Good and stable laptop.");
-           storeId2 = storeRepository.addStore(2,"Electronics store", "electronics");
-           productId2 = productRepository.addProduct(storeId2,"HP computer","electronics",6000,50, "Good and stable pc.");
-           productId3 = productRepository.addProduct(storeId2,"Dell computer A12","electronics",2000,50, "Good and stable laptop.");
-           storeId3= storeRepository.addStore(2,"Electronics store", "electronics");
-           productId4 = productRepository.addProduct(storeId3,"Mac laptop","electronics devices",10000,50, "Good and stable .");
-           productId5 = productRepository.addProduct(storeId3,"Gaming laptop","gaming",10000,50, "Good and stable computer.");
+        try {
+            storeId1 = storeRepository.addStore(2, "Electronics store", "electronics");
+            productId1 = productRepository.addProduct(storeId1, "Dell computer", "electronics", 1000, 50, "Good and stable laptop.");
+            storeId2 = storeRepository.addStore(2, "Electronics store", "electronics");
+            productId2 = productRepository.addProduct(storeId2, "HP computer", "electronics", 6000, 50, "Good and stable pc.");
+            productId3 = productRepository.addProduct(storeId2, "Dell computer A12", "electronics", 2000, 50, "Good and stable laptop.");
+            storeId3 = storeRepository.addStore(2, "Electronics store", "electronics");
+            productId4 = productRepository.addProduct(storeId3, "Mac laptop", "electronics devices", 10000, 50, "Good and stable .");
+            productId5 = productRepository.addProduct(storeId3, "Gaming laptop", "gaming", 10000, 50, "Good and stable computer.");
 
 
-       }catch (Exception e) {
-           fail("Exception was thrown");
-       }
+        } catch (Exception e) {
+            fail("Exception was thrown");
+        }
 
     }
 
     public void deleteAllData() {
-        productRepository.removeStoreProduct(productId1,storeId1);
-        productRepository.removeStoreProduct(productId2,storeId2);
-        productRepository.removeStoreProduct(productId3,storeId2);
-        productRepository.removeStoreProduct(productId4,storeId3);
-        productRepository.removeStoreProduct(productId5,storeId3);
+        productRepository.removeStoreProduct(productId1, storeId1);
+        productRepository.removeStoreProduct(productId2, storeId2);
+        productRepository.removeStoreProduct(productId3, storeId2);
+        productRepository.removeStoreProduct(productId4, storeId3);
+        productRepository.removeStoreProduct(productId5, storeId3);
         storeRepository.removeStore(storeId1);
         storeRepository.removeStore(storeId2);
         storeRepository.removeStore(storeId3);
     }
+
     @AfterEach
     void tearDown() {
         deleteAllData();
@@ -86,9 +86,9 @@ public class MarketTest {
     @Test
     void searchProductByName() {
         try {
-            List<Product> products=market.searchProductByName(productName1);
+            List<Product> products = market.searchProductByName(productName1);
             assertEquals(2, products.size());
-            assertEquals(2, products.stream().filter(p->p.getName().contains(productName1)).count());
+            assertEquals(2, products.stream().filter(p -> p.getName().contains(productName1)).count());
 
         } catch (Exception e) {
             fail("Exception was thrown");
@@ -98,9 +98,9 @@ public class MarketTest {
     @Test
     void searchProductByCategory() {
         try {
-            List<Product> products=market.searchProductByCategory(productCategory1);
+            List<Product> products = market.searchProductByCategory(productCategory1);
             assertEquals(4, products.size());
-            assertEquals(4, products.stream().filter(p->p.getCategory().contains(productCategory1)).count());
+            assertEquals(4, products.stream().filter(p -> p.getCategory().contains(productCategory1)).count());
 
         } catch (Exception e) {
             fail("Exception was thrown");
@@ -121,9 +121,9 @@ public class MarketTest {
     @Test
     void searchProductByKeywords() {
         try {
-            List<Product> products=market.searchProductByKeywords(productKeywords);
+            List<Product> products = market.searchProductByKeywords(productKeywords);
             assertEquals(4, products.size());
-            assertEquals(4, products.stream().filter(p->checkIfContainsSomeKeywords(productKeywords,p.getDescription())).count());
+            assertEquals(4, products.stream().filter(p -> checkIfContainsSomeKeywords(productKeywords, p.getDescription())).count());
         } catch (Exception e) {
         }
     }
@@ -138,7 +138,7 @@ public class MarketTest {
             market.searchProductByName(productName2);
             List<Product> products = market.filterByPriceRange(0, 2000);
             assertEquals(2, products.size());
-            assertEquals(2, products.stream().filter(p->checkRange(minPrice,maxPrice,p.getPrice())).count());
+            assertEquals(2, products.stream().filter(p -> checkRange(minPrice, maxPrice, p.getPrice())).count());
 
         } catch (IllegalArgumentException e) {
             fail("Exception was thrown");
@@ -147,14 +147,14 @@ public class MarketTest {
 
     @Test
     void filterByProductRank_nonEmptyList() {
-         try {
-             market.searchProductByName(productName2);
-             List<Product> products = market.filterByProductRank(0, 5);
-             assertEquals(3, products.size());
-             assertEquals(3, products.stream().filter(p->checkRange(0,5,p.getRank())).count());
-          } catch (Exception e) {
-             fail("Exception was thrown");
-         }
+        try {
+            market.searchProductByName(productName2);
+            List<Product> products = market.filterByProductRank(0, 5);
+            assertEquals(3, products.size());
+            assertEquals(3, products.stream().filter(p -> checkRange(0, 5, p.getRank())).count());
+        } catch (Exception e) {
+            fail("Exception was thrown");
+        }
     }
 
     @Test
@@ -163,7 +163,7 @@ public class MarketTest {
             market.searchProductByName(productName2);
             List<Product> products = market.filterByProductRank(5, 5);
             assertEquals(0, products.size());
-            assertEquals(0, products.stream().filter(p->checkRange(5,5,p.getRank())).count());
+            assertEquals(0, products.stream().filter(p -> checkRange(5, 5, p.getRank())).count());
         } catch (Exception e) {
             fail("Exception was thrown");
         }
@@ -175,7 +175,7 @@ public class MarketTest {
             market.searchProductByName(productName4);
             List<Product> products = market.filterByCategory(productCategory2);
             assertEquals(0, products.size());
-            assertEquals(0, products.stream().filter(p->p.getCategory().contains(productCategory2)).count());
+            assertEquals(0, products.stream().filter(p -> p.getCategory().contains(productCategory2)).count());
         } catch (Exception e) {
             fail();
         }
@@ -187,7 +187,7 @@ public class MarketTest {
             market.searchProductByName(productName3);
             List<Product> products = market.filterByCategory(productCategory2);
             assertEquals(1, products.size());
-            assertEquals(1, products.stream().filter(p->p.getCategory().contains(productCategory2)).count());
+            assertEquals(1, products.stream().filter(p -> p.getCategory().contains(productCategory2)).count());
         } catch (Exception e) {
             fail();
         }
@@ -199,7 +199,7 @@ public class MarketTest {
             market.searchProductByName(productName2);
             List<Product> products = market.filterByStoreRank(0, 5);
             assertEquals(3, products.size());
-            assertEquals(3, products.stream().filter(p->checkRange(0,5,p.getRank())).count());
+            assertEquals(3, products.stream().filter(p -> checkRange(0, 5, p.getRank())).count());
         } catch (Exception e) {
             fail("Exception was thrown");
         }
@@ -211,7 +211,7 @@ public class MarketTest {
             market.searchProductByName(productName2);
             List<Product> products = market.filterByStoreRank(5, 5);
             assertEquals(0, products.size());
-            assertEquals(0, products.stream().filter(p->checkRange(5,5,p.getRank())).count());
+            assertEquals(0, products.stream().filter(p -> checkRange(5, 5, p.getRank())).count());
         } catch (Exception e) {
             fail("Exception was thrown");
         }

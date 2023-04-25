@@ -23,6 +23,7 @@ import BGU.Group13B.backend.Repositories.Implementations.UserPemissionRepository
 import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepositoryAsHashmap;
 import BGU.Group13B.backend.Repositories.Interfaces.*;
 import BGU.Group13B.backend.System.Searcher;
+import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.storePackage.AlertManager;
 import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
@@ -31,6 +32,7 @@ import BGU.Group13B.service.callbacks.AddToUserCart;
 import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
 
 import java.io.IOException;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
@@ -83,7 +85,8 @@ public class SingletonCollection {
     private static Searcher searcher;
     private static Market market;
 
-    private static final String LOG_FILE_NAME = "logger_output.txt";
+    private static final String LOG_FILE_NAME = "info_logger.txt";
+    private static final String ERROR_LOG_FILE_NAME = "error_logger.txt";
 
     //static initializer
     static {
@@ -112,7 +115,7 @@ public class SingletonCollection {
 
         //adapters
         deliveryAdapter = null; //TODO
-        paymentAdapter = null;  //TODO
+        paymentAdapter = (address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCVV, id, creditCardType, successfulProducts, failedProducts, totalAmount) -> true;  //TODO
 
 
         //additional classes
@@ -147,7 +150,6 @@ public class SingletonCollection {
 
         //adapters
         deliveryAdapter = null; //TODO
-        paymentAdapter = null;  //TODO
 
 
         //additional classes
@@ -278,9 +280,9 @@ public class SingletonCollection {
     /**
      * <h1>LOGGER</h1>
      */
-    public static void setFileHandler(Logger LOGGER) {
+    public static void setFileHandler(Logger LOGGER, boolean info) {
         try {
-            FileHandler fileHandler = new FileHandler(LOG_FILE_NAME);
+            FileHandler fileHandler = new FileHandler(info ? LOG_FILE_NAME : ERROR_LOG_FILE_NAME);
             LOGGER.addHandler(fileHandler);
         } catch (IOException e) {
             System.out.println("Error setting the logger handler: " + e.getMessage());
@@ -314,5 +316,8 @@ public class SingletonCollection {
         storePermissionRepository.reset();*/
     }
 
+    public static void setPaymentFail() {
+        paymentAdapter = null;
+    }
 }
 

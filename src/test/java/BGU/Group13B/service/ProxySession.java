@@ -31,21 +31,16 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void addProductToCart(int userId, int productId, int storeId) {
-        if (realSession != null)
-            realSession.addProductToCart(userId, productId, storeId);
-    }
-
-    @Override
     public void addToCart(int userId, int storeId, int productId) {
         if (realSession != null)
             realSession.addToCart(userId, storeId, productId);
     }
 
     @Override
-    public void purchaseProductCart(int userId, String address, String creditCardNumber, String creditCardMonth, String creditCardYear, String creditCardHolderFirstName, String creditCardHolderLastName, String creditCardCcv, String id, String creditCardType, HashMap<Integer, String> productsCoupons, String storeCoupon) {
+    public double purchaseProductCart(int userId, String address, String creditCardNumber, String creditCardMonth, String creditCardYear, String creditCardHolderFirstName, String creditCardHolderLastName, String creditCardCcv, String id, String creditCardType, HashMap<Integer, String> productsCoupons, String storeCoupon) {
         if (realSession != null)
-            realSession.purchaseProductCart(userId, address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType, productsCoupons, storeCoupon);
+            return realSession.purchaseProductCart(userId, address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType, productsCoupons, storeCoupon);
+        return -1;
     }
 
 
@@ -520,6 +515,13 @@ public class ProxySession implements ISession {
     public void exitSystemAsGuest(int userId) {
         if (realSession != null)
             realSession.exitSystemAsGuest(userId);
+    }
+
+    @Override
+    public List<Integer> getFailedProducts(int userId, int storeId) {
+        if(realSession != null)
+            return realSession.getFailedProducts(userId, storeId);
+        return new ArrayList<>();
     }
 
     @Override

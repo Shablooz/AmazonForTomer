@@ -1,6 +1,7 @@
 package BGU.Group13B.service;
 
 import BGU.Group13B.backend.System.SystemInfo;
+import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
@@ -54,8 +55,9 @@ public interface ISession {
      * @param creditCardCcv             the credit card ccv
      * @param id                        the id of the card owner
      * @param creditCardType            the credit card type
+     * @return total price paid by the user
      */
-    void purchaseProductCart(int userId, String address, String creditCardNumber, String creditCardMonth,
+    double purchaseProductCart(int userId, String address, String creditCardNumber, String creditCardMonth,
                              String creditCardYear, String creditCardHolderFirstName,
                              String creditCardHolderLastName, String creditCardCcv, String id,
                              String creditCardType, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
@@ -248,8 +250,8 @@ public interface ISession {
      * @param userId    this user will become the founder of the store
      * @param storeName doesn't have to be unique
      * @param category  the store category, currently a free text
-     * @return          the store id
-     * */
+     * @return the store id
+     */
     int addStore(int userId, String storeName, String category);
 
 
@@ -313,7 +315,7 @@ public interface ISession {
 
 
     /**
-     * @param userId     the user id
+     * @param userId the user id
      * @return the message
      */
     public Message readMessage(int userId);
@@ -584,7 +586,7 @@ public interface ISession {
      * @param userId the user id
      *               to turn the user from member into admin put 1, to turn it from admin into a member put 2
      */
-    void setUserStatus(int admin_id,int userId, int newStatus);
+    void setUserStatus(int admin_id, int userId, int newStatus);
 
     /**
      * #30
@@ -1005,5 +1007,20 @@ public interface ISession {
      *               as a guess u can exit the system and delete all ur related data
      */
     void exitSystemAsGuest(int userId);
+
+    /**
+     * @param userId the user id
+     * @param storeId the store id
+     * @return the list of the products that the user failed buy from the store
+     * */
+    List<Integer> getFailedProducts(int userId, int storeId);
+
+    /**
+     * @param userId the user id
+     * @param storeId the store id
+     * @param productId the product id
+     * @throws Exception if the product is not in the store
+     *
+     * */
 
 }

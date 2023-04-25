@@ -2,10 +2,7 @@ package BGU.Group13B.service;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
 import BGU.Group13B.backend.System.SystemInfo;
-import BGU.Group13B.backend.User.Message;
-import BGU.Group13B.backend.User.PurchaseFailedException;
-import BGU.Group13B.backend.User.User;
-import BGU.Group13B.backend.User.UserPermissions;
+import BGU.Group13B.backend.User.*;
 import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
@@ -29,10 +26,12 @@ import java.util.logging.Logger;
 public class Session implements ISession {
     private final Market market;
     private final IUserRepository userRepository = SingletonCollection.getUserRepository();
-    private static final Logger LOGGER = Logger.getLogger(Session.class.getName());
-
+    private static final Logger LOGGER_INFO = Logger.getLogger(Session.class.getName());
+    private static final Logger LOGGER_ERROR = Logger.getLogger(Session.class.getName());
     static {
-        SingletonCollection.setFileHandler(LOGGER);
+        SingletonCollection.setFileHandler(LOGGER_INFO, true);
+        SingletonCollection.setFileHandler(LOGGER_ERROR, false);
+
     }
 
     IUserRepository userRepositoryAsHashmap;
@@ -62,6 +61,7 @@ public class Session implements ISession {
             //TODO: handle exception
             return -1;
         }
+
     }
 
     @Override
@@ -70,14 +70,14 @@ public class Session implements ISession {
     }
 
     @Override
-    public void purchaseProductCart(int userId, String address, String creditCardNumber,
+    public double purchaseProductCart(int userId, String address, String creditCardNumber,
                                     String creditCardMonth, String creditCardYear,
                                     String creditCardHolderFirstName, String creditCardHolderLastName,
                                     String creditCardCcv, String id, String creditCardType,
                                     HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
                                     String/*store coupons*/ storeCoupon) {
         try {
-            userRepository.getUser(userId).
+            return userRepository.getUser(userId).
                     purchaseCart(address, creditCardNumber, creditCardMonth,
                             creditCardYear, creditCardHolderFirstName, creditCardHolderLastName,
                             creditCardCcv, id, creditCardType, productsCoupons, storeCoupon);
@@ -201,7 +201,7 @@ public class Session implements ISession {
             synchronized (user) {
                 user.login(username, password, answer1, answer2, answer3);
                 /*example of use*/
-                LOGGER.info("user " + username + " logged in");
+                LOGGER_INFO.info("user " + username + " logged in");
                 //removes the current guest profile to swap to the existing member one
                 userRepositoryAsHashmap.removeUser(userID);
                 //gets the new id - of the user we're logging into
@@ -707,6 +707,11 @@ public class Session implements ISession {
     }
 
     @Override
+    public List<Integer> getFailedProducts(int userId, int storeId) {
+        return userRepository.getUser(userId).getFailedProducts(storeId);
+    }
+
+    @Override
     public void allowPurchasePolicyConflicts(int userId, int storeId) {
         try {
             market.allowPurchasePolicyConflicts(userId, storeId);
@@ -909,5 +914,6 @@ public class Session implements ISession {
             //TODO: handle exception
         }
     }
+
 
 }

@@ -16,9 +16,7 @@ public class BasketRepositoryAsHashMap implements IBasketRepository {
     }
 
     public Set<Basket> getUserBaskets(int userId) {
-        if (!baskets.containsKey(userId))
-            baskets.put(userId, ConcurrentHashMap.newKeySet());
-        return baskets.get(userId);
+        return baskets.getOrDefault(userId, ConcurrentHashMap.newKeySet());
     }
 
     public void removeUserBasket(int userId, int storeId) {
@@ -28,12 +26,12 @@ public class BasketRepositoryAsHashMap implements IBasketRepository {
     }
 
     public Basket addUserBasket(int userId, int storeId) {
-        if (baskets.putIfAbsent(userId, ConcurrentHashMap.newKeySet()) != null) {
+        if (baskets.putIfAbsent(userId, ConcurrentHashMap.newKeySet()) == null) {
             Basket basket = new Basket(userId, storeId);
             baskets.get(userId).add(basket);
             return basket;
         }
-        return null;
+        throw new IllegalArgumentException("User already has a basket associated with the storeId: " + storeId);
     }
 
 }
