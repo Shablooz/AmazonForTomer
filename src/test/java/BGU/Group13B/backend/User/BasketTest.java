@@ -4,11 +4,10 @@ import BGU.Group13B.backend.Repositories.Implementations.BasketProductRepository
 import BGU.Group13B.backend.Repositories.Interfaces.IBasketProductRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductHistoryRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
-import BGU.Group13B.backend.storePackage.Discounts.VisibleDiscount;
 import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
-import BGU.Group13B.service.SingletonCollection;
-import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
+import BGU.Group13B.frontEnd.service.SingletonCollection;
+import BGU.Group13B.frontEnd.service.callbacks.CalculatePriceOfBasket;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 

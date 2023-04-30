@@ -2,8 +2,8 @@ package BGU.Group13B.backend.User;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IBasketRepository;
 import BGU.Group13B.backend.storePackage.Product;
-import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
-import BGU.Group13B.service.SingletonCollection;
+import BGU.Group13B.frontEnd.service.callbacks.CalculatePriceOfBasket;
+import BGU.Group13B.frontEnd.service.SingletonCollection;
 
 import java.util.HashMap;
 import java.util.NoSuchElementException;

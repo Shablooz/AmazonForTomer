@@ -2,9 +2,8 @@ package BGU.Group13B.backend.Repositories.Implementations.PurchaseHistoryReposit
 
 import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
 import BGU.Group13B.backend.User.PurchaseHistory;
-import org.springframework.data.jpa.repository.JpaRepository;
 
-public class PurchaseHistoryRepositoryAsJPA implements IPurchaseHistoryRepository {
+/*public class PurchaseHistoryRepositoryAsJPA implements IPurchaseHistoryRepository {
 
     private final JpaRepository<PurchaseHistory, Integer> repo;
 
@@ -26,4 +25,4 @@ public class PurchaseHistoryRepositoryAsJPA implements IPurchaseHistoryRepositor
     public void reset() {
 
     }
-}
+}*/

@@ -7,10 +7,11 @@ import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
-import BGU.Group13B.service.SingletonCollection;
-import BGU.Group13B.service.callbacks.AddToUserCart;
-import BGU.Group13B.service.info.ProductInfo;
-import BGU.Group13B.service.info.StoreInfo;
+import BGU.Group13B.frontEnd.service.SingletonCollection;
+import BGU.Group13B.frontEnd.service.callbacks.AddToUserCart;
+import BGU.Group13B.frontEnd.service.info.ProductInfo;
+import BGU.Group13B.frontEnd.service.info.StoreInfo;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 
@@ -19,13 +20,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
-
 public class Market {
     private final IStoreRepository storeRepository;
     private Searcher searcher; //inject in the loading of the system
 
     private final AddToUserCart addToUserCart;
-
     public Market() {
         SingletonCollection.setCalculatePriceOfBasket(this::calculatePriceOfBasket);
 

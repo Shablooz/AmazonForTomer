@@ -1,14 +1,15 @@
 package BGU.Group13B.service;
 
+import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.Store;
-import org.springframework.data.util.Pair;
-import BGU.Group13B.service.info.ProductInfo;
-import BGU.Group13B.service.info.StoreInfo;
+import BGU.Group13B.frontEnd.service.ISession;
+import BGU.Group13B.frontEnd.service.info.ProductInfo;
+import BGU.Group13B.frontEnd.service.info.StoreInfo;
 
 import java.time.LocalDateTime;
 

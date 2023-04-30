@@ -1,4 +1,4 @@
-package BGU.Group13B.service.info;
+package BGU.Group13B.frontEnd.service.info;
 
 import BGU.Group13B.backend.storePackage.Product;
 

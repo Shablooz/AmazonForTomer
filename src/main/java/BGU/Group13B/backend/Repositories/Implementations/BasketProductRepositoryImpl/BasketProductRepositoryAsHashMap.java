@@ -1,18 +1,16 @@
 package BGU.Group13B.backend.Repositories.Implementations.BasketProductRepositoryImpl;
 
+import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.Repositories.Interfaces.IBasketProductRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
 import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.storePackage.Product;
-import BGU.Group13B.service.SingletonCollection;
-import org.springframework.data.util.Pair;
+import BGU.Group13B.frontEnd.service.SingletonCollection;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 public class BasketProductRepositoryAsHashMap implements IBasketProductRepository {
     private final ConcurrentHashMap<Pair<Integer/*storeId*/, Integer/*userId*/>, Optional<List<BasketProduct>>> basketProducts;

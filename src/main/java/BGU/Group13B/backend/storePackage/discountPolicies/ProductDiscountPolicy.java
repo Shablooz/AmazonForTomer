@@ -3,7 +3,7 @@ package BGU.Group13B.backend.storePackage.discountPolicies;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductDiscountsRepository;
 import BGU.Group13B.backend.storePackage.DiscountPolicy;
 import BGU.Group13B.backend.storePackage.Discounts.Discount;
-import BGU.Group13B.service.SingletonCollection;
+import BGU.Group13B.frontEnd.service.SingletonCollection;
 
 import java.time.LocalDateTime;
 
