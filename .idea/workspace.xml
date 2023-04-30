@@ -4,51 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5ac43427-cf4f-4815-b259-3dcd3c1ae58a" name="Changes" comment="Fixing main">
-      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Pair.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/frontEnd/AppConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/frontEnd/LoginView.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/frontEnd/RegisterView.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/frontEnd/Service_test.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/frontEnd/View/HomeView.java" afterDir="false" />
+    <list default="true" id="5ac43427-cf4f-4815-b259-3dcd3c1ae58a" name="Changes" comment="save work">
+      <change afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/frontEnd/service/Response.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/frontEnd/Application.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/AcutionRepositoryImpl/AuctionRepositoryAsHashMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/AcutionRepositoryImpl/AuctionRepositoryAsHashMap.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/BasketProductRepositoryImpl/BasketProductRepositoryAsHashMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/BasketProductRepositoryImpl/BasketProductRepositoryAsHashMap.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductRepositoryImpl/ProductRepositoryAsJPA.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/ProductRepositoryImpl/ProductRepositoryAsJPA.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/PurchaseHistoryRepositoryImpl/PurchaseHistoryRepositoryAsJPA.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/PurchaseHistoryRepositoryImpl/PurchaseHistoryRepositoryAsJPA.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/StoreRepositoryImpl/StoreRepositoryAsJPA.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Implementations/StoreRepositoryImpl/StoreRepositoryAsJPA.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IAuctionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IAuctionRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IBasketRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/Repositories/Interfaces/IBasketRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/Basket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/Basket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/Cart.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/Cart.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/UserPermissions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/User/UserPermissions.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Market.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Market.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Product.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Store.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/Store.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/discountPolicies/ProductDiscountPolicy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/discountPolicies/ProductDiscountPolicy.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/discountPolicies/StoreDiscountPolicy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/backend/storePackage/discountPolicies/StoreDiscountPolicy.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/ISession.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/frontEnd/service/ISession.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/Session.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/frontEnd/service/Session.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/SingletonCollection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/frontEnd/service/SingletonCollection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/callbacks/AddToUserCart.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/frontEnd/service/callbacks/AddToUserCart.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/callbacks/CalculatePriceOfBasket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/frontEnd/service/callbacks/CalculatePriceOfBasket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/info/ProductInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/frontEnd/service/info/ProductInfo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/service/info/StoreInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/frontEnd/service/info/StoreInfo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/MarketTests/MarketTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/MarketTests/MarketTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/Repositories/Implementations/AcutionRepositoryImpl/AuctionRepositoryAsHashMapTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/Repositories/Implementations/AcutionRepositoryImpl/AuctionRepositoryAsHashMapTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/Repositories/Interfaces/IStoreMessagesRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/Repositories/Interfaces/IStoreMessagesRepositoryTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/Repositories/Interfaces/IStoreRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/Repositories/Interfaces/IStoreRepositoryTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/User/BasketTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/User/BasketTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/User/CartTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/User/CartTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/User/UserTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/User/UserTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/storePackage/StoreManagementTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/storePackage/StoreManagementTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/storePackage/StoreTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/backend/storePackage/StoreTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/service/Driver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/service/Driver.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/service/ProjectTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/service/ProjectTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/BGU/Group13B/service/ProxySession.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/BGU/Group13B/service/ProxySession.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/frontEnd/LoginView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/frontEnd/LoginView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/frontEnd/RegisterView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/frontEnd/RegisterView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BGU/Group13B/frontEnd/View/HomeView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BGU/Group13B/frontEnd/View/HomeView.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -229,9 +192,16 @@
       <workItem from="1682454979304" duration="387000" />
       <workItem from="1682456869660" duration="19099000" />
       <workItem from="1682620368266" duration="101000" />
-      <workItem from="1682843334000" duration="7790000" />
+      <workItem from="1682843334000" duration="18447000" />
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="save work">
+      <created>1682867442903</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1682867442903</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -263,7 +233,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="UnitTests #22 tests" />
     <MESSAGE value="Fixing main" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixing main" />
+    <MESSAGE value="save work" />
+    <option name="LAST_COMMIT_MESSAGE" value="save work" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -319,13 +290,18 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/BGU/Group13B/frontEnd/LoginView.java</url>
-          <line>40</line>
+          <line>41</line>
           <option name="timeStamp" value="22" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/BGU/Group13B/frontEnd/RegisterView.java</url>
-          <line>40</line>
+          <line>45</line>
           <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/BGU/Group13B/frontEnd/service/Response.java</url>
+          <line>114</line>
+          <option name="timeStamp" value="24" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

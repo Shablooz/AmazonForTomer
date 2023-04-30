@@ -35,6 +35,7 @@ public class LoginView extends VerticalLayout {
         // Use UI.access() to access the VaadinSession state on the UI thread
         UI.getCurrent().access(() -> {
             VaadinSession session = VaadinSession.getCurrent();
+            session.getSession().getId();
             RegisterView.setGuestId(_guestId[0]);
             // You can initialise any data required for the connected UI components here.
             loginButton.addClickListener(e -> {
