@@ -1,10 +1,11 @@
-package bgu.group13b;
+package BGU.Group13B.frontend;
 
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 /**
  * The entry point of the Spring Boot application.
@@ -14,6 +15,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *
  */
 @SpringBootApplication
+@ComponentScan(basePackages = "BGU.Group13B")
 @Theme(value = "trading-system", variant = Lumo.DARK)
 public class Application implements AppShellConfigurator {
 
