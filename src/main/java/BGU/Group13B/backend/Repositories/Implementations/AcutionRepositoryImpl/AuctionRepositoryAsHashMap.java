@@ -4,8 +4,8 @@ import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.Repositories.Interfaces.IAuctionRepository;
 import BGU.Group13B.backend.storePackage.PublicAuction;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
-import BGU.Group13B.frontEnd.service.SingletonCollection;
-import BGU.Group13B.frontEnd.service.callbacks.AddToUserCart;
+import BGU.Group13B.service.SingletonCollection;
+import BGU.Group13B.service.callbacks.AddToUserCart;
 
 
 import java.time.Duration;

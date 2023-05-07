@@ -6,8 +6,8 @@ import BGU.Group13B.backend.User.UserPermissions;
 import BGU.Group13B.backend.storePackage.permissions.ChangePermissionException;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.permissions.StorePermission;
-import BGU.Group13B.frontEnd.service.SingletonCollection;
-import BGU.Group13B.frontEnd.service.callbacks.AddToUserCart;
+import BGU.Group13B.service.SingletonCollection;
+import BGU.Group13B.service.callbacks.AddToUserCart;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 

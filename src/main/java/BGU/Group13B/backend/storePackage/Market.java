@@ -7,11 +7,10 @@ import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
-import BGU.Group13B.frontEnd.service.SingletonCollection;
-import BGU.Group13B.frontEnd.service.callbacks.AddToUserCart;
-import BGU.Group13B.frontEnd.service.info.ProductInfo;
-import BGU.Group13B.frontEnd.service.info.StoreInfo;
-import org.springframework.beans.factory.annotation.Autowired;
+import BGU.Group13B.service.SingletonCollection;
+import BGU.Group13B.service.callbacks.AddToUserCart;
+import BGU.Group13B.service.info.ProductInfo;
+import BGU.Group13B.service.info.StoreInfo;
 
 import java.time.LocalDateTime;
 

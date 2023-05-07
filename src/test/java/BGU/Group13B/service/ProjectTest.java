@@ -1,8 +1,6 @@
 package BGU.Group13B.service;
 
 import BGU.Group13B.backend.Pair;
-import BGU.Group13B.frontEnd.service.ISession;
-import BGU.Group13B.frontEnd.service.SingletonCollection;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 

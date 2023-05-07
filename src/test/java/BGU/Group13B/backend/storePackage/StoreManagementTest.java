@@ -2,7 +2,7 @@ package BGU.Group13B.backend.storePackage;
 
 import BGU.Group13B.backend.Repositories.Interfaces.*;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
-import BGU.Group13B.frontEnd.service.SingletonCollection;
+import BGU.Group13B.service.SingletonCollection;
 import org.junit.jupiter.api.*;
 
 import java.util.concurrent.atomic.AtomicBoolean;

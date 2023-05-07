@@ -1,7 +1,7 @@
 package BGU.Group13B.backend.Repositories.Interfaces;
 
 import BGU.Group13B.backend.storePackage.Store;
-import BGU.Group13B.frontEnd.service.SingletonCollection;
+import BGU.Group13B.service.SingletonCollection;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;

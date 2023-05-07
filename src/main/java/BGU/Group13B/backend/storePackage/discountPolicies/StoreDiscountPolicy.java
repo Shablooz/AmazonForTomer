@@ -4,7 +4,7 @@ import BGU.Group13B.backend.Repositories.Interfaces.IStoreDiscountsRepository;
 import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.storePackage.DiscountPolicy;
 import BGU.Group13B.backend.storePackage.Discounts.Discount;
-import BGU.Group13B.frontEnd.service.SingletonCollection;
+import BGU.Group13B.service.SingletonCollection;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.ConcurrentLinkedQueue;

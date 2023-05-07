@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 import BGU.Group13B.backend.Repositories.Interfaces.IRepositoryReview;
 import BGU.Group13B.backend.storePackage.discountPolicies.ProductDiscountPolicy;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
-import BGU.Group13B.frontEnd.service.SingletonCollection;
-import BGU.Group13B.frontEnd.service.info.ProductInfo;
+import BGU.Group13B.service.SingletonCollection;
+import BGU.Group13B.service.info.ProductInfo;
 
 public class Product {
 

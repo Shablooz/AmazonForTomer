@@ -1,7 +1,7 @@
 package BGU.Group13B.backend.Repositories.Implementations.AcutionRepositoryImpl;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IAuctionRepository;
-import BGU.Group13B.frontEnd.service.callbacks.AddToUserCart;
+import BGU.Group13B.service.callbacks.AddToUserCart;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

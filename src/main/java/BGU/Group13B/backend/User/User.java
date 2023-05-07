@@ -8,7 +8,7 @@ import BGU.Group13B.backend.Repositories.Interfaces.IUserPermissionRepository;
 import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
-import BGU.Group13B.frontEnd.service.SingletonCollection;
+import BGU.Group13B.service.SingletonCollection;
 //eyal import
 import java.util.HashMap;
 import java.util.List;

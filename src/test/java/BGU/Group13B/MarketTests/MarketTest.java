@@ -3,7 +3,7 @@ package BGU.Group13B.MarketTests;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
 import BGU.Group13B.backend.storePackage.*;
-import BGU.Group13B.frontEnd.service.SingletonCollection;
+import BGU.Group13B.service.SingletonCollection;
 import org.junit.jupiter.api.*;
 
 import java.util.List;

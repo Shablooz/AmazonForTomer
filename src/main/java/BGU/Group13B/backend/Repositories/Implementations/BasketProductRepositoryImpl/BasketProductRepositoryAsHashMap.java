@@ -5,7 +5,7 @@ import BGU.Group13B.backend.Repositories.Interfaces.IBasketProductRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
 import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.storePackage.Product;
-import BGU.Group13B.frontEnd.service.SingletonCollection;
+import BGU.Group13B.service.SingletonCollection;
 
 import java.util.LinkedList;
 import java.util.List;
