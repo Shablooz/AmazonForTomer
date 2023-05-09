@@ -525,6 +525,13 @@ public class ProxySession implements ISession {
     }
 
     @Override
+    public boolean isUserLogged(int userId) {
+        if (realSession != null)
+            return realSession.isUserLogged(userId);
+        return false;
+    }
+
+    @Override
     public void allowPurchasePolicyConflicts(int userId, int storeId) {
         if (realSession != null)
             realSession.allowPurchasePolicyConflicts(userId, storeId);
