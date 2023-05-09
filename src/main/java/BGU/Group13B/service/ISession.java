@@ -264,9 +264,6 @@ public interface ISession {
      */
     void addProductToCart(int userId, int productId, int storeId);
 
-
-    void getUserPurchaseHistory(int userId);
-
     /**
      * [#28]
      *
@@ -1028,4 +1025,11 @@ public interface ISession {
      * @return weather the user is logged or not
      */
     boolean isUserLogged(int userId);
+
+    /**
+     * @param userId the user id
+     * @return the user's purchase history
+     * @throws Exception
+     */
+    Response<String> getUserPurchaseHistory(int userId) throws Exception;
 }

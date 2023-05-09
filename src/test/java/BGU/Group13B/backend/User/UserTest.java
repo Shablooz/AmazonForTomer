@@ -1,11 +1,17 @@
 package BGU.Group13B.backend.User;
 
+import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
+import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
 import BGU.Group13B.service.SingletonCollection;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 
 class UserTest {
 
@@ -16,6 +22,9 @@ class UserTest {
     private User user5;
 
     private IUserRepository userRepository = SingletonCollection.getUserRepository();
+    private IPurchaseHistoryRepository purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
+
+    private IStoreRepository storeRepository= SingletonCollection.getStoreRepository();
 
     private final String goodUsername1 = "goodUsername1";
     private final String goodUsername2 = "greatname";
@@ -185,6 +194,32 @@ class UserTest {
         Assertions.assertFalse(user2.SecurityAnswer1Exists());
         Assertions.assertFalse(user2.SecurityAnswer3Exists());
         Assertions.assertTrue(user2.SecurityAnswer2Exists());
+    }
+
+    @Test
+    void purchaseUserHistory(){
+        user1.register(goodUsername1, goodPassword1, goodEmail1, "yellow", "", "");
+        user1.login(goodUsername1, goodPassword1, "yellow", "", "");
+        int storeId1 = SingletonCollection.getStoreRepository().addStore(user2.getUserId(), "Electronics store", "electronics");
+        int productId1 = SingletonCollection.getProductRepository().addProduct(storeId1, "Dell computer", "electronics", 1000, 50, "Good and stable laptop.");
+        int productId2 = SingletonCollection.getProductRepository().addProduct(storeId1, "HP computer", "electronics", 6000, 0, "Good and stable pc.");
+        //int productId3 = SingletonCollection.getProductRepository().addProduct(storeId1, "Dell computer A12", "electronics", 2000, 1, "Good and stable laptop.");
+        purchaseHistoryRepository.addPurchase(user1.getUserId(), storeId1, Arrays.asList(productId1,productId2), Arrays.asList(1,2), 13000);
+
+
+
+        Assertions.assertEquals(3,user1.getPurchaseHistory().size());
+        Assertions.assertEquals(3,user2.getPurchaseHistory().size());
+        Assertions.assertEquals(3,user3.getPurchaseHistory().size());
+        Assertions.assertEquals(1,user1.getPurchaseHistory().get(0).getPurchaseId());
+        Assertions.assertEquals(2,user1.getPurchaseHistory().get(1).getPurchaseId());
+        Assertions.assertEquals(3,user1.getPurchaseHistory().get(2).getPurchaseId());
+        Assertions.assertEquals(1,user2.getPurchaseHistory().get(0).getPurchaseId());
+        Assertions.assertEquals(2,user2.getPurchaseHistory().get(1).getPurchaseId());
+        Assertions.assertEquals(3,user2.getPurchaseHistory().get(2).getPurchaseId());
+        Assertions.assertEquals(1,user3.getPurchaseHistory().get(0).getPurchaseId());
+        Assertions.assertEquals(2,user3.getPurchaseHistory().get(1).getPurchaseId());
+        Assertions.assertEquals(3,user3.getPurchaseHistory().get(2).getPurchaseId());
     }
 
 

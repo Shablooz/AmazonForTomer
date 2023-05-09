@@ -394,4 +394,8 @@ public class User {
     public List<Integer> getFailedProducts(int storeId) {
         return cart.getFailedProducts(storeId, userId);
     }
+
+    public String getPurchaseHistory() {
+       return purchaseHistoryRepository.getAllPurchases(userId);
+    }
 }

@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import static BGU.Group13B.service.Response.Status.FAILURE;
+import static BGU.Group13B.service.Response.Status.SUCCESS;
+
 /**
  * IMPORTANT need to initialize the session AFTER loading first user (id = 1) from database
  */
@@ -42,7 +45,7 @@ public class Session implements ISession {
 
     //IMPORTANT need to initialize the session AFTER loading first user (id = 1) from database
 
-    public Session(){
+    public Session() {
         this(new Market());
     }
 
@@ -252,12 +255,6 @@ public class Session implements ISession {
         } catch (Exception e) {
             //TODO: handle exception
         }
-    }
-
-
-    @Override
-    public void getUserPurchaseHistory(int userId) {
-        //TODO: implement
     }
 
     public void openComplaint(int userId, String header, String complaint) {
@@ -945,6 +942,22 @@ public class Session implements ISession {
     public boolean isUserLogged(int userId) {
         return userRepositoryAsHashmap.getUser(userId).isLoggedIn();
     }
+
+    @Override
+    public Response<String> getUserPurchaseHistory(int userId) throws Exception {
+        try {
+            Response.Builder<String> builder = new Response.Builder<String>().data(userRepositoryAsHashmap.getUser(userId).getPurchaseHistory());
+            builder.message("User purchase history");
+            builder.status(SUCCESS);
+            return builder.build();
+        } catch (Exception e) {
+            Response.Builder<String> builder = new Response.Builder<String>().data(null);
+            builder.message("failed to get user purchase history");
+            builder.status(FAILURE);
+            return builder.build();
+        }
+    }
+
 
 
 

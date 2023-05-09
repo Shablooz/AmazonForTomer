@@ -1,9 +1,18 @@
 package BGU.Group13B.backend.Repositories.Interfaces;
 
+import BGU.Group13B.backend.User.PurchaseHistory;
+
+import java.util.List;
+
 public interface IPurchaseHistoryRepository {
 
-    boolean isPurchase(int userId, int storeId, int productId); //TODO:eden need to implement - return true if the user purchased the product from the store
-    boolean isPurchaseFromStore(int userId, int storeId); //TODO:eden need to implement -return true if the user purchased from the store
+    boolean isPurchase(int userId, int storeId, int productId);
+
+    boolean isPurchaseFromStore(int userId, int storeId);
+
+    String getAllPurchases(int userId);
+
+    void addPurchase(int userId, int storeId, List<Integer> products, List<Integer> amounts, double price);
 
     void reset();
 }
