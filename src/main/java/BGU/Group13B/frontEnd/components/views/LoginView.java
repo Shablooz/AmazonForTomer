@@ -1,5 +1,6 @@
 package BGU.Group13B.frontEnd.components.views;
 
+import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.service.Session;
 import com.vaadin.flow.component.Tag;
 
@@ -22,7 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @PageTitle("Login")
 public class LoginView extends VerticalLayout {
 
-
+    private final SessionToIdMapper sessionToIdMapper = SessionToIdMapper.getInstance();
     private final TextField username = new TextField("Username");
 
     private final PasswordField password = new PasswordField("Password");
@@ -31,7 +32,12 @@ public class LoginView extends VerticalLayout {
 
     @Autowired
     public LoginView(Session session) {
+        //code below logs as guest and puts the guest id in the hashmap
         final int guestId = session.enterAsGuest();
+        UI currentUI = UI.getCurrent();
+        VaadinSession currentSession = currentUI.getSession();
+        String sessionId = currentSession.getSession().getId();
+        sessionToIdMapper.add(sessionId, guestId);
 
         // Use UI.access() to access the VaadinSession state on the UI thread
 
@@ -40,6 +46,7 @@ public class LoginView extends VerticalLayout {
         RegisterView.setGuestId(guestId);
         // You can initialise any data required for the connected UI components here.
         loginButton.addClickListener(e -> {
+            //need to change completely
             if (session.login(guestId, username.getValue(), password.getValue(),
                     "054-1234567", "1234", "answer3") != 0) {
                 Notification.show("Login successful");
