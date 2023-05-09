@@ -10,11 +10,13 @@ import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
+import net.bytebuddy.dynamic.scaffold.MethodGraph;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -947,8 +949,26 @@ public class Session implements ISession {
     }
 
 
-
     public boolean isUserLoggedIn() {
         return false;
+    }
+
+    @Override
+    public List<Pair<StoreInfo, String>> getAllUserAssociatedStores(int userId) {
+        try{
+            User user = userRepositoryAsHashmap.getUser(userId);
+            List<Pair<Integer, String>> storeIdsAndRoles = user.getStoresAndRoles();
+            //map each storeId to storeInfo
+            List<Pair<StoreInfo, String>> storeInfosAndRoles = new LinkedList<>();
+            for(Pair<Integer, String> storeIdAndRole : storeIdsAndRoles){
+                StoreInfo storeInfo = market.getStoreInfo(storeIdAndRole.getFirst());
+                storeInfosAndRoles.add(Pair.of(storeInfo, storeIdAndRole.getSecond()));
+            }
+            return storeInfosAndRoles;
+        }
+        catch(Exception e){
+            //TODO: handle exception
+            throw new RuntimeException(e);
+        }
     }
 }

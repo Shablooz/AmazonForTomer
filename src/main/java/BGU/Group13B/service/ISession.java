@@ -3,6 +3,7 @@ package BGU.Group13B.service;
 import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.User.Message;
+import BGU.Group13B.backend.User.UserPermissions;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.service.info.StoreInfo;
@@ -1028,4 +1029,12 @@ public interface ISession {
      * @return weather the user is logged or not
      */
     boolean isUserLogged(int userId);
+
+
+    /**
+     *
+     * @param userId the user id
+     * @return all the user's associated stores (all stores that the user has a role in)
+     */
+    List<Pair<StoreInfo, String>> getAllUserAssociatedStores(int userId);
 }
