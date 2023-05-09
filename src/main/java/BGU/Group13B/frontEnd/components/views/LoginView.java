@@ -42,8 +42,6 @@ public class LoginView extends VerticalLayout {
         String sessionId = currentSession.getSession().getId();
         sessionToIdMapper.add(sessionId, guestId);
         // Use UI.access() to access the VaadinSession state on the UI thread
-        Timer timer = new Timer();
-        timer.schedule(SessionToIdMapper.getInstance().kickExpired(), 0, 5 * 60 * 1000);
         VaadinSession web_session = VaadinSession.getCurrent();
         web_session.getSession().getId();
         RegisterView.setGuestId(guestId);

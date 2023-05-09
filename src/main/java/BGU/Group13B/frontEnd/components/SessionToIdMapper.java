@@ -33,13 +33,19 @@ public class SessionToIdMapper {
         return this.sessionToId.get(session);
     }
 
+
     public TimerTask kickExpired() {
-        for (String key : sessionToId.keySet()) {
-            if (isSessionExpired())
-                sessionToId.remove(key);
-        }
-        return null;
+        TimerTask task = new TimerTask() {
+            public void run() {
+                for (String key : sessionToId.keySet()) {
+                    if (isSessionExpired())
+                        sessionToId.remove(key);
+                }
+            }
+        };
+        return task;
     }
+
 
     public boolean isSessionExpired() {
         // Get the current Vaadin session
