@@ -7,6 +7,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class IStoreRepositoryTest {
@@ -49,6 +51,8 @@ class IStoreRepositoryTest {
 
         Thread[] threads = new Thread[numOfThreads];
         int[] storeIds = new int[numOfThreads];
+        String[] storeNames = new String[numOfThreads];
+
         for (int i = 0; i < numOfThreads; i++) {
             int finalI = i;
             threads[i] = new Thread(() -> {
@@ -56,7 +60,7 @@ class IStoreRepositoryTest {
                 storeIds[finalI] = storeId;
 
                 Store result = storeRepository.getStore(storeId);
-                assertEquals(storeNamePrefix + finalI, result.getStoreName());
+                storeNames[finalI] = result.getStoreName();
             });
         }
         for (int i = 0; i < numOfThreads; i++) {
@@ -74,6 +78,11 @@ class IStoreRepositoryTest {
             for (int j = i + 1; j < numOfThreads; j++) {
                 assertNotEquals(storeIds[i], storeIds[j]);
             }
+        }
+
+        //checking all the store names are correct
+        for (int i = 0; i < numOfThreads; i++) {
+            assertEquals(storeNamePrefix + i, storeNames[i]);
         }
     }
 }
