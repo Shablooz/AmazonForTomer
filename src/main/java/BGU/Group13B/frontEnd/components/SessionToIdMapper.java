@@ -31,14 +31,10 @@ public class SessionToIdMapper {
         this.sessionToId = new ConcurrentHashMap<>();
     }
 
-    public static SessionToIdMapper getInstance() {
-        if (instance == null) {
-            synchronized (SessionToIdMapper.class) {
-                if (instance == null) {
-                    instance = new SessionToIdMapper();
-                }
+    public synchronized static SessionToIdMapper getInstance() {
+            if (instance == null) {
+                instance = new SessionToIdMapper();
             }
-        }
         return instance;
     }
 
