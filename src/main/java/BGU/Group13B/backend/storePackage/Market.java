@@ -19,13 +19,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
-
 public class Market {
     private final IStoreRepository storeRepository;
     private Searcher searcher; //inject in the loading of the system
 
     private final AddToUserCart addToUserCart;
-
     public Market() {
         SingletonCollection.setCalculatePriceOfBasket(this::calculatePriceOfBasket);
 

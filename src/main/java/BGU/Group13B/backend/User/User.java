@@ -1,5 +1,6 @@
 package BGU.Group13B.backend.User;
 
+import BGU.Group13B.backend.Pair;
 import org.mindrot.jbcrypt.BCrypt;
 import BGU.Group13B.backend.Repositories.Interfaces.IMessageRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
@@ -8,7 +9,6 @@ import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.service.SingletonCollection;
-import org.springframework.data.util.Pair;
 //eyal import
 import java.util.HashMap;
 import java.util.List;

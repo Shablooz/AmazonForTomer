@@ -1,12 +1,9 @@
 package BGU.Group13B.service;
 
-import BGU.Group13B.backend.System.SystemInfo;
+import BGU.Group13B.backend.Pair;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.springframework.data.util.Pair;
 
-import java.util.HashMap;
 import java.util.List;
 
 public abstract class ProjectTest {
@@ -92,9 +89,9 @@ public abstract class ProjectTest {
             i++;
         }
         for (int j = 0; j < users.size(); j++) {
-            if (i != UsersIndex.BAD.ordinal() && i != UsersIndex.GUEST.ordinal())
+            if (j != UsersIndex.BAD.ordinal() && j != UsersIndex.GUEST.ordinal())
                 session.login(userIds[j], users.get(j).getFirst(), users.get(j).getSecond(),
-                        "BLACK LIVES MATTER " + i, "because i never go back " + i, "YEAH " + i);
+                        "BLACK LIVES MATTER " + j, "because i never go back " + j, "YEAH " + j);
         }
     }
 

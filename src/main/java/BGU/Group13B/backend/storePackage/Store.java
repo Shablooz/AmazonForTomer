@@ -3,12 +3,9 @@ package BGU.Group13B.backend.storePackage;
 
 import BGU.Group13B.backend.Repositories.Interfaces.*;
 import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyImpl.StoreMessageRepositoryNonPersist;
-import BGU.Group13B.backend.Repositories.Interfaces.*;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.User.BasketProduct;
-import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.User.UserPermissions;
-import BGU.Group13B.backend.storePackage.Discounts.Discount;
 import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
 import BGU.Group13B.backend.storePackage.discountPolicies.StoreDiscountPolicy;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
@@ -16,7 +13,6 @@ import BGU.Group13B.backend.storePackage.permissions.DefaultManagerFunctionality
 import BGU.Group13B.backend.storePackage.permissions.DefaultOwnerFunctionality;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.permissions.StorePermission;
-import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseBounder;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 import BGU.Group13B.backend.storePackage.permissions.*;
 import BGU.Group13B.service.SingletonCollection;
@@ -24,7 +20,6 @@ import BGU.Group13B.service.callbacks.AddToUserCart;
 import BGU.Group13B.service.info.StoreInfo;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;

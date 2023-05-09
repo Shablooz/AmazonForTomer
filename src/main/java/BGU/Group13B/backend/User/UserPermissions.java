@@ -1,6 +1,7 @@
 package BGU.Group13B.backend.User;
 
-import org.springframework.data.util.Pair;
+
+import BGU.Group13B.backend.Pair;
 
 import java.util.HashMap;
 import java.util.LinkedList;

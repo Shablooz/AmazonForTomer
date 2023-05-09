@@ -4,7 +4,6 @@ import BGU.Group13B.backend.Repositories.Implementations.BasketProductRepository
 import BGU.Group13B.backend.Repositories.Interfaces.IBasketProductRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductHistoryRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
-import BGU.Group13B.backend.storePackage.Discounts.VisibleDiscount;
 import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
 import BGU.Group13B.service.SingletonCollection;

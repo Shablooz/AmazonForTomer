@@ -1,7 +1,6 @@
 package BGU.Group13B.backend.Repositories.Interfaces;
 
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
-import BGU.Group13B.service.callbacks.AddToUserCart;
 
 import java.time.LocalDateTime;
 import java.util.Optional;

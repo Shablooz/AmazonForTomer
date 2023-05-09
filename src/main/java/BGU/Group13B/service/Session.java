@@ -1,5 +1,6 @@
 package BGU.Group13B.service;
 
+import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.User.*;
@@ -7,9 +8,9 @@ import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
-import org.springframework.data.util.Pair;
 import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
@@ -23,11 +24,13 @@ import java.util.logging.Logger;
  */
 
 //made it public for testing purposes - should be private
+@Service
 public class Session implements ISession {
     private final Market market;
     private final IUserRepository userRepository = SingletonCollection.getUserRepository();
     private static final Logger LOGGER_INFO = Logger.getLogger(Session.class.getName());
     private static final Logger LOGGER_ERROR = Logger.getLogger(Session.class.getName());
+
     static {
         SingletonCollection.setFileHandler(LOGGER_INFO, true);
         SingletonCollection.setFileHandler(LOGGER_ERROR, false);
@@ -38,6 +41,11 @@ public class Session implements ISession {
 
 
     //IMPORTANT need to initialize the session AFTER loading first user (id = 1) from database
+
+    public Session(){
+        this(new Market());
+    }
+
     public Session(Market market) {
         this.market = market;
         //callbacks initialization
@@ -71,11 +79,11 @@ public class Session implements ISession {
 
     @Override
     public double purchaseProductCart(int userId, String address, String creditCardNumber,
-                                    String creditCardMonth, String creditCardYear,
-                                    String creditCardHolderFirstName, String creditCardHolderLastName,
-                                    String creditCardCcv, String id, String creditCardType,
-                                    HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                    String/*store coupons*/ storeCoupon) {
+                                      String creditCardMonth, String creditCardYear,
+                                      String creditCardHolderFirstName, String creditCardHolderLastName,
+                                      String creditCardCcv, String id, String creditCardType,
+                                      HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                                      String/*store coupons*/ storeCoupon) {
         try {
             return userRepository.getUser(userId).
                     purchaseCart(address, creditCardNumber, creditCardMonth,
@@ -202,8 +210,6 @@ public class Session implements ISession {
                 user.login(username, password, answer1, answer2, answer3);
                 /*example of use*/
                 LOGGER_INFO.info("user " + username + " logged in");
-                //removes the current guest profile to swap to the existing member one
-                userRepositoryAsHashmap.removeUser(userID);
                 //gets the new id - of the user we're logging into
                 return userRepositoryAsHashmap.getUserId(user);
             }
@@ -284,7 +290,7 @@ public class Session implements ISession {
     @Override
     public void sendMassageAdmin(int userId, String receiverId, String header, String massage) {
         try {
-            if(userRepository.checkIfUserExists(receiverId)==null)
+            if (userRepository.checkIfUserExists(receiverId) == null)
                 throw new RuntimeException("receiver Id not found");
             userRepositoryAsHashmap.getUser(userId).sendMassageAdmin(receiverId, header, massage);
         } catch (NoPermissionException e) {
@@ -916,4 +922,7 @@ public class Session implements ISession {
     }
 
 
+    public boolean isUserLoggedIn() {
+        return false;
+    }
 }

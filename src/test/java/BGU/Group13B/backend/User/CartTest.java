@@ -3,13 +3,11 @@ package BGU.Group13B.backend.User;
 import BGU.Group13B.backend.Repositories.Interfaces.*;
 import BGU.Group13B.backend.storePackage.*;
 import BGU.Group13B.service.ISession;
-import BGU.Group13B.service.ProxySession;
 import BGU.Group13B.service.Session;
 import BGU.Group13B.service.SingletonCollection;
 import org.junit.jupiter.api.*;
 
 import java.util.HashMap;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
