@@ -18,6 +18,7 @@ import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
+
 @Tag("login-view")
 @Route(value = "login", layout = MainLayout.class)
 @PageTitle("Login")
@@ -38,7 +39,6 @@ public class LoginView extends VerticalLayout {
         VaadinSession currentSession = currentUI.getSession();
         String sessionId = currentSession.getSession().getId();
         sessionToIdMapper.add(sessionId, guestId);
-
         // Use UI.access() to access the VaadinSession state on the UI thread
 
         VaadinSession web_session = VaadinSession.getCurrent();
@@ -64,6 +64,8 @@ public class LoginView extends VerticalLayout {
         add(formLayout, loginButton, registerButton);
         //setAlignItems(Alignment.CENTER);
     }
+
+
 
 
 }
