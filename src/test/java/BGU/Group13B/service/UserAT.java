@@ -9,12 +9,12 @@ public class UserAT extends ProjectTest {
     @Test
     void joinAsGuest(){
         //we check that the id counter advances and that the user exists in the repository
+        Assertions.assertEquals(this.session.enterAsGuest(),6);
         Assertions.assertEquals(this.session.enterAsGuest(),7);
-        Assertions.assertEquals(this.session.enterAsGuest(),8);
         //the lines below should throw exception if test fails
         try {
+            Assertions.assertNotNull(session.getUserName(6));
             Assertions.assertNotNull(session.getUserName(7));
-            Assertions.assertNotNull(session.getUserName(8));
         }catch (Exception e){
             Assertions.fail();
         }

@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class Communication_AT extends ProjectTest {
 
-
+    protected final int[] storeIds = new int[stores.length];
     @Test
     public void openComplaint_Valid() {
         session.openComplaint(userIds[UsersIndex.STORE_OWNER_2.ordinal()], "complaint", "complaint");

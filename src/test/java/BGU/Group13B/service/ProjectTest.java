@@ -1,12 +1,15 @@
 package BGU.Group13B.service;
 
 import BGU.Group13B.backend.Pair;
+import BGU.Group13B.backend.System.SystemInfo;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
+import java.util.HashMap;
 import java.util.List;
 
 public abstract class ProjectTest {
+
     private final List<Pair<String, String>> users = List.of(
             Pair.of("adminUser", "Qwerty12345"),
             Pair.of("storeOwnerUser1", "KingBIBI69420"),
@@ -15,10 +18,11 @@ public abstract class ProjectTest {
             Pair.of("badUser", "BadPas"));
     protected final int[] userIds = new int[users.size()];
     protected ISession session; //TODO: change to private ask shaun
-    protected final Object[][] products = {
-            {0/*userId*/, 0/*storeId*/, "product1", "The best category1", 100.0, 10, "Least beast in the east description1"},
-            {0/*userId*/, 0/*storeId*/, "product2", "Mediocre category2", 200.0, 1, "Best in the west description2"}
-    };
+
+/*    protected final Object[][] products = {
+            {0*//*userId*//*, 0*//*storeId*//*, "product1", "The best category1", 100.0, 10, "Least beast in the east description1"},
+            {0*//*userId*//*, 0*//*storeId*//*, "product2", "Mediocre category2", 200.0, 1, "Best in the west description2"}
+    };*/
 
     protected final String[] categories = {"Electronics", "Computers", "Phones", "Tablets", "TVs", "Audio", "Peripherals"};
 
@@ -26,9 +30,7 @@ public abstract class ProjectTest {
         UserID, STORE_ID, NAME, CATEGORY, PRICE, QUANTITY, DESCRIPTION
     }
 
-    private final Object[][] stores = {
-            {0, "store1", "category1"},
-            {0, "store2", "category2"}
+
     //String productName, String category, double price, int stockQuantity, String description
     protected final Object[][] products = {
             {-1 /*productId*/, -1 /*storeId*/, -1 /*store founderId*/, "PC" /*name*/, categories[0], 100.0 /*price*/, 10 /*stock quantity*/, "PC description"},
@@ -48,6 +50,7 @@ public abstract class ProjectTest {
             {-1, -1, "store2", "category2"}
     };
 
+    protected final int[] storeIds = new int[stores.length];
 
     protected enum UsersIndex {
         ADMIN, STORE_OWNER_1, STORE_OWNER_2, GUEST, BAD
@@ -109,7 +112,7 @@ public abstract class ProjectTest {
         for (int j = 0; j < users.size(); j++) {
             if (j != UsersIndex.BAD.ordinal() && j != UsersIndex.GUEST.ordinal())
                 session.login(userIds[j], users.get(j).getFirst(), users.get(j).getSecond(),
-                        "BLACK LIVES MATTER " + j, "https://www.youtube.com/watch?v=xvFZjo5PgG0" + j, "YEAH " + j);
+                        "BLACK LIVES MATTER " + j, "because i never go back " + j, "YEAH " + j);
         }
     }
 
@@ -159,12 +162,6 @@ public abstract class ProjectTest {
     }
 
     private void setUpProducts() {
-        for (int i = 0; i < products.length; i++) {
-            products[i][0] = userIds[UsersIndex.STORE_OWNER_1.ordinal()];
-            products[i][1] = storeIds[StoresIndex.STORE_1.ordinal()];
-            productIds[i] = session.addProduct((int) products[i][0], (int) products[i][1], (String) products[i][2], (String) products[i][3], (double) products[i][4], (int) products[i][5], (String) products[i][6]);
-        }
-
         for(int i = 0; i < products.length; i++) {
             products[i][1] = stores[i % stores.length][0]; //storeId
             products[i][2] = stores[i % stores.length][1]; //founder
@@ -179,6 +176,7 @@ public abstract class ProjectTest {
             stores[i][1] = userIds[UsersIndex.STORE_OWNER_1.ordinal() + i];
             stores[i][0] = session.addStore(userIds[UsersIndex.STORE_OWNER_1.ordinal() + i], (String) stores[i][2], (String) stores[i][3]);
         }
+
     }
 
 

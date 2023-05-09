@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2023-05-09T08:54:29.686216600Z</date>
+  <millis>1683622469686</millis>
+  <nanos>216600</nanos>
+  <sequence>0</sequence>
+  <logger>BGU.Group13B.service.Session</logger>
+  <level>INFO</level>
+  <class>BGU.Group13B.service.Session</class>
+  <method>login</method>
+  <thread>17</thread>
+  <message>user adminUser logged in</message>
+</record>
+<record>
+  <date>2023-05-09T08:54:29.810304500Z</date>
+  <millis>1683622469810</millis>
+  <nanos>304500</nanos>
+  <sequence>1</sequence>
+  <logger>BGU.Group13B.service.Session</logger>
+  <level>INFO</level>
+  <class>BGU.Group13B.service.Session</class>
+  <method>login</method>
+  <thread>17</thread>
+  <message>user storeOwnerUser1 logged in</message>
+</record>
+<record>
+  <date>2023-05-09T08:54:29.892402100Z</date>
+  <millis>1683622469892</millis>
+  <nanos>402100</nanos>
+  <sequence>2</sequence>
+  <logger>BGU.Group13B.service.Session</logger>
+  <level>INFO</level>
+  <class>BGU.Group13B.service.Session</class>
+  <method>login</method>
+  <thread>17</thread>
+  <message>user storeOwnerUser2 logged in</message>
+</record>
+</log>

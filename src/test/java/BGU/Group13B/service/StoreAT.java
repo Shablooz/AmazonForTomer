@@ -34,7 +34,7 @@ public class StoreAT extends ProjectTest{
                 (int) stores[0][0], "my product", "my description",
                 10, 10, "my category");
 
-        ProductInfo productInfo = session.getProductInfo(productId);
+        BGU.Group13B.service.info.ProductInfo productInfo = session.getProductInfo(productId);
         assertEquals("my product", productInfo.name());
     }
 
