@@ -37,10 +37,8 @@ public class HomeView extends VerticalLayout implements BeforeEnterObserver {
         getStyle().set("height", "100vh");
         getStyle().set("width", "100vw");
 
-        /*
-            MenuBar menuBar = buildMenuBar();
-            add(menuBar);
-        */
+       /* MenuBar menuBar = buildMenuBar();
+        add(menuBar);*/
     }
 
     @Override
@@ -73,6 +71,6 @@ public class HomeView extends VerticalLayout implements BeforeEnterObserver {
     private void setPosition(MenuBar component) {
         component.getElement().getStyle().set("position", "absolute");
         component.getElement().getStyle().set("top", "0");
-        component.getElement().getStyle().set("left", "0");
+        component.getElement().getStyle().set("left", "25");
     }
 }

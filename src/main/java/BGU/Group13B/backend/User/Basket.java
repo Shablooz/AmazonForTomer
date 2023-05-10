@@ -26,6 +26,7 @@ public class Basket {
     private ScheduledFuture<?> scheduledFuture;
     private int idealTime = 5;
     private TimeUnit unitsToRestore = TimeUnit.MINUTES;
+    private ScheduledExecutorService scheduler;
 
     public Basket(int userId, int storeId) {
         this.userId = userId;
@@ -60,47 +61,52 @@ public class Basket {
         return storeId;
     }
 
-    public double purchaseBasket(String address, String creditCardNumber,
-                                 String creditCardMonth, String creditCardYear,
-                                 String creditCardHolderFirstName, String creditCardHolderLastName,
-                                 String creditCardCVV, String id, String creditCardType,
-                                 HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                 String/*store coupons*/ storeCoupon
-    ) throws PurchaseFailedException {
-        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+    /*
+     * returns total price after discounts, and updates the products stock
+     * */
+    public double startPurchaseBasketTransaction(HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                                                 String/*store coupons*/ storeCoupon) throws PurchaseFailedException {
+        scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduledFuture = scheduler.schedule(this::restoreProductsStock, idealTime, unitsToRestore);
         getSuccessfulProducts();
-
-
         double totalAmount = getTotalAmount(productsCoupons);
         //calculate the total price of the products by the store discount policy
-        totalAmount = calculateStoreDiscount(totalAmount, storeCoupon);
-        if (paymentAdapter.
-                pay(address, creditCardNumber, creditCardMonth, creditCardYear,
-                        creditCardHolderFirstName, creditCardHolderLastName,
-                        creditCardCVV, id, creditCardType, successfulProducts, failedProducts, totalAmount)) {
-            scheduledFuture.cancel(true);
-            scheduledFuture = null;
-            scheduler.shutdown();
-            //if succeeded, add the successful products to the purchase history
-            for (BasketProduct basketProduct : successfulProducts) {
-                productHistoryRepository.addProductToHistory(basketProduct, userId);
-            }
-            basketProductRepository.removeBasketProducts(storeId, userId);
-            successfulProducts.clear();
-            /*//todo: send message with the failed products ids!
-            failedProducts.clear();*/
-            return totalAmount;
-        } else {
+        return calculateStoreDiscount(totalAmount, storeCoupon);
+    }
+
+    public void purchaseBasket(String creditCardNumber,
+                               String creditCardMonth, String creditCardYear,
+                               String creditCardHolderFirstName,
+                               String creditCardCVV, String id) throws PurchaseFailedException {
+
+        if (!paymentAdapter.pay(creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardCVV, id)) {
             throw new PurchaseFailedException("Payment failed");
         }
 
-        //try to pay for the product using PaymentAdapter
-        //if succeeded, add the product to the purchase history, todo: and send message with the failed products ids
-        //if the user wants to cancel the purchase, added the function cancel purchase.
-        //then restore the quantity of the product in the store, yap
-        //if failed throw an appropriate exception
+        scheduledFuture.cancel(true);
+        scheduledFuture = null;
+        scheduler.shutdown();
+        //if succeeded, add the successful products to the purchase history
+        for (BasketProduct basketProduct : successfulProducts) {
+            productHistoryRepository.addProductToHistory(basketProduct, userId);
+        }
+        basketProductRepository.removeBasketProducts(storeId, userId);
+        successfulProducts.clear();
 
+    }
+
+    /*used for testing done both operations at once*/
+    public double purchaseBasket(String creditCardNumber,
+                                 String creditCardMonth, String creditCardYear,
+                                 String creditCardHolderFirstName,
+                                 String creditCardCVV, String id,
+                                 HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                                 String/*store coupons*/ storeCoupon
+    ) throws PurchaseFailedException {
+
+        double price = startPurchaseBasketTransaction(productsCoupons, storeCoupon);
+        purchaseBasket(creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardCVV, id);
+        return price;
     }
 
     /*In case the user pressed on exit in the middle of the purchase or something like that*/
@@ -162,7 +168,7 @@ public class Basket {
     public void addProduct(int productId) throws IllegalArgumentException {
         BasketProduct basketProduct = basketProductRepository.getBasketProduct(productId, storeId, userId);
         if (basketProduct != null) {
-            basketProductRepository.changeProductQuantity(productId, storeId, userId , 1);
+            basketProductRepository.changeProductQuantity(productId, storeId, userId, 1);
         } else
             basketProductRepository.addNewProductToBasket(productId, storeId, userId);
     }
@@ -191,7 +197,7 @@ public class Basket {
     public void changeProductQuantity(int productId, int quantity) throws Exception {
         BasketProduct basketProduct = basketProductRepository.getBasketProduct(productId, storeId, userId);
         if (basketProduct != null) {
-            basketProductRepository.changeProductQuantity(productId, userId, storeId, quantity);
+            basketProductRepository.changeProductQuantity(productId, storeId, userId, quantity);
         } else
             throw new Exception("Product not in basket");
     }
@@ -219,5 +225,13 @@ public class Basket {
 
     public List<Product> getBasketContent() {
         return basketProductRepository.getBasketProducts(storeId, userId).orElseGet(LinkedList::new).stream().map(BasketProduct::getProduct).collect(Collectors.toList());
+    }
+
+    public List<BasketProduct> getBasketProducts() {
+        return basketProductRepository.getBasketProducts(storeId, userId).orElseGet(LinkedList::new);
+    }
+
+    public double getTotalPriceOfBasketBeforeDiscount() {
+        return basketProductRepository.getBasketProducts(storeId, userId).orElseGet(LinkedList::new).stream().mapToDouble(BasketProduct::getSubtotal).sum();
     }
 }

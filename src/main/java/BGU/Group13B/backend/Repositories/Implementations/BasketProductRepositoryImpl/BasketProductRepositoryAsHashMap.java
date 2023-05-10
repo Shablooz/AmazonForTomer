@@ -56,7 +56,7 @@ public class BasketProductRepositoryAsHashMap implements IBasketProductRepositor
 
 
     @Override
-    public void changeProductQuantity(int productId, int storeId, int userId, int addedQuantity) {
+    public void changeProductQuantity(int productId, int storeId, int userId, int newQuantity) {
 
         var basketProducts = getBasketProducts(storeId, userId).orElseThrow(
                 () -> new IllegalArgumentException("Products of store with id: " + storeId + " does not exist"));
@@ -64,7 +64,7 @@ public class BasketProductRepositoryAsHashMap implements IBasketProductRepositor
         basketProducts.stream().filter(basketProduct -> basketProduct.getProductId() == productId).findFirst().
                 orElseThrow(
                         () -> new IllegalArgumentException("Product with id: " + productId + " does not exist in this basket")
-                ).addQuantity(addedQuantity);
+                ).setQuantity(newQuantity);
     }
 
     @Override
