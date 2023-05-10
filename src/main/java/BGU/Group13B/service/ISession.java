@@ -1038,4 +1038,6 @@ public interface ISession {
     double getTotalPriceOfCart(int userId);
 
     void cancelPurchase(int userId);
+
+    boolean isUserLogged(int userId);
 }
