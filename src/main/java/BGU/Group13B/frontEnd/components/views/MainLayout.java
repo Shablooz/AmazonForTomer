@@ -1,6 +1,7 @@
 package BGU.Group13B.frontEnd.components.views;
 
 
+import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.frontEnd.components.appnav.AppNav;
 import BGU.Group13B.frontEnd.components.appnav.AppNavItem;
 import BGU.Group13B.service.Session;
@@ -26,6 +27,8 @@ public class MainLayout extends AppLayout {
 
     private H2 viewTitle;
     private final Session session;
+
+    private final int userId = SessionToIdMapper.getInstance().getCurrentSessionId();
 
     @Autowired
     public MainLayout(Session session) {
@@ -84,8 +87,12 @@ public class MainLayout extends AppLayout {
         // For documentation, visit https://github.com/vaadin/vcf-nav#readme
         AppNav nav = new AppNav();
         nav.addItem(new AppNavItem("Home View", HomeView.class, LineAwesomeIcon.GLOBE_SOLID.create()));
+
         //my stores
-        nav.addItem(new AppNavItem("My Stores", MyStoresView.class, LineAwesomeIcon.STORE_SOLID.create()));
+        if(session.isUserLogged(userId)){
+            nav.addItem(new AppNavItem("My Stores", MyStoresView.class, LineAwesomeIcon.STORE_SOLID.create()));
+        }
+
 
         return nav;
     }
