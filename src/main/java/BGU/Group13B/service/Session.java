@@ -954,15 +954,16 @@ public class Session implements ISession {
 
     @Override
     public boolean removeUser(int userId, int removerId){
-        if(getUserStatus(removerId).equals("ADMIN")){
-            //remove te user
+        //remove te user
+        try {
+            if(!getUserStatus(removerId).equals("ADMIN"))
+                throw new IllegalArgumentException("not admin ! (; go sheeps!!!!????");
             userRepositoryAsHashmap.removeUser(userId);
-            //remove the user from the stores
             return true;
+        }catch (Exception e) {
+            return false;
         }
-        return false;
     }
-
 
 
 

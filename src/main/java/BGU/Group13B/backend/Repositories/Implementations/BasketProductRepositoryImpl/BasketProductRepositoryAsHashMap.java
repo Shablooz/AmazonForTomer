@@ -27,7 +27,7 @@ public class BasketProductRepositoryAsHashMap implements IBasketProductRepositor
     }
 
     @Override
-    public void removeBasketProducts(int storeId, int userId) {
+    public void removeAllBasketProducts(int storeId, int userId) {
         basketProducts.remove(Pair.of(storeId, userId)).orElseThrow(
                 () -> new IllegalArgumentException("There is not basket for store with id: " + storeId + " and user with id: " + userId));
     }
@@ -78,7 +78,10 @@ public class BasketProductRepositoryAsHashMap implements IBasketProductRepositor
     }
     @Override
     public void removeBasketProduct(int productId, int userId, int storeId) {
-        throw new RuntimeException("not implemented exception");
+        var basketProducts = getBasketProducts(storeId, userId).orElseThrow(
+                () -> new IllegalArgumentException("Products of store with id: " + storeId + " does not exist"));
+
+        basketProducts.removeIf(basketProduct -> basketProduct.getProductId() == productId);
     }
 
 }

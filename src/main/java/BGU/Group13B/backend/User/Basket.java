@@ -86,7 +86,7 @@ public class Basket {
             for (BasketProduct basketProduct : successfulProducts) {
                 productHistoryRepository.addProductToHistory(basketProduct, userId);
             }
-            basketProductRepository.removeBasketProducts(storeId, userId);
+            basketProductRepository.removeAllBasketProducts(storeId, userId);
             successfulProducts.clear();
             /*//todo: send message with the failed products ids!
             failedProducts.clear();*/

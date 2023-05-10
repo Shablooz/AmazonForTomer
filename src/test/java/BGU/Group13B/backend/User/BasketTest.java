@@ -267,7 +267,7 @@ class BasketTest {
     static void afterAll() {
         try {
             productRepository.removeStoreProducts(storeId);
-            basketProductRepository.removeBasketProducts(storeId, userId);
+            basketProductRepository.removeAllBasketProducts(storeId, userId);
             SingletonCollection.getStoreRepository().removeStore(storeId);
             SingletonCollection.getProductDiscountsRepository().removeProductDiscount(productId1);
             SingletonCollection.getProductDiscountsRepository().removeProductDiscount(productId2);
