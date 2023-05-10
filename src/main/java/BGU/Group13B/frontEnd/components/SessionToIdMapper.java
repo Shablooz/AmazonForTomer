@@ -34,7 +34,7 @@ public class SessionToIdMapper {
         return this.sessionToId.get(session);
     }
 
-    public int getCurrentSession() {
+    public int getCurrentSessionId() {
         return this.sessionToId.get(VaadinSession.getCurrent());
     }
 
