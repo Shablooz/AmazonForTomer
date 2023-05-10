@@ -1,11 +1,14 @@
 package BGU.Group13B.frontEnd;
 
+import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+
+import java.util.Timer;
 
 /**
  * The entry point of the Spring Boot application.
@@ -20,7 +23,11 @@ import org.springframework.context.annotation.ComponentScan;
 public class Application implements AppShellConfigurator {
 
     public static void main(String[] args) {
+        //timer for deleting idle sessions
+        //running the ui
         SpringApplication.run(Application.class, args);
+        Timer timer = new Timer();
+        timer.schedule(SessionToIdMapper.getInstance().kickExpired(), 5 * 30 * 100, 5 * 30 * 100);
     }
 
 }

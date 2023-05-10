@@ -1028,4 +1028,10 @@ public interface ISession {
      *
      * */
 
+    /**
+     *
+     * @param userId
+     * @return weather the user is logged or not
+     */
+    boolean isUserLogged(int userId);
 }
