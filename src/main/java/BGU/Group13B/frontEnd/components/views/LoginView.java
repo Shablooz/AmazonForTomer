@@ -79,12 +79,16 @@ public class LoginView extends VerticalLayout {
                 setAuthenticateButton(session,guestId);
 
                 return;
-            } else if (session.login(guestId, username.getValue(), password.getValue(),
-                    "", "", "") != 0) {
-                Notification.show("Login successful");
-                UI.getCurrent().navigate(HomeView.class);
             } else {
-                Notification.show("Login failed");
+                try {
+                    int newId = session.login(guestId, username.getValue(), password.getValue(),
+                            "", "", "");
+                    Notification.show("Login successful");
+                    SessionToIdMapper.getInstance().updateCurrentSession(newId);
+                    UI.getCurrent().navigate(HomeView.class);
+                }catch (Exception ex){
+                    Notification.show("Login failed");
+                }
             }
         });
     }
@@ -100,13 +104,13 @@ public class LoginView extends VerticalLayout {
     private void setAuthenticateButton(Session session,int guestId){
         authenticationLayout.setVisible(true);
         authenticate.addClickListener(e -> {
-            int newId =session.login(guestId, username.getValue(), password.getValue(),
-                    answer1.getValue(), answer2.getValue(), answer3.getValue());
-            if ( newId!= 0){
+            try {
+                int newId = session.login(guestId, username.getValue(), password.getValue(),
+                        answer1.getValue(), answer2.getValue(), answer3.getValue());
                 Notification.show("Login successful");
                 SessionToIdMapper.getInstance().updateCurrentSession(newId);
                 UI.getCurrent().navigate(HomeView.class);
-            }else{
+            }catch (Exception ex){
                 Notification.show("Login failed");
             }
 
