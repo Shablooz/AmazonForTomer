@@ -382,6 +382,12 @@ public class MainLayout extends AppLayout {
         //
         nav.addItem(new AppNavItem("Home View", HomeView.class, LineAwesomeIcon.HOME_SOLID.create()));
 
+        //my stores
+        if(true){ //TODO! check if the user is logged in
+            nav.addItem(new AppNavItem("My Stores", MyStoresView.class, LineAwesomeIcon.STORE_SOLID.create()));
+        }
+
+
         return nav;
     }
 
