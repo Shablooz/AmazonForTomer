@@ -59,6 +59,7 @@ public class Session implements ISession {
         userRepositoryAsHashmap.addUser(id, new User(id));
         register(id, "kingOfTheSheep", "SheePLover420",
                 "mrsheep@gmail.com", "054-1234567", "1234", "answer3");
+
     }
 
     @Override
@@ -310,6 +311,31 @@ public class Session implements ISession {
     public Message readMessage(int userId) {
         try {
             return userRepositoryAsHashmap.getUser(userId).readMassage();
+        } catch (NoPermissionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @Override
+    public void replayMessage(int userId, String message){
+        try {
+            userRepositoryAsHashmap.getUser(userId).replayMessage(message);
+        } catch (NoPermissionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @Override
+    public Message readOldMessage(int userId) {
+        try {
+            return userRepositoryAsHashmap.getUser(userId).readOldMessage();
+        } catch (NoPermissionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @Override
+    public void refreshOldMessages(int userId)
+    {
+        try {
+            userRepositoryAsHashmap.getUser(userId).refreshOldMessage();
         } catch (NoPermissionException e) {
             throw new RuntimeException(e);
         }
