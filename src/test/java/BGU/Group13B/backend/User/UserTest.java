@@ -3,6 +3,7 @@ package BGU.Group13B.backend.User;
 import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
+import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.service.SingletonCollection;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 class UserTest {
 
@@ -202,11 +204,22 @@ class UserTest {
         user1.register(goodUsername1, goodPassword1, goodEmail1, "yellow", "", "");
         user1.login(goodUsername1, goodPassword1, "yellow", "", "");
         int storeId1 = SingletonCollection.getStoreRepository().addStore(user2.getUserId(), "Electronics store", "electronics");
-        int productId1 = SingletonCollection.getProductRepository().addProduct(storeId1, "Dell computer", "electronics", 1000, 50, "Good and stable laptop.");
-        int productId2 = SingletonCollection.getProductRepository().addProduct(storeId1, "HP computer", "electronics", 6000, 0, "Good and stable pc.");
-        int productId3 = SingletonCollection.getProductRepository().addProduct(storeId1, "Dell computer A12", "electronics", 2000, 1, "Good and stable laptop.");
-        PurchaseHistory purchaseHistory1 = purchaseHistoryRepository.addPurchase(user1.getUserId(), storeId1, Arrays.asList(productId1,productId2), Arrays.asList(1,2), 13000);
-        PurchaseHistory purchaseHistory2 = purchaseHistoryRepository.addPurchase(user1.getUserId(), storeId1, Arrays.asList(productId2,productId3), Arrays.asList(1,2), 10000);
+        Product product1 = SingletonCollection.getProductRepository().addProduct(storeId1, "Dell computer", "electronics", 1000, 50, "Good and stable laptop.");
+        Product product2 = SingletonCollection.getProductRepository().addProduct(storeId1, "HP computer", "electronics", 6000, 0, "Good and stable pc.");
+        Product product3 = SingletonCollection.getProductRepository().addProduct(storeId1, "Dell computer A12", "electronics", 2000, 1, "Good and stable laptop.");
+        BasketProduct basketProduct1= new BasketProduct(product1);
+        basketProduct1.setQuantity(2);
+        BasketProduct basketProduct2= new BasketProduct(product2);
+        BasketProduct basketProduct3= new BasketProduct(product3);
+        basketProduct3.setQuantity(3);
+        ConcurrentLinkedQueue<BasketProduct> basketProducts1 = new ConcurrentLinkedQueue<>();
+        basketProducts1.add(basketProduct1);
+        basketProducts1.add(basketProduct2);
+        ConcurrentLinkedQueue<BasketProduct> basketProducts2 = new ConcurrentLinkedQueue<>();
+        basketProducts2.add(basketProduct2);
+        basketProducts2.add(basketProduct3);
+        PurchaseHistory purchaseHistory1 = purchaseHistoryRepository.addPurchase(user1.getUserId(), storeId1, basketProducts1, 8000);
+        PurchaseHistory purchaseHistory2 = purchaseHistoryRepository.addPurchase(user1.getUserId(), storeId1, basketProducts2, 12000);
         Assertions.assertEquals(purchaseHistory1.toString()+'\n'+purchaseHistory2 +'\n',user1.getPurchaseHistory());
     }
 

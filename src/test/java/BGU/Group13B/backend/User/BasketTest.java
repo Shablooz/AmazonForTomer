@@ -78,8 +78,8 @@ class BasketTest {
     }
 
     private void initProducts() {
-        productId1 = productRepository.addProduct(storeId, "product1", "category1", 10.0, 1, "description1");
-        productId2 = productRepository.addProduct(storeId, "product2", "category2", 15.0, 1, "eyal was here");
+        productId1 = productRepository.addProduct(storeId, "product1", "category1", 10.0, 1, "description1").getProductId();
+        productId2 = productRepository.addProduct(storeId, "product2", "category2", 15.0, 1, "eyal was here").getProductId();
 
         basketProductRepository.addNewProductToBasket(productId1, storeId, userId);//adding product 0 to basket
         basketProductRepository.addNewProductToBasket(productId2, storeId, userId);//adding product 1 to basket
@@ -119,7 +119,7 @@ class BasketTest {
                 productHistoryRepository, calculatePriceOfBasket);
         Basket basket3 = new Basket(userId3, storeId, basketProductRepository, paymentAdapter,
                 productHistoryRepository, calculatePriceOfBasket);
-        int productId3 = productRepository.addProduct(storeId, "product3", "category3", 15.0, 1, "eyal was still here");
+        int productId3 = productRepository.addProduct(storeId, "product3", "category3", 15.0, 1, "eyal was still here").getStoreId();
         basketProductRepository.addNewProductToBasket(productId3, storeId, userId3);//adding product 1 to basket
         basketProductRepository.addNewProductToBasket(productId3, storeId, userId2);//adding product 1 to basket2
         Thread thread1 = new Thread(() -> {

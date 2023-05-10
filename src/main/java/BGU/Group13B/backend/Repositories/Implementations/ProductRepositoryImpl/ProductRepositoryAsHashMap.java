@@ -30,12 +30,13 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
     }
 
   
-    public synchronized int addProduct(int storeId, String name, String category, double price, int stockQuantity, String description) {
+    public synchronized Product addProduct(int storeId, String name, String category, double price, int stockQuantity, String description) {
         if (!storeProducts.containsKey(storeId))
             storeProducts.put(storeId, new ConcurrentSkipListSet<>(Comparator.comparingInt(Product::getProductId)));
         int productId = productIdCounter.getAndIncrement();
-        storeProducts.get(storeId).add(new Product(productId, storeId, name, category, price, stockQuantity, description));
-        return productId;
+        Product product=new Product(productId, storeId, name, category, price, stockQuantity, description);
+        storeProducts.get(storeId).add(product);
+        return product;
     }
 
 

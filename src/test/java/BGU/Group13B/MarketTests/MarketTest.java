@@ -52,13 +52,13 @@ public class MarketTest {
 
         try {
             storeId1 = storeRepository.addStore(2, "Electronics store", "electronics");
-            productId1 = productRepository.addProduct(storeId1, "Dell computer", "electronics", 1000, 50, "Good and stable laptop.");
+            productId1 = productRepository.addProduct(storeId1, "Dell computer", "electronics", 1000, 50, "Good and stable laptop.").getProductId();
             storeId2 = storeRepository.addStore(2, "Electronics store", "electronics");
-            productId2 = productRepository.addProduct(storeId2, "HP computer", "electronics", 6000, 50, "Good and stable pc.");
-            productId3 = productRepository.addProduct(storeId2, "Dell computer A12", "electronics", 2000, 50, "Good and stable laptop.");
+            productId2 = productRepository.addProduct(storeId2, "HP computer", "electronics", 6000, 50, "Good and stable pc.").getProductId();
+            productId3 = productRepository.addProduct(storeId2, "Dell computer A12", "electronics", 2000, 50, "Good and stable laptop.").getProductId();
             storeId3 = storeRepository.addStore(2, "Electronics store", "electronics");
-            productId4 = productRepository.addProduct(storeId3, "Mac laptop", "electronics devices", 10000, 50, "Good and stable .");
-            productId5 = productRepository.addProduct(storeId3, "Gaming laptop", "gaming", 10000, 50, "Good and stable computer.");
+            productId4 = productRepository.addProduct(storeId3, "Mac laptop", "electronics devices", 10000, 50, "Good and stable .").getProductId();
+            productId5 = productRepository.addProduct(storeId3, "Gaming laptop", "gaming", 10000, 50, "Good and stable computer.").getProductId();
 
 
         } catch (Exception e) {

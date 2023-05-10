@@ -2,6 +2,7 @@ package BGU.Group13B.backend.User;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IBasketProductRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductHistoryRepository;
+import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
 import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
@@ -18,6 +19,7 @@ public class Basket {
     private final int userId;
     private final int storeId;
     private final IBasketProductRepository basketProductRepository;
+    private final IPurchaseHistoryRepository purchaseHistoryRepository;
     private final PaymentAdapter paymentAdapter;
     private final ConcurrentLinkedQueue<BasketProduct> successfulProducts;
     private final ConcurrentLinkedQueue<BasketProduct> failedProducts;
@@ -36,6 +38,7 @@ public class Basket {
         this.calculatePriceOfBasket = SingletonCollection.getCalculatePriceOfBasket();
         this.successfulProducts = new ConcurrentLinkedQueue<>();
         this.failedProducts = new ConcurrentLinkedQueue<>();
+        this.purchaseHistoryRepository= SingletonCollection.getPurchaseHistoryRepository();
     }
 
     //used for testing
@@ -45,6 +48,7 @@ public class Basket {
         this.userId = userId;
         this.storeId = storeId;
         this.basketProductRepository = productRepository;
+        this.purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
         this.paymentAdapter = paymentAdapter;
         this.productHistoryRepository = productHistoryRepository;
         this.calculatePriceOfBasket = calculatePriceOfBasket;
@@ -86,6 +90,7 @@ public class Basket {
             for (BasketProduct basketProduct : successfulProducts) {
                 productHistoryRepository.addProductToHistory(basketProduct, userId);
             }
+            purchaseHistoryRepository.addPurchase(userId, storeId, successfulProducts,totalAmount);
             basketProductRepository.removeBasketProducts(storeId, userId);
             successfulProducts.clear();
             /*//todo: send message with the failed products ids!

@@ -1,8 +1,10 @@
 package BGU.Group13B.backend.Repositories.Interfaces;
 
+import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.PurchaseHistory;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public interface IPurchaseHistoryRepository {
 
@@ -12,7 +14,7 @@ public interface IPurchaseHistoryRepository {
 
     String getAllPurchases(int userId);
 
-    PurchaseHistory addPurchase(int userId, int storeId, List<Integer> products, List<Integer> amounts, double price);
+    public PurchaseHistory addPurchase(int userId, int storeId, ConcurrentLinkedQueue<BasketProduct> products, double price);
 
     void reset();
 }

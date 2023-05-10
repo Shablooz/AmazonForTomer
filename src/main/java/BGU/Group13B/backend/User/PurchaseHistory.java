@@ -7,10 +7,10 @@ import java.util.Map;
 public class PurchaseHistory {
     private int userId;
     private int storeId;
-    private HashMap<Integer /*product id*/,Integer /*amount*/> products;
+    private HashMap<Integer /*product id*/,Integer /*quantity*/> products;
     private double price;
 
-    public PurchaseHistory(int userId, int storeId, HashMap<Integer /*product id*/,Integer /*amount*/> products, double price) {
+    public PurchaseHistory(int userId, int storeId, HashMap<Integer /*product id*/,Integer /*quantity*/> products, double price) {
         this.userId = userId;
         this.storeId = storeId;
         this.products = products;

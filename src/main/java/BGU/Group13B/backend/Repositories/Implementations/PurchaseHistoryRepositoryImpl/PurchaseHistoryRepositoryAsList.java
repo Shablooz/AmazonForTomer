@@ -1,12 +1,14 @@
 package BGU.Group13B.backend.Repositories.Implementations.PurchaseHistoryRepositoryImpl;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
+import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.PurchaseHistory;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class PurchaseHistoryRepositoryAsList implements IPurchaseHistoryRepository {
 
@@ -35,13 +37,11 @@ public class PurchaseHistoryRepositoryAsList implements IPurchaseHistoryReposito
         return sb.toString();
     }
     @Override
-    public PurchaseHistory addPurchase(int userId, int storeId, List<Integer> products, List<Integer> amounts, double price) {
+    public PurchaseHistory addPurchase(int userId, int storeId, ConcurrentLinkedQueue<BasketProduct> products, double price) {
 
         HashMap<Integer, Integer> productsAmounts = new HashMap<>();
-        for (int i = 0; i < products.size(); i++) {
-            int productId = products.get(i);
-            int amount = amounts.get(i);
-            productsAmounts.put(productId, amount);
+        for(BasketProduct basketProduct : products){
+            productsAmounts.put(basketProduct.getProductId(), basketProduct.getQuantity());
         }
         PurchaseHistory purchaseHistory = new PurchaseHistory(userId, storeId, productsAmounts, price);
         purchaseHistories.add(purchaseHistory);

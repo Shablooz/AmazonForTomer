@@ -290,7 +290,7 @@ public class Store {
         if (!this.storePermission.checkPermission(userId))
             throw new NoPermissionException("User " + userId + " has no permission to add product to store " + this.storeId);
 
-        return this.productRepository.addProduct(storeId, productName, category, price, stockQuantity, description);
+        return this.productRepository.addProduct(storeId, productName, category, price, stockQuantity, description).getProductId();
     }
 
     public double calculatePriceOfBasket(double totalAmountBeforeStoreDiscountPolicy,
