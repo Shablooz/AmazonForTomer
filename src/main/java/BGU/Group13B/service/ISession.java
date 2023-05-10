@@ -998,6 +998,8 @@ public interface ISession {
      */
     int enterAsGuest();
 
+    boolean checkIfQuestionsExist(String userName);
+
     /**
      * #13
      * require 1.1

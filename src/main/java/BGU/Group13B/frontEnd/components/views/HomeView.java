@@ -1,6 +1,8 @@
 package BGU.Group13B.frontEnd.components.views;
 
+import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.service.Session;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.contextmenu.SubMenu;
 import com.vaadin.flow.component.html.H1;
@@ -12,6 +14,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -23,6 +26,13 @@ public class HomeView extends VerticalLayout implements BeforeEnterObserver {
     public HomeView(Session session) {
         this.session = session;
         // You can initialise any data required for the connected UI components here.
+        //joining as a guest
+        UI currentUI = UI.getCurrent();
+        VaadinSession currentSession = currentUI.getSession();
+        String sessionId = currentSession.getSession().getId();
+        if(SessionToIdMapper.getInstance().containsKey(sessionId)){
+            SessionToIdMapper.getInstance().add(sessionId, session.enterAsGuest());
+        }
         //congratulations on logging in
         add(new H1("Welcome to the Super Duper Market!"));
         //center the text

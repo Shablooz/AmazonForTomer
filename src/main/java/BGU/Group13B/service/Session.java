@@ -712,6 +712,12 @@ public class Session implements ISession {
     }
 
     @Override
+    public boolean checkIfQuestionsExist(String userName) {
+        if(userRepositoryAsHashmap.checkIfUserExists(userName) == null)
+            return false;
+        return checkIfQuestionsExist(userRepositoryAsHashmap.checkIfUserExists(userName).getUserId());
+    }
+    @Override
     public void exitSystemAsGuest(int userId) {
         userRepositoryAsHashmap.removeUser(userId);
     }

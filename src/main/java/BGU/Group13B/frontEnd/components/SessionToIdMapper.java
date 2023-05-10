@@ -56,6 +56,10 @@ public class SessionToIdMapper {
         VaadinSession session = VaadinSession.getCurrent();
         return session == null || session.getState() == VaadinSessionState.CLOSED;
     }
+
+    public boolean containsKey(String sessionId) {
+        return this.sessionToId.containsKey(sessionId);
+    }
 }
 
 
