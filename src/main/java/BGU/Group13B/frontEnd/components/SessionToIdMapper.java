@@ -29,10 +29,14 @@ public class SessionToIdMapper {
         this.sessionToId.put(session, id);
     }
 
+    //will moistly be used for communication
     public int get(String session) {
         return this.sessionToId.get(session);
     }
 
+    public int getCurrentSession() {
+        return this.sessionToId.get(VaadinSession.getCurrent());
+    }
 
     public TimerTask kickExpired() {
         TimerTask task = new TimerTask() {

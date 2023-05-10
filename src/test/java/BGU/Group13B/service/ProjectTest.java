@@ -27,7 +27,7 @@ public abstract class ProjectTest {
     protected final String[] categories = {"Electronics", "Computers", "Phones", "Tablets", "TVs", "Audio", "Peripherals"};
 
     enum ProductInfo {
-        UserID, STORE_ID, NAME, CATEGORY, PRICE, QUANTITY, DESCRIPTION
+        PRODUCT_ID, STORE_ID, STORE_FOUNDER_ID, NAME, CATEGORY, PRICE, QUANTITY, DESCRIPTION
     }
 
 
