@@ -35,7 +35,7 @@ public class SessionToIdMapper {
     }
 
     public int getCurrentSessionId() {
-        return this.sessionToId.get(VaadinSession.getCurrent());
+        return this.sessionToId.get(VaadinSession.getCurrent().getSession().getId());
     }
 
     public TimerTask kickExpired() {
