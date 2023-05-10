@@ -52,13 +52,11 @@ public class LoginView extends VerticalLayout {
 
         authenticationLayout.add(answer1, answer2, answer3, authenticate);
         authenticationLayout.setVisible(false);
-
-        final int guestId = SessionToIdMapper.getInstance().getCurrentSessionId();
+        int guestId = SessionToIdMapper.getInstance().getCurrentSessionId();
 
         // Use UI.access() to access the VaadinSession state on the UI thread
         VaadinSession web_session = VaadinSession.getCurrent();
         web_session.getSession().getId();
-        RegisterView.setGuestId(guestId);
 
         setLoginButton(session, guestId);
 
@@ -77,7 +75,6 @@ public class LoginView extends VerticalLayout {
             if(session.checkIfQuestionsExist(username.getValue())){
                 Notification.show("Please answer the questions that u answered when registered!");
                 setAuthenticateButton(session,guestId);
-
                 return;
             } else {
                 try {
@@ -100,9 +97,20 @@ public class LoginView extends VerticalLayout {
         });
     }
 
-
+    private void hideNoneNeededAuthentication(Session session){
+        if(!session.SecurityAnswer1Exists(SessionToIdMapper.getInstance().getCurrentSessionId())){
+            answer1.setVisible(false);
+        }
+        if(!session.SecurityAnswer2Exists(SessionToIdMapper.getInstance().getCurrentSessionId())){
+            answer2.setVisible(false);
+        }
+        if(!session.SecurityAnswer3Exists(SessionToIdMapper.getInstance().getCurrentSessionId())){
+            answer3.setVisible(false);
+        }
+    }
     private void setAuthenticateButton(Session session,int guestId){
         authenticationLayout.setVisible(true);
+        hideNoneNeededAuthentication(session);
         authenticate.addClickListener(e -> {
             try {
                 int newId = session.login(guestId, username.getValue(), password.getValue(),
