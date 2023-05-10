@@ -1,6 +1,7 @@
 package BGU.Group13B.frontEnd.components.views;
 
 
+import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.frontEnd.components.appnav.AppNav;
 import BGU.Group13B.frontEnd.components.appnav.AppNavItem;
 import BGU.Group13B.service.Session;
@@ -31,15 +32,23 @@ public class MainLayout extends AppLayout {
 
     private H2 viewTitle;
     private final Session session;
+    private int USERID=0;
 
+    private final String MEMBER = "Member";
+    private final String ADMIN = "Admin";
+    private final String GUEST = "Guest";
     public interface VoidAction{
         void act();
     }
-
+    private void setUSERID(){
+        if(USERID==0)
+            USERID = SessionToIdMapper.getInstance().getCurrentSessionId();
+    }
     @Autowired
     public MainLayout(Session session) {
         this.session = session;
 
+        setUSERID();
 
         setPrimarySection(Section.DRAWER);
         addDrawerContent();
@@ -63,7 +72,7 @@ public class MainLayout extends AppLayout {
     {
         HorizontalLayout rightAlignment = new HorizontalLayout();
         Button messageButton =messageDialog();
-        if( true  /* TODO:session.isUserLoggedIn()*/)
+        if(session.isUserLogged(USERID))
             rightAlignment.add(messageButton);
 
         rightAlignment.setJustifyContentMode(FlexLayout.JustifyContentMode.END);
@@ -341,7 +350,8 @@ public class MainLayout extends AppLayout {
 
         buttonsLayout.add(newMessagesButton,oldMessagesButton,openComplaintsButton);
         currentDialog.add(buttonsLayout);
-        if(true /*admin*/){
+
+        if(session.getUserStatus(USERID).equals(ADMIN)){
             buttonsLayout.add(showComplaintsButton,sendMessageButton);
         }
 
