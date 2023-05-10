@@ -1030,4 +1030,6 @@ public interface ISession {
      * @return weather the user is logged or not
      */
     boolean isUserLogged(int userId);
+
+    boolean removeUser(int userId, int removerId);
 }

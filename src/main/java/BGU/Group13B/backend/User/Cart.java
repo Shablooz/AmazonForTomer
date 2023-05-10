@@ -112,4 +112,8 @@ public class Cart {
                 filter(basket -> basket.getStoreId() == storeId).findFirst().get().
                 getFailedProducts().stream().map(BasketProduct::getProductId).toList();
     }
+
+    public void removeAllBaskets(int userId) {
+        basketRepository.removeAllUserBaskets(userId);
+    }
 }

@@ -952,6 +952,17 @@ public class Session implements ISession {
         return userRepositoryAsHashmap.getUser(userId).isLoggedIn();
     }
 
+    @Override
+    public boolean removeUser(int userId, int removerId){
+        if(getUserStatus(removerId).equals("ADMIN")){
+            //remove te user
+            userRepositoryAsHashmap.removeUser(userId);
+            //remove the user from the stores
+            return true;
+        }
+        return false;
+    }
+
 
 
 

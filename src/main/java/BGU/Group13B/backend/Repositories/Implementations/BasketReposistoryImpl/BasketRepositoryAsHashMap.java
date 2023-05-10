@@ -34,4 +34,9 @@ public class BasketRepositoryAsHashMap implements IBasketRepository {
         throw new IllegalArgumentException("User already has a basket associated with the storeId: " + storeId);
     }
 
+    @Override
+    public void removeAllUserBaskets(int userId) {
+        baskets.remove(userId);
+    }
+
 }

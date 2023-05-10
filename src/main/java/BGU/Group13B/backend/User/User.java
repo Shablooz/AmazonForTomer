@@ -390,6 +390,10 @@ public class User {
         cart.removeBasket(userId, basketId);
     }
 
+    public void removeAllBaskets(){
+
+        cart.removeAllBaskets(this.userId);
+    }
 
     public List<Integer> getFailedProducts(int storeId) {
         return cart.getFailedProducts(storeId, userId);

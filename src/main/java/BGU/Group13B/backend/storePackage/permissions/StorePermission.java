@@ -13,6 +13,7 @@ public class StorePermission {
     private final HashMap<StoreRole, Set<String>> defaultStoreRoleFunctionalities;
     private final HashMap<Integer/*userId*/, StoreRole> userToStoreRole;
     private final HashMap<Integer/*got appointed by*/, Set<Integer>/*appointee*/> appointedOwnersMap;
+    private int founderId;
 
     public StorePermission(int founderId) {
         userStoreFunctionPermissions = new HashMap<>();
@@ -181,5 +182,18 @@ public class StorePermission {
     public void clearForTest(){
         userToStoreRole.clear();
         appointedOwnersMap.clear();
+    }
+
+    //function that deletes the content of the hash maps
+    //TODO delete also from database when milestone 3 is implemented
+    public void emptyMaps(){
+        userToStoreRole.clear();
+        appointedOwnersMap.clear();
+        userStoreFunctionPermissions.clear();
+        defaultStoreRoleFunctionalities.clear();
+    }
+
+    public int getFounderId(){
+        return this.founderId;
     }
 }

@@ -132,4 +132,10 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
         storeProducts.clear();
         productIdCounter.set(0);
     }
+
+    //TODO also delete from database
+    @Override
+    public void removeAllStoreProducts(int storeId) {
+        storeProducts.remove(storeId);
+    }
 }

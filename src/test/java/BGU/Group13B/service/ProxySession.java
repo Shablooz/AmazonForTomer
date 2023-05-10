@@ -537,6 +537,11 @@ public class ProxySession implements ISession {
     }
 
     @Override
+    public boolean removeUser(int userId, int removerId) {
+        return realSession.removeUser(userId, removerId);
+    }
+
+    @Override
     public void allowPurchasePolicyConflicts(int userId, int storeId) {
         if (realSession != null)
             realSession.allowPurchasePolicyConflicts(userId, storeId);
