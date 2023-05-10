@@ -1,5 +1,6 @@
 package BGU.Group13B.frontEnd.components.views;
 
+import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.frontEnd.components.views.viewEntity.Address;
 import BGU.Group13B.frontEnd.components.views.viewEntity.Card;
 import BGU.Group13B.frontEnd.components.views.viewEntity.Country;
@@ -13,7 +14,6 @@ import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.accordion.AccordionPanel;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.charts.model.DataSeriesItemBullet;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -26,8 +26,11 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.router.BeforeLeaveEvent;
+import com.vaadin.flow.router.BeforeLeaveObserver;
 import com.vaadin.flow.router.Route;
 
 import java.time.LocalDate;
@@ -46,7 +49,7 @@ import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY_INLIN
 
 
 @Route(value = "payment", layout = MainLayout.class)
-public class PaymentView extends Div {
+public class PaymentView extends Div implements BeforeLeaveObserver {
 
     private static final String PAYMENT = "Payment";
     private static final String BILLING_ADDRESS = "Billing address";
@@ -54,7 +57,7 @@ public class PaymentView extends Div {
     private double totalPriceAfterDiscount;
     private ComboBox<Month> monthComboBox;
     private ComboBox<Integer> yearComboBox;
-    private TextField cvv;
+    private NumberField cvv;
     private TextField accountNumber;
     private TextField zipCode;
     private TextField city;
@@ -74,14 +77,16 @@ public class PaymentView extends Div {
     private AccordionPanel paymentPanel;
     private Component combinedDateView;
     private final Session session;
+    private boolean paymentSuccessful;
 
     public PaymentView(Session session) {
         this.session = session;
-        double totalPriceBeforeDiscount = session.getTotalPriceOfCart(1/*fixme*/);
+        paymentSuccessful = false;
+        double totalPriceBeforeDiscount = session.getTotalPriceOfCart(SessionToIdMapper.getInstance().getCurrentSessionId());
         //coupon code in the future
         add(getPricesLayout(session, totalPriceBeforeDiscount));
 
-        List<ServiceProduct> failedProducts = session.getAllFailedProductsAfterPayment(1/*fixme*/);
+        List<ServiceProduct> failedProducts = session.getAllFailedProductsAfterPayment(SessionToIdMapper.getInstance().getCurrentSessionId());
         if (failedProducts.size() > 0) {
             add(paymentFailedView(failedProducts, totalPriceAfterDiscount));
         }
@@ -122,13 +127,14 @@ public class PaymentView extends Div {
     }
 
     private HorizontalLayout getPricesLayout(Session session, double totalPriceBeforeDiscount) {
-        totalPriceAfterDiscount = session.startPurchaseBasketTransaction(1/*fixme*/, new HashMap<>(), "");
-        Span spanBeforeDiscount = new Span("Total price before discount: " + totalPriceBeforeDiscount);
+        totalPriceAfterDiscount = session.startPurchaseBasketTransaction(SessionToIdMapper.getInstance().getCurrentSessionId(), new HashMap<>(), "");
+        Span spanBeforeDiscountTitle = new Span("Total price before discount: ");
+        Span spanBeforeDiscount = new Span(String.valueOf(totalPriceBeforeDiscount));
         spanBeforeDiscount.getStyle().set("text-decoration", "line-through");
 
         Span spanAfterDiscount = new Span("Total price after discount: " + totalPriceAfterDiscount);
         spanAfterDiscount.getStyle().set("font-weight", "bold");
-        return new HorizontalLayout(spanBeforeDiscount, spanAfterDiscount);
+        return new HorizontalLayout(spanBeforeDiscountTitle, spanBeforeDiscount, spanAfterDiscount);
     }
 
     private void bindAddressFields() {
@@ -157,7 +163,7 @@ public class PaymentView extends Div {
         dialog.add(dialogFailedProducts);
         dialog.setCancelable(true);
         dialog.addCancelListener(event -> {
-            session.cancelPurchase(1/*fixme*/);
+            session.cancelPurchase(SessionToIdMapper.getInstance().getCurrentSessionId());
             UI.getCurrent().navigate("");
         });
 
@@ -183,41 +189,45 @@ public class PaymentView extends Div {
                 paymentPanel.setSummaryText(PAYMENT);
             } else if (cardBinder.getBean() != null) {
                 Card cardValues = cardBinder.getBean();
-                if (cardValues.getMonth() == null || cardValues.getYear() == null ||
-                        cardValues.getCvv() == null || cardValues.getAccountNumber() == null) {
-                    createReportError("Please fill all the fields").open();
-                    paymentPanel.setOpened(true);
+                if (cardValues.getAccountNumber() == null || cardValues.getMonth() == null ||
+                        cardValues.getYear() == null || cardValues.getCvv() == null) {
+                    //createReportError("Please fill all the fields").open();
+                    paymentPanel.setOpened(false);
                     return;
                 }
                 paymentPanel.setSummary(
-                        createSummary(PAYMENT, cardValues.getAccountNumber(),
-                                cardValues.getMonth().getValue() + "/" + cardValues.getYear(),
-                                cardValues.getCvv()));
+                        createSummary(PAYMENT,
+                                "Credit Card Number: " + cardValues.getAccountNumber(),
+                                "Credit Card Expiration Date " + cardValues.getMonth().getValue() + "/" + cardValues.getYear(),
+                                "Credit Card CVV: " + cardValues.getCvv().intValue()));
             }
         });
 
         Button paymentButton = new Button("Finish and pay", e -> {
             paymentPanel.setOpened(false);
-
-            Response<VoidResponse> response = session.purchaseProductCart(1/*fixme*/, cardBinder.getBean().getAccountNumber(),
+            if (theFieldNonNull(cardBinder.getBean())) {
+                createReportError("Please fill all the fields").open();
+                paymentPanel.setOpened(false);
+                return;
+            }
+            Response<VoidResponse> response = session.purchaseProductCart(SessionToIdMapper.getInstance().getCurrentSessionId(), cardBinder.getBean().getAccountNumber(),
                     "" + cardBinder.getBean().getMonth().getValue(),
                     "" + cardBinder.getBean().getYear(),
                     personBinder.getBean().getFirstName() + " " + personBinder.getBean().getLastName(),
-                    cardBinder.getBean().getCvv(),
-                    personBinder.getBean().getId());
+                    "" + cardBinder.getBean().getCvv(),
+                    personBinder.getBean().getPersonId());
             if (response.getStatus() == Response.Status.FAILURE) {
                 Notification.show("Payment failed you can try again or cancel the purchase");
                 paymentPanel.setOpened(true);
             } else {
                 createSubmitSuccess().open();
                 //success dialog
-
+                paymentSuccessful = true;
                 UI.getCurrent().navigate("");
             }
 
         });
         Button cancelButton = new Button("Cancel", e -> {
-            session.cancelPurchase(1/*fixme*/);
             Notification.show("Purchase canceled successfully");
             UI.getCurrent().navigate("");
         });
@@ -225,6 +235,17 @@ public class PaymentView extends Div {
         cancelButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
         paymentPanel.addContent(paymentButton);
         paymentPanel.addContent(cancelButton);
+    }
+
+    private boolean theFieldNonNull(Card cardValues) {
+        return cardValues.getMonth() == null || cardValues.getYear() == null ||
+                cardValues.getCvv() == null || cardValues.getAccountNumber() == null ||
+                cardValues.getCvv() == 0.0 || cardValues.getAccountNumber().isEmpty() ||
+                personBinder.getBean().getFirstName() == null || personBinder.getBean().getLastName() == null ||
+                personBinder.getBean().getPersonId() == null || personBinder.getBean().getFirstName().isEmpty() ||
+                personBinder.getBean().getLastName().isEmpty() || personBinder.getBean().getPersonId().isEmpty() ||
+                personBinder.getBean().getAddress() == null || personBinder.getBean().getAddress().getCity().isEmpty() ||
+                personBinder.getBean().getAddress().getStreet().isEmpty() || personBinder.getBean().getAddress().getZip().isEmpty();
     }
 
     private Button createCloseBtn(Notification notification) {
@@ -296,7 +317,7 @@ public class PaymentView extends Div {
         monthComboBox.setReadOnly(false);
         yearComboBox = (ComboBox<Integer>) componentList.get(2);
         yearComboBox.setReadOnly(false);
-        cvv = new TextField("CVV");
+        cvv = new NumberField("CVV");
         cvv.setReadOnly(false);
     }
 
@@ -308,9 +329,9 @@ public class PaymentView extends Div {
                 Address addressValues = personBinder.getBean().getAddress();
                 billingAddressPanel.setSummary(createSummary(BILLING_ADDRESS,
                         "Street: " + addressValues.getStreet(),
-                        "Zip: " + addressValues.getZip() + " ",
-                        "City" + addressValues.getCity() + " ",
-                        "Country" + addressValues.getCountry()));
+                        "Zip: " + addressValues.getZip(),
+                        "City: " + addressValues.getCity(),
+                        "Country: " + addressValues.getCountry()));
             }
         });
 
@@ -368,9 +389,9 @@ public class PaymentView extends Div {
             } else if (personBinder.getBean() != null) {
                 Person personValues = personBinder.getBean();
                 customDetailsPanel.setSummary(createSummary(CUSTOMER_DETAILS,
-                        personValues.getFirstName() + " "
-                                + personValues.getLastName() + " ",
-                        personValues.getId()));
+                        !personValues.getFirstName().isEmpty() ? "First Name: " + personValues.getFirstName() : "",
+                        !personValues.getFirstName().isEmpty() ? "Last Name: " + personValues.getLastName() : "",
+                        !personValues.getPersonId().isEmpty() ? "Personal ID: " + personValues.getPersonId() : ""));
             }
         });
 
@@ -388,7 +409,7 @@ public class PaymentView extends Div {
         personBinder.forField(lastName).bind("lastName");
 
         id = new TextField("ID");
-        personBinder.forField(id).bind("id");
+        personBinder.forField(id).bind("personId");
         id.setReadOnly(false);
     }
 
@@ -446,7 +467,7 @@ public class PaymentView extends Div {
 
     private List<Component> DatePickerIndividualInputFields() {
         final ComboBox<Month> monthPicker = new ComboBox<>("Month", Month.values());
-        ;
+
         ComboBox<Integer> yearPicker;
         LocalDate now = LocalDate.now(ZoneId.systemDefault());
 
@@ -482,5 +503,13 @@ public class PaymentView extends Div {
 
         monthPicker.setValue(null);
         monthPicker.setEnabled(true);
+    }
+
+    @Override
+    public void beforeLeave(BeforeLeaveEvent beforeLeaveEvent) {
+        if (!paymentSuccessful) {
+            session.cancelPurchase(SessionToIdMapper.getInstance().getCurrentSessionId());
+            Notification.show("Payment cancelled");
+        }
     }
 }

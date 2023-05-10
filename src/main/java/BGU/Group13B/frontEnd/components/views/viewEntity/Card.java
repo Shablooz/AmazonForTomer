@@ -9,7 +9,7 @@ public class Card extends AbstractEntity {
     private Month month;
     private Integer year;
 
-    private String cvv;
+    private Double cvv;
 
     public Card() {
     }
@@ -18,7 +18,7 @@ public class Card extends AbstractEntity {
         return accountNumber;
     }
 
-    public String getCvv() {
+    public Double getCvv() {
         return cvv;
     }
 
@@ -27,7 +27,7 @@ public class Card extends AbstractEntity {
     }
 
 
-    public void setCvv(String cvv) {
+    public void setCvv(Double cvv) {
         this.cvv = cvv;
     }
 

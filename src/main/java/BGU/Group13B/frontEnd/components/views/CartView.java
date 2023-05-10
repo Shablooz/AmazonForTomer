@@ -1,5 +1,6 @@
 package BGU.Group13B.frontEnd.components.views;
 
+import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.service.Response;
 import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
@@ -61,11 +62,10 @@ public class CartView extends Div {
     }
 
     private void setItemsToGrid(GridPro<ServiceBasketProduct> cartItemsGrid) {
-        VaadinSession vaadinSession = VaadinSession.getCurrent();
-        String sessionId = vaadinSession.getSession().getId();
+
         createItemsForDevelopment();//delete me
         //fixme: change to sessionId
-        Response<List<ServiceBasketProduct>> serviceProductsResponse = session.getCartContent(1/*change to sessionId*/);
+        Response<List<ServiceBasketProduct>> serviceProductsResponse = session.getCartContent(SessionToIdMapper.getInstance().getCurrentSessionId());
         if (serviceProductsResponse.getStatus() == Response.Status.SUCCESS) {
             updateGrid(cartItemsGrid, serviceProductsResponse);
         } else
@@ -80,10 +80,10 @@ public class CartView extends Div {
 
 
     private void createItemsForDevelopment() {
-        int storeId = SingletonCollection.getStoreRepository().addStore(1, "StoreName " + (int) (100 * Math.random()), "Category");
-        session.addToCart(1, storeId
+        int storeId = SingletonCollection.getStoreRepository().addStore(SessionToIdMapper.getInstance().getCurrentSessionId(), "StoreName " + (int) (100 * Math.random()), "Category");
+        session.addToCart(SessionToIdMapper.getInstance().getCurrentSessionId(), storeId
                 , SingletonCollection.getProductRepository().
-                        addProduct(storeId, "ProductName " + (int) (100 * Math.random()), "Category", 10 * Math.random(), (int) (50 * Math.random()), "Best Product Ever"));
+                        addProduct(storeId, "ProductName " + (int) (100 * Math.random()), "Category", (int)(10 * Math.random()) + (double)((int)(100 * Math.random()))/100, (int) (50 * Math.random()), "Best Product Ever"));
     }
 
     private GridPro<ServiceBasketProduct> getServiceProductGrid() {
@@ -111,10 +111,10 @@ public class CartView extends Div {
         if (newQuantity <= 0)
             Notification.show("Quantity must be positive");
         else {
-            session.changeProductQuantityInCart(1/*change*/, serviceBasketProduct.getStoreId(), serviceBasketProduct.getProductId(),
+            session.changeProductQuantityInCart(SessionToIdMapper.getInstance().getCurrentSessionId(), serviceBasketProduct.getStoreId(), serviceBasketProduct.getProductId(),
                     newQuantity);
             // Update the quantity when the user changes the value in the TextField
-            updateGrid(cartItemsGrid, session.getCartContent(1/*change*/));
+            updateGrid(cartItemsGrid, session.getCartContent(SessionToIdMapper.getInstance().getCurrentSessionId()));
         }
     }
 }

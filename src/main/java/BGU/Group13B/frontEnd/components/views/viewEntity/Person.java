@@ -4,7 +4,7 @@ package BGU.Group13B.frontEnd.components.views.viewEntity;
 public class Person {
 
     private Address address;
-    private String id;
+    private String personId;
     private String firstName;
     private String lastName;
 
@@ -18,11 +18,11 @@ public class Person {
     }
 
 
-    public String getId() {
-        return id;
+    public String getPersonId() {
+        return personId;
     }
-    public String setId(String id) {
-        return this.id = id;
+    public void setPersonId(String personId) {
+         this.personId = personId;
     }
 
     public String getFirstName() {
