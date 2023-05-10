@@ -62,6 +62,7 @@ public class Session implements ISession {
         userRepositoryAsHashmap.addUser(id, new User(id));
         register(id, "kingOfTheSheep", "SheePLover420",
                 "mrsheep@gmail.com", "054-1234567", "1234", "answer3");
+
     }
 
     @Override
@@ -70,7 +71,7 @@ public class Session implements ISession {
             return market.addProduct(userId, storeId, productName, category, price, stockQuantity, description);
         } catch (Exception e) {
             //TODO: handle exception
-            return -1;
+            throw new RuntimeException(e);
         }
 
     }
@@ -174,17 +175,16 @@ public class Session implements ISession {
         try {
             //the first "if" might not be necessary when we will connect to web
             if (this.userRepositoryAsHashmap.checkIfUserWithEmailExists(email)) {
-                System.out.println("user with this email already exists!");
-                return;//temporary
+                throw new IllegalArgumentException("user with this email already exists!");//temporary
             }
             if (!user.isRegistered()) {
                 if (userRepositoryAsHashmap.checkIfUserExists(username) == null) {
                     user.register(username, password, email, answer1, answer2, answer3);
                 } else {
-                    System.out.println("user with this username already exists!");
+                    throw new IllegalArgumentException("user with this username already exists!");
                 }
             } else {
-                System.out.println("already registered!");
+                throw new IllegalArgumentException("already registered!");
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -227,7 +227,6 @@ public class Session implements ISession {
         market.filterByStoreRank(minRating, maxRating);
     }
 
-
     @Override
     public int login(int userID, String username, String password, String answer1, String answer2, String answer3) {
         try {
@@ -241,8 +240,9 @@ public class Session implements ISession {
                 return userRepositoryAsHashmap.getUserId(user);
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return 0;
+            //line below temporary
+            throw new IllegalArgumentException(e.getMessage());
+
         }
 
     }
@@ -265,11 +265,11 @@ public class Session implements ISession {
                     return storeId;
                 } catch (Exception e) {
                     //TODO: handle exception
-                    return -1;
+                    throw new RuntimeException(e);
                 }
             }
             //TODO: handle exception
-            return -1;
+            throw new RuntimeException("user is not registered");
         }
     }
 
@@ -338,6 +338,31 @@ public class Session implements ISession {
     public Message readMessage(int userId) {
         try {
             return userRepositoryAsHashmap.getUser(userId).readMassage();
+        } catch (NoPermissionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @Override
+    public void replayMessage(int userId, String message){
+        try {
+            userRepositoryAsHashmap.getUser(userId).replayMessage(message);
+        } catch (NoPermissionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @Override
+    public Message readOldMessage(int userId) {
+        try {
+            return userRepositoryAsHashmap.getUser(userId).readOldMessage();
+        } catch (NoPermissionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @Override
+    public void refreshOldMessages(int userId)
+    {
+        try {
+            userRepositoryAsHashmap.getUser(userId).refreshOldMessage();
         } catch (NoPermissionException e) {
             throw new RuntimeException(e);
         }
@@ -508,6 +533,7 @@ public class Session implements ISession {
             market.setProductName(userId, storeId, productId, name);
         } catch (Exception e) {
             //TODO: handle exception
+            throw new RuntimeException(e);
         }
     }
 
@@ -517,6 +543,7 @@ public class Session implements ISession {
             market.setProductCategory(userId, storeId, productId, category);
         } catch (Exception e) {
             //TODO: handle exception
+            throw new RuntimeException(e);
         }
     }
 
@@ -526,6 +553,7 @@ public class Session implements ISession {
             market.setProductPrice(userId, storeId, productId, price);
         } catch (Exception e) {
             //TODO: handle exception
+            throw new RuntimeException(e);
         }
     }
 
@@ -535,6 +563,7 @@ public class Session implements ISession {
             market.setProductStockQuantity(userId, storeId, productId, stockQuantity);
         } catch (Exception e) {
             //TODO: handle exception
+            throw new RuntimeException(e);
         }
     }
 
@@ -544,6 +573,7 @@ public class Session implements ISession {
             market.setProductDescription(userId, storeId, productId, description);
         } catch (Exception e) {
             //TODO: handle exception
+            throw new RuntimeException(e);
         }
     }
 
@@ -561,6 +591,7 @@ public class Session implements ISession {
             market.removeProduct(userId, storeId, productId);
         } catch (Exception e) {
             //TODO: handle exception
+            throw new RuntimeException(e);
         }
     }
 
@@ -579,8 +610,7 @@ public class Session implements ISession {
     public void setUserStatus(int admin_id, int userId, int newStatus) {
         if (!getUserStatus(admin_id).equals("Admin")) {
             //should throw an exception
-            System.out.println("isnt an admin");
-            return;
+            throw new IllegalArgumentException("isnt an admin");
         }
         if (newStatus == 1 && userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.MEMBER)
             userRepositoryAsHashmap.getUser(userId).setPermissions(UserPermissions.UserPermissionStatus.ADMIN);
@@ -614,7 +644,7 @@ public class Session implements ISession {
             return market.getStoreInfo(storeId);
         } catch (Exception e) {
             //TODO: handle exception
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
@@ -624,7 +654,7 @@ public class Session implements ISession {
             return market.getStoreName(storeId);
         } catch (Exception e) {
             //TODO: handle exception
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
@@ -634,7 +664,7 @@ public class Session implements ISession {
             return market.getStoreCategory(storeId);
         } catch (Exception e) {
             //TODO: handle exception
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
@@ -644,7 +674,7 @@ public class Session implements ISession {
             return market.getStoreProductInfo(storeId, productId);
         } catch (Exception e) {
             //TODO: handle exception
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
@@ -654,7 +684,7 @@ public class Session implements ISession {
             return market.getProductInfo(productId);
         } catch (Exception e) {
             //TODO: handle exception
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
@@ -664,7 +694,7 @@ public class Session implements ISession {
             return market.getProductName(productId);
         } catch (Exception e) {
             //TODO: handle exception
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
@@ -674,7 +704,7 @@ public class Session implements ISession {
             return market.getProductCategory(productId);
         } catch (Exception e) {
             //TODO: handle exception
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
@@ -692,7 +722,7 @@ public class Session implements ISession {
             return market.getProductPrice(productId);
         } catch (Exception e) {
             //TODO: handle exception
-            return -1;
+            throw new RuntimeException(e);
         }
     }
 
@@ -702,7 +732,7 @@ public class Session implements ISession {
             return market.getProductStockQuantity(productId);
         } catch (Exception e) {
             //TODO: handle exception
-            return -1;
+            throw new RuntimeException(e);
         }
     }
 
@@ -712,7 +742,7 @@ public class Session implements ISession {
             return market.getProductScore(productId);
         } catch (Exception e) {
             //TODO: handle exception
-            return -1;
+            throw new RuntimeException(e);
         }
     }
 
@@ -722,7 +752,7 @@ public class Session implements ISession {
             return market.getAllStoreProductsInfo(storeId);
         } catch (Exception e) {
             //TODO: handle exception
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
@@ -745,6 +775,12 @@ public class Session implements ISession {
         return SecurityAnswer1Exists(userId) || SecurityAnswer2Exists(userId) || SecurityAnswer3Exists(userId);
     }
 
+    @Override
+    public boolean checkIfQuestionsExist(String userName) {
+        if(userRepositoryAsHashmap.checkIfUserExists(userName) == null)
+            return false;
+        return checkIfQuestionsExist(userRepositoryAsHashmap.checkIfUserExists(userName).getUserId());
+    }
     @Override
     public void exitSystemAsGuest(int userId) {
         userRepositoryAsHashmap.removeUser(userId);
@@ -777,6 +813,7 @@ public class Session implements ISession {
             market.allowPurchasePolicyConflicts(userId, storeId);
         } catch (Exception e) {
             //TODO: handle exception
+            throw new RuntimeException(e);
         }
     }
 
@@ -786,6 +823,7 @@ public class Session implements ISession {
             market.disallowPurchasePolicyConflicts(userId, storeId);
         } catch (Exception e) {
             //TODO: handle exception
+            throw new RuntimeException(e);
         }
     }
 
@@ -795,6 +833,7 @@ public class Session implements ISession {
             market.setStorePurchaseQuantityUpperBound(userId, storeId, upperBound);
         } catch (Exception e) {
             //TODO: handle exception
+            throw new RuntimeException(e);
         }
     }
 
@@ -804,6 +843,7 @@ public class Session implements ISession {
             market.setStorePurchaseQuantityLowerBound(userId, storeId, lowerBound);
         } catch (Exception e) {
             //TODO: handle exception
+            throw new RuntimeException(e);
         }
     }
 
@@ -813,6 +853,7 @@ public class Session implements ISession {
             market.setStorePurchaseQuantityBounds(userId, storeId, lowerBound, upperBound);
         } catch (Exception e) {
             //TODO: handle exception
+            throw new RuntimeException(e);
         }
     }
 
@@ -822,6 +863,7 @@ public class Session implements ISession {
             market.setStorePurchasePriceUpperBound(userId, storeId, upperBound);
         } catch (Exception e) {
             //TODO: handle exception
+            throw new RuntimeException(e);
         }
     }
 
@@ -831,6 +873,7 @@ public class Session implements ISession {
             market.setStorePurchasePriceLowerBound(userId, storeId, lowerBound);
         } catch (Exception e) {
             //TODO: handle exception
+            throw new RuntimeException(e);
         }
     }
 
@@ -840,6 +883,7 @@ public class Session implements ISession {
             market.setStorePurchasePriceBounds(userId, storeId, lowerBound, upperBound);
         } catch (Exception e) {
             //TODO: handle exception
+            throw new RuntimeException(e);
         }
     }
 
@@ -849,6 +893,7 @@ public class Session implements ISession {
             market.setProductPurchaseQuantityUpperBound(userId, storeId, productId, upperBound);
         } catch (Exception e) {
             //TODO: handle exception
+            throw new RuntimeException(e);
         }
     }
 
@@ -858,6 +903,7 @@ public class Session implements ISession {
             market.setProductPurchaseQuantityLowerBound(userId, storeId, productId, lowerBound);
         } catch (Exception e) {
             //TODO: handle exception
+            throw new RuntimeException(e);
         }
     }
 
@@ -867,6 +913,7 @@ public class Session implements ISession {
             market.setProductPurchaseQuantityBounds(userId, storeId, productId, lowerBound, upperBound);
         } catch (Exception e) {
             //TODO: handle exception
+            throw new RuntimeException(e);
         }
     }
 
@@ -876,6 +923,7 @@ public class Session implements ISession {
             market.setProductPurchasePriceUpperBound(userId, storeId, productId, upperBound);
         } catch (Exception e) {
             //TODO: handle exception
+            throw new RuntimeException(e);
         }
     }
 
@@ -885,6 +933,7 @@ public class Session implements ISession {
             market.setProductPurchasePriceLowerBound(userId, storeId, productId, lowerBound);
         } catch (Exception e) {
             //TODO: handle exception
+            throw new RuntimeException(e);
         }
     }
 
@@ -894,6 +943,7 @@ public class Session implements ISession {
             market.setProductPurchasePriceBounds(userId, storeId, productId, lowerBound, upperBound);
         } catch (Exception e) {
             //TODO: handle exception
+            throw new RuntimeException(e);
         }
     }
 
@@ -903,7 +953,7 @@ public class Session implements ISession {
             return market.addStoreVisibleDiscount(userId, storeId, discountPercentage, discountLastDate);
         } catch (Exception e) {
             //TODO: handle exception
-            return -1;
+            throw new RuntimeException(e);
         }
     }
 
@@ -913,7 +963,7 @@ public class Session implements ISession {
             return market.addStoreConditionalDiscount(userId, storeId, discountPercentage, discountLastDate, minPriceForDiscount, quantityForDiscount);
         } catch (Exception e) {
             //TODO: handle exception
-            return -1;
+            throw new RuntimeException(e);
         }
     }
 
@@ -923,7 +973,7 @@ public class Session implements ISession {
             return market.addStoreHiddenDiscount(userId, storeId, discountPercentage, discountLastDate, code);
         } catch (Exception e) {
             //TODO: handle exception
-            return -1;
+            throw new RuntimeException(e);
         }
     }
 
@@ -933,6 +983,7 @@ public class Session implements ISession {
             market.removeStoreDiscount(userId, storeId, discountId);
         } catch (Exception e) {
             //TODO: handle exception
+            throw new RuntimeException(e);
         }
     }
 
@@ -942,7 +993,7 @@ public class Session implements ISession {
             return market.addProductVisibleDiscount(userId, storeId, productId, discountPercentage, discountLastDate);
         } catch (Exception e) {
             //TODO: handle exception
-            return -1;
+            throw new RuntimeException(e);
         }
     }
 
@@ -952,7 +1003,7 @@ public class Session implements ISession {
             return market.addProductConditionalDiscount(userId, storeId, productId, discountPercentage, discountLastDate, minPriceForDiscount, quantityForDiscount);
         } catch (Exception e) {
             //TODO: handle exception
-            return -1;
+            throw new RuntimeException(e);
         }
     }
 
@@ -962,7 +1013,7 @@ public class Session implements ISession {
             return market.addProductHiddenDiscount(userId, storeId, productId, discountPercentage, discountLastDate, code);
         } catch (Exception e) {
             //TODO: handle exception
-            return -1;
+            throw new RuntimeException(e);
         }
     }
 
@@ -972,11 +1023,16 @@ public class Session implements ISession {
             market.removeProductDiscount(userId, storeId, productId, discountId);
         } catch (Exception e) {
             //TODO: handle exception
+            throw new RuntimeException(e);
         }
     }
 
-
-    public boolean isUserLoggedIn() {
-        return false;
+    @Override
+    public boolean isUserLogged(int userId) {
+        return userRepositoryAsHashmap.getUser(userId).isLoggedIn();
     }
+
+
+
+
 }

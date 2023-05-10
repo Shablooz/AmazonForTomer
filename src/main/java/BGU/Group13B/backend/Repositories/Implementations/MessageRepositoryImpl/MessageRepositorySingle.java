@@ -42,7 +42,7 @@ public class MessageRepositorySingle implements IMessageRepository {
         addEntryIfNotExist(receiverId);
         readMessagesIterator.putIfAbsent(receiverId,readMessages.get(receiverId).iterator());
         if(!readMessagesIterator.get(receiverId).hasNext())
-            throw new IllegalArgumentException("no read messages");
+            throw new IllegalArgumentException("no read messages/refresh to the beginning");
         return readMessagesIterator.get(receiverId).next();
     }
 

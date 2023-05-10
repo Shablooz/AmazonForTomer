@@ -328,6 +328,12 @@ public interface ISession {
     public Message readMessage(int userId);
 
 
+    void replayMessage(int userId, String message);
+
+    Message readOldMessage(int userId);
+
+    void refreshOldMessages(int userId);
+
     /**
      * [#27]
      *
@@ -1009,6 +1015,8 @@ public interface ISession {
      * returns the new user id
      */
     int enterAsGuest();
+
+    boolean checkIfQuestionsExist(String userName);
 
     /**
      * #13
