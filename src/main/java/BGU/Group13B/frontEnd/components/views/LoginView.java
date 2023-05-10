@@ -100,9 +100,11 @@ public class LoginView extends VerticalLayout {
     private void setAuthenticateButton(Session session,int guestId){
         authenticationLayout.setVisible(true);
         authenticate.addClickListener(e -> {
-            if (session.login(guestId, username.getValue(), password.getValue(),
-                    answer1.getValue(), answer2.getValue(), answer3.getValue()) != 0){
+            int newId =session.login(guestId, username.getValue(), password.getValue(),
+                    answer1.getValue(), answer2.getValue(), answer3.getValue());
+            if ( newId!= 0){
                 Notification.show("Login successful");
+                SessionToIdMapper.getInstance().updateCurrentSession(newId);
                 UI.getCurrent().navigate(HomeView.class);
             }else{
                 Notification.show("Login failed");
