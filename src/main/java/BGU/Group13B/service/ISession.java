@@ -3,7 +3,11 @@ package BGU.Group13B.service;
 import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.User.Message;
+
 import BGU.Group13B.backend.User.PurchaseFailedException;
+
+import BGU.Group13B.backend.User.UserPermissions;
+
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
@@ -1040,4 +1044,12 @@ public interface ISession {
     void cancelPurchase(int userId);
 
     boolean isUserLogged(int userId);
+
+
+    /**
+     *
+     * @param userId the user id
+     * @return all the user's associated stores (all stores that the user has a role in)
+     */
+    List<Pair<StoreInfo, String>> getAllUserAssociatedStores(int userId);
 }
