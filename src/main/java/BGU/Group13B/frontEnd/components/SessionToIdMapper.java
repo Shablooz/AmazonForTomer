@@ -25,20 +25,20 @@ public class SessionToIdMapper {
         return instance;
     }
 
-    public void add(String session, int id) {
+    public synchronized void add(String session, int id) {
         this.sessionToId.put(session, id);
     }
 
     //will moistly be used for communication
-    public int get(String session) {
+    public synchronized int get(String session) {
         return this.sessionToId.get(session);
     }
 
-    public int getCurrentSessionId() {
+    public synchronized int getCurrentSessionId() {
         return this.sessionToId.get(VaadinSession.getCurrent().getSession().getId());
     }
 
-    public TimerTask kickExpired() {
+    public synchronized TimerTask kickExpired() {
         TimerTask task = new TimerTask() {
             public void run() {
                 for (String key : sessionToId.keySet()) {
@@ -51,10 +51,14 @@ public class SessionToIdMapper {
     }
 
 
-    public boolean isSessionExpired() {
+    public synchronized boolean isSessionExpired() {
         // Get the current Vaadin session
         VaadinSession session = VaadinSession.getCurrent();
         return session == null || session.getState() == VaadinSessionState.CLOSED;
+    }
+
+    public synchronized boolean containsKey(String sessionId) {
+        return this.sessionToId.containsKey(sessionId);
     }
 }
 

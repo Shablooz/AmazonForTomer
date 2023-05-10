@@ -5,6 +5,7 @@ import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.frontEnd.components.appnav.AppNav;
 import BGU.Group13B.frontEnd.components.appnav.AppNavItem;
 import BGU.Group13B.service.Session;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
@@ -16,6 +17,7 @@ import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.lineawesome.LineAwesomeIcon;
@@ -31,6 +33,13 @@ public class MainLayout extends AppLayout {
     @Autowired
     public MainLayout(Session session) {
         this.session = session;
+        UI currentUI = UI.getCurrent();
+        VaadinSession currentSession = currentUI.getSession();
+        String sessionId = currentSession.getSession().getId();
+        if(!SessionToIdMapper.getInstance().containsKey(sessionId)){
+            int tempId = session.enterAsGuest();
+            SessionToIdMapper.getInstance().add(sessionId,tempId);
+        }
         setPrimarySection(Section.DRAWER);
         addDrawerContent();
         addHeaderContent();
@@ -55,8 +64,8 @@ public class MainLayout extends AppLayout {
         FlexLayout flexLayout = new FlexLayout();
         flexLayout.setJustifyContentMode(FlexLayout.JustifyContentMode.END);
         flexLayout.setWidthFull();
-
-        if (!session.isUserLoggedIn(/*todo change to session*/)) {
+        int id = SessionToIdMapper.getInstance().getCurrentSessionId();
+        if (!session.isUserLogged(id)) {
             Button loginButton = new Button("Login");
             loginButton.addClickListener(event -> getUI().ifPresent(ui -> ui.navigate("login")));
             flexLayout.add(loginButton);

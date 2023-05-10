@@ -2,6 +2,7 @@ package BGU.Group13B.frontEnd.components.views;
 
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.service.Session;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;
 
 import com.vaadin.flow.component.UI;
@@ -26,43 +27,90 @@ import org.springframework.beans.factory.annotation.Autowired;
 @PageTitle("Login")
 public class LoginView extends VerticalLayout {
 
-    private final SessionToIdMapper sessionToIdMapper = SessionToIdMapper.getInstance();
     private final TextField username = new TextField("Username");
 
     private final PasswordField password = new PasswordField("Password");
     private final Button loginButton = new Button("Login");
     private final Button registerButton = new Button("Register");
 
+    private final Button authenticate = new Button("authenticate");
+
+    private final TextField answer1;
+
+    private final TextField answer3;
+
+    private final TextField answer2;
+
+    private final VerticalLayout authenticationLayout = new VerticalLayout();
+
+
     @Autowired
     public LoginView(Session session) {
-        //code below logs as guest and puts the guest id in the hashmap
-        final int guestId = session.enterAsGuest();
-        UI currentUI = UI.getCurrent();
-        VaadinSession currentSession = currentUI.getSession();
-        String sessionId = currentSession.getSession().getId();
-        sessionToIdMapper.add(sessionId, guestId);
+        answer1 = new TextField("מה המספר של אמא שלך");
+        answer2 = new TextField("אבא שלך ערומכו?");
+        answer3 = new TextField("What is your favorite book or movie?");
+
+        authenticationLayout.add(answer1, answer2, answer3, authenticate);
+        authenticationLayout.setVisible(false);
+
+        final int guestId = SessionToIdMapper.getInstance().getCurrentSessionId();
+
         // Use UI.access() to access the VaadinSession state on the UI thread
         VaadinSession web_session = VaadinSession.getCurrent();
         web_session.getSession().getId();
         RegisterView.setGuestId(guestId);
-        // You can initialise any data required for the connected UI components here.
+
+        setLoginButton(session, guestId);
+
+        setregisterButton();
+
+        FormLayout formLayout = new FormLayout();
+        formLayout.add(username, password);
+        add(formLayout, loginButton, registerButton);
+        //setAlignItems(Alignment.CENTER);
+        add(authenticationLayout);
+    }
+
+    private void setLoginButton(Session session,int guestId){
         loginButton.addClickListener(e -> {
             //need to change completely
-            if (session.login(guestId, username.getValue(), password.getValue(),
-                    "054-1234567", "1234", "answer3") != 0) {
+            if(session.checkIfQuestionsExist(username.getValue())){
+                Notification.show("Please answer the questions that u answered when registered!");
+                setAuthenticateButton(session,guestId);
+
+                return;
+            } else if (session.login(guestId, username.getValue(), password.getValue(),
+                    "", "", "") != 0) {
                 Notification.show("Login successful");
                 UI.getCurrent().navigate(HomeView.class);
             } else {
                 Notification.show("Login failed");
             }
         });
+    }
 
+
+    private void setregisterButton(){
         registerButton.addClickListener(e -> {
             UI.getCurrent().navigate(RegisterView.class);
         });
-        FormLayout formLayout = new FormLayout();
-        formLayout.add(username, password);
-        add(formLayout, loginButton, registerButton);
-        //setAlignItems(Alignment.CENTER);
     }
+
+
+    private void setAuthenticateButton(Session session,int guestId){
+        authenticationLayout.setVisible(true);
+        authenticate.addClickListener(e -> {
+            if (session.login(guestId, username.getValue(), password.getValue(),
+                    answer1.getValue(), answer2.getValue(), answer3.getValue()) != 0){
+                Notification.show("Login successful");
+                UI.getCurrent().navigate(HomeView.class);
+            }else{
+                Notification.show("Login failed");
+            }
+
+
+        });
+    }
+
+
 }

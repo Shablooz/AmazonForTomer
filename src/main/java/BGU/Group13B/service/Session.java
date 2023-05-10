@@ -714,6 +714,12 @@ public class Session implements ISession {
     }
 
     @Override
+    public boolean checkIfQuestionsExist(String userName) {
+        if(userRepositoryAsHashmap.checkIfUserExists(userName) == null)
+            return false;
+        return checkIfQuestionsExist(userRepositoryAsHashmap.checkIfUserExists(userName).getUserId());
+    }
+    @Override
     public void exitSystemAsGuest(int userId) {
         userRepositoryAsHashmap.removeUser(userId);
     }
@@ -949,6 +955,7 @@ public class Session implements ISession {
     }
 
 
+
     public boolean isUserLoggedIn() {
         return false;
     }
@@ -970,4 +977,5 @@ public class Session implements ISession {
             throw new RuntimeException(e);
         }
     }
+
 }
