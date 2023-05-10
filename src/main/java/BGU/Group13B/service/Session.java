@@ -954,7 +954,5 @@ public class Session implements ISession {
 
 
 
-    public boolean isUserLoggedIn() {
-        return false;
-    }
+
 }

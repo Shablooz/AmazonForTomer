@@ -17,7 +17,6 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
-
 @Route(value = "", layout = MainLayout.class)
 public class HomeView extends VerticalLayout implements BeforeEnterObserver {
     private final Session session;
@@ -27,12 +26,6 @@ public class HomeView extends VerticalLayout implements BeforeEnterObserver {
         this.session = session;
         // You can initialise any data required for the connected UI components here.
         //joining as a guest
-        UI currentUI = UI.getCurrent();
-        VaadinSession currentSession = currentUI.getSession();
-        String sessionId = currentSession.getSession().getId();
-        if(SessionToIdMapper.getInstance().containsKey(sessionId)){
-            SessionToIdMapper.getInstance().add(sessionId, session.enterAsGuest());
-        }
         //congratulations on logging in
         add(new H1("Welcome to the Super Duper Market!"));
         //center the text

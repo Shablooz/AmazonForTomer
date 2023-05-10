@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 @PageTitle("Login")
 public class LoginView extends VerticalLayout {
 
-    private final SessionToIdMapper sessionToIdMapper = SessionToIdMapper.getInstance();
     private final TextField username = new TextField("Username");
 
     private final PasswordField password = new PasswordField("Password");
@@ -54,31 +53,21 @@ public class LoginView extends VerticalLayout {
         authenticationLayout.add(answer1, answer2, answer3, authenticate);
         authenticationLayout.setVisible(false);
 
-        //code below logs as guest and puts the guest id in the hashmap
-        final int guestId = session.enterAsGuest();
-        UI currentUI = UI.getCurrent();
-        VaadinSession currentSession = currentUI.getSession();
+        final int guestId = SessionToIdMapper.getInstance().getCurrentSessionId();
+
         // Use UI.access() to access the VaadinSession state on the UI thread
         VaadinSession web_session = VaadinSession.getCurrent();
         web_session.getSession().getId();
         RegisterView.setGuestId(guestId);
 
-        // You can initialise any data required for the connected UI components here.
-
         setLoginButton(session, guestId);
 
         setregisterButton();
-
-
-        // You can initialise any data required for the connected UI components here.
-
 
         FormLayout formLayout = new FormLayout();
         formLayout.add(username, password);
         add(formLayout, loginButton, registerButton);
         //setAlignItems(Alignment.CENTER);
-        //למה צריך רגע אני רוצה לראות איך זה נראה עכשיו
-        //הבן שלי זוכר 2022 ספרות מהפאי
         add(authenticationLayout);
     }
 
@@ -100,11 +89,13 @@ public class LoginView extends VerticalLayout {
         });
     }
 
+
     private void setregisterButton(){
         registerButton.addClickListener(e -> {
             UI.getCurrent().navigate(RegisterView.class);
         });
     }
+
 
     private void setAuthenticateButton(Session session,int guestId){
         authenticationLayout.setVisible(true);
