@@ -554,6 +554,13 @@ public class ProxySession implements ISession {
     }
 
     @Override
+    public List<Pair<StoreInfo, String>> getAllUserAssociatedStores(int userId) {
+        if(realSession != null)
+            return realSession.getAllUserAssociatedStores(userId);
+        return new ArrayList<>();
+    }
+
+    @Override
     public void allowPurchasePolicyConflicts(int userId, int storeId) {
         if (realSession != null)
             realSession.allowPurchasePolicyConflicts(userId, storeId);

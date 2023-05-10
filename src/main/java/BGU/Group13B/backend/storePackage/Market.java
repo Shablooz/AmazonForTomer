@@ -335,6 +335,8 @@ public class Market {
     public void removeProductDiscount(int userId, int storeId, int productId, int discountId) throws NoPermissionException {
         storeRepository.getStore(storeId).removeProductDiscount(userId, productId, discountId);
     }
-
-
+    
+    public List<StoreInfo> getStoreInfos(List<Integer> storeIds) {
+        return storeIds.stream().map(storeId -> storeRepository.getStore(storeId).getStoreInfo()).collect(Collectors.toList());
+    }
 }

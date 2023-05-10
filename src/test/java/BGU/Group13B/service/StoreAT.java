@@ -15,7 +15,7 @@ public class StoreAT extends ProjectTest{
     void addStore_member_success(){
         int storeId = session.addStore(userIds[UsersIndex.STORE_OWNER_1.ordinal()], "my store", categories[0]);
         StoreInfo storeInfo = session.getStoreInfo(storeId);
-        assertEquals("my store", storeInfo.getStoreName());
+        assertEquals("my store", storeInfo.storeName());
     }
 
     @Test

@@ -83,6 +83,7 @@ public class Store {
             storePermissionsRepository.addStorePermission(storeId, storePermission1);
         }
         this.storePermission = storePermission1;
+        userRepository.getUser(founderId).addPermission(storeId, UserPermissions.StoreRole.FOUNDER);
         this.rank = 0;
         this.purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
         this.storeScore = SingletonCollection.getStoreScoreRepository();
