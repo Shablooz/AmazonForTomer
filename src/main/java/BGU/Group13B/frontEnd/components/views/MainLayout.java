@@ -28,8 +28,6 @@ public class MainLayout extends AppLayout {
     private H2 viewTitle;
     private final Session session;
 
-    private final int userId = SessionToIdMapper.getInstance().getCurrentSessionId();
-
     @Autowired
     public MainLayout(Session session) {
         this.session = session;
@@ -89,7 +87,7 @@ public class MainLayout extends AppLayout {
         nav.addItem(new AppNavItem("Home View", HomeView.class, LineAwesomeIcon.GLOBE_SOLID.create()));
 
         //my stores
-        if(session.isUserLogged(userId)){
+        if(true){ //TODO! check if the user is logged in
             nav.addItem(new AppNavItem("My Stores", MyStoresView.class, LineAwesomeIcon.STORE_SOLID.create()));
         }
 
