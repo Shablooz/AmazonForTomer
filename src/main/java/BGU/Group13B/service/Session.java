@@ -956,8 +956,7 @@ public class Session implements ISession {
     @Override
     public List<Pair<StoreInfo, String>> getAllUserAssociatedStores(int userId) {
         try{
-            User user = userRepositoryAsHashmap.getUser(userId);
-            List<Pair<Integer, String>> storeIdsAndRoles = user.getStoresAndRoles();
+            List<Pair<Integer, String>> storeIdsAndRoles = getStoresOfUser(userId);
             //map each storeId to storeInfo
             List<Pair<StoreInfo, String>> storeInfosAndRoles = new LinkedList<>();
             for(Pair<Integer, String> storeIdAndRole : storeIdsAndRoles){
