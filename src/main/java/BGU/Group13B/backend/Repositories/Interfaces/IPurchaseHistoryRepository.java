@@ -12,7 +12,7 @@ public interface IPurchaseHistoryRepository {
 
     String getAllPurchases(int userId);
 
-    void addPurchase(int userId, int storeId, List<Integer> products, List<Integer> amounts, double price);
+    PurchaseHistory addPurchase(int userId, int storeId, List<Integer> products, List<Integer> amounts, double price);
 
     void reset();
 }

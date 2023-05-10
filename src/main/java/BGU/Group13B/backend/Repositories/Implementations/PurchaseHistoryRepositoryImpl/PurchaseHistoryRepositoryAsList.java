@@ -21,12 +21,10 @@ public class PurchaseHistoryRepositoryAsList implements IPurchaseHistoryReposito
         return purchaseHistories.stream().anyMatch(purchaseHistory -> purchaseHistory.getUserId() == userId && purchaseHistory.getStoreId() == storeId &&
                 purchaseHistory.getProductsId().contains(productId));
     }
-
     @Override
     public boolean isPurchaseFromStore(int userId, int storeId) {
         return purchaseHistories.stream().anyMatch(purchaseHistory -> purchaseHistory.getUserId() == userId && purchaseHistory.getStoreId() == storeId);
     }
-
     @Override
     public String getAllPurchases(int userId) {
         List<PurchaseHistory> purchases = getAllPurchasesAsList(userId);
@@ -36,17 +34,18 @@ public class PurchaseHistoryRepositoryAsList implements IPurchaseHistoryReposito
         }
         return sb.toString();
     }
-
     @Override
-    public void addPurchase(int userId, int storeId, List<Integer> products, List<Integer> amounts, double price) {
+    public PurchaseHistory addPurchase(int userId, int storeId, List<Integer> products, List<Integer> amounts, double price) {
 
-        HashMap<Integer, Double> productsAmounts = new HashMap<>();
+        HashMap<Integer, Integer> productsAmounts = new HashMap<>();
         for (int i = 0; i < products.size(); i++) {
             int productId = products.get(i);
-            double amount = amounts.get(i);
+            int amount = amounts.get(i);
             productsAmounts.put(productId, amount);
         }
-        purchaseHistories.add(new PurchaseHistory(userId, storeId, productsAmounts, price));
+        PurchaseHistory purchaseHistory = new PurchaseHistory(userId, storeId, productsAmounts, price);
+        purchaseHistories.add(purchaseHistory);
+        return purchaseHistory;
     }
 
     private List<PurchaseHistory> getAllPurchasesAsList(int userId) {

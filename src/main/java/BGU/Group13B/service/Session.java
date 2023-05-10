@@ -946,19 +946,18 @@ public class Session implements ISession {
     @Override
     public Response<String> getUserPurchaseHistory(int userId) throws Exception {
         try {
+            isUserLoggedIn();
             Response.Builder<String> builder = new Response.Builder<String>().data(userRepositoryAsHashmap.getUser(userId).getPurchaseHistory());
             builder.message("User purchase history");
             builder.status(SUCCESS);
             return builder.build();
         } catch (Exception e) {
             Response.Builder<String> builder = new Response.Builder<String>().data(null);
-            builder.message("failed to get user purchase history");
+            builder.message(e.getMessage());
             builder.status(FAILURE);
             return builder.build();
         }
     }
-
-
 
 
     public boolean isUserLoggedIn() {
