@@ -315,6 +315,31 @@ public class Session implements ISession {
             throw new RuntimeException(e);
         }
     }
+    @Override
+    public void replayMessage(int userId, String message){
+        try {
+            userRepositoryAsHashmap.getUser(userId).replayMessage(message);
+        } catch (NoPermissionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @Override
+    public Message readOldMessage(int userId) {
+        try {
+            return userRepositoryAsHashmap.getUser(userId).readOldMessage();
+        } catch (NoPermissionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @Override
+    public void refreshOldMessages(int userId)
+    {
+        try {
+            userRepositoryAsHashmap.getUser(userId).refreshOldMessage();
+        } catch (NoPermissionException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public void sendMassageStore(int userId, String header, String massage, int storeId) {

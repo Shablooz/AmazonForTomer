@@ -26,7 +26,7 @@ public class User {
     private final Market market;
     private int messageId;
     private String userName;
-    private Message currentMessageToReply;
+    private Message regularMessageToReply;
     private String password;
 
     private String email;
@@ -156,7 +156,7 @@ public class User {
         if (!isAdmin())
             throw new NoPermissionException("Only admin can read complaints");
         Message message= messageRepository.readUnreadMassage(adminIdentifier);
-        currentMessageToReply = message;
+        regularMessageToReply = message;
         return message;
     }
 
@@ -179,11 +179,11 @@ public class User {
     public void answerComplaint(String answer) throws NoPermissionException {
         if (!isAdmin())
             throw new NoPermissionException("Only admin can answer complaints");
-        if(currentMessageToReply==null)
+        if(regularMessageToReply ==null)
             throw new IllegalArgumentException("no complaint to answer");
-        messageRepository.markAsRead(currentMessageToReply.getReceiverId(), currentMessageToReply.getSenderId(), currentMessageToReply.getMessageId());
-        messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), "RE: " + currentMessageToReply.getHeader(), answer, currentMessageToReply.getSenderId()));
-        currentMessageToReply=null;
+        messageRepository.markAsRead(regularMessageToReply.getReceiverId(), regularMessageToReply.getSenderId(), regularMessageToReply.getMessageId());
+        messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), "RE: " + regularMessageToReply.getHeader(), answer, regularMessageToReply.getSenderId()));
+        regularMessageToReply =null;
     }
 
     public Message readMassage() throws NoPermissionException {
@@ -192,8 +192,28 @@ public class User {
 
         Message message = messageRepository.readUnreadMassage(this.userName);
         messageRepository.markAsRead(message.getReceiverId(), message.getSenderId(), message.getMessageId());
-        currentMessageToReply = message;
+        regularMessageToReply = message;
         return message;
+    }
+    public void replayMessage(String answer) throws NoPermissionException{
+        if (!isRegistered())
+            throw new NoPermissionException("Only registered users can read massages");
+        if(regularMessageToReply ==null)
+            throw new IllegalArgumentException("no message to answer");
+        messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), "RE: " + regularMessageToReply.getHeader(), answer, regularMessageToReply.getSenderId()));
+        regularMessageToReply =null;
+    }
+    public Message readOldMessage() throws NoPermissionException {
+        if (!isRegistered())
+            throw new NoPermissionException("Only registered users can read massages");
+
+        return messageRepository.readReadMassage(this.userName);
+    }
+    public void refreshOldMessage() throws NoPermissionException {
+        if (!isRegistered())
+            throw new NoPermissionException("Only registered users can read massages");
+
+        messageRepository.refreshOldMessages(this.userName);
     }
 
     //27
@@ -211,7 +231,7 @@ public class User {
     //42
     public Message readUnreadMassageStore(int storeId) throws NoPermissionException {
         Message message = market.getUnreadMessages(this.userId, storeId);
-        currentMessageToReply = message;
+        regularMessageToReply = message;
         return message;
     }
     //42
@@ -222,12 +242,12 @@ public class User {
 
     //42
     public void answerQuestionStore(String answer) throws NoPermissionException {
-        if(currentMessageToReply==null)
+        if(regularMessageToReply ==null)
             throw new IllegalArgumentException("no message to reply to");
-        assert currentMessageToReply.getReceiverId().matches("-?\\d+");
-        market.markAsCompleted(currentMessageToReply.getSenderId(), currentMessageToReply.getMessageId(), this.userId, Integer.parseInt(currentMessageToReply.getReceiverId()));
-        messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), "RE: " + currentMessageToReply.getHeader(), answer, currentMessageToReply.getSenderId()));
-        currentMessageToReply=null;
+        assert regularMessageToReply.getReceiverId().matches("-?\\d+");
+        market.markAsCompleted(regularMessageToReply.getSenderId(), regularMessageToReply.getMessageId(), this.userId, Integer.parseInt(regularMessageToReply.getReceiverId()));
+        messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), "RE: " + regularMessageToReply.getHeader(), answer, regularMessageToReply.getSenderId()));
+        regularMessageToReply =null;
     }
 
     //42

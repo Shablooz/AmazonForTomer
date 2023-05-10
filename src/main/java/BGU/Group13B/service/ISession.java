@@ -320,6 +320,12 @@ public interface ISession {
     public Message readMessage(int userId);
 
 
+    void replayMessage(int userId, String message);
+
+    Message readOldMessage(int userId);
+
+    void refreshOldMessages(int userId);
+
     /**
      * [#27]
      *

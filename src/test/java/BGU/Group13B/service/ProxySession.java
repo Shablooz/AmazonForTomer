@@ -211,6 +211,23 @@ public class ProxySession implements ISession {
             return realSession.readMessage(userId);
         return Message.constractMessage("", -1, "", "", "");
     }
+    @Override
+    public void replayMessage(int userId, String massage) {
+        if (realSession != null)
+            realSession.replayMessage(userId,massage);
+    }
+    @Override
+    public Message readOldMessage(int userId) {
+        if (realSession != null)
+            return realSession.readOldMessage(userId);
+        return Message.constractMessage("", -1, "", "", "");
+    }
+    @Override
+    public void refreshOldMessages(int userId)
+    {
+        if (realSession != null)
+            realSession.refreshOldMessages(userId);
+    }
 
     @Override
     public void sendMassageStore(int userId, String header, String massage, int storeId) {
