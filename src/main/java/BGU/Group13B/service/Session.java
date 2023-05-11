@@ -168,18 +168,10 @@ public class Session implements ISession {
     }
 
     @Override
-    public void searchProductByName(String productName) {
-        market.searchProductByName(productName);
-    }
-
-    @Override
-    public void searchProductByCategory(String category) {
-        market.searchProductByCategory(category);
-    }
-
-    @Override
-    public void searchProductByKeywords(List<String> keywords) {
-        market.searchProductByKeywords(keywords);
+    public void search(String searchWords) {
+        market.searchProductByKeywords(searchWords);
+        market.searchProductByCategory(searchWords);
+        market.searchProductByName(searchWords);
     }
 
     @Override
