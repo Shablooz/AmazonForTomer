@@ -47,10 +47,6 @@ public class Session implements ISession {
 
     //IMPORTANT need to initialize the session AFTER loading first user (id = 1) from database
 
-    public Session(){
-        this(new Market());
-    }
-
     public Session(Market market) {
         this.market = market;
         //callbacks initialization

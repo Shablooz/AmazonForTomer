@@ -36,17 +36,16 @@ public class CartTest {
             userRepository = SingletonCollection.getUserRepository();
             basketRepository = SingletonCollection.getBasketRepository();
             basketProductRepository = SingletonCollection.getBasketProductRepository();
-            //session = new ProxySession();
-            session = new Session(new Market());
+            session = SingletonCollection.getSession();
             int userId1 = userRepository.getNewUserId();
             user1 = new User(userId1);
             userRepository.addUser(userId1, user1);
             int userId2 = userRepository.getNewUserId();
             user2 = new User(userId2);
             userRepository.addUser(userId2, user2);
-            storeId1 = storeRepository.addStore(2, "Electronics store", "electronics");
+            storeId1 = storeRepository.addStore(1, "Electronics store", "electronics");
             productId1 = productRepository.addProduct(storeId1, "Dell computer", "electronics", 1000, 50, "Good and stable laptop.");
-            storeId2 = storeRepository.addStore(2, "Electronics store", "electronics");
+            storeId2 = storeRepository.addStore(1, "Electronics store", "electronics");
             productId2 = productRepository.addProduct(storeId2, "HP computer", "electronics", 6000, 0, "Good and stable pc.");
             productId3 = productRepository.addProduct(storeId2, "Dell computer A12", "electronics", 2000, 1, "Good and stable laptop.");
 
@@ -71,7 +70,8 @@ public class CartTest {
 
     @AfterEach
     void tearDown() {
-        deleteAllData();
+        //deleteAllData();
+        SingletonCollection.reset_system();
     }
 
     @Test

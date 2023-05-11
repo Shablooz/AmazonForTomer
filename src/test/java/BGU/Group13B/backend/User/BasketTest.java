@@ -34,8 +34,6 @@ class BasketTest {
     private static int productId1;
     private static int productId2;
 
-    private static Session session = new Session();
-
     @BeforeEach
     void setUp() {
 

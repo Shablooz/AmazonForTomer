@@ -19,9 +19,6 @@ public class StoreManagementTest {
     private static IProductPurchasePolicyRepository productPurchasePolicyRepository;
     private static IProductDiscountsRepository productDiscountsRepository;
     private static IStorePermissionsRepository storePermissionsRepository;
-
-    //init the admin
-    private static final Session session = new Session();
     private final int founderId = 1;
     private final String storeName = "storeName";
     private final String category = "category";
@@ -33,8 +30,8 @@ public class StoreManagementTest {
     private int storeId;
     private Store store;
 
-    @BeforeAll
-    static void setUp() {
+    @BeforeEach
+    void setUpEach() {
         storeRepository = SingletonCollection.getStoreRepository();
         storePurchasePolicyRepository = SingletonCollection.getStorePurchasePolicyRepository();
         storeDiscountsRepository = SingletonCollection.getStoreDiscountsRepository();
@@ -42,10 +39,6 @@ public class StoreManagementTest {
         productPurchasePolicyRepository = SingletonCollection.getProductPurchasePolicyRepository();
         productDiscountsRepository = SingletonCollection.getProductDiscountsRepository();
         storePermissionsRepository = SingletonCollection.getStorePermissionRepository();
-    }
-
-    @BeforeEach
-    void setUpEach() {
         storeId = storeRepository.addStore(founderId, storeName, category);
         store = storeRepository.getStore(storeId);
     }
@@ -53,13 +46,7 @@ public class StoreManagementTest {
 
     @AfterEach
     void tearDown() {
-        storeRepository.reset();
-        storePurchasePolicyRepository.reset();
-        storeDiscountsRepository.reset();
-        productRepository.reset();
-        productPurchasePolicyRepository.reset();
-        productDiscountsRepository.reset();
-        storePermissionsRepository.reset();
+        SingletonCollection.reset_system();
     }
 
     private int addProduct1() throws NoPermissionException {
