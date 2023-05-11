@@ -528,6 +528,7 @@ public class StoreManagementTest {
     @Test
     void hideStoreTest_simpleCase_success(){
         try {
+            addProduct1();
             store.hideStore(founderId);
             assertTrue(store.isHidden());
             Collection<Product> storeProducts = store.getAllStoreProducts(founderId);
@@ -599,6 +600,43 @@ public class StoreManagementTest {
             assertTrue(product.isHidden());
         } catch (NoPermissionException e) {
             fail();
+        }
+    }
+
+    @Test
+    void unhideStoreTest_simpleCase_success(){
+        try {
+            store.hideStore(founderId);
+            addProduct1();
+            store.unhideStore(founderId);
+            assertFalse(store.isHidden());
+            Collection<Product> storeProducts = store.getAllStoreProducts(founderId);
+            for(Product product : storeProducts){
+                assertFalse(product.isHidden());
+            }
+        } catch (NoPermissionException e) {
+            fail();
+        }
+    }
+
+    @Test
+    void unhideStoreTest_noPermission_fail(){
+        try {
+            store.hideStore(founderId);
+            store.unhideStore(founderId + 1);
+            fail();
+        } catch (NoPermissionException e) {
+            assertTrue(true);
+        }
+    }
+
+    @Test
+    void unhideStoreTest_alreadyUnhidden_fail(){
+        try {
+            store.unhideStore(founderId);
+            fail();
+        } catch (Exception e) {
+            assertTrue(true);
         }
     }
 
