@@ -118,21 +118,9 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void searchProductByName(String productName) {
+    public void search(String searchWords) {
         if (realSession != null)
-            realSession.searchProductByName(productName);
-    }
-
-    @Override
-    public void searchProductByCategory(String category) {
-        if (realSession != null)
-            realSession.searchProductByCategory(category);
-    }
-
-    @Override
-    public void searchProductByKeywords(List<String> keywords) {
-        if (realSession != null)
-            realSession.searchProductByKeywords(keywords);
+            realSession.search(searchWords);
     }
 
     @Override

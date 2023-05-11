@@ -39,7 +39,7 @@ public class User {
     //TODO: show the messages upon registering
     private static final String question1 = "What is your favorite color?";
     private static final String question2 = "What is your favorite food?";
-    private static final String question3 = "What is your favorite book or movie?";
+    private static final String question3 = "What is your favorite book?";
     //eyal addition
     private volatile boolean isLoggedIn;
 
@@ -136,6 +136,9 @@ public class User {
         if (!this.answer1.equals(answer1) || !this.answer2.equals(answer2) || !this.answer3.equals(answer3)) {
             throw new IllegalArgumentException("wrong answers on security questions!");
         }
+        if(isLoggedIn())
+            throw new IllegalArgumentException("User is already logged in!");
+
         this.isLoggedIn = true;
 
     }

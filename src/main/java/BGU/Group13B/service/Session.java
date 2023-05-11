@@ -174,39 +174,29 @@ public class Session implements ISession {
     public synchronized void register(int userId, String username, String password,
                                       String email, String answer1, String answer2, String answer3) {
         User user = userRepositoryAsHashmap.getUser(userId);
-        try {
-            //the first "if" might not be necessary when we will connect to web
-            if (this.userRepositoryAsHashmap.checkIfUserWithEmailExists(email)) {
-                throw new IllegalArgumentException("user with this email already exists!");//temporary
-            }
-            if (!user.isRegistered()) {
-                if (userRepositoryAsHashmap.checkIfUserExists(username) == null) {
-                    user.register(username, password, email, answer1, answer2, answer3);
-                } else {
-                    throw new IllegalArgumentException("user with this username already exists!");
-                }
-            } else {
-                throw new IllegalArgumentException("already registered!");
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+
+        //the first "if" might not be necessary when we will connect to web
+        if (this.userRepositoryAsHashmap.checkIfUserWithEmailExists(email)) {
+            throw new IllegalArgumentException("user with this email already exists!");//temporary
         }
-
+        if (!user.isRegistered()) {
+            if (userRepositoryAsHashmap.checkIfUserExists(username) == null) {
+                user.register(username, password, email, answer1, answer2, answer3);
+            } else {
+                throw new IllegalArgumentException("user with this username already exists!");
+            }
+        } else {
+            throw new IllegalArgumentException("already registered!");
+        }
     }
 
-    @Override
-    public void searchProductByName(String productName) {
-        market.searchProductByName(productName);
-    }
+
 
     @Override
-    public void searchProductByCategory(String category) {
-        market.searchProductByCategory(category);
-    }
-
-    @Override
-    public void searchProductByKeywords(List<String> keywords) {
-        market.searchProductByKeywords(keywords);
+    public void search(String searchWords) {
+        market.searchProductByKeywords(searchWords);
+        market.searchProductByCategory(searchWords);
+        market.searchProductByName(searchWords);
     }
 
     @Override
