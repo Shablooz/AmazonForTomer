@@ -24,6 +24,7 @@ import BGU.Group13B.backend.System.Searcher;
 import BGU.Group13B.backend.storePackage.AlertManager;
 import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
+import BGU.Group13B.backend.storePackage.payment.PaymentAPI;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
 import BGU.Group13B.service.callbacks.AddToUserCart;
 import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
@@ -110,8 +111,9 @@ public class SingletonCollection {
         storePermissionRepository = new StorePermissionsRepositoryAsHashmap();
 
         //adapters
-        deliveryAdapter = null; //TODO
-        paymentAdapter = (address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCVV, id, creditCardType, successfulProducts, failedProducts, totalAmount) -> true;  //TODO
+        deliveryAdapter = new PaymentAPI();
+        paymentAdapter = new PaymentAPI();
+
 
 
         //additional classes

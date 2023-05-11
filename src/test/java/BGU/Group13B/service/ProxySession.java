@@ -2,11 +2,14 @@ package BGU.Group13B.service;
 
 import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.User.Message;
+import BGU.Group13B.backend.User.PurchaseFailedException;
 import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.Store;
+import BGU.Group13B.service.entity.ServiceBasketProduct;
+import BGU.Group13B.service.entity.ServiceProduct;
 import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
 
@@ -37,9 +40,23 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public double purchaseProductCart(int userId, String address, String creditCardNumber, String creditCardMonth, String creditCardYear, String creditCardHolderFirstName, String creditCardHolderLastName, String creditCardCcv, String id, String creditCardType, HashMap<Integer, String> productsCoupons, String storeCoupon) {
+    public double purchaseProductCart(int userId, String creditCardNumber, String creditCardMonth, String creditCardYear, String creditCardHolderFirstName, String creditCardCcv, String id, HashMap<Integer, String> productsCoupons, String storeCoupon) {
         if (realSession != null)
-            return realSession.purchaseProductCart(userId, address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType, productsCoupons, storeCoupon);
+            return realSession.purchaseProductCart(userId, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardCcv, id, productsCoupons, storeCoupon);
+        return -1;
+    }
+
+    @Override
+    public Response<VoidResponse> purchaseProductCart(int userId, String creditCardNumber, String creditCardMonth, String creditCardYear, String creditCardHolderFirstName, String creditCardCcv, String id) {
+        if (realSession != null)
+            return realSession.purchaseProductCart(userId, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardCcv, id);
+        return null;
+    }
+
+    @Override
+    public double startPurchaseBasketTransaction(int userId, HashMap<Integer, String> productsCoupons, String storeCoupon) throws PurchaseFailedException {
+        if (realSession != null)
+            return realSession.startPurchaseBasketTransaction(userId, productsCoupons, storeCoupon);
         return -1;
     }
 
@@ -319,6 +336,13 @@ public class ProxySession implements ISession {
     }
 
     @Override
+    public Response<List<ServiceBasketProduct>> getCartContent(int userId) {
+        if(realSession != null)
+            return realSession.getCartContent(userId);
+        return null;
+    }
+
+    @Override
     public void removeProductFromCart(int userId, int storeId, int productId) {
         if (realSession != null)
             realSession.removeProductFromCart(userId, storeId, productId);
@@ -469,6 +493,13 @@ public class ProxySession implements ISession {
     }
 
     @Override
+    public List<ServiceProduct> getAllFailedProductsAfterPayment(int userId) {
+        if (realSession != null)
+            return realSession.getAllFailedProductsAfterPayment(userId);
+        return new ArrayList<>();
+    }
+
+    @Override
     public int enterAsGuest() {
         if (realSession != null)
             return realSession.enterAsGuest();
@@ -491,6 +522,19 @@ public class ProxySession implements ISession {
         if(realSession != null)
             return realSession.getFailedProducts(userId, storeId);
         return new ArrayList<>();
+    }
+
+    @Override
+    public double getTotalPriceOfCart(int userId) {
+        if (realSession != null)
+            return realSession.getTotalPriceOfCart(userId);
+        return -1;
+    }
+
+    @Override
+    public void cancelPurchase(int userId) {
+        if(realSession != null)
+            realSession.cancelPurchase(userId);
     }
 
     @Override

@@ -149,15 +149,12 @@ public class CartTest {
                 session.addProductToCart(user1.getUserId(), productId1, storeId1);
                 session.purchaseProductCart(
                         user1.getUserId(),
-                        "address",
                         "creditCardNumber",
                         "creditCardMonth",
                         "creditCardYear",
                         "creditCardHolderFirstName",
-                        "creditCardHolderLastName",
                         "creditCardCcv",
                         "id",
-                        "creditCardType",
                         new HashMap<>(),
                         "couponCode");
             });
@@ -201,15 +198,12 @@ public class CartTest {
                 session.addProductToCart(user1.getUserId(), productId3, storeId2);
                 session.purchaseProductCart(
                         user1.getUserId(),
-                        "address",
                         "creditCardNumber",
                         "creditCardMonth",
                         "creditCardYear",
                         "creditCardHolderFirstName",
-                        "creditCardHolderLastName",
                         "creditCardCcv",
                         "id",
-                        "creditCardType",
                         new HashMap<>(),
                         "couponCode");
             });

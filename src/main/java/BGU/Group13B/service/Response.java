@@ -50,6 +50,8 @@ public class Response<T> {
         return status;
     }
 
+
+
     /**
      * The Status enum represents the status of the response.
      * It can be SUCCESS, PARTIAL_SUCCESS, or FAILURE.
@@ -57,7 +59,8 @@ public class Response<T> {
     public enum Status {
         SUCCESS,
         PARTIAL_SUCCESS,
-        FAILURE
+        FAILURE,
+        NO_PERMISSION
     }
 
     /**
@@ -128,6 +131,13 @@ public class Response<T> {
     public static <T> Response<T> success(T data) {
         return new Builder<T>()
                 .data(data)
+                .message("Operation completed successfully")
+                .status(Status.SUCCESS)
+                .build();
+    }
+    public static Response<VoidResponse> success() {
+        return new Builder<VoidResponse>()
+                .data(new VoidResponse())
                 .message("Operation completed successfully")
                 .status(Status.SUCCESS)
                 .build();

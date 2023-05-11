@@ -2,7 +2,7 @@ package BGU.Group13B.backend.User;
 
 import BGU.Group13B.backend.storePackage.Product;
 
-public class BasketProduct  {
+public class BasketProduct {
     private final Product product;
     private int quantity;
 
@@ -11,9 +11,6 @@ public class BasketProduct  {
         this.quantity = 1;
     }
 
-    public Product getProduct() {
-        return product;
-    }
 
     //gets product id
     public int getQuantity() {
@@ -23,7 +20,8 @@ public class BasketProduct  {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
-    public int getProductId(){
+
+    public int getProductId() {
         return product.getProductId();
     }
 
@@ -31,7 +29,31 @@ public class BasketProduct  {
         this.quantity += addedQuantity;
     }
 
-    public String toString(){
-        return "Product: " + product.getName() + " Quantity: " + quantity +"\n";
+    public String getName() {
+        return product.getName();
+    }
+
+    public double getPrice() {
+        return product.getPrice();
+    }
+
+    public String getCategory() {
+        return product.getCategory();
+    }
+
+    public int getStoreId() {
+        return product.getStoreId();
+    }
+
+
+    public String toString() {
+        return "Product: " + product.getName() + " Quantity: " + quantity + "\n";
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+    public double getSubtotal() {
+        return getPrice() * quantity;
     }
 }

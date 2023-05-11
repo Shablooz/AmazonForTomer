@@ -3,9 +3,15 @@ package BGU.Group13B.service;
 import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.User.Message;
+
+import BGU.Group13B.backend.User.PurchaseFailedException;
+
 import BGU.Group13B.backend.User.UserPermissions;
+
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
+import BGU.Group13B.service.entity.ServiceBasketProduct;
+import BGU.Group13B.service.entity.ServiceProduct;
 import BGU.Group13B.service.info.StoreInfo;
 import BGU.Group13B.service.info.ProductInfo;
 
@@ -46,22 +52,27 @@ public interface ISession {
      * require 2.5
      *
      * @param userId                    the user id
-     * @param address                   the address of the user
      * @param creditCardNumber          the credit card number
      * @param creditCardMonth           the credit card month
      * @param creditCardYear            the credit card year
      * @param creditCardHolderFirstName the credit card holder first name
-     * @param creditCardHolderLastName  the credit card holder last name
      * @param creditCardCcv             the credit card ccv
      * @param id                        the id of the card owner
-     * @param creditCardType            the credit card type
      * @return total price paid by the user
      */
-    double purchaseProductCart(int userId, String address, String creditCardNumber, String creditCardMonth,
-                             String creditCardYear, String creditCardHolderFirstName,
-                             String creditCardHolderLastName, String creditCardCcv, String id,
-                             String creditCardType, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                             String/*store coupons*/ storeCoupon);
+    double purchaseProductCart(int userId, String creditCardNumber, String creditCardMonth,
+                               String creditCardYear, String creditCardHolderFirstName,
+                               String creditCardCcv, String id,
+                               HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                               String/*store coupons*/ storeCoupon);
+
+    Response<VoidResponse> purchaseProductCart(int userId, String creditCardNumber,
+                                               String creditCardMonth, String creditCardYear,
+                                               String creditCardHolderFirstName,
+                                               String creditCardCcv, String id);
+
+    double startPurchaseBasketTransaction(int userId, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                                          String/*store coupons*/ storeCoupon) throws PurchaseFailedException;
 
     /**
      * #50
@@ -463,6 +474,8 @@ public interface ISession {
      */
     void getCartDescription(int userId);
 
+    Response<List<ServiceBasketProduct>> getCartContent(int userId);
+
     /**
      * #20
      * require 2.4
@@ -685,6 +698,8 @@ public interface ISession {
      */
     boolean checkIfQuestionsExist(int userId);
 
+
+    List<ServiceProduct> getAllFailedProductsAfterPayment(int userId);
 
     /**
      * #33
@@ -961,19 +976,11 @@ public interface ISession {
      * */
     List<Integer> getFailedProducts(int userId, int storeId);
 
-    /**
-     * @param userId the user id
-     * @param storeId the store id
-     * @param productId the product id
-     * @throws Exception if the product is not in the store
-     *
-     * */
 
-    /**
-     *
-     * @param userId
-     * @return weather the user is logged or not
-     */
+    double getTotalPriceOfCart(int userId);
+
+    void cancelPurchase(int userId);
+
     boolean isUserLogged(int userId);
 
 
