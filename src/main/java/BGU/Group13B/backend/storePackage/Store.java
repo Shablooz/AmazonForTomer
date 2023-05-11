@@ -887,7 +887,7 @@ public class Store {
          */
     }
 
-    //only the store founder can do this function
+    @DefaultFounderFunctionality
     public synchronized void unhideStore(int userId) throws NoPermissionException {
         if(!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to unhide the store: " + this.storeId);
@@ -902,7 +902,7 @@ public class Store {
         notifyAllWorkers(userId, "Store Closed", "The store " + this.storeName + " has been hidden");
     }
 
-    public void deleteStore(int userId) throws NoPermissionException {
+    public synchronized void deleteStore(int userId) throws NoPermissionException {
         if(!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to delete the store: " + this.storeId);
 
