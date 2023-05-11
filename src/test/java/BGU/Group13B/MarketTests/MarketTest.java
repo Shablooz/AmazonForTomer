@@ -2,7 +2,6 @@ package BGU.Group13B.MarketTests;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
-import BGU.Group13B.backend.User.User;
 import BGU.Group13B.backend.storePackage.*;
 import BGU.Group13B.service.SingletonCollection;
 import org.junit.jupiter.api.*;
@@ -49,18 +48,17 @@ public class MarketTest {
         productKeywords = "computer laptop pc";
         minPrice = 1000;
         maxPrice = 3000;
-        market = new Market();
+        market = SingletonCollection.getMarket();
         productRepository = SingletonCollection.getProductRepository();
         storeRepository = SingletonCollection.getStoreRepository();
-        int storeOwner1 = SingletonCollection.getUserRepository().getNewUserId();
-        SingletonCollection.getUserRepository().addUser(storeOwner1, new User(storeOwner1));
+
         try {
-            storeId1 = storeRepository.addStore(storeOwner1, "Electronics store", "electronics");
+            storeId1 = storeRepository.addStore(1, "Electronics store", "electronics");
             productId1 = productRepository.addProduct(storeId1, "Dell computer", "electronics", 1000, 50, "Good and stable laptop.");
-            storeId2 = storeRepository.addStore(storeOwner1, "Electronics store", "electronics");
+            storeId2 = storeRepository.addStore(1, "Electronics store", "electronics");
             productId2 = productRepository.addProduct(storeId2, "HP computer", "electronics", 6000, 50, "Good and stable pc.");
             productId3 = productRepository.addProduct(storeId2, "Dell computer A12", "electronics", 2000, 50, "Good and stable laptop.");
-            storeId3 = storeRepository.addStore(storeOwner1, "Electronics store", "electronics");
+            storeId3 = storeRepository.addStore(1, "Electronics store", "electronics");
             productId4 = productRepository.addProduct(storeId3, "Mac laptop", "electronics devices", 10000, 50, "Good and stable .");
             productId5 = productRepository.addProduct(storeId3, "Gaming laptop", "gaming", 10000, 50, "Good and stable computer.");
 
@@ -84,7 +82,8 @@ public class MarketTest {
 
     @AfterEach
     void tearDown() {
-        deleteAllData();
+        //deleteAllData();
+        SingletonCollection.reset_system();
     }
 
     @Test
@@ -157,7 +156,7 @@ public class MarketTest {
             market.searchProductByName(productName2);
             List<Product> products = market.filterByProductRank(0, 5);
             assertEquals(3, products.size());
-            assertEquals(3, products.stream().filter(p -> checkRange(0, 5, p.getRank())).count());
+            assertEquals(3, products.stream().filter(p -> checkRange(0, 5, p.getProductScore())).count());
         } catch (Exception e) {
             fail("Exception was thrown");
         }
@@ -169,7 +168,7 @@ public class MarketTest {
             market.searchProductByName(productName2);
             List<Product> products = market.filterByProductRank(5, 5);
             assertEquals(0, products.size());
-            assertEquals(0, products.stream().filter(p -> checkRange(5, 5, p.getRank())).count());
+            assertEquals(0, products.stream().filter(p -> checkRange(5, 5, p.getProductScore())).count());
         } catch (Exception e) {
             fail("Exception was thrown");
         }
@@ -205,7 +204,7 @@ public class MarketTest {
             market.searchProductByName(productName2);
             List<Product> products = market.filterByStoreRank(0, 5);
             assertEquals(3, products.size());
-            assertEquals(3, products.stream().filter(p -> checkRange(0, 5, p.getRank())).count());
+            assertEquals(3, products.stream().filter(p -> checkRange(0, 5, p.getProductScore())).count());
         } catch (Exception e) {
             fail("Exception was thrown");
         }
@@ -217,7 +216,7 @@ public class MarketTest {
             market.searchProductByName(productName2);
             List<Product> products = market.filterByStoreRank(5, 5);
             assertEquals(0, products.size());
-            assertEquals(0, products.stream().filter(p -> checkRange(5, 5, p.getRank())).count());
+            assertEquals(0, products.stream().filter(p -> checkRange(5, 5, p.getProductScore())).count());
         } catch (Exception e) {
             fail("Exception was thrown");
         }

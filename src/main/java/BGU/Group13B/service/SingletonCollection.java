@@ -81,6 +81,7 @@ public class SingletonCollection {
     private static AlertManager alertManager;
     private static Searcher searcher;
     private static Market market;
+    private static Session session;
 
     private static final String LOG_FILE_NAME = "info_logger.txt";
     private static final String ERROR_LOG_FILE_NAME = "error_logger.txt";
@@ -106,20 +107,21 @@ public class SingletonCollection {
         reviewRepository = new ReviewRepoSingle();
         messageRepository = new MessageRepositorySingle();
         storeScoreRepository = new StoreScoreSingle();
-
         userPermissionRepository = new UserPermissionRepositoryAsHashmap();
         storePermissionRepository = new StorePermissionsRepositoryAsHashmap();
+
 
         //adapters
         deliveryAdapter = new PaymentAPI();
         paymentAdapter = new PaymentAPI();
 
 
-
         //additional classes
         alertManager = new AlertManager(userRepository);
         searcher = new Searcher(productRepository, storeRepository);
         market = new Market();
+        session = new Session(market);
+
     }
 
     public static void reset_system()
@@ -153,6 +155,7 @@ public class SingletonCollection {
         alertManager = new AlertManager(userRepository);
         searcher = new Searcher(productRepository, storeRepository);
         market = new Market();
+        session = new Session(market);
     }
 
     private SingletonCollection() {
@@ -260,6 +263,10 @@ public class SingletonCollection {
 
     public static IUserPermissionRepository getUserPermissionRepository(){
         return userPermissionRepository;
+    }
+
+    public static Session getSession() {
+        return session;
     }
 
     /**

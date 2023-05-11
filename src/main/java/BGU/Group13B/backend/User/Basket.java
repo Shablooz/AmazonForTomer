@@ -153,7 +153,7 @@ public class Basket {
                 //try to decrease the quantity of the product in the store
                 //if succeeded, add the product to the successful products list
                 //if failed, add the product to the failed products list
-                if (basketProduct.getProduct().isDeleted())
+                if (basketProduct.getProduct().isDeleted() || basketProduct.getProduct().isHidden())
                     failedProducts.add(basketProduct);
                 else if (basketProduct.getProduct().tryDecreaseQuantity(basketProduct.getQuantity())) {
                     successfulProducts.add(basketProduct);

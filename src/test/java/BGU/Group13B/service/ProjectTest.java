@@ -79,7 +79,7 @@ public abstract class ProjectTest {
 
     @BeforeEach
     public void setUp() {
-        this.session = Driver.getSession();
+        this.session = SingletonCollection.getSession();
         setUpUsers();
         setUpAdmin();
         setUpStores();
