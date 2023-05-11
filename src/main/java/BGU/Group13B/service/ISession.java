@@ -628,9 +628,10 @@ public interface ISession {
      * #17
      * require 2.1
      *
+     * @param userId  the user id
      * @param storeId the store id
      */
-    StoreInfo getStoreInfo(int storeId);
+    StoreInfo getStoreInfo(int userId, int storeId);
 
     /**
      * #17
@@ -652,58 +653,11 @@ public interface ISession {
      * #17
      * require 2.1
      *
+     * @param userId    the user id
      * @param storeId   the store id
      * @param productId the product id
      */
-    ProductInfo getStoreProductInfo(int storeId, int productId);
-
-    /**
-     * #17
-     * require 2.1
-     *
-     * @param productId the product id
-     */
-    ProductInfo getProductInfo(int productId);
-
-    /**
-     * #17
-     * require 2.1
-     *
-     * @param productId the product id
-     */
-    String getProductName(int productId);
-
-    /**
-     * #17
-     * require 2.1
-     *
-     * @param productId the product id
-     */
-    String getProductCategory(int productId);
-
-    /**
-     * #17
-     * require 2.1
-     *
-     * @param productId the product id
-     */
-    double getProductPrice(int productId);
-
-    /**
-     * #17
-     * require 2.1
-     *
-     * @param productId the product id
-     */
-    int getProductStockQuantity(int productId);
-
-    /**
-     * #17
-     * require 2.1
-     *
-     * @param productId the product id
-     */
-    float getProductScore(int productId);
+    ProductInfo getStoreProductInfo(int userId, int storeId, int productId);
 
     /**
      * #17
@@ -711,7 +665,7 @@ public interface ISession {
      *
      * @param storeId the store id
      */
-    Set<ProductInfo> getAllStoreProductsInfo(int storeId);
+    Set<ProductInfo> getAllStoreProductsInfo(int userId, int storeId);
 
     /**
      * #31
@@ -1045,4 +999,14 @@ public interface ISession {
      * @return all the user's associated stores (all stores that the user has a role in)
      */
     List<Pair<StoreInfo, String>> getAllUserAssociatedStores(int userId);
+
+
+    /**
+     * #39
+     * require 4.9
+     *
+     * @param userId    the user id (only the founder can do this action)
+     * @param storeId   the store id that will be hidden
+     */
+    void hideStore(int userId, int storeId);
 }
