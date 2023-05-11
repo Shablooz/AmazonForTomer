@@ -12,10 +12,12 @@ public class SessionToIdMapper {
 
     private static SessionToIdMapper instance;
     private ConcurrentHashMap<String, Integer> sessionToId;
+    private ConcurrentHashMap<Integer, VaadinSession> idToSession;
 
     private SessionToIdMapper() {
         // Private constructor to prevent instantiation from outside
         this.sessionToId = new ConcurrentHashMap<>();
+        this.idToSession=new ConcurrentHashMap<>();
     }
 
     public synchronized static SessionToIdMapper getInstance() {
@@ -27,11 +29,17 @@ public class SessionToIdMapper {
 
     public synchronized void add(String session, int id) {
         this.sessionToId.put(session, id);
+        if(getCurrentSessionId()!=id)
+            idToSession.remove(getCurrentSessionId());
+        this.idToSession.put(id,VaadinSession.getCurrent());
     }
 
     //will moistly be used for communication
     public synchronized int get(String session) {
         return this.sessionToId.get(session);
+    }
+    public synchronized VaadinSession getSession(int id) {
+        return this.idToSession.get(id);
     }
 
     public synchronized int getCurrentSessionId() {

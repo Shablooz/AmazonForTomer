@@ -10,7 +10,6 @@ import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
-import net.bytebuddy.dynamic.scaffold.MethodGraph;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -263,218 +262,244 @@ public class Session implements ISession {
         //TODO: implement
     }
 
-    public void openComplaint(int userId, String header, String complaint) {
+    @Override
+    public Response<VoidResponse> clearMessageToReply(int userId) {
+        try {
+            userRepositoryAsHashmap.getUser(userId).clearMessageToReply();
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    public Response<VoidResponse> openComplaint(int userId, String header, String complaint) {
         try {
             userRepositoryAsHashmap.getUser(userId).openComplaint(header, complaint);
-        } catch (NoPermissionException e) {
-            throw new RuntimeException(e);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
         }
     }
 
 
-    public Message getComplaint(int userId) {
+    public Response<Message> getComplaint(int userId) {
         try {
-            return userRepositoryAsHashmap.getUser(userId).getComplaint();
-        } catch (NoPermissionException e) {
-            throw new RuntimeException(e);
+            return Response.success(userRepositoryAsHashmap.getUser(userId).getComplaint());
+        }catch (Exception e){
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void markMessageAsReadAdmin(int userId, String receiverId, String senderId, int messageId) {
+    public Response<VoidResponse> markMessageAsReadAdmin(int userId, String receiverId, String senderId, int messageId) {
         try {
             userRepositoryAsHashmap.getUser(userId).markMessageAsReadAdmin(receiverId, senderId, messageId);
-        } catch (NoPermissionException e) {
-            throw new RuntimeException(e);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void sendMassageAdmin(int userId, String receiverId, String header, String massage) {
+    public Response<VoidResponse> sendMassageAdmin(int userId, String receiverId, String header, String massage) {
         try {
             if (userRepository.checkIfUserExists(receiverId) == null)
                 throw new RuntimeException("receiver Id not found");
             userRepositoryAsHashmap.getUser(userId).sendMassageAdmin(receiverId, header, massage);
-        } catch (NoPermissionException e) {
-            throw new RuntimeException(e);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void answerComplaint(int userId, String answer) {
+    public Response<VoidResponse> answerComplaint(int userId, String answer) {
         try {
             userRepositoryAsHashmap.getUser(userId).answerComplaint(answer);
-        } catch (NoPermissionException e) {
-            throw new RuntimeException(e);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
         }
     }
 
     @Override
-    public Message readMessage(int userId) {
+    public Response<Message> readMessage(int userId) {
         try {
-            return userRepositoryAsHashmap.getUser(userId).readMassage();
-        } catch (NoPermissionException e) {
-            throw new RuntimeException(e);
+            return Response.success(userRepositoryAsHashmap.getUser(userId).readMassage());
+        } catch (Exception e) {
+            return Response.exception(e);
         }
     }
     @Override
-    public void replayMessage(int userId, String message){
+    public Response<VoidResponse> replayMessage(int userId, String message){
         try {
             userRepositoryAsHashmap.getUser(userId).replayMessage(message);
-        } catch (NoPermissionException e) {
-            throw new RuntimeException(e);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
         }
     }
     @Override
-    public Message readOldMessage(int userId) {
+    public Response<Message> readOldMessage(int userId) {
         try {
-            return userRepositoryAsHashmap.getUser(userId).readOldMessage();
-        } catch (NoPermissionException e) {
-            throw new RuntimeException(e);
+            return Response.success(userRepositoryAsHashmap.getUser(userId).readOldMessage());
+        } catch (Exception e) {
+            return Response.exception(e);
         }
     }
     @Override
-    public void refreshOldMessages(int userId)
+    public Response<VoidResponse> refreshOldMessages(int userId)
     {
         try {
             userRepositoryAsHashmap.getUser(userId).refreshOldMessage();
-        } catch (NoPermissionException e) {
-            throw new RuntimeException(e);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void sendMassageStore(int userId, String header, String massage, int storeId) {
+    public Response<VoidResponse> sendMassageStore(int userId, String header, String massage, int storeId) {
         try {
             userRepositoryAsHashmap.getUser(userId).sendMassageStore(header, massage, storeId);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public Message readUnreadMassageStore(int userId, int storeId) {
+    public Response<Message> readUnreadMassageStore(int userId, int storeId) {
         try {
-            return userRepositoryAsHashmap.getUser(userId).readUnreadMassageStore(storeId);
+            return Response.success(userRepositoryAsHashmap.getUser(userId).readUnreadMassageStore(storeId));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Message> readReadMassageStore(int userId, int storeId) {
+        try {
+            return Response.success( userRepositoryAsHashmap.getUser(userId).readReadMassageStore(storeId));
         } catch (NoPermissionException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public Message readReadMassageStore(int userId, int storeId) {
-        try {
-            return userRepositoryAsHashmap.getUser(userId).readReadMassageStore(storeId);
-        } catch (NoPermissionException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public void answerQuestionStore(int userId, String answer) {
+    public Response<VoidResponse> answerQuestionStore(int userId, String answer) {
         try {
             userRepositoryAsHashmap.getUser(userId).answerQuestionStore(answer);
-        } catch (NoPermissionException e) {
-            throw new RuntimeException(e);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void refreshOldMessageStore(int userId, int storeId) {
+    public Response<VoidResponse> refreshOldMessageStore(int userId, int storeId) {
         try {
             userRepositoryAsHashmap.getUser(userId).refreshOldMessageStore(storeId);
-        } catch (NoPermissionException e) {
-            throw new RuntimeException(e);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void addReview(int userId, String review, int storeId, int productId) {
+    public Response<VoidResponse> addReview(int userId, String review, int storeId, int productId) {
         try {
             userRepositoryAsHashmap.getUser(userId).addReview(review, storeId, productId);
-        } catch (NoPermissionException e) {
-            throw new RuntimeException(e);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void removeReview(int userId, int storeId, int productId) {
+    public Response<VoidResponse> removeReview(int userId, int storeId, int productId) {
         try {
             userRepositoryAsHashmap.getUser(userId).removeReview(storeId, productId);
-        } catch (NoPermissionException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public Review getReview(int userId, int storeId, int productId) {
-        try {
-            return userRepositoryAsHashmap.getUser(userId).getReview(storeId, productId);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public float getProductScore(int userId, int storeId, int productId) {
+    public Response<Review> getReview(int userId, int storeId, int productId) {
         try {
-            return userRepositoryAsHashmap.getUser(userId).getProductScore(storeId, productId);
+            return Response.success( userRepositoryAsHashmap.getUser(userId).getReview(storeId, productId));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void addAndSetProductScore(int userId, int storeId, int productId, int score) {
+    public Response<Float> getProductScore(int userId, int storeId, int productId) {
+        try {
+            return Response.success(userRepositoryAsHashmap.getUser(userId).getProductScore(storeId, productId));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<VoidResponse> addAndSetProductScore(int userId, int storeId, int productId, int score) {
         try {
             userRepositoryAsHashmap.getUser(userId).addAndSetProductScore(storeId, productId, score);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void removeProductScore(int userId, int storeId, int productId) {
+    public Response<VoidResponse> removeProductScore(int userId, int storeId, int productId) {
         try {
             userRepositoryAsHashmap.getUser(userId).removeProductScore(storeId, productId);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void addStoreScore(int userId, int storeId, int score) {
+    public Response<VoidResponse> addStoreScore(int userId, int storeId, int score) {
         try {
             userRepositoryAsHashmap.getUser(userId).addStoreScore(storeId, score);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void removeStoreScore(int userId, int storeId) {
+    public Response<VoidResponse> removeStoreScore(int userId, int storeId) {
         try {
             userRepositoryAsHashmap.getUser(userId).removeStoreScore(storeId);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void modifyStoreScore(int userId, int storeId, int score) {
+    public Response<VoidResponse> modifyStoreScore(int userId, int storeId, int score) {
         try {
             userRepositoryAsHashmap.getUser(userId).modifyStoreScore(storeId, score);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public float getStoreScore(int userId, int storeId) {
+    public Response<Float> getStoreScore(int userId, int storeId) {
         try {
-            return userRepositoryAsHashmap.getUser(userId).getStoreScore(storeId);
+            return Response.success( userRepositoryAsHashmap.getUser(userId).getStoreScore(storeId));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
@@ -1002,6 +1027,12 @@ public class Session implements ISession {
             //TODO: handle exception
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void pushTest()
+    {
+        PushNotification.pushNotification("MY TEST!",2);
     }
 
 }
