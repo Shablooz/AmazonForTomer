@@ -135,6 +135,8 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
 
     @Override
     public void hideAllStoreProducts(int storeId) {
+        if(!storeProducts.containsKey(storeId))
+            return;
         getStoreProducts(storeId).orElseThrow(
                 () -> new IllegalArgumentException("Store " + storeId + " not found")
         ).forEach(Product::hide);
