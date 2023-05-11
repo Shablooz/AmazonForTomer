@@ -5,12 +5,13 @@ import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.User.*;
 import BGU.Group13B.backend.storePackage.Market;
+import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
-import net.bytebuddy.dynamic.scaffold.MethodGraph;
+import com.vaadin.flow.router.QueryParameters;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -163,13 +164,13 @@ public class Session implements ISession {
         }
     }
 
-
-
     @Override
-    public void search(String searchWords) {
-        market.searchProductByKeywords(searchWords);
-        market.searchProductByCategory(searchWords);
-        market.searchProductByName(searchWords);
+    public Response<List<ProductInfo>> search(String searchWords) {
+        List<ProductInfo> products = new LinkedList<>();
+        products.addAll(market.searchProductByKeywords(searchWords));
+        products.addAll(market.searchProductByCategory(searchWords));
+        products.addAll(market.searchProductByName(searchWords));
+        return Response.success(products);
     }
 
     @Override

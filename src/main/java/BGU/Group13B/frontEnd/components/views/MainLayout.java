@@ -1,6 +1,7 @@
 package BGU.Group13B.frontEnd.components.views;
 
 
+import BGU.Group13B.frontEnd.components.Searcher.Searcher;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.frontEnd.components.appnav.AppNav;
 import BGU.Group13B.frontEnd.components.appnav.AppNavItem;
@@ -68,13 +69,15 @@ public class MainLayout extends AppLayout {
     private void addHeaderContent() {
         DrawerToggle toggle = new DrawerToggle();
         toggle.getElement().setAttribute("aria-label", "Menu toggle");
+        Searcher searcher = new Searcher();
 
         viewTitle = new H2();
         viewTitle.addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.Margin.NONE);
 
         HorizontalLayout rightAlignment = rightAlignmentHeaderContext();
 
-        addToNavbar(true, toggle, viewTitle,rightAlignment);
+        addToNavbar(true, toggle, viewTitle, rightAlignment, searcher);
+
     }
     private HorizontalLayout rightAlignmentHeaderContext()
     {
@@ -122,7 +125,7 @@ public class MainLayout extends AppLayout {
         horizontalLayout.setWidthFull();
         horizontalLayout.add(flexLayout);
 
-        addToDrawer(header, scroller, horizontalLayout, createFooter());
+        addToDrawer( header, scroller, horizontalLayout, createFooter());
     }
 
     private void newMessageDialog(Dialog currentDialog)
@@ -387,6 +390,13 @@ public class MainLayout extends AppLayout {
 
         return nav;
     }
+
+    private Searcher createSearcher() {
+        Searcher searcher = new Searcher();
+        return searcher;
+    }
+
+
 
     private Footer createFooter() {
         Footer layout = new Footer();

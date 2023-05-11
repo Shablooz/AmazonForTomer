@@ -3,11 +3,11 @@ package BGU.Group13B.service;
 import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.User.Message;
-import BGU.Group13B.backend.User.UserPermissions;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.service.info.StoreInfo;
 import BGU.Group13B.service.info.ProductInfo;
+import com.vaadin.flow.router.QueryParameters;
 
 import java.time.LocalDateTime;
 
@@ -164,8 +164,9 @@ public interface ISession {
      * require 2.2
      *
      * @param searchWords - the search words
+     * @return
      */
-    void search(String searchWords);
+    Response<List<ProductInfo>> search(String searchWords);
 
     /**
      * #18

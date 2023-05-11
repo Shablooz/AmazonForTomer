@@ -8,10 +8,10 @@ import BGU.Group13B.backend.storePackage.Product;
  * it can also be used for tests
  */
 
-public record ProductInfo(int productId, int storeId, String name, String category, double price,
+public record ProductInfo(int productId, int storeId, String seller, String name, String category, double price,
                           int stockQuantity, String description, float score) {
     public ProductInfo(Product product) {
-        this(product.getProductId(), product.getStoreId(), product.getName(),
+        this(product.getProductId(), product.getStoreId(), product.getSeller(), product.getName(),
                 product.getCategory(), product.getPrice(), product.getStockQuantity(),
                 product.getDescription(), product.getProductScore());
     }

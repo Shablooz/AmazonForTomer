@@ -1,8 +1,6 @@
 package BGU.Group13B.frontEnd.components.views;
 
-import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.service.Session;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.contextmenu.SubMenu;
 import com.vaadin.flow.component.html.H1;
@@ -14,7 +12,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Route(value = "", layout = MainLayout.class)
@@ -31,6 +28,7 @@ public class HomeView extends VerticalLayout implements BeforeEnterObserver {
         //center the text
         setAlignItems(Alignment.CENTER);
         String sourceLink = "https://i.dailymail.co.uk/i/pix/2012/11/01/article-2226519-15CC7B9F000005DC-738_634x471.jpg";
+
         /*CSS code*/
         getStyle().set("background-image", "url(" + sourceLink + ")");
         getStyle().set("background-size", "cover");
