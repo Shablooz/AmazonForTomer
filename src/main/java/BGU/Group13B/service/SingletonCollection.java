@@ -147,7 +147,6 @@ public class SingletonCollection {
 
 
         //adapters
-        deliveryAdapter = null; //TODO
 
 
         //additional classes

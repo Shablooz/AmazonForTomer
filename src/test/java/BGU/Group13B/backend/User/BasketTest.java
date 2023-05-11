@@ -5,10 +5,14 @@ import BGU.Group13B.backend.Repositories.Interfaces.IBasketProductRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductHistoryRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
 import BGU.Group13B.backend.storePackage.Market;
+import BGU.Group13B.backend.storePackage.PurchasePolicy;
+import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
+import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 import BGU.Group13B.service.Session;
 import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
+import jakarta.validation.constraints.AssertTrue;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 
@@ -35,6 +39,13 @@ class BasketTest {
     private static int productId2;
 
     private static Session session = new Session();
+    private DeliveryAdapter deliveryAdapter;
+    private final int quantityLowerBound = 1;
+    private final int quantityUpperBound = 10;
+    private final int priceLowerBound = 2;
+    private final int priceUpperBound = 100;
+    private int productId3;
+    private int productId4;
 
     @BeforeEach
     void setUp() {
@@ -48,6 +59,8 @@ class BasketTest {
         //initCalculatePriceOfBasket(market);
         userId = 1;
         storeId = SingletonCollection.getStoreRepository().addStore(userId, "store1", "category1");
+        SingletonCollection.getStorePurchasePolicyRepository().getPurchasePolicy(storeId).setPriceBounds(priceLowerBound, priceUpperBound);
+        SingletonCollection.getStorePurchasePolicyRepository().getPurchasePolicy(storeId).setQuantityBounds(quantityLowerBound, quantityUpperBound);
 
         initProducts();
         //total price before 25.0
@@ -59,10 +72,12 @@ class BasketTest {
         //total price after store discount 18.0
 
         paymentAdapter = Mockito.mock(PaymentAdapter.class);
+        deliveryAdapter = Mockito.mock(DeliveryAdapter.class);
         productHistoryRepository = Mockito.mock(IProductHistoryRepository.class);
         initBasket();
 
         paymentAndHistoryBehaviour();
+
     }
 
     private void paymentAndHistoryBehaviour() {
@@ -71,19 +86,29 @@ class BasketTest {
     }
 
     private void payBehaviour(boolean success) {
-        Mockito.when(paymentAdapter.pay(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
+        Mockito.when(paymentAdapter.pay(
+                Mockito.anyString(), Mockito.anyString(),
+                Mockito.anyString(), Mockito.anyString(),
+                Mockito.anyString(), Mockito.anyString())).thenReturn(success);
+    }
+
+    private void deliveryBehaviour(boolean success) {
+        Mockito.when(deliveryAdapter.supply(
+                Mockito.anyString(), Mockito.anyString(),
+                Mockito.anyString(), Mockito.anyString(),
                 Mockito.anyString())).thenReturn(success);
     }
 
     private void initBasket() {
         basket = new Basket(userId, storeId, basketProductRepository, paymentAdapter,
-                productHistoryRepository, calculatePriceOfBasket);
+                productHistoryRepository, calculatePriceOfBasket, deliveryAdapter);
     }
 
     private void initProducts() {
         productId1 = productRepository.addProduct(storeId, "product1", "category1", 10.0, 1, "description1");
         productId2 = productRepository.addProduct(storeId, "product2", "category2", 15.0, 1, "eyal was here");
-
+        productId3 = productRepository.addProduct(storeId, "product3", "category3", 1.0, 1000, "description3");
+        productId4 = productRepository.addProduct(storeId, "product4", "category4", 15, 1000, "description4");
         basketProductRepository.addNewProductToBasket(productId1, storeId, userId);//adding product 0 to basket
         basketProductRepository.addNewProductToBasket(productId2, storeId, userId);//adding product 1 to basket
     }
@@ -114,14 +139,14 @@ class BasketTest {
     @RepeatedTest(10)
     void twoThreadsTryToPurchaseTheLastProduct() {
         AtomicInteger firstThread = new AtomicInteger(0);
-        AtomicReference<Double> pricePayed2 = new AtomicReference<>((double) 0);
-        AtomicReference<Double> pricePayed3 = new AtomicReference<>((double) 0);
+        AtomicReference<Double> pricePayed2 = new AtomicReference<>(0.0);
+        AtomicReference<Double> pricePayed3 = new AtomicReference<>(0.0);
         int userId2 = 2;
         int userId3 = 3;
         Basket basket2 = new Basket(userId2, storeId, basketProductRepository, paymentAdapter,
-                productHistoryRepository, calculatePriceOfBasket);
+                productHistoryRepository, calculatePriceOfBasket, deliveryAdapter);
         Basket basket3 = new Basket(userId3, storeId, basketProductRepository, paymentAdapter,
-                productHistoryRepository, calculatePriceOfBasket);
+                productHistoryRepository, calculatePriceOfBasket, deliveryAdapter);
         int productId3 = productRepository.addProduct(storeId, "product3", "category3", 15.0, 1, "eyal was still here");
         basketProductRepository.addNewProductToBasket(productId3, storeId, userId3);//adding product 1 to basket
         basketProductRepository.addNewProductToBasket(productId3, storeId, userId2);//adding product 1 to basket2
@@ -130,10 +155,14 @@ class BasketTest {
                 if (Math.random() > 0.5)
                     Thread.sleep(100);
                 payBehaviour(true);
+                deliveryBehaviour(true);
                 firstThread.compareAndSet(0, 1);
-                pricePayed3.set(basket3.purchaseBasket("", "", "", "", "", "", new HashMap<>(), ""));
-            } catch (PurchaseFailedException | InterruptedException e) {
-                throw new RuntimeException(e);
+                pricePayed3.set(basket3.purchaseBasket("", "", "",
+                        "", "", "", new HashMap<>(), ""));
+            } catch (PurchaseFailedException e) {
+                Assertions.assertEquals("purchase quantity exceeds policy. must be in [1, 10]", e.getMessage());
+            }catch (InterruptedException e) {
+                Assertions.fail(e);
             }
         });
         Thread thread2 = new Thread(() -> {
@@ -141,10 +170,15 @@ class BasketTest {
                 if (Math.random() > 0.5)
                     Thread.sleep(100);
                 payBehaviour(true);
+                deliveryBehaviour(true);
+
                 firstThread.compareAndSet(0, 2);
                 pricePayed2.set(basket2.purchaseBasket("", "", "", "", "", "", new HashMap<>(), ""));
-            } catch (PurchaseFailedException | InterruptedException e) {
-                throw new RuntimeException(e);
+            } catch (PurchaseFailedException e) {
+                Assertions.assertEquals("purchase quantity exceeds policy. must be in [1, 10]", e.getMessage());
+
+            }catch (InterruptedException e) {
+                Assertions.fail(e);
             }
         });
         thread1.start();
@@ -177,6 +211,8 @@ class BasketTest {
 
         try {
             payBehaviour(true);
+            deliveryBehaviour(true);
+
             Assertions.assertEquals(18, basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), ""));
         } catch (PurchaseFailedException e) {
             throw new RuntimeException(e);
@@ -189,6 +225,54 @@ class BasketTest {
 
         try {
             payBehaviour(false);
+            deliveryBehaviour(true);
+
+            basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), "");
+        } catch (PurchaseFailedException e) {
+            Assertions.assertEquals("Payment failed", e.getMessage());
+        } catch (Exception e) {
+            Assertions.fail(e.getMessage());
+        }
+
+    }
+
+    @Test
+    void purchaseBasketSimpleTest_externalDeliverySuccess() {
+
+        try {
+            payBehaviour(true);
+            deliveryBehaviour(true);
+
+            Assertions.assertEquals(18, basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), ""));
+        } catch (PurchaseFailedException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    @Test
+    void purchaseBasketSimpleTest_externalDeliveryFail() {
+
+        try {
+            payBehaviour(true);
+            deliveryBehaviour(false);
+
+            basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), "");
+        } catch (PurchaseFailedException e) {
+            Assertions.assertEquals("Delivery failed", e.getMessage());
+        } catch (Exception e) {
+            Assertions.fail(e.getMessage());
+        }
+
+    }
+
+    @Test
+    void purchaseBasketSimpleTest_externalPaymentAndDeliveryFailed() {
+
+        try {
+            payBehaviour(false);
+            deliveryBehaviour(false);
+
             basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), "");
         } catch (PurchaseFailedException e) {
             Assertions.assertEquals("Payment failed", e.getMessage());
@@ -202,6 +286,7 @@ class BasketTest {
     void purchaseBasketSimpleTest_notInStockFail() {
         try {
             payBehaviour(true);
+            deliveryBehaviour(true);
             basketProductRepository.changeProductQuantity(productId1, storeId, userId, 3);
             double price = basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), "");
             Assertions.assertEquals(15 * 0.9 * 0.8, price);
@@ -223,6 +308,7 @@ class BasketTest {
             payBehaviour(false);
             basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), "");
         } catch (PurchaseFailedException e) {
+            Assertions.assertEquals("Payment failed", e.getMessage());
             basket.cancelPurchase();
             Assertions.assertEquals(1, productRepository.getStoreProductById(productId1, storeId).getStockQuantity());
             Assertions.assertEquals(1, productRepository.getStoreProductById(productId2, storeId).getStockQuantity());
@@ -263,19 +349,123 @@ class BasketTest {
 
     }
 
+    //policy tests
     @Test
-    void addProduct() {
+    void purchaseBasketSimpleTest_StorePolicyMinQuantityFail() {
+        try {
+            payBehaviour(true);
+            deliveryBehaviour(true);
+            basketProductRepository.removeBasketProducts(storeId, userId);
+            basketProductRepository.addNewProductToBasket(productId3, storeId, userId);
+            basketProductRepository.changeProductQuantity(productId3, storeId, userId, 0);
+            basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), "");
+        } catch (PurchaseFailedException e) {
+            Assertions.assertEquals("purchase quantity exceeds policy. must be in [1, 10]", e.getMessage());
+        } catch (Exception e) {
+            Assertions.fail(e.getMessage());
+        }
+
     }
+    @Test
+    void purchaseBasketSimpleTest_StorePolicyMinQuantitySuccess() {
+        try {
+            payBehaviour(true);
+            deliveryBehaviour(true);
+            basketProductRepository.removeBasketProducts(storeId, userId);
+            basketProductRepository.addNewProductToBasket(productId3, storeId, userId);
+            basketProductRepository.changeProductQuantity(productId3, storeId, userId, 5);
+            basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), "");
+        } catch (Exception e) {
+            Assertions.fail(e.getMessage());
+        }
+
+    }
+    @Test
+    void purchaseBasketSimpleTest_StorePolicyMaxQuantityFail() {
+        try {
+            payBehaviour(true);
+            deliveryBehaviour(true);
+            basketProductRepository.removeBasketProducts(storeId, userId);
+            basketProductRepository.addNewProductToBasket(productId3, storeId, userId);
+            basketProductRepository.changeProductQuantity(productId3, storeId, userId, 13);
+            basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), "");
+        } catch (PurchaseFailedException e) {
+            Assertions.assertEquals("purchase quantity exceeds policy. must be in [1, 10]", e.getMessage());
+        } catch (Exception e) {
+            Assertions.fail(e.getMessage());
+        }
+
+    }
+    @Test
+    void purchaseBasketSimpleTest_StorePolicyMaxQuantitySuccess() {
+        try {
+            payBehaviour(true);
+            deliveryBehaviour(true);
+            basketProductRepository.removeBasketProducts(storeId, userId);
+            basketProductRepository.addNewProductToBasket(productId3, storeId, userId);
+            basketProductRepository.changeProductQuantity(productId3, storeId, userId, 10);
+            basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), "");
+        } catch (Exception e) {
+            Assertions.fail(e.getMessage());
+        }
+
+    }
+    @Test
+    void purchaseBasketSimpleTest_StorePolicyMinBagPriceFail() {
+        try {
+            payBehaviour(true);
+            deliveryBehaviour(true);
+            basketProductRepository.removeBasketProducts(storeId, userId);
+            basketProductRepository.addNewProductToBasket(productId3, storeId, userId);
+            basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), "");
+        } catch (PurchaseFailedException e) {
+            Assertions.assertEquals("purchase price exceeds policy. must be in [2, 100]", e.getMessage());
+        } catch (Exception e) {
+            Assertions.fail(e.getMessage());
+        }
+
+    }
+    @Test
+    void purchaseBasketSimpleTest_StorePolicyMinBagPriceSuccess() {
+        try {
+            payBehaviour(true);
+            deliveryBehaviour(true);
+            basketProductRepository.removeBasketProducts(storeId, userId);
+            basketProductRepository.addNewProductToBasket(productId3, storeId, userId);
+            basketProductRepository.changeProductQuantity(productId3, storeId, userId, 3);
+            basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), "");
+        } catch (Exception e) {
+            Assertions.fail(e.getMessage());
+        }
+
+    }
+    @Test
+    void purchaseBasketSimpleTest_StorePolicyMaxBagPriceFail() {
+        try {
+            payBehaviour(true);
+            deliveryBehaviour(true);
+            basketProductRepository.removeBasketProducts(storeId, userId);
+            basketProductRepository.addNewProductToBasket(productId4, storeId, userId);
+            basketProductRepository.changeProductQuantity(productId4, storeId, userId, 10);
+            basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), "");
+        } catch (PurchaseFailedException e) {
+            Assertions.assertEquals("purchase price exceeds policy. must be in [2, 100]", e.getMessage());
+        } catch (Exception e) {
+            Assertions.fail(e.getMessage());
+        }
+    }
+
 
     @AfterAll
     static void afterAll() {
         try {
-            productRepository.removeStoreProducts(storeId);
+            /*productRepository.removeStoreProducts(storeId);
             basketProductRepository.removeBasketProducts(storeId, userId);
             SingletonCollection.getStoreRepository().removeStore(storeId);
             SingletonCollection.getProductDiscountsRepository().removeProductDiscount(productId1);
             SingletonCollection.getProductDiscountsRepository().removeProductDiscount(productId2);
-            SingletonCollection.getStoreDiscountsRepository().removeStoreDiscounts(storeId);
+            SingletonCollection.getStoreDiscountsRepository().removeStoreDiscounts(storeId);*/
+            SingletonCollection.reset_system();
 
         } catch (Exception e) {
             throw new RuntimeException(e);

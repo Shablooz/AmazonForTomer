@@ -136,7 +136,7 @@ public class User {
         if (!this.answer1.equals(answer1) || !this.answer2.equals(answer2) || !this.answer3.equals(answer3)) {
             throw new IllegalArgumentException("wrong answers on security questions!");
         }
-        if(isLoggedIn())
+        if (isLoggedIn())
             throw new IllegalArgumentException("User is already logged in!");
 
         this.isLoggedIn = true;
@@ -199,20 +199,23 @@ public class User {
         regularMessageToReply = message;
         return message;
     }
-    public void replayMessage(String answer) throws NoPermissionException{
+
+    public void replayMessage(String answer) throws NoPermissionException {
         if (!isRegistered())
             throw new NoPermissionException("Only registered users can read massages");
-        if(regularMessageToReply ==null)
+        if (regularMessageToReply == null)
             throw new IllegalArgumentException("no message to answer");
         messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), "RE: " + regularMessageToReply.getHeader(), answer, regularMessageToReply.getSenderId()));
-        regularMessageToReply =null;
+        regularMessageToReply = null;
     }
+
     public Message readOldMessage() throws NoPermissionException {
         if (!isRegistered())
             throw new NoPermissionException("Only registered users can read massages");
 
         return messageRepository.readReadMassage(this.userName);
     }
+
     public void refreshOldMessage() throws NoPermissionException {
         if (!isRegistered())
             throw new NoPermissionException("Only registered users can read massages");
@@ -325,7 +328,9 @@ public class User {
                                String creditCardYear, String creditCardHolderFirstName,
                                String creditCardCcv, String id,
                                HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                               String/*store coupons*/ storeCoupon) throws PurchaseFailedException {
+                               String/*store coupons*/ storeCoupon) throws PurchaseFailedException, NoPermissionException {
+        if (isRegistered() && !isLoggedIn)
+            throw new NoPermissionException("Only logged in users can purchase cart");
         return cart.purchaseCart(creditCardNumber,
                 creditCardMonth, creditCardYear,
                 creditCardHolderFirstName,
@@ -334,29 +339,45 @@ public class User {
                 storeCoupon);
     }
 
-    public void purchaseCart(String creditCardNumber, String creditCardMonth,
-                             String creditCardYear, String creditCardHolderFirstName,
-                             String creditCardCcv, String id) throws PurchaseFailedException {
-        cart.purchaseCart(creditCardNumber,
-                creditCardMonth, creditCardYear,
-                creditCardHolderFirstName,
-                creditCardCcv, id);
+    public void purchaseCart(String creditCardNumber,
+                             String creditCardMonth, String creditCardYear,
+                             String creditCardHolderFirstName,
+                             String creditCardCVV, String id,
+                             String address, String city, String country,
+                             String zip) throws PurchaseFailedException, NoPermissionException {
+        if (isRegistered() && !isLoggedIn)
+            throw new NoPermissionException("Only logged in users can purchase cart");
+        cart.purchaseCart(
+                creditCardNumber, creditCardMonth,
+                creditCardYear, creditCardHolderFirstName,
+                creditCardCVV, id,
+                address, city,
+                country, zip);
     }
+
     public double startPurchaseBasketTransaction(HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                                 String/*store coupons*/ storeCoupon) throws PurchaseFailedException {
+                                                 String/*store coupons*/ storeCoupon) throws PurchaseFailedException, NoPermissionException {
+        if (isRegistered() && !isLoggedIn)
+            throw new NoPermissionException("Only logged in users can purchase cart");
         return cart.startPurchaseBasketTransaction(productsCoupons, storeCoupon);
     }
 
 
-    public String getCartDescription() {
+    public String getCartDescription() throws NoPermissionException {
+        if (isRegistered() && !isLoggedIn)
+            throw new NoPermissionException("Only logged in users can purchase cart");
         return cart.getCartDescription();
     }
 
-    public List<Product> getCartContent() {
+    public List<Product> getCartContent() throws NoPermissionException {
+        if (isRegistered() && !isLoggedIn)
+            throw new NoPermissionException("Only logged in users can purchase cart");
         return cart.getCartContent();
     }
 
-    public List<BasketProduct> getCartBasketProducts() {
+    public List<BasketProduct> getCartBasketProducts() throws NoPermissionException {
+        if (isRegistered() && !isLoggedIn)
+            throw new NoPermissionException("Only logged in users can purchase cart");
         return cart.getCartBasketProducts();
     }
 
@@ -379,16 +400,22 @@ public class User {
     }
 
     public void addProductToCart(int productId, int storeId) throws Exception {
+        if (isRegistered() && !isLoggedIn)
+            throw new NoPermissionException("Only logged in users can purchase cart");
         market.isProductAvailable(productId, storeId);
         cart.addProductToCart(productId, storeId);
     }
 
 
     public void removeProductFromCart(int storeId, int productId) throws Exception {
+        if (isRegistered() && !isLoggedIn)
+            throw new NoPermissionException("Only logged in users can purchase cart");
         cart.removeProduct(storeId, productId);
     }
 
     public void changeProductQuantityInCart(int storeId, int productId, int quantity) throws Exception {
+        if (isRegistered() && !isLoggedIn)
+            throw new NoPermissionException("Only logged in users can purchase cart");
         cart.changeProductQuantity(storeId, productId, quantity);
     }
 

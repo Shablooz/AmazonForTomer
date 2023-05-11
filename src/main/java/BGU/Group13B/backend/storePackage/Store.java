@@ -299,7 +299,7 @@ public class Store {
                                          String storeCoupon) throws PurchaseExceedsPolicyException {
         int quantity = successfulProducts.stream().mapToInt(BasketProduct::getQuantity).sum();
         double finalPrice = discountPolicy.applyAllDiscounts(totalAmountBeforeStoreDiscountPolicy, successfulProducts, storeCoupon);
-        getPurchasePolicy().checkPolicy(quantity, finalPrice);//todo test
+        getPurchasePolicy().checkPolicy(quantity, finalPrice);
         return finalPrice;
     }
 

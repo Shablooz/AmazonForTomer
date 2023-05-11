@@ -3,6 +3,7 @@ package BGU.Group13B.backend.User;
 import BGU.Group13B.backend.Repositories.Interfaces.IBasketProductRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductHistoryRepository;
 import BGU.Group13B.backend.storePackage.Product;
+import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
@@ -19,6 +20,7 @@ public class Basket {
     private final int storeId;
     private final IBasketProductRepository basketProductRepository;
     private final PaymentAdapter paymentAdapter;
+    private final DeliveryAdapter deliveryAdapter;
     private final ConcurrentLinkedQueue<BasketProduct> successfulProducts;
     private final ConcurrentLinkedQueue<BasketProduct> failedProducts;
     private final IProductHistoryRepository productHistoryRepository;
@@ -37,12 +39,13 @@ public class Basket {
         this.calculatePriceOfBasket = SingletonCollection.getCalculatePriceOfBasket();
         this.successfulProducts = new ConcurrentLinkedQueue<>();
         this.failedProducts = new ConcurrentLinkedQueue<>();
+        deliveryAdapter = SingletonCollection.getDeliveryAdapter();
     }
 
     //used for testing
     public Basket(int userId, int storeId, IBasketProductRepository productRepository,
                   PaymentAdapter paymentAdapter, IProductHistoryRepository productHistoryRepository,
-                  CalculatePriceOfBasket calculatePriceOfBasket) {
+                  CalculatePriceOfBasket calculatePriceOfBasket, DeliveryAdapter deliveryAdapter) {
         this.userId = userId;
         this.storeId = storeId;
         this.basketProductRepository = productRepository;
@@ -51,6 +54,7 @@ public class Basket {
         this.calculatePriceOfBasket = calculatePriceOfBasket;
         this.successfulProducts = new ConcurrentLinkedQueue<>();
         this.failedProducts = new ConcurrentLinkedQueue<>();
+        this.deliveryAdapter = deliveryAdapter;
     }
 
     public int getUserId() {
@@ -74,13 +78,18 @@ public class Basket {
         return calculateStoreDiscount(totalAmount, storeCoupon);
     }
 
-    public void purchaseBasket(String creditCardNumber,
-                               String creditCardMonth, String creditCardYear,
-                               String creditCardHolderFirstName,
-                               String creditCardCVV, String id) throws PurchaseFailedException {
+        public void purchaseBasket(String creditCardNumber,
+                                   String creditCardMonth, String creditCardYear,
+                                   String creditCardHolderFirstName,
+                                   String creditCardCVV, String id,
+                                   String address, String city, String country,
+                                   String zip) throws PurchaseFailedException {
 
         if (!paymentAdapter.pay(creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardCVV, id)) {
             throw new PurchaseFailedException("Payment failed");
+        }
+        if (!deliveryAdapter.supply(creditCardHolderFirstName, address, city, country, zip)) {
+            throw new PurchaseFailedException("Delivery failed");
         }
 
         scheduledFuture.cancel(true);
@@ -105,7 +114,8 @@ public class Basket {
     ) throws PurchaseFailedException {
 
         double price = startPurchaseBasketTransaction(productsCoupons, storeCoupon);
-        purchaseBasket(creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardCVV, id);
+        purchaseBasket(creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardCVV, id,
+                "address", "city", "country", "1234134");
         return price;
     }
 

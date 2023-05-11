@@ -33,6 +33,7 @@ class AuctionRepositoryAsHashMapTest {
 
     }
 
+
     @Test
     void addNewAuctionForAProductSimpleUpdateAndAutomaticTimeout() {
        /* endTime = LocalDateTime.now().plusSeconds(3);

@@ -1,6 +1,7 @@
 package BGU.Group13B.backend.storePackage;
 
 import BGU.Group13B.backend.Repositories.Interfaces.*;
+import BGU.Group13B.backend.User.User;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.service.SingletonCollection;
 import org.junit.jupiter.api.*;
@@ -18,7 +19,7 @@ public class StoreManagementTest {
     private static IProductDiscountsRepository productDiscountsRepository;
     private static IStorePermissionsRepository storePermissionsRepository;
 
-    private final int founderId = 1;
+    private  int founderId;
     private final String storeName = "storeName";
     private final String category = "category";
     private final String productName = "productName";
@@ -42,11 +43,16 @@ public class StoreManagementTest {
 
     @BeforeEach
     void setUpEach() {
+        founderId = getFounderId();
         storeId = storeRepository.addStore(founderId, storeName, category);
         store = storeRepository.getStore(storeId);
     }
 
-
+    private int getFounderId() {
+        int founderId = SingletonCollection.getUserRepository().getNewUserId();
+        SingletonCollection.getUserRepository().addUser(founderId, new User(founderId));
+        return founderId;
+    }
     @AfterEach
     void tearDown() {
         storeRepository.reset();

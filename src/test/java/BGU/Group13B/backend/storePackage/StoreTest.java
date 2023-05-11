@@ -33,6 +33,10 @@ class StoreTest {
     private static BIDRepositoryAsList bidRepository;
     private static AlertManager alertManager;
     private static String msg;
+    private int tUserOwnerId;
+    private int tUserId;
+    private int tUserId2;
+    private int storeId1;
 
     @BeforeEach
     void setUp() {
@@ -218,123 +222,126 @@ class StoreTest {
         }
     }
 
-    public void customSetUp(){
-        tUser = new User(102);
-        tUser2 = new User(103);
-        omTestStore = new Store(101, 101, "hireTestStore", "time travel");
-        SingletonCollection.getUserRepository().addUser(102, tUser);
-        SingletonCollection.getUserRepository().addUser(103, tUser2);
+    public void customSetUp() {
+        tUserOwnerId = SingletonCollection.getUserRepository().getNewUserId();
+        SingletonCollection.getUserRepository().addUser(tUserOwnerId, new User(tUserOwnerId));
+
+        tUserId = SingletonCollection.getUserRepository().getNewUserId();
+        SingletonCollection.getUserRepository().addUser(tUserId, new User(tUserId));
+        tUser = SingletonCollection.getUserRepository().getUser(tUserId);
+
+        tUserId2 = SingletonCollection.getUserRepository().getNewUserId();
+        SingletonCollection.getUserRepository().addUser(tUserId2, new User(tUserId2));
+        tUser2 = SingletonCollection.getUserRepository().getUser(tUserId2);
+        storeId1 = SingletonCollection.getStoreRepository().addStore(tUserOwnerId, "hireTestStore", "time travel");
+
+        omTestStore = SingletonCollection.getStoreRepository().getStore(storeId1);
     }
 
     private static User tUser;
     private static Store omTestStore;
     private static User tUser2;
 
-    public void customTearDown(){
+    public void customTearDown() {
         omTestStore.getStorePermission().clearForTest();
         tUser.getUserPermissions().clearForTest();
         tUser2.getUserPermissions().clearForTest();
         SingletonCollection.getStorePurchasePolicyRepository().reset();
+        //SingletonCollection.reset_system();
     }
 
 
     @Test
-    void addOwnerSuccess(){
+    void addOwnerSuccess() {
         customSetUp();
         try {
-            omTestStore.addOwner(101,102);
-            Assertions.assertEquals(omTestStore.getStorePermission().getUserPermission(102), UserPermissions.StoreRole.OWNER);
-            Assertions.assertEquals(tUser.getUserPermissions().getStoreRole(101), UserPermissions.StoreRole.OWNER);
+            omTestStore.addOwner(tUserOwnerId, tUserId);
+            Assertions.assertEquals(omTestStore.getStorePermission().getUserPermission(tUserId), UserPermissions.StoreRole.OWNER);
+            Assertions.assertEquals(tUser.getUserPermissions().getStoreRole(omTestStore.getStoreId()), UserPermissions.StoreRole.OWNER);
         } catch (NoPermissionException | ChangePermissionException e) {
             fail(e);
-        }
-        finally {
+        } finally {
             customTearDown();
         }
     }
 
     @Test
-    void addOwnerFail(){
+    void addOwnerFail() {
         customSetUp();
         try {
-            omTestStore.addOwner(101,102);
-            Assertions.assertThrows(ChangePermissionException.class, () -> omTestStore.addOwner(101,102));
+            omTestStore.addOwner(tUserOwnerId, tUserId);
+            Assertions.assertThrows(ChangePermissionException.class, () -> omTestStore.addOwner(tUserOwnerId, tUserId));
         } catch (NoPermissionException | ChangePermissionException e) {
             fail(e);
-        }
-        finally {
+        } finally {
             customTearDown();
         }
     }
 
     @Test
-    void removeOwnerSuccess(){
+    void removeOwnerSuccess() {
         customSetUp();
         try {
-            omTestStore.addOwner(101,102);
-            omTestStore.removeOwner(101,102);
-            assertNull(omTestStore.getStorePermission().getUserPermission(102));
-            assertNull(tUser.getUserPermissions().getStoreRole(101));
+            omTestStore.addOwner(tUserOwnerId, tUserId);
+            omTestStore.removeOwner(tUserOwnerId, tUserId);
+            assertNull(omTestStore.getStorePermission().getUserPermission(tUserId));
+            assertNull(tUser.getUserPermissions().getStoreRole(tUserOwnerId));
         } catch (NoPermissionException | ChangePermissionException e) {
             fail(e);
-        }
-        finally {
+        } finally {
             customTearDown();
         }
     }
 
     @Test
-    void removeOwnerFail(){
+    void removeOwnerFail() {
         customSetUp();
         try {
-            omTestStore.addOwner(101,102);
-            omTestStore.addOwner(101,103);
-            Assertions.assertThrows(ChangePermissionException.class, () -> omTestStore.removeOwner(103,102));
+            omTestStore.addOwner(tUserOwnerId, tUserId);
+            omTestStore.addOwner(tUserOwnerId, tUserId2);
+            Assertions.assertThrows(ChangePermissionException.class, () -> omTestStore.removeOwner(tUserId2, tUserId));
         } catch (NoPermissionException | ChangePermissionException e) {
             fail(e);
-        }
-        finally {
+        } finally {
             customTearDown();
         }
     }
 
     @Test
-    void addManagerSuccess(){
+    void addManagerSuccess() {
         customSetUp();
         try {
-            omTestStore.addManager(101,102);
-            Assertions.assertEquals(omTestStore.getStorePermission().getUserPermission(102), UserPermissions.StoreRole.MANAGER);
-            Assertions.assertEquals(tUser.getUserPermissions().getStoreRole(101), UserPermissions.StoreRole.MANAGER);
+            omTestStore.addManager(tUserOwnerId, tUserId);
+            Assertions.assertEquals(omTestStore.getStorePermission().getUserPermission(tUserId), UserPermissions.StoreRole.MANAGER);
+            Assertions.assertEquals(tUser.getUserPermissions().getStoreRole(omTestStore.getStoreId()), UserPermissions.StoreRole.MANAGER);
         } catch (NoPermissionException | ChangePermissionException e) {
             fail(e);
-        }
-        finally {
+        } finally {
             customTearDown();
         }
     }
 
     @Test
-    void addManagerFail(){
+    void addManagerFail() {
         customSetUp();
         try {
-            omTestStore.addManager(101,102);
-            Assertions.assertThrows(ChangePermissionException.class, () -> omTestStore.addManager(101,102));
+            omTestStore.addManager(tUserOwnerId, tUserId);
+            Assertions.assertThrows(ChangePermissionException.class, () -> omTestStore.addManager(tUserOwnerId, tUserId));
         } catch (NoPermissionException | ChangePermissionException e) {
             fail(e);
-        }
-        finally {
+        } finally {
             customTearDown();
         }
     }
 
     @Test
-    void removeManagerSuccess(){
+    void removeManagerSuccess() {
         customSetUp();
         try {
-            omTestStore.addManager(101,102);
-            omTestStore.removeManager(101,102);
-            assertNull(omTestStore.getStorePermission().getUserPermission(102));
-            assertNull(tUser.getUserPermissions().getStoreRole(101));
+            omTestStore.addManager(tUserOwnerId, tUserId);
+            omTestStore.removeManager(tUserOwnerId, tUserId);
+            assertNull(omTestStore.getStorePermission().getUserPermission(tUserId));
+            assertNull(tUser.getUserPermissions().getStoreRole(tUserOwnerId));
         } catch (NoPermissionException | ChangePermissionException e) {
             fail(e);
         }
@@ -342,16 +349,15 @@ class StoreTest {
     }
 
     @Test
-    void removeManagerFail(){
+    void removeManagerFail() {
         customSetUp();
         try {
-            omTestStore.addManager(101,102);
-            omTestStore.addOwner(101,103);
-            Assertions.assertThrows(ChangePermissionException.class, () -> omTestStore.removeManager(103,102));
+            omTestStore.addManager(tUserOwnerId, tUserId);
+            omTestStore.addOwner(tUserOwnerId, tUserId2);
+            Assertions.assertThrows(ChangePermissionException.class, () -> omTestStore.removeManager(tUserId2, tUserId));
         } catch (NoPermissionException | ChangePermissionException e) {
             fail(e);
-        }
-        finally {
+        } finally {
             customTearDown();
         }
     }

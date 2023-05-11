@@ -3,12 +3,9 @@ package BGU.Group13B.frontEnd.components.views;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.service.Session;
 import BGU.Group13B.service.SingletonCollection;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;
 
 import com.vaadin.flow.component.UI;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -20,7 +17,6 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.server.Cookie;
 
 
 
