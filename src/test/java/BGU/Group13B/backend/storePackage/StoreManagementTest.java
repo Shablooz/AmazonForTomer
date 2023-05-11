@@ -2,9 +2,11 @@ package BGU.Group13B.backend.storePackage;
 
 import BGU.Group13B.backend.Repositories.Interfaces.*;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
+import BGU.Group13B.service.Session;
 import BGU.Group13B.service.SingletonCollection;
 import org.junit.jupiter.api.*;
 
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,6 +20,8 @@ public class StoreManagementTest {
     private static IProductDiscountsRepository productDiscountsRepository;
     private static IStorePermissionsRepository storePermissionsRepository;
 
+    //init the admin
+    private static final Session session = new Session();
     private final int founderId = 1;
     private final String storeName = "storeName";
     private final String category = "category";
@@ -532,6 +536,82 @@ public class StoreManagementTest {
         assertTrue(foundStockQuantity);
         assertTrue(foundDescription);
 
+    }
+
+    @Test
+    void hideStoreTest_simpleCase_success(){
+        try {
+            store.hideStore(founderId);
+            assertTrue(store.isHidden());
+            Collection<Product> storeProducts = store.getAllStoreProducts(founderId);
+            for(Product product : storeProducts){
+                assertTrue(product.isHidden());
+            }
+        } catch (NoPermissionException e) {
+            fail();
+        }
+    }
+
+    @Test
+    void hideStoreTest_noPermission_fail(){
+        try {
+            store.hideStore(founderId + 1);
+            fail();
+        } catch (NoPermissionException e) {
+            assertTrue(true);
+        }
+    }
+
+    @Test
+    void hideStoreTest_alreadyHidden_fail(){
+        try {
+            store.hideStore(founderId);
+            store.hideStore(founderId);
+            fail();
+        } catch (NoPermissionException e) {
+            fail();
+        } catch (Exception e) {
+            assertTrue(true);
+        }
+    }
+
+    @Test
+    void hideStoreTest_noPermissionToViewProducts_fail(){
+        try {
+            store.hideStore(founderId);
+            store.getAllStoreProducts(founderId + 1);
+            fail();
+        } catch (NoPermissionException e) {
+            assertTrue(true);
+        }
+    }
+
+    @Test
+    void hideStoreTest_noPermissionToViewProduct_fail(){
+        try {
+            int productId = addProduct1();
+            store.hideStore(founderId);
+            store.getStoreProduct(founderId + 1, productId);
+            fail();
+        } catch (NoPermissionException e) {
+            assertTrue(true);
+        }
+    }
+
+    @Test
+    void hideStoreTest_addProductToHiddenStore_Success(){
+        try {
+            store.hideStore(founderId);
+            int productId = addProduct1();
+            Product product = store.getStoreProduct(founderId, productId);
+            assertEquals(product.getName(), productName);
+            assertEquals(product.getCategory(), category);
+            assertEquals(product.getPrice(), price);
+            assertEquals(product.getStockQuantity(), stockQuantity);
+            assertEquals(product.getDescription(), description);
+        } catch (NoPermissionException e) {
+            fail();
+        }
     }
 
 

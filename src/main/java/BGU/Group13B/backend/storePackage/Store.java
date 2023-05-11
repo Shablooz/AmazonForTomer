@@ -845,6 +845,9 @@ public class Store {
         if(!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to hide the store: " + this.storeId);
 
+        if(this.hidden)
+            throw new RuntimeException("The store " + this.storeName + " is already hidden");
+
         this.hidden = true;
         productRepository.hideAllStoreProducts(this.storeId);
 
@@ -863,4 +866,7 @@ public class Store {
     }
 
 
+    public boolean isHidden() {
+        return hidden;
+    }
 }
