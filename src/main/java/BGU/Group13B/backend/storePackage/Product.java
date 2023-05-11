@@ -172,4 +172,8 @@ public class Product {
     public boolean isHidden() {
         return this.hidden;
     }
+
+    public void unhide() {
+        this.hidden = false;
+    }
 }

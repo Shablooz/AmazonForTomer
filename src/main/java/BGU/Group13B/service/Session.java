@@ -991,4 +991,14 @@ public class Session implements ISession {
         }
     }
 
+    @Override
+    public void unhideStore(int userId, int storeId) {
+        try {
+            market.unhideStore(userId, storeId);
+        } catch (Exception e) {
+            //TODO: handle exception
+            throw new RuntimeException(e);
+        }
+    }
+
 }
