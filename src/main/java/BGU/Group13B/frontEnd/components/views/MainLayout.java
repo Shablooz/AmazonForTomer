@@ -22,6 +22,9 @@ import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
+import com.vaadin.flow.router.Location;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.lumo.LumoUtility;
@@ -31,7 +34,7 @@ import org.vaadin.lineawesome.LineAwesomeIcon;
 /**
  * The main view is a top-level placeholder for other views.
  */
-public class MainLayout extends AppLayout {
+public class MainLayout extends AppLayout  {
 
     private H2 viewTitle;
     private final Session session;
@@ -40,6 +43,12 @@ public class MainLayout extends AppLayout {
     private final String MEMBER = "Member";
     private final String ADMIN = "Admin";
     private final String GUEST = "Guest";
+
+    private Button loginButton = null;
+
+    private Button logoutButton = null;
+    private Button signUpButton = null;
+
     public interface VoidAction{
         void act();
     }
@@ -100,22 +109,15 @@ public class MainLayout extends AppLayout {
         FlexLayout flexLayout = new FlexLayout();
         flexLayout.setJustifyContentMode(FlexLayout.JustifyContentMode.END);
         flexLayout.setWidthFull();
-
-        if (!false ){    //session.isUserLoggedIn( /*todo change to session*/)) {
-            Button loginButton = new Button("Login");
-            loginButton.addClickListener(event -> getUI().ifPresent(ui -> ui.navigate("login")));
-            flexLayout.add(loginButton);
-
-            Button signUpButton = new Button("Sign up");
-            signUpButton.addClickListener(event -> getUI().ifPresent(ui -> ui.navigate("register")));
-            flexLayout.add(signUpButton);
+        //defining the buttons
+        prepareLoginButton(flexLayout);
+        prepareLogoutButton(flexLayout);
+        prepareSignUpButton(flexLayout);
+        if (!session.isUserLogged(SessionToIdMapper.getInstance().getCurrentSessionId()/*todo change to session*/) ){    //) {
+            logoutButton.setVisible(false);
         } else {
-            Button logoutButton = new Button("Logout");
-            logoutButton.addClickListener(event -> {
-                session.logout(5/*todo chase to use sessionId*/);
-                getUI().ifPresent(ui -> ui.getPage().reload());
-            });
-            flexLayout.add(logoutButton);
+            loginButton.setVisible(false);
+            signUpButton.setVisible(false);
         }
 
         HorizontalLayout horizontalLayout = new HorizontalLayout();
@@ -167,6 +169,28 @@ public class MainLayout extends AppLayout {
 
 
 
+    }
+
+    private void prepareLoginButton(FlexLayout flexLayout){
+        this.loginButton = new Button("Login");
+        loginButton.addClickListener(event -> getUI().ifPresent(ui -> ui.navigate("login")));
+        flexLayout.add(loginButton);
+    }
+
+    private void prepareSignUpButton(FlexLayout flexLayout){
+        signUpButton = new Button("Sign up");
+        signUpButton.addClickListener(event -> getUI().ifPresent(ui -> ui.navigate("register")));
+        flexLayout.add(signUpButton);
+    }
+
+    private void prepareLogoutButton(FlexLayout flexLayout){
+        logoutButton = new Button("Logout");
+        logoutButton.addClickListener(event -> {
+            session.logout(SessionToIdMapper.getInstance().getCurrentSessionId());
+            SessionToIdMapper.getInstance().updateCurrentSession(session.enterAsGuest());
+            getUI().ifPresent(ui -> ui.getPage().reload());
+        });
+        flexLayout.add(logoutButton);
     }
     private void oldMessageDialog(Dialog currentDialog)
     {
@@ -398,6 +422,11 @@ public class MainLayout extends AppLayout {
     protected void afterNavigation() {
         super.afterNavigation();
         viewTitle.setText(getCurrentPageTitle());
+        if(session.isUserLogged(SessionToIdMapper.getInstance().getCurrentSessionId())) {
+            this.loginButton.setVisible(false);
+            this.signUpButton.setVisible(false);
+            this.logoutButton.setVisible(true);
+        }
     }
 
     private String getCurrentPageTitle() {
