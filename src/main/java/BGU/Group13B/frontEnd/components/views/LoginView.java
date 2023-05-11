@@ -2,6 +2,7 @@ package BGU.Group13B.frontEnd.components.views;
 
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.service.Session;
+import BGU.Group13B.service.SingletonCollection;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;
 
@@ -47,9 +48,9 @@ public class LoginView extends VerticalLayout {
 
     @Autowired
     public LoginView(Session session) {
-        answer1 = new TextField("מה המספר של אמא שלך");
-        answer2 = new TextField("אבא שלך ערומכו?");
-        answer3 = new TextField("What is your favorite book or movie?");
+        answer1 = new TextField("favorite color?");
+        answer2 = new TextField("favorite food?");
+        answer3 = new TextField("bUgAati cOloR?");
 
         authenticationLayout.add(answer1, answer2, answer3, authenticate);
         authenticationLayout.setVisible(false);
@@ -98,18 +99,23 @@ public class LoginView extends VerticalLayout {
     }
 
     private void hideNoneNeededAuthentication(Session session){
-        if(!session.SecurityAnswer1Exists(SessionToIdMapper.getInstance().getCurrentSessionId())){
+        if(SingletonCollection.getUserRepository().checkIfUserExists(username.getValue()) == null)
+            return;
+        if(!session.SecurityAnswer1Exists(SingletonCollection.getUserRepository().checkIfUserExists(username.getValue()).getUserId())){
             answer1.setVisible(false);
         }
-        if(!session.SecurityAnswer2Exists(SessionToIdMapper.getInstance().getCurrentSessionId())){
+        if(!session.SecurityAnswer2Exists(SingletonCollection.getUserRepository().checkIfUserExists(username.getValue()).getUserId())){
             answer2.setVisible(false);
         }
-        if(!session.SecurityAnswer3Exists(SessionToIdMapper.getInstance().getCurrentSessionId())){
+        if(!session.SecurityAnswer3Exists(SingletonCollection.getUserRepository().checkIfUserExists(username.getValue()).getUserId())){
             answer3.setVisible(false);
         }
     }
     private void setAuthenticateButton(Session session,int guestId){
         authenticationLayout.setVisible(true);
+        answer1.setVisible(true);
+        answer2.setVisible(true);
+        answer3.setVisible(true);
         hideNoneNeededAuthentication(session);
         authenticate.addClickListener(e -> {
             try {

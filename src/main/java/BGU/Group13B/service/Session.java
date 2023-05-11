@@ -1026,10 +1026,6 @@ public class Session implements ISession {
 
 
 
-    public boolean isUserLoggedIn() {
-        return false;
-    }
-
     @Override
     public List<Pair<StoreInfo, String>> getAllUserAssociatedStores(int userId) {
         try{
