@@ -1000,4 +1000,6 @@ public interface ISession {
      * @param storeId   the store id that will be hidden
      */
     void hideStore(int userId, int storeId);
+
+    void deleteStore(int userId, int storeId);
 }

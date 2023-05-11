@@ -54,4 +54,12 @@ public class ReviewRepoSingle implements IRepositoryReview {
         implementations.get(storeId).removeProductScore(storeId,productId,userId);
     }
 
+    @Override
+    public void removeProductData(int storeId, int productId) {
+        if(!implementations.containsKey(storeId))
+            return;
+        implementations.get(storeId).removeProductData(storeId,productId);
+        //TODO check this with tomer
+    }
+
 }

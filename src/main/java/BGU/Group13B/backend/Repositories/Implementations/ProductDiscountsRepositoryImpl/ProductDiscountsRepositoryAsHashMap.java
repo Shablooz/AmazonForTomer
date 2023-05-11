@@ -70,8 +70,8 @@ public class ProductDiscountsRepositoryAsHashMap implements IProductDiscountsRep
     }
 
     @Override
-    public void removeProductDiscount(int storeId) {
-        productDiscounts.remove(storeId);
+    public void removeProductDiscounts(int productId) {
+        productDiscounts.remove(productId);
     }
 
     @Override

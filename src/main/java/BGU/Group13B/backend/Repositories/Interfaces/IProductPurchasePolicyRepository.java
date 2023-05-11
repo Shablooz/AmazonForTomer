@@ -25,4 +25,5 @@ public interface IProductPurchasePolicyRepository {
 
     void reset();
 
+    void removeAllProductPurchasePolicies(int storeId, int productId);
 }

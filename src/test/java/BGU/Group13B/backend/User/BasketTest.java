@@ -6,7 +6,6 @@ import BGU.Group13B.backend.Repositories.Interfaces.IProductHistoryRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
 import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
-import BGU.Group13B.service.Session;
 import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
 import org.junit.jupiter.api.*;
@@ -271,8 +270,8 @@ class BasketTest {
             productRepository.removeStoreProducts(storeId);
             basketProductRepository.removeBasketProducts(storeId, userId);
             SingletonCollection.getStoreRepository().removeStore(storeId);
-            SingletonCollection.getProductDiscountsRepository().removeProductDiscount(productId1);
-            SingletonCollection.getProductDiscountsRepository().removeProductDiscount(productId2);
+            SingletonCollection.getProductDiscountsRepository().removeProductDiscounts(productId1);
+            SingletonCollection.getProductDiscountsRepository().removeProductDiscounts(productId2);
             SingletonCollection.getStoreDiscountsRepository().removeStoreDiscounts(storeId);
 
         } catch (Exception e) {

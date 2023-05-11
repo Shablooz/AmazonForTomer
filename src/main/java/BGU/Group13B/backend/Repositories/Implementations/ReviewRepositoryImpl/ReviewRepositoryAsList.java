@@ -66,4 +66,10 @@ public class ReviewRepositoryAsList implements IRepositoryReview {
             throw new IllegalArgumentException("User didn't score this product");
         scores.remove(userId);
     }
+
+    @Override
+    public void removeProductData(int storeId, int productId) {
+        reviews.clear();
+        scores.clear();
+    }
 }

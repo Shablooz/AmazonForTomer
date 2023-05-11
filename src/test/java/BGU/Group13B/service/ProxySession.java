@@ -558,6 +558,12 @@ public class ProxySession implements ISession {
     }
 
     @Override
+    public void deleteStore(int userId, int storeId) {
+        if(realSession != null)
+            realSession.deleteStore(userId, storeId);
+    }
+
+    @Override
     public void allowPurchasePolicyConflicts(int userId, int storeId) {
         if (realSession != null)
             realSession.allowPurchasePolicyConflicts(userId, storeId);
