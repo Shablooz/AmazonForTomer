@@ -18,6 +18,7 @@ import BGU.Group13B.backend.storePackage.permissions.*;
 import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.AddToUserCart;
 import BGU.Group13B.service.info.StoreInfo;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -857,6 +858,7 @@ public class Store {
 
     //will send a message to all the store's workers except the user with the given id
     private void notifyAllWorkers(int userId, String msgHeader, String msgBody) {
+        throw new NotImplementedException("TODO - notifyAllWorkers");
         /* //TODO. the parameters can be changed if needed. make sure to update the function call in the function above (hideStore)
         for(int workerId : this.storePermission.getWorkersInfo().stream().map(WorkerCard::userId).toList()){
             if(workerId != userId)
