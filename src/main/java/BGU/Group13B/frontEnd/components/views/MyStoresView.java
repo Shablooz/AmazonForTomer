@@ -115,7 +115,6 @@ public class MyStoresView extends VerticalLayout {
         //add the buttons to the view in horizontal layout
         buttonsLayout.add(createStoreButton, enterStoreButton);
         add(buttonsLayout);
-
     }
 
     private void navigateToStore(){

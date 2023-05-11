@@ -609,6 +609,7 @@ public class StoreManagementTest {
             assertEquals(product.getPrice(), price);
             assertEquals(product.getStockQuantity(), stockQuantity);
             assertEquals(product.getDescription(), description);
+            assertTrue(product.isHidden());
         } catch (NoPermissionException e) {
             fail();
         }

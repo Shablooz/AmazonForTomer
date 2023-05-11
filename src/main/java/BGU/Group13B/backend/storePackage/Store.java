@@ -294,7 +294,7 @@ public class Store {
        and 4.13: "get store purchase history feature"  **/
     @DefaultManagerFunctionality
     @DefaultOwnerFunctionality
-    public int addProduct(int userId, String productName, String category, double price, int stockQuantity, String description) throws NoPermissionException {
+    public synchronized int addProduct(int userId, String productName, String category, double price, int stockQuantity, String description) throws NoPermissionException {
         /*
          * check if the user has permission to add product
          * */
@@ -841,7 +841,7 @@ public class Store {
     }
 
     //only the store founder can do this function
-    public void hideStore(int userId) throws NoPermissionException {
+    public synchronized void hideStore(int userId) throws NoPermissionException {
         if(!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to hide the store: " + this.storeId);
 
