@@ -8,6 +8,8 @@ import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
+import BGU.Group13B.service.entity.ServiceBasketProduct;
+import BGU.Group13B.service.entity.ServiceProduct;
 import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
 import net.bytebuddy.dynamic.scaffold.MethodGraph;
@@ -20,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * IMPORTANT need to initialize the session AFTER loading first user (id = 1) from database
@@ -81,17 +84,41 @@ public class Session implements ISession {
     }
 
     @Override
-    public double purchaseProductCart(int userId, String address, String creditCardNumber,
+    public double purchaseProductCart(int userId, String creditCardNumber,
                                       String creditCardMonth, String creditCardYear,
-                                      String creditCardHolderFirstName, String creditCardHolderLastName,
-                                      String creditCardCcv, String id, String creditCardType,
+                                      String creditCardHolderFirstName,
+                                      String creditCardCcv, String id,
                                       HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
                                       String/*store coupons*/ storeCoupon) {
         try {
             return userRepository.getUser(userId).
-                    purchaseCart(address, creditCardNumber, creditCardMonth,
-                            creditCardYear, creditCardHolderFirstName, creditCardHolderLastName,
-                            creditCardCcv, id, creditCardType, productsCoupons, storeCoupon);
+                    purchaseCart(creditCardNumber, creditCardMonth,
+                            creditCardYear, creditCardHolderFirstName,
+                            creditCardCcv, id, productsCoupons, storeCoupon);
+        } catch (PurchaseFailedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @Override
+    public Response<VoidResponse> purchaseProductCart(int userId, String creditCardNumber,
+                                                      String creditCardMonth, String creditCardYear,
+                                                      String creditCardHolderFirstName,
+                                                      String creditCardCcv, String id) {
+        try {
+            userRepository.getUser(userId).
+                    purchaseCart(creditCardNumber, creditCardMonth,
+                            creditCardYear, creditCardHolderFirstName,
+                            creditCardCcv, id, new HashMap<>(), "");
+            return Response.success();
+        } catch (PurchaseFailedException e) {
+            return Response.exception(e);
+        }
+    }
+    @Override
+    public double startPurchaseBasketTransaction(int userId, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                                                 String/*store coupons*/ storeCoupon){
+        try {
+            return userRepository.getUser(userId).startPurchaseBasketTransaction(productsCoupons, storeCoupon);
         } catch (PurchaseFailedException e) {
             throw new RuntimeException(e);
         }
@@ -474,6 +501,17 @@ public class Session implements ISession {
     }
 
     @Override
+    public Response<List<ServiceBasketProduct>> getCartContent(int userId) {
+        List<BasketProduct> cartContent;
+        try{
+            cartContent = userRepositoryAsHashmap.getUser(userId).getCartBasketProducts();
+        }catch (Exception e){
+            return Response.exception(e);
+        }
+        return Response.success(cartContent.stream().map(ServiceBasketProduct::new).collect(Collectors.toList()));
+    }
+
+        @Override
     public void removeProductFromCart(int userId, int storeId, int productId) {
         try {
             userRepositoryAsHashmap.getUser(userId).removeProductFromCart(storeId, productId);
@@ -746,6 +784,22 @@ public class Session implements ISession {
     }
 
     @Override
+    public double getTotalPriceOfCart(int userId) {
+        return userRepository.getUser(userId).getTotalPriceOfCart();
+    }
+
+    @Override
+    public void cancelPurchase(int userId) {
+        userRepository.getUser(userId).cancelPurchase();
+    }
+
+    @Override
+    public List<ServiceProduct> getAllFailedProductsAfterPayment(int userId) {
+        return userRepository.getUser(userId).getAllFailedProductsAfterPayment().
+                stream().map(ServiceProduct::new).collect(Collectors.toList());
+    }
+
+        @Override
     public void allowPurchasePolicyConflicts(int userId, int storeId) {
         try {
             market.allowPurchasePolicyConflicts(userId, storeId);

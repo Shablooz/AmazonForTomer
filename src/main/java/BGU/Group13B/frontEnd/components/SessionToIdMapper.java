@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SessionToIdMapper {
 
     private static SessionToIdMapper instance;
-    private ConcurrentHashMap<String, Integer> sessionToId;
+    private final ConcurrentHashMap<String, Integer> sessionToId;
 
     private SessionToIdMapper() {
         // Private constructor to prevent instantiation from outside

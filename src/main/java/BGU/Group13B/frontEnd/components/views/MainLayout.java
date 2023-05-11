@@ -38,33 +38,33 @@ public class MainLayout extends AppLayout  {
 
     private H2 viewTitle;
     private final Session session;
-    private int USERID=0;
+    private int USERID = 0;
 
     private final String MEMBER = "Member";
     private final String ADMIN = "Admin";
     private final String GUEST = "Guest";
 
-    private Button loginButton = null;
+private Button loginButton = null;
 
     private Button logoutButton = null;
-    private Button signUpButton = null;
-
-    public interface VoidAction{
+    private Button signUpButton = null;    public interface VoidAction {
         void act();
     }
-    private void setUSERID(){
-        if(USERID==0)
+
+    private void setUSERID() {
+        if (USERID == 0)
             USERID = SessionToIdMapper.getInstance().getCurrentSessionId();
     }
+
     @Autowired
     public MainLayout(Session session) {
         this.session = session;
         UI currentUI = UI.getCurrent();
         VaadinSession currentSession = currentUI.getSession();
         String sessionId = currentSession.getSession().getId();
-        if(!SessionToIdMapper.getInstance().containsKey(sessionId)){
+        if (!SessionToIdMapper.getInstance().containsKey(sessionId)) {
             int tempId = session.enterAsGuest();
-            SessionToIdMapper.getInstance().add(sessionId,tempId);
+            SessionToIdMapper.getInstance().add(sessionId, tempId);
         }
 
         setUSERID();
@@ -80,17 +80,19 @@ public class MainLayout extends AppLayout  {
 
         viewTitle = new H2();
         viewTitle.addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.Margin.NONE);
+        Button cartButton = new Button(new Icon(VaadinIcon.CART));
+        cartButton.addClickListener(event -> getUI().ifPresent(ui -> ui.navigate("cart")));
 
         HorizontalLayout rightAlignment = rightAlignmentHeaderContext();
 
-        addToNavbar(true, toggle, viewTitle,rightAlignment);
+        addToNavbar(true, toggle, viewTitle, cartButton, rightAlignment);
     }
-    private HorizontalLayout rightAlignmentHeaderContext()
-    {
+
+    private HorizontalLayout rightAlignmentHeaderContext() {
         HorizontalLayout rightAlignment = new HorizontalLayout();
-        Button messageButton =messageDialog();
-        System.out.println("USERID: "+USERID+" is logged in: "+session.isUserLogged(USERID));
-        if(session.isUserLogged(USERID))
+        Button messageButton = messageDialog();
+        System.out.println("USERID: " + USERID + " is logged in: " + session.isUserLogged(USERID));
+        if (session.isUserLogged(USERID))
             rightAlignment.add(messageButton);
 
         rightAlignment.setJustifyContentMode(FlexLayout.JustifyContentMode.END);
@@ -127,8 +129,7 @@ public class MainLayout extends AppLayout  {
         addToDrawer(header, scroller, horizontalLayout, createFooter());
     }
 
-    private void newMessageDialog(Dialog currentDialog)
-    {
+    private void newMessageDialog(Dialog currentDialog) {
         currentDialog.removeAll();
         currentDialog.getFooter().removeAll();
         currentDialog.getHeader().removeAll();
@@ -141,10 +142,10 @@ public class MainLayout extends AppLayout  {
 
         Button jmpMainDialog = new Button("Messages Center");
         Button nextMessageButton = new Button("next message");
-        VerticalLayout verticalDialogMessage=new VerticalLayout();
+        VerticalLayout verticalDialogMessage = new VerticalLayout();
         TextArea messageBody = new TextArea();
         Button replyButton = new Button("Reply");
-        TextArea  inputBody= new TextArea();
+        TextArea inputBody = new TextArea();
         Button sendMessageButton = new Button("Send Answer");
 
 
@@ -163,13 +164,14 @@ public class MainLayout extends AppLayout  {
 
 
         jmpMainDialog.addClickListener(event -> mainDialog(currentDialog));
-        replyButton.addClickListener(event->{verticalDialogMessage.remove(replyButton);
-                                     verticalDialogMessage.add(inputBody,sendMessageButton);});
-
-
+        replyButton.addClickListener(event -> {
+            verticalDialogMessage.remove(replyButton);
+            verticalDialogMessage.add(inputBody, sendMessageButton);
+        });
 
 
     }
+
 
     private void prepareLoginButton(FlexLayout flexLayout){
         this.loginButton = new Button("Login");
@@ -206,13 +208,13 @@ public class MainLayout extends AppLayout  {
 
         Button jmpMainDialog = new Button("Messages Center");
         Button nextMessageButton = new Button("next message");
-        VerticalLayout verticalDialogMessage=new VerticalLayout();
+        VerticalLayout verticalDialogMessage = new VerticalLayout();
         TextArea messageBody = new TextArea();
         Button refreshMessagesButton = new Button("Refresh Messages");
 
 
         currentDialog.getFooter().add(jmpMainDialog);
-        currentDialog.getFooter().add(refreshMessagesButton,nextMessageButton);
+        currentDialog.getFooter().add(refreshMessagesButton, nextMessageButton);
         currentDialog.add(verticalDialogMessage);
 
         messageBody.setWidthFull();
@@ -224,10 +226,9 @@ public class MainLayout extends AppLayout  {
         jmpMainDialog.addClickListener(event -> mainDialog(currentDialog));
 
 
-
     }
-    private void openComplaintDialog(Dialog currentDialog)
-    {
+
+    private void openComplaintDialog(Dialog currentDialog) {
         currentDialog.removeAll();
         currentDialog.getFooter().removeAll();
         currentDialog.getHeader().removeAll();
@@ -239,9 +240,9 @@ public class MainLayout extends AppLayout  {
         currentDialog.getHeader().add(closeButton);
 
         Button jmpMainDialog = new Button("Messages Center");
-        VerticalLayout verticalDialogMessage=new VerticalLayout();
+        VerticalLayout verticalDialogMessage = new VerticalLayout();
         TextField inputHeader = new TextField();
-        TextArea  inputBody= new TextArea();
+        TextArea inputBody = new TextArea();
         Button sendMessageButton = new Button("Send Complaint");
 
 
@@ -260,8 +261,8 @@ public class MainLayout extends AppLayout  {
 
         jmpMainDialog.addClickListener(event -> mainDialog(currentDialog));
     }
-    private void showComplaintDialog(Dialog currentDialog)
-    {
+
+    private void showComplaintDialog(Dialog currentDialog) {
         currentDialog.removeAll();
         currentDialog.getFooter().removeAll();
         currentDialog.getHeader().removeAll();
@@ -273,10 +274,10 @@ public class MainLayout extends AppLayout  {
 
         Button jmpMainDialog = new Button("Messages Center");
         Button nextMessageButton = new Button("Next Complaint");
-        VerticalLayout verticalDialogMessage=new VerticalLayout();
+        VerticalLayout verticalDialogMessage = new VerticalLayout();
         TextArea messageBody = new TextArea();
         Button replyButton = new Button("Reply");
-        TextArea  inputBody= new TextArea();
+        TextArea inputBody = new TextArea();
         Button sendMessageButton = new Button("Send Answer");
 
 
@@ -295,10 +296,13 @@ public class MainLayout extends AppLayout  {
 
 
         jmpMainDialog.addClickListener(event -> mainDialog(currentDialog));
-        replyButton.addClickListener(event->{verticalDialogMessage.remove(replyButton);
-            verticalDialogMessage.add(inputBody,sendMessageButton);});
+        replyButton.addClickListener(event -> {
+            verticalDialogMessage.remove(replyButton);
+            verticalDialogMessage.add(inputBody, sendMessageButton);
+        });
 
     }
+
     private void sendMessageDialog(Dialog currentDialog) {
         currentDialog.removeAll();
         currentDialog.getFooter().removeAll();
@@ -311,10 +315,10 @@ public class MainLayout extends AppLayout  {
         currentDialog.getHeader().add(closeButton);
 
         Button jmpMainDialog = new Button("Messages Center");
-        VerticalLayout verticalDialogMessage=new VerticalLayout();
+        VerticalLayout verticalDialogMessage = new VerticalLayout();
         TextField receiverName = new TextField();
         TextField inputHeader = new TextField();
-        TextArea  inputBody= new TextArea();
+        TextArea inputBody = new TextArea();
         Button sendMessageButton = new Button("Send Message");
 
 
@@ -338,7 +342,8 @@ public class MainLayout extends AppLayout  {
         jmpMainDialog.addClickListener(event -> mainDialog(currentDialog));
 
     }
-    private void mainDialog(Dialog currentDialog){
+
+    private void mainDialog(Dialog currentDialog) {
 
         currentDialog.removeAll();
         currentDialog.getFooter().removeAll();
@@ -352,47 +357,47 @@ public class MainLayout extends AppLayout  {
 
         VerticalLayout buttonsLayout = new VerticalLayout();
         Button newMessagesButton = new Button("New Messages");
-        newMessagesButton.addClickListener(event-> {
+        newMessagesButton.addClickListener(event -> {
             newMessageDialog(currentDialog);
         });
 
         Button oldMessagesButton = new Button("Old Messages");
-        oldMessagesButton.addClickListener(event-> {
+        oldMessagesButton.addClickListener(event -> {
             oldMessageDialog(currentDialog);
         });
 
         Button openComplaintsButton = new Button("Open Complaints");
-        openComplaintsButton.addClickListener(event-> {
+        openComplaintsButton.addClickListener(event -> {
             openComplaintDialog(currentDialog);
         });
 
         Button showComplaintsButton = new Button("Show Complaints");
-        showComplaintsButton.addClickListener(event-> {
+        showComplaintsButton.addClickListener(event -> {
             showComplaintDialog(currentDialog);
         });
 
         Button sendMessageButton = new Button("Send Message");
-        sendMessageButton.addClickListener(event-> {
+        sendMessageButton.addClickListener(event -> {
             sendMessageDialog(currentDialog);
         });
 
-        buttonsLayout.add(newMessagesButton,oldMessagesButton,openComplaintsButton);
+        buttonsLayout.add(newMessagesButton, oldMessagesButton, openComplaintsButton);
         currentDialog.add(buttonsLayout);
 
-        if(session.getUserStatus(USERID).equals(ADMIN)){
-            buttonsLayout.add(showComplaintsButton,sendMessageButton);
+        if (session.getUserStatus(USERID).equals(ADMIN)) {
+            buttonsLayout.add(showComplaintsButton, sendMessageButton);
         }
 
     }
-    private Button messageDialog()
-    {
+
+    private Button messageDialog() {
         Button messageButton = new Button("Message Center");
         messageButton.setIcon(VaadinIcon.COMMENTS_O.create());
         Dialog myDialog = new Dialog();
 
         mainDialog(myDialog);
 
-        messageButton.addClickListener(event->myDialog.open());
+        messageButton.addClickListener(event -> myDialog.open());
         return messageButton;
     }
 
@@ -401,7 +406,8 @@ public class MainLayout extends AppLayout  {
         // AppNav is not yet an official component.
         // For documentation, visit https://github.com/vaadin/vcf-nav#readme
         AppNav nav = new AppNav();
-        nav.addItem(new AppNavItem("Home View", HomeView.class, LineAwesomeIcon.GLOBE_SOLID.create()));
+        //
+        nav.addItem(new AppNavItem("Home View", HomeView.class, LineAwesomeIcon.HOME_SOLID.create()));
 
         //my stores
         if(true){ //TODO! check if the user is logged in

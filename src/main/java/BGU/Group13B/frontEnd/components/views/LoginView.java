@@ -20,6 +20,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.server.Cookie;
 
 
 
@@ -54,10 +55,9 @@ public class LoginView extends VerticalLayout {
         authenticationLayout.add(answer1, answer2, answer3, authenticate);
         authenticationLayout.setVisible(false);
         int guestId = SessionToIdMapper.getInstance().getCurrentSessionId();
-
         // Use UI.access() to access the VaadinSession state on the UI thread
         VaadinSession web_session = VaadinSession.getCurrent();
-        web_session.getSession().getId();
+        String s_id = web_session.getSession().getId();
 
         setLoginButton(session, guestId);
 

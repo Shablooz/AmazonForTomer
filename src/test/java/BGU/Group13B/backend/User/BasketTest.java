@@ -72,7 +72,7 @@ class BasketTest {
 
     private void payBehaviour(boolean success) {
         Mockito.when(paymentAdapter.pay(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
-                Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any(), Mockito.any(), Mockito.anyDouble())).thenReturn(success);
+                Mockito.anyString())).thenReturn(success);
     }
 
     private void initBasket() {
@@ -131,7 +131,7 @@ class BasketTest {
                     Thread.sleep(100);
                 payBehaviour(true);
                 firstThread.compareAndSet(0, 1);
-                pricePayed3.set(basket3.purchaseBasket("", "", "", "", "", "", "", "", "", new HashMap<>(), ""));
+                pricePayed3.set(basket3.purchaseBasket("", "", "", "", "", "", new HashMap<>(), ""));
             } catch (PurchaseFailedException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -142,7 +142,7 @@ class BasketTest {
                     Thread.sleep(100);
                 payBehaviour(true);
                 firstThread.compareAndSet(0, 2);
-                pricePayed2.set(basket2.purchaseBasket("", "", "", "", "", "", "", "", "", new HashMap<>(), ""));
+                pricePayed2.set(basket2.purchaseBasket("", "", "", "", "", "", new HashMap<>(), ""));
             } catch (PurchaseFailedException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -177,7 +177,7 @@ class BasketTest {
 
         try {
             payBehaviour(true);
-            Assertions.assertEquals(18, basket.purchaseBasket("", "", "", "", "", "", "", "", "", new HashMap<>(), ""));
+            Assertions.assertEquals(18, basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), ""));
         } catch (PurchaseFailedException e) {
             throw new RuntimeException(e);
         }
@@ -189,7 +189,7 @@ class BasketTest {
 
         try {
             payBehaviour(false);
-            basket.purchaseBasket("", "", "", "", "", "", "", "", "", new HashMap<>(), "");
+            basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), "");
         } catch (PurchaseFailedException e) {
             Assertions.assertEquals("Payment failed", e.getMessage());
         } catch (Exception e) {
@@ -202,8 +202,8 @@ class BasketTest {
     void purchaseBasketSimpleTest_notInStockFail() {
         try {
             payBehaviour(true);
-            basketProductRepository.changeProductQuantity(productId1, storeId, userId, 2);
-            double price = basket.purchaseBasket("", "", "", "", "", "", "", "", "", new HashMap<>(), "");
+            basketProductRepository.changeProductQuantity(productId1, storeId, userId, 3);
+            double price = basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), "");
             Assertions.assertEquals(15 * 0.9 * 0.8, price);
             BasketProduct failedProduct = basket.getFailedProducts().peek();
             BasketProduct successfulProduct = basket.getSuccessfulProductsList().peek();
@@ -221,7 +221,7 @@ class BasketTest {
     void cancelPurchase() {
         try {
             payBehaviour(false);
-            basket.purchaseBasket("", "", "", "", "", "", "", "", "", new HashMap<>(), "");
+            basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), "");
         } catch (PurchaseFailedException e) {
             basket.cancelPurchase();
             Assertions.assertEquals(1, productRepository.getStoreProductById(productId1, storeId).getStockQuantity());
@@ -241,7 +241,7 @@ class BasketTest {
         payBehaviour(false);
         Thread t1 = new Thread(() -> {
             try {
-                basket.purchaseBasket("", "", "", "", "", "", "", "", "", new HashMap<>(), "");
+                basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), "");
                 //failed products
                 Assertions.assertEquals(2, basket.getFailedProducts().size());
             } catch (PurchaseFailedException ignore) {
@@ -266,6 +266,7 @@ class BasketTest {
     @Test
     void addProduct() {
     }
+
     @AfterAll
     static void afterAll() {
         try {

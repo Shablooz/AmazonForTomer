@@ -124,7 +124,7 @@ public class Communication_AT extends ProjectTest {
         session.addToCart(userIds[UsersIndex.STORE_OWNER_2.ordinal()],
                 storeIds[StoresIndex.STORE_1.ordinal()], productIds[ProductsIndex.PRODUCT_1.ordinal()]);
 
-        double payedPrice = session.purchaseProductCart(userIds[UsersIndex.STORE_OWNER_2.ordinal()], "", "", "", "", "", "", "", "", "", new HashMap<>(), "");
+        double payedPrice = session.purchaseProductCart(userIds[UsersIndex.STORE_OWNER_2.ordinal()], "", "", "", "", "", "", new HashMap<>(), "");
         assertEquals(products[ProductsIndex.PRODUCT_1.ordinal()][ProductInfo.PRICE.ordinal()],
                 payedPrice);
         int quantity_after = session.getProductStockQuantity(productIds[ProductsIndex.PRODUCT_1.ordinal()]);
@@ -140,7 +140,7 @@ public class Communication_AT extends ProjectTest {
         session.removeProduct(userIds[UsersIndex.STORE_OWNER_1.ordinal()],
                 storeIds[StoresIndex.STORE_1.ordinal()],
                 productIds[ProductsIndex.PRODUCT_1.ordinal()]);
-        double totalPrice = session.purchaseProductCart(userIds[UsersIndex.STORE_OWNER_2.ordinal()], "", "", "", "", "", "", "", "", "", new HashMap<>(), "");
+        double totalPrice = session.purchaseProductCart(userIds[UsersIndex.STORE_OWNER_2.ordinal()], "", "", "", "", "", "", new HashMap<>(), "");
         assertEquals(0, totalPrice);
         var failedProducts = session.getFailedProducts(
                 userIds[UsersIndex.STORE_OWNER_2.ordinal()],
@@ -154,7 +154,7 @@ public class Communication_AT extends ProjectTest {
         //expect payment fail
         session.addToCart(userIds[UsersIndex.STORE_OWNER_2.ordinal()],
                 storeIds[StoresIndex.STORE_1.ordinal()], productIds[ProductsIndex.PRODUCT_1.ordinal()]);
-        double payedPrice = session.purchaseProductCart(userIds[UsersIndex.STORE_OWNER_2.ordinal()], "", "", "", "", "", "", "", "", "", new HashMap<>(), "");
+        double payedPrice = session.purchaseProductCart(userIds[UsersIndex.STORE_OWNER_2.ordinal()], "", "", "", "", "", "", new HashMap<>(), "");
         assertEquals(0, payedPrice);
     }
 }

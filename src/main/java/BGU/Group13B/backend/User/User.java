@@ -1,6 +1,7 @@
 package BGU.Group13B.backend.User;
 
 import BGU.Group13B.backend.Pair;
+import BGU.Group13B.backend.storePackage.Product;
 import org.mindrot.jbcrypt.BCrypt;
 import BGU.Group13B.backend.Repositories.Interfaces.IMessageRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
@@ -158,7 +159,7 @@ public class User {
     public synchronized Message getComplaint() throws NoPermissionException {
         if (!isAdmin())
             throw new NoPermissionException("Only admin can read complaints");
-        Message message= messageRepository.readUnreadMassage(adminIdentifier);
+        Message message = messageRepository.readUnreadMassage(adminIdentifier);
         regularMessageToReply = message;
         return message;
     }
@@ -182,11 +183,11 @@ public class User {
     public void answerComplaint(String answer) throws NoPermissionException {
         if (!isAdmin())
             throw new NoPermissionException("Only admin can answer complaints");
-        if(regularMessageToReply ==null)
+        if (regularMessageToReply == null)
             throw new IllegalArgumentException("no complaint to answer");
         messageRepository.markAsRead(regularMessageToReply.getReceiverId(), regularMessageToReply.getSenderId(), regularMessageToReply.getMessageId());
         messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), "RE: " + regularMessageToReply.getHeader(), answer, regularMessageToReply.getSenderId()));
-        regularMessageToReply =null;
+        regularMessageToReply = null;
     }
 
     public Message readMassage() throws NoPermissionException {
@@ -245,12 +246,12 @@ public class User {
 
     //42
     public void answerQuestionStore(String answer) throws NoPermissionException {
-        if(regularMessageToReply ==null)
+        if (regularMessageToReply == null)
             throw new IllegalArgumentException("no message to reply to");
         assert regularMessageToReply.getReceiverId().matches("-?\\d+");
         market.markAsCompleted(regularMessageToReply.getSenderId(), regularMessageToReply.getMessageId(), this.userId, Integer.parseInt(regularMessageToReply.getReceiverId()));
         messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), "RE: " + regularMessageToReply.getHeader(), answer, regularMessageToReply.getSenderId()));
-        regularMessageToReply =null;
+        regularMessageToReply = null;
     }
 
     //42
@@ -320,18 +321,43 @@ public class User {
         return market.getStoreScore(storeId);
     }
 
-    public double purchaseCart(String address, String creditCardNumber, String creditCardMonth, String creditCardYear, String creditCardHolderFirstName,
-                             String creditCardHolderLastName, String creditCardCcv, String id, String creditCardType,
-                             HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                             String/*store coupons*/ storeCoupon) throws PurchaseFailedException {
-        return cart.purchaseCart(address, creditCardNumber, creditCardMonth, creditCardYear,
-                creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType,
-                productsCoupons, storeCoupon);
+    public double purchaseCart(String creditCardNumber, String creditCardMonth,
+                               String creditCardYear, String creditCardHolderFirstName,
+                               String creditCardCcv, String id,
+                               HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                               String/*store coupons*/ storeCoupon) throws PurchaseFailedException {
+        return cart.purchaseCart(creditCardNumber,
+                creditCardMonth, creditCardYear,
+                creditCardHolderFirstName,
+                creditCardCcv, id,
+                productsCoupons,
+                storeCoupon);
+    }
+
+    public void purchaseCart(String creditCardNumber, String creditCardMonth,
+                             String creditCardYear, String creditCardHolderFirstName,
+                             String creditCardCcv, String id) throws PurchaseFailedException {
+        cart.purchaseCart(creditCardNumber,
+                creditCardMonth, creditCardYear,
+                creditCardHolderFirstName,
+                creditCardCcv, id);
+    }
+    public double startPurchaseBasketTransaction(HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                                                 String/*store coupons*/ storeCoupon) throws PurchaseFailedException {
+        return cart.startPurchaseBasketTransaction(productsCoupons, storeCoupon);
     }
 
 
     public String getCartDescription() {
         return cart.getCartDescription();
+    }
+
+    public List<Product> getCartContent() {
+        return cart.getCartContent();
+    }
+
+    public List<BasketProduct> getCartBasketProducts() {
+        return cart.getCartBasketProducts();
     }
 
 
@@ -409,12 +435,24 @@ public class User {
     }
 
 
-    public void removeBasket(int basketId){
+    public void removeBasket(int basketId) {
         cart.removeBasket(userId, basketId);
     }
 
 
     public List<Integer> getFailedProducts(int storeId) {
         return cart.getFailedProducts(storeId, userId);
+    }
+
+    public List<Product> getAllFailedProductsAfterPayment() {
+        return cart.getAllFailedProductsAfterPayment();
+    }
+
+    public double getTotalPriceOfCart() {
+        return cart.getTotalPriceOfCartBeforeDiscount();
+    }
+
+    public void cancelPurchase() {
+        cart.cancelPurchase();
     }
 }
