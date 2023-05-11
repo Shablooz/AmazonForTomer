@@ -228,7 +228,7 @@ public class User {
     }
 
 
-    public void sendMassageStore(String header, String massage, int storeId) {
+    public void sendMassageStore(String header, String massage, int storeId) throws NoPermissionException {
         market.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), header, massage, String.valueOf(storeId)), userId, storeId);
     }
 
@@ -278,13 +278,13 @@ public class User {
     }
 
     //#25
-    public Review getReview(int storeId, int productId) {
+    public Review getReview(int storeId, int productId) throws NoPermissionException {
         return market.getReview(storeId, productId, this.userId);
     }
 
     //#26
-    public float getProductScore(int storeId, int productId) {
-        return market.getProductScore(storeId, productId);
+    public float getProductScore(int storeId, int productId) throws NoPermissionException {
+        return market.getProductScore(storeId, productId, userId);
     }
 
     public void addAndSetProductScore(int storeId, int productId, int score) throws NoPermissionException {

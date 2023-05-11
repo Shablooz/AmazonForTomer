@@ -4,6 +4,7 @@ import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
 import BGU.Group13B.backend.storePackage.Product;
 
+import java.util.Collection;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -23,18 +24,22 @@ public class Searcher {
     }
     public List<Product> searchByName(String name) {
         products = productRepository.getProductByName(name);
+        filterHiddenProducts();
         return products;
     }
     public List<Product> searchByCategory(String category) {
         products = productRepository.getProductByCategory(category);
+        filterHiddenProducts();
         return products;
     }
     public List<Product> searchByKeywords(String Keywords) {
         String[] keywords = Keywords.split(" ");
         products = productRepository.getProductByKeywords(Arrays.asList(keywords));
+        filterHiddenProducts();
         return products;
     }
     public List<Product> filterByPriceRange(int minPrice, int maxPrice) {
+        filterHiddenProducts();
         List<Product> newProducts = new LinkedList<>();
         for (Product product : products) {
             if (product.getPrice() >= minPrice && product.getPrice() <= maxPrice) {
@@ -45,9 +50,10 @@ public class Searcher {
         return products;
     }
     public List<Product> filterByProductRank(int minRating, int maxRating) {
+        filterHiddenProducts();
         List<Product> newProducts = new LinkedList<>();
         for (Product product : products) {
-            if (product.getRank() >= minRating && product.getRank() <= maxRating) {
+            if (product.getProductScore() >= minRating && product.getProductScore() <= maxRating) {
                 newProducts.add(product);
             }
         }
@@ -55,6 +61,7 @@ public class Searcher {
         return products;
     }
     public List<Product> filterByCategory(String category) {
+        filterHiddenProducts();
         List<Product> newProducts = new LinkedList<>();
         for (Product product : products) {
             if (product.getCategory().toLowerCase().equals(category.toLowerCase())) {
@@ -66,13 +73,17 @@ public class Searcher {
     }
     //filter by store rating
     public List<Product> filterByStoreRank(int minRating, int maxRating) {
+        filterHiddenProducts();
         List<Product> newProducts = new LinkedList<>();
         for (Product product : products) {
-            if (storeRepository.getStore(product.getStoreId()).getRank() >= minRating &&
-                    storeRepository.getStore(product.getStoreId()).getRank() <= maxRating) {
+            if (storeRepository.getStore(product.getStoreId()).getStoreScore() >= minRating &&
+                    storeRepository.getStore(product.getStoreId()).getStoreScore() <= maxRating) {
                 newProducts.add(product);
             }
         }
+
+
+
         products = newProducts;
         return products;
     }
@@ -84,9 +95,14 @@ public class Searcher {
         }
        }
 
-    public Product getProductById(int productId) {
-        return productRepository.getProductById(productId);
-
+    private void filterHiddenProducts() {
+        List<Product> filteredProducts = new LinkedList<>();
+        for (Product product : products) {
+            if (!product.isHidden()) {
+                filteredProducts.add(product);
+            }
+        }
+        products = filteredProducts;
     }
 
 }

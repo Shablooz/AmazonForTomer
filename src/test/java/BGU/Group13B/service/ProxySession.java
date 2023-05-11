@@ -430,9 +430,10 @@ public class ProxySession implements ISession {
         return new ArrayList<>();
     }
 
-    public StoreInfo getStoreInfo(int storeId) {
+    @Override
+    public StoreInfo getStoreInfo(int userId, int storeId) {
         if (realSession != null)
-            return realSession.getStoreInfo(storeId);
+            return realSession.getStoreInfo(userId, storeId);
         return new StoreInfo(new Store(1, 1, "", ""));
     }
 
@@ -451,58 +452,16 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public ProductInfo getStoreProductInfo(int storeId, int productId) {
+    public ProductInfo getStoreProductInfo(int userId, int storeId, int productId) {
         if (realSession != null)
-            return realSession.getStoreProductInfo(storeId, productId);
+            return realSession.getStoreProductInfo(userId, storeId, productId);
         return new ProductInfo(new Product(1, 1, "", "", -1, -1, ""));
     }
 
     @Override
-    public ProductInfo getProductInfo(int productId) {
+    public Set<ProductInfo> getAllStoreProductsInfo(int userId, int storeId) {
         if (realSession != null)
-            return realSession.getProductInfo(productId);
-        return new ProductInfo(new Product(1, 1, "", "", -1, -1, ""));
-    }
-
-    @Override
-    public String getProductName(int productId) {
-        if (realSession != null)
-            return realSession.getProductName(productId);
-        return "";
-    }
-
-    @Override
-    public String getProductCategory(int productId) {
-        if (realSession != null)
-            return realSession.getProductCategory(productId);
-        return "";
-    }
-
-    @Override
-    public double getProductPrice(int productId) {
-        if (realSession != null)
-            return realSession.getProductPrice(productId);
-        return -1;
-    }
-
-    @Override
-    public int getProductStockQuantity(int productId) {
-        if (realSession != null)
-            return realSession.getProductStockQuantity(productId);
-        return -1;
-    }
-
-    @Override
-    public float getProductScore(int productId) {
-        if (realSession != null)
-            return realSession.getProductScore(productId);
-        return -1;
-    }
-
-    @Override
-    public Set<ProductInfo> getAllStoreProductsInfo(int storeId) {
-        if (realSession != null)
-            return realSession.getAllStoreProductsInfo(storeId);
+            return realSession.getAllStoreProductsInfo(userId, storeId);
         return new HashSet<>();
     }
 
@@ -590,6 +549,12 @@ public class ProxySession implements ISession {
         if(realSession != null)
             return realSession.getAllUserAssociatedStores(userId);
         return new ArrayList<>();
+    }
+
+    @Override
+    public void hideStore(int userId, int storeId) {
+        if(realSession != null)
+            realSession.hideStore(userId, storeId);
     }
 
     @Override

@@ -47,10 +47,6 @@ public class Session implements ISession {
 
     //IMPORTANT need to initialize the session AFTER loading first user (id = 1) from database
 
-    public Session(){
-        this(new Market());
-    }
-
     public Session(Market market) {
         this.market = market;
         //callbacks initialization
@@ -631,9 +627,9 @@ public class Session implements ISession {
         return userRepositoryAsHashmap.getUser(userId).getStoresAndRoles();
     }
 
-    public StoreInfo getStoreInfo(int storeId) {
+    public StoreInfo getStoreInfo(int userId, int storeId) {
         try {
-            return market.getStoreInfo(storeId);
+            return market.getStoreInfo(userId, storeId);
         } catch (Exception e) {
             //TODO: handle exception
             throw new RuntimeException(e);
@@ -661,39 +657,9 @@ public class Session implements ISession {
     }
 
     @Override
-    public ProductInfo getStoreProductInfo(int storeId, int productId) {
+    public ProductInfo getStoreProductInfo(int userId, int storeId, int productId) {
         try {
-            return market.getStoreProductInfo(storeId, productId);
-        } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public ProductInfo getProductInfo(int productId) {
-        try {
-            return market.getProductInfo(productId);
-        } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public String getProductName(int productId) {
-        try {
-            return market.getProductName(productId);
-        } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public String getProductCategory(int productId) {
-        try {
-            return market.getProductCategory(productId);
+            return market.getStoreProductInfo(userId, storeId, productId);
         } catch (Exception e) {
             //TODO: handle exception
             throw new RuntimeException(e);
@@ -709,39 +675,10 @@ public class Session implements ISession {
         }
     }
 
-    public double getProductPrice(int productId) {
-        try {
-            return market.getProductPrice(productId);
-        } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
-        }
-    }
-
     @Override
-    public int getProductStockQuantity(int productId) {
+    public Set<ProductInfo> getAllStoreProductsInfo(int userId, int storeId) {
         try {
-            return market.getProductStockQuantity(productId);
-        } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public float getProductScore(int productId) {
-        try {
-            return market.getProductScore(productId);
-        } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public Set<ProductInfo> getAllStoreProductsInfo(int storeId) {
-        try {
-            return market.getAllStoreProductsInfo(storeId);
+            return market.getAllStoreProductsInfo(userId, storeId);
         } catch (Exception e) {
             //TODO: handle exception
             throw new RuntimeException(e);
@@ -1033,12 +970,22 @@ public class Session implements ISession {
             //map each storeId to storeInfo
             List<Pair<StoreInfo, String>> storeInfosAndRoles = new LinkedList<>();
             for(Pair<Integer, String> storeIdAndRole : storeIdsAndRoles){
-                StoreInfo storeInfo = market.getStoreInfo(storeIdAndRole.getFirst());
+                StoreInfo storeInfo = market.getStoreInfo(userId, storeIdAndRole.getFirst());
                 storeInfosAndRoles.add(Pair.of(storeInfo, storeIdAndRole.getSecond()));
             }
             return storeInfosAndRoles;
         }
         catch(Exception e){
+            //TODO: handle exception
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void hideStore(int userId, int storeId) {
+        try {
+            market.hideStore(userId, storeId);
+        } catch (Exception e) {
             //TODO: handle exception
             throw new RuntimeException(e);
         }

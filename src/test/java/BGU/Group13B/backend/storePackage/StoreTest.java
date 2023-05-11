@@ -35,7 +35,7 @@ class StoreTest {
     private static String msg;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws NoPermissionException {
         /*initializing data*/
 
         var storePermission = Mockito.mock(StorePermission.class);
@@ -52,8 +52,8 @@ class StoreTest {
 
         /*Defining behaviour */
 
-        Mockito.when(storePermission.checkPermission(managerWithPermission)).thenReturn(true);
-        Mockito.when(storePermission.checkPermission(managerWithoutPermission)).thenReturn(false);
+        Mockito.when(storePermission.checkPermission(managerWithPermission, false)).thenReturn(true);
+        Mockito.when(storePermission.checkPermission(managerWithoutPermission, false)).thenReturn(false);
         Mockito.when(storePermission.getAllUsersWithPermission(functionName)).thenReturn(Set.of(managerWithPermission));
         /*verify the method invocation*/
         Mockito.doNothing().when(addToUserCart).apply(managerWithPermission, storeId, productId);
