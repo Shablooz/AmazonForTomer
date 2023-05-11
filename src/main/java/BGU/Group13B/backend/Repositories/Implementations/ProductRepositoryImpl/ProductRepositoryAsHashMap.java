@@ -143,6 +143,15 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
     }
 
     @Override
+    public void unhideAllStoreProducts(int storeId) {
+        if(!storeProducts.containsKey(storeId))
+            return;
+        getStoreProducts(storeId).orElseThrow(
+                () -> new IllegalArgumentException("Store " + storeId + " not found")
+        ).forEach(Product::unhide);
+    }
+
+    @Override
     public synchronized int addHiddenProduct(int storeId, String name, String category, double price, int stockQuantity, String description) {
         if (!storeProducts.containsKey(storeId))
             storeProducts.put(storeId, new ConcurrentSkipListSet<>(Comparator.comparingInt(Product::getProductId)));

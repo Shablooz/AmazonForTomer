@@ -1001,5 +1001,14 @@ public interface ISession {
      */
     void hideStore(int userId, int storeId);
 
+    /**
+     * #40
+     * require 4.10
+     *
+     * @param userId    the user id (only the founder can do this action)
+     * @param storeId   the store id that will be unhidden
+     */
+    void unhideStore(int userId, int storeId);
+
     void deleteStore(int userId, int storeId);
 }
