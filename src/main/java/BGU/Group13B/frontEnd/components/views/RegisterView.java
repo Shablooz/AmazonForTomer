@@ -1,5 +1,6 @@
 package BGU.Group13B.frontEnd.components.views;
 
+import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.service.Session;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -19,40 +20,39 @@ public class RegisterView extends VerticalLayout {
 
     private final TextField username;
     private final PasswordField password;
-    private final PasswordField passwordConfirm;
     private final EmailField email;
-    private static int guestId;
+
+    private final TextField answer1;
+    private final TextField answer2;
+    private final TextField answer3;
     private final Button registerButton;
 
     @Autowired
     public RegisterView(Session session) {
         super();
-        username = new TextField("Username");
-        password = new PasswordField("Password");
-        passwordConfirm = new PasswordField("Confirm Password");
-        email = new EmailField("Email");
+        username = new TextField("*Username");
+        password = new PasswordField("*Password");
+        answer1 = new TextField("your favorite color?");
+        answer2 = new TextField("your favorite food?");
+        answer3 = new TextField("your favorite book?");
+        email = new EmailField("*Email");
         registerButton = new Button("Register");
         registerButton.addClickListener(e -> {
             if (username.getValue().isEmpty() || password.getValue().isEmpty() || email.getValue().isEmpty()) {
                 Notification.show("Please fill all fields");
                 return;
             }
-            if (!password.getValue().equals(passwordConfirm.getValue())) {
-                Notification.show("Passwords do not match");
-                return;
+            try {
+                session.register(SessionToIdMapper.getInstance().getCurrentSessionId()/*temp*/, username.getValue(), password.getValue(), email.getValue(),
+                        answer1.getValue(), answer2.getValue(), answer3.getValue());
+                UI.getCurrent().navigate(LoginView.class);
+            }catch (Exception exp){
+                Notification.show(exp.getMessage());
             }
-            session.register(guestId/*temp*/, username.getValue(), password.getValue(), email.getValue(),
-                    "054-1234567", "1234", "answer3");
-            //navigate(LoginView.class);
-            UI.getCurrent().navigate(LoginView.class);
         });
         FormLayout formLayout = new FormLayout();
 
-        formLayout.add(username, password, passwordConfirm, email);
+        formLayout.add(username, password, email,answer1,answer2,answer3);
         add(formLayout, registerButton);
-    }
-
-    public static void setGuestId(int _guestId) {
-        guestId = _guestId;
     }
 }

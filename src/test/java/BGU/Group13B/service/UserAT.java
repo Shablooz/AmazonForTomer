@@ -1,11 +1,16 @@
 package BGU.Group13B.service;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class UserAT extends ProjectTest {
 
 
+    @BeforeEach
+    void userATsetUp() {
+        SingletonCollection.reset_system();
+    }
     @Test
     void joinAsGuest(){
         //we check that the id counter advances and that the user exists in the repository
@@ -20,11 +25,12 @@ public class UserAT extends ProjectTest {
         }
     }
 
+
     @Test
     void loginTest(){
         int id = this.session.enterAsGuest();
-        session.register(id,"testingname","verySecurePass123","goodmall@gmail.com","ans1","","");
-        session.login(id,"testingname","verySecurePass123","ans1","","");
+        session.register(id,"TetTesting","verySecurePass123","goodmall@gmail.com","ans1","","");
+        session.login(id,"TetTesting","verySecurePass123","ans1","","");
         Assertions.assertTrue(session.isUserLogged(id));
     }
 

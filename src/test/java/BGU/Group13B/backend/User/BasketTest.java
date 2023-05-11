@@ -6,6 +6,7 @@ import BGU.Group13B.backend.Repositories.Interfaces.IProductHistoryRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
 import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
+import BGU.Group13B.service.Session;
 import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
 import org.junit.jupiter.api.*;
@@ -33,12 +34,14 @@ class BasketTest {
     private static int productId1;
     private static int productId2;
 
+    private static Session session = new Session();
+
     @BeforeEach
     void setUp() {
-        Market market = new Market();
+
         /*Mockito.when(SingletonCollection.getProductRepository()).
                 thenReturn(Mockito.mock(IProductRepository.class));*/ //remember
-
+        //eyal was here
         productRepository = SingletonCollection.getProductRepository();
         basketProductRepository = new BasketProductRepositoryAsHashMap();
 
