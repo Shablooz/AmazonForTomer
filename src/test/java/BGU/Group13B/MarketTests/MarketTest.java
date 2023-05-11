@@ -151,7 +151,7 @@ public class MarketTest {
             market.searchProductByName(productName2);
             List<Product> products = market.filterByProductRank(0, 5);
             assertEquals(3, products.size());
-            assertEquals(3, products.stream().filter(p -> checkRange(0, 5, p.getRank())).count());
+            assertEquals(3, products.stream().filter(p -> checkRange(0, 5, p.getProductScore())).count());
         } catch (Exception e) {
             fail("Exception was thrown");
         }
@@ -163,7 +163,7 @@ public class MarketTest {
             market.searchProductByName(productName2);
             List<Product> products = market.filterByProductRank(5, 5);
             assertEquals(0, products.size());
-            assertEquals(0, products.stream().filter(p -> checkRange(5, 5, p.getRank())).count());
+            assertEquals(0, products.stream().filter(p -> checkRange(5, 5, p.getProductScore())).count());
         } catch (Exception e) {
             fail("Exception was thrown");
         }
@@ -199,7 +199,7 @@ public class MarketTest {
             market.searchProductByName(productName2);
             List<Product> products = market.filterByStoreRank(0, 5);
             assertEquals(3, products.size());
-            assertEquals(3, products.stream().filter(p -> checkRange(0, 5, p.getRank())).count());
+            assertEquals(3, products.stream().filter(p -> checkRange(0, 5, p.getProductScore())).count());
         } catch (Exception e) {
             fail("Exception was thrown");
         }
@@ -211,7 +211,7 @@ public class MarketTest {
             market.searchProductByName(productName2);
             List<Product> products = market.filterByStoreRank(5, 5);
             assertEquals(0, products.size());
-            assertEquals(0, products.stream().filter(p -> checkRange(5, 5, p.getRank())).count());
+            assertEquals(0, products.stream().filter(p -> checkRange(5, 5, p.getProductScore())).count());
         } catch (Exception e) {
             fail("Exception was thrown");
         }
