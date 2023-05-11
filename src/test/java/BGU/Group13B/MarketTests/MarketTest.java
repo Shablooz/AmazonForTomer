@@ -6,6 +6,8 @@ import BGU.Group13B.backend.storePackage.*;
 import BGU.Group13B.service.SingletonCollection;
 import org.junit.jupiter.api.*;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,7 +21,7 @@ public class MarketTest {
     private static String productName4;
     private static String productCategory1;
     private static String productCategory2;
-    private static List<String> productKeywords;
+    private static String productKeywords;
     private static int minPrice;
     private static int maxPrice;
     private static IProductRepository productRepository;
@@ -43,7 +45,7 @@ public class MarketTest {
         productName4 = "Mac laptop";
         productCategory1 = "electronics";
         productCategory2 = "gaming";
-        productKeywords = List.of("computer", "laptop", "pc");
+        productKeywords = "computer laptop pc";
         minPrice = 1000;
         maxPrice = 3000;
         market = new Market();
@@ -107,10 +109,12 @@ public class MarketTest {
         }
     }
 
-    private boolean checkIfContainsSomeKeywords(List<String> keywords, String description) {
-        List<String> modifiedKeywords = keywords.stream().map(String::toLowerCase).toList();
+    private boolean checkIfContainsSomeKeywords(String keywords, String description) {
+        String[] keywordsArray = keywords.split(" ");
+        List<String> keywordsAsList = Arrays.asList(keywordsArray);
+        keywordsAsList.replaceAll(String::toLowerCase);
         String modifiedDescription = description.toLowerCase();
-        for (String keyword : modifiedKeywords) {
+        for (String keyword : keywordsAsList) {
             if (modifiedDescription.contains(keyword)) {
                 return true;
             }

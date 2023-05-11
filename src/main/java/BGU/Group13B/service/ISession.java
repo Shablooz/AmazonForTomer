@@ -163,25 +163,9 @@ public interface ISession {
      * #18
      * require 2.2
      *
-     * @param productName - the name of the product
+     * @param searchWords - the search words
      */
-    void searchProductByName(String productName);
-
-    /**
-     * #18
-     * require 2.2
-     *
-     * @param category - the category of the product
-     */
-    void searchProductByCategory(String category);
-
-    /**
-     * #18
-     * require 2.2
-     *
-     * @param keywords - list of keywords
-     */
-    void searchProductByKeywords(List<String> keywords);
+    void search(String searchWords);
 
     /**
      * #18

@@ -5,6 +5,8 @@ import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
 import BGU.Group13B.backend.storePackage.Product;
 
 import java.util.Collection;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,8 +32,9 @@ public class Searcher {
         filterHiddenProducts();
         return products;
     }
-    public List<Product> searchByKeywords(List<String> Keywords) {
-        products = productRepository.getProductByKeywords(Keywords);
+    public List<Product> searchByKeywords(String Keywords) {
+        String[] keywords = Keywords.split(" ");
+        products = productRepository.getProductByKeywords(Arrays.asList(keywords));
         filterHiddenProducts();
         return products;
     }

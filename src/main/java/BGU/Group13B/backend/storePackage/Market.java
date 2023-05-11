@@ -149,7 +149,7 @@ public class Market {
         return searcher.searchByCategory(category);
     }
 
-    public List<Product> searchProductByKeywords(List<String> keywords) {
+    public List<Product> searchProductByKeywords(String keywords) {
         return searcher.searchByKeywords(keywords);
     }
 
