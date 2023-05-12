@@ -28,7 +28,6 @@ public class BroadCaster {
 
         public static synchronized boolean broadcast(Integer id,String message) {
             Consumer<String> listener = listeners.get(id);
-            System.out.println("listener is "+ listener==null?"null":"not null");
             if (listener != null){
                 executor.execute(() -> listener.accept(message));
                 return true;
