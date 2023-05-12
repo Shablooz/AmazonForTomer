@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 //made it public for testing purposes - should be private
 @Service
 public class Session implements ISession {
-    private final Market market;
+    private Market market;
     private final IUserRepository userRepository = SingletonCollection.getUserRepository();
     private static final Logger LOGGER_INFO = Logger.getLogger(Session.class.getName());
     private static final Logger LOGGER_ERROR = Logger.getLogger(Session.class.getName());
@@ -48,6 +48,7 @@ public class Session implements ISession {
     //IMPORTANT need to initialize the session AFTER loading first user (id = 1) from database
 
     public Session() {
+
         this(new Market());
     }
 
