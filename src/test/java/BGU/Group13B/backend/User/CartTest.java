@@ -33,7 +33,8 @@ public class CartTest {
 
         try {
             SingletonCollection.reset_system();
-            session = new Session(new Market());
+            session = SingletonCollection.getSession();
+            //session = new Session(new Market());
             productRepository = SingletonCollection.getProductRepository();
             storeRepository = SingletonCollection.getStoreRepository();
             userRepository = SingletonCollection.getUserRepository();
@@ -91,7 +92,7 @@ public class CartTest {
             userRepository.removeUser(user1.getUserId());
 
         } catch (Exception e) {
-            fail("Exception was thrown");
+            fail("Exception was thrown " + e.getMessage());
         }
     }
 

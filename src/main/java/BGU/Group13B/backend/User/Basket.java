@@ -244,4 +244,17 @@ public class Basket {
     public double getTotalPriceOfBasketBeforeDiscount() {
         return basketProductRepository.getBasketProducts(storeId, userId).orElseGet(LinkedList::new).stream().mapToDouble(BasketProduct::getSubtotal).sum();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Basket basket = (Basket) o;
+        return userId == basket.userId && storeId == basket.storeId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId, storeId);
+    }
 }

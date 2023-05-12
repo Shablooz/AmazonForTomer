@@ -1,18 +1,13 @@
 package BGU.Group13B.backend.User;
 
-import BGU.Group13B.backend.Repositories.Implementations.BasketProductRepositoryImpl.BasketProductRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Interfaces.IBasketProductRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductHistoryRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
 import BGU.Group13B.backend.storePackage.Market;
-import BGU.Group13B.backend.storePackage.PurchasePolicy;
 import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
-import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
-import BGU.Group13B.service.Session;
 import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
-import jakarta.validation.constraints.AssertTrue;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 
@@ -33,12 +28,11 @@ class BasketTest {
     private static IBasketProductRepository basketProductRepository;
     private PaymentAdapter paymentAdapter;
     private IProductHistoryRepository productHistoryRepository;
-    private CalculatePriceOfBasket calculatePriceOfBasket = SingletonCollection.getCalculatePriceOfBasket();
+    private CalculatePriceOfBasket calculatePriceOfBasket;
     private static IProductRepository productRepository;
     private static int productId1;
     private static int productId2;
 
-    private static Session session = new Session();
     private DeliveryAdapter deliveryAdapter;
     private final int quantityLowerBound = 1;
     private final int quantityUpperBound = 10;
@@ -47,17 +41,21 @@ class BasketTest {
     private int productId3;
     private int productId4;
 
+
+
     @BeforeEach
     void setUp() {
 
         /*Mockito.when(SingletonCollection.getProductRepository()).
                 thenReturn(Mockito.mock(IProductRepository.class));*/ //remember
         //eyal was here
+        SingletonCollection.reset_system();
         productRepository = SingletonCollection.getProductRepository();
-        basketProductRepository = new BasketProductRepositoryAsHashMap();
-
+        basketProductRepository = SingletonCollection.getBasketProductRepository();
+        calculatePriceOfBasket = SingletonCollection.getCalculatePriceOfBasket();
         //initCalculatePriceOfBasket(market);
-        userId = 1;
+        userId = SingletonCollection.getUserRepository().getNewUserId();
+        SingletonCollection.getUserRepository().addUser(userId, new User(userId));
         storeId = SingletonCollection.getStoreRepository().addStore(userId, "store1", "category1");
         SingletonCollection.getStorePurchasePolicyRepository().getPurchasePolicy(storeId).setPriceBounds(priceLowerBound, priceUpperBound);
         SingletonCollection.getStorePurchasePolicyRepository().getPurchasePolicy(storeId).setQuantityBounds(quantityLowerBound, quantityUpperBound);
@@ -102,6 +100,7 @@ class BasketTest {
     private void initBasket() {
         basket = new Basket(userId, storeId, basketProductRepository, paymentAdapter,
                 productHistoryRepository, calculatePriceOfBasket, deliveryAdapter);
+        SingletonCollection.getBasketRepository().addUserBasket(basket);
     }
 
     private void initProducts() {
@@ -141,12 +140,16 @@ class BasketTest {
         AtomicInteger firstThread = new AtomicInteger(0);
         AtomicReference<Double> pricePayed2 = new AtomicReference<>(0.0);
         AtomicReference<Double> pricePayed3 = new AtomicReference<>(0.0);
-        int userId2 = 2;
-        int userId3 = 3;
+        int userId2 = SingletonCollection.getUserRepository().getNewUserId();
+        SingletonCollection.getUserRepository().addUser(userId2, new User(userId2));
+        int userId3 = SingletonCollection.getUserRepository().getNewUserId();
+        SingletonCollection.getUserRepository().addUser(userId3, new User(userId3));
         Basket basket2 = new Basket(userId2, storeId, basketProductRepository, paymentAdapter,
                 productHistoryRepository, calculatePriceOfBasket, deliveryAdapter);
         Basket basket3 = new Basket(userId3, storeId, basketProductRepository, paymentAdapter,
                 productHistoryRepository, calculatePriceOfBasket, deliveryAdapter);
+        SingletonCollection.getBasketRepository().addUserBasket(basket2);
+        SingletonCollection.getBasketRepository().addUserBasket(basket3);
         int productId3 = productRepository.addProduct(storeId, "product3", "category3", 15.0, 1, "eyal was still here");
         basketProductRepository.addNewProductToBasket(productId3, storeId, userId3);//adding product 1 to basket
         basketProductRepository.addNewProductToBasket(productId3, storeId, userId2);//adding product 1 to basket2
@@ -374,7 +377,9 @@ class BasketTest {
             basketProductRepository.removeBasketProducts(storeId, userId);
             basketProductRepository.addNewProductToBasket(productId3, storeId, userId);
             basketProductRepository.changeProductQuantity(productId3, storeId, userId, 5);
-            basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), "");
+            basket.purchaseBasket(
+                    "12341234", "4", "2033", "Shaun",
+                    "123", "1232323", new HashMap<>(), "");
         } catch (Exception e) {
             Assertions.fail(e.getMessage());
         }
@@ -456,19 +461,5 @@ class BasketTest {
     }
 
 
-    @AfterAll
-    static void afterAll() {
-        try {
-            /*productRepository.removeStoreProducts(storeId);
-            basketProductRepository.removeBasketProducts(storeId, userId);
-            SingletonCollection.getStoreRepository().removeStore(storeId);
-            SingletonCollection.getProductDiscountsRepository().removeProductDiscount(productId1);
-            SingletonCollection.getProductDiscountsRepository().removeProductDiscount(productId2);
-            SingletonCollection.getStoreDiscountsRepository().removeStoreDiscounts(storeId);*/
-            SingletonCollection.reset_system();
 
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
