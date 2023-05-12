@@ -72,8 +72,9 @@ public class UserRepositoryAsHashmap implements IUserRepository {
     }
 
 
-    //TODO in the future this will be replaced with taking a user by username in the database - this is prototype for testing
-    private User getUserByUsername(String username){
+    //TODO in the future this will be replaced with taking a user by username in the database - tomer use this method
+    @Override
+    public User getUserByUsername(String username){
         for (User user : integerUserHashMap.values()){
             if(user.getUserName().equals(username))
                 return user;

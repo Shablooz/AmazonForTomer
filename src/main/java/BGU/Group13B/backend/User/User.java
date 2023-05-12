@@ -2,6 +2,7 @@ package BGU.Group13B.backend.User;
 
 import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.storePackage.Product;
+import BGU.Group13B.service.PushNotification;
 import org.mindrot.jbcrypt.BCrypt;
 import BGU.Group13B.backend.Repositories.Interfaces.IMessageRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
@@ -44,7 +45,7 @@ public class User {
     private volatile boolean isLoggedIn;
 
     private final String adminIdentifier = "Admin";
-
+    private boolean messageNotification;
 
     public User(int userId) {
         this.purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
@@ -68,6 +69,7 @@ public class User {
         this.answer3 = "";
         this.messageId = 1;
         this.isLoggedIn = false;
+        this.messageNotification= false;
     }
 
 
@@ -153,6 +155,7 @@ public class User {
         if (!isRegistered())
             throw new NoPermissionException("Only registered users can open complaints");
         messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), header, complaint, adminIdentifier));
+
     }
 
     //#47
@@ -177,6 +180,9 @@ public class User {
         if (!isAdmin())
             throw new NoPermissionException("Only admin can send massages");
         messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), header, massage, receiverId));
+        User receiverNext=SingletonCollection.getUserRepository().getUserByUsername(regularMessageToReply.getSenderId());
+        if(!PushNotification.pushNotification("New Message",receiverNext.getUserId()))
+            receiverNext.setMessageNotification(true);
     }
 
     //#47
@@ -187,9 +193,15 @@ public class User {
             throw new IllegalArgumentException("no complaint to answer");
         messageRepository.markAsRead(regularMessageToReply.getReceiverId(), regularMessageToReply.getSenderId(), regularMessageToReply.getMessageId());
         messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), "RE: " + regularMessageToReply.getHeader(), answer, regularMessageToReply.getSenderId()));
+        User receiverNext=SingletonCollection.getUserRepository().getUserByUsername(regularMessageToReply.getSenderId());
+        if(!PushNotification.pushNotification("New Message",receiverNext.getUserId()))
+            receiverNext.setMessageNotification(true);
         regularMessageToReply = null;
     }
-
+    public void clearMessageToReply()
+    {
+        regularMessageToReply =null;
+    }
     public Message readMassage() throws NoPermissionException {
         if (!isRegistered())
             throw new NoPermissionException("Only registered users can read massages");
@@ -206,6 +218,9 @@ public class User {
         if (regularMessageToReply == null)
             throw new IllegalArgumentException("no message to answer");
         messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), "RE: " + regularMessageToReply.getHeader(), answer, regularMessageToReply.getSenderId()));
+        User receiverNext=SingletonCollection.getUserRepository().getUserByUsername(regularMessageToReply.getSenderId());
+        if(!PushNotification.pushNotification("New Message",receiverNext.getUserId()))
+            receiverNext.setMessageNotification(true);
         regularMessageToReply = null;
     }
 
@@ -469,6 +484,14 @@ public class User {
 
     public List<Integer> getFailedProducts(int storeId) {
         return cart.getFailedProducts(storeId, userId);
+    }
+
+    public synchronized boolean getMessageNotification() {
+        return messageNotification;
+    }
+
+    public synchronized void setMessageNotification(boolean notifications) {
+        this.messageNotification = notifications;
     }
 
     public List<Product> getAllFailedProductsAfterPayment() {
