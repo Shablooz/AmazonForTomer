@@ -1,8 +1,6 @@
 package BGU.Group13B.frontEnd.components.views;
 
-import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.service.Session;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.contextmenu.SubMenu;
 import com.vaadin.flow.component.html.H1;
@@ -14,7 +12,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Route(value = "", layout = MainLayout.class)
@@ -40,10 +37,8 @@ public class HomeView extends VerticalLayout implements BeforeEnterObserver {
         getStyle().set("height", "100vh");
         getStyle().set("width", "100vw");
 
-        /*
-            MenuBar menuBar = buildMenuBar();
-            add(menuBar);
-        */
+       /* MenuBar menuBar = buildMenuBar();
+        add(menuBar);*/
     }
 
     @Override
@@ -76,6 +71,6 @@ public class HomeView extends VerticalLayout implements BeforeEnterObserver {
     private void setPosition(MenuBar component) {
         component.getElement().getStyle().set("position", "absolute");
         component.getElement().getStyle().set("top", "0");
-        component.getElement().getStyle().set("left", "0");
+        component.getElement().getStyle().set("left", "25");
     }
 }

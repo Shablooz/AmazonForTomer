@@ -121,13 +121,15 @@ public class Communication_AT extends ProjectTest {
 
     @Test
     public void purchaseCart_Valid() {
-        session.addToCart(userIds[UsersIndex.STORE_OWNER_2.ordinal()],
-                storeIds[StoresIndex.STORE_1.ordinal()], productIds[ProductsIndex.PRODUCT_1.ordinal()]);
+        session.addProductToCart(userIds[UsersIndex.STORE_OWNER_2.ordinal()],
+                productIds[ProductsIndex.PRODUCT_1.ordinal()],
+                storeIds[StoresIndex.STORE_1.ordinal()] );
 
-        double payedPrice = session.purchaseProductCart(userIds[UsersIndex.STORE_OWNER_2.ordinal()], "", "", "", "", "", "", "", "", "", new HashMap<>(), "");
+        double payedPrice = session.purchaseProductCart(userIds[UsersIndex.STORE_OWNER_2.ordinal()],
+                "12341234", "4", "2044", "shaun", "123", "12323", new HashMap<>(), "");
         assertEquals(products[ProductsIndex.PRODUCT_1.ordinal()][ProductInfo.PRICE.ordinal()],
                 payedPrice);
-        int quantity_after = session.getProductStockQuantity(productIds[ProductsIndex.PRODUCT_1.ordinal()]);
+        int quantity_after = session.getStoreProductInfo(userIds[UsersIndex.STORE_OWNER_2.ordinal()], storeIds[StoresIndex.STORE_1.ordinal()], productIds[ProductsIndex.PRODUCT_1.ordinal()]).stockQuantity();
         assertEquals(9, quantity_after);
 
     }
@@ -140,7 +142,7 @@ public class Communication_AT extends ProjectTest {
         session.removeProduct(userIds[UsersIndex.STORE_OWNER_1.ordinal()],
                 storeIds[StoresIndex.STORE_1.ordinal()],
                 productIds[ProductsIndex.PRODUCT_1.ordinal()]);
-        double totalPrice = session.purchaseProductCart(userIds[UsersIndex.STORE_OWNER_2.ordinal()], "", "", "", "", "", "", "", "", "", new HashMap<>(), "");
+        double totalPrice = session.purchaseProductCart(userIds[UsersIndex.STORE_OWNER_2.ordinal()], "12341234", "4", "2044", "shaun", "123", "12323", new HashMap<>(), "");
         assertEquals(0, totalPrice);
         var failedProducts = session.getFailedProducts(
                 userIds[UsersIndex.STORE_OWNER_2.ordinal()],
@@ -152,9 +154,11 @@ public class Communication_AT extends ProjectTest {
     @Test
     public void purchaseCart_PayFail(){//fixme its ok AT should not always pass
         //expect payment fail
-        session.addToCart(userIds[UsersIndex.STORE_OWNER_2.ordinal()],
-                storeIds[StoresIndex.STORE_1.ordinal()], productIds[ProductsIndex.PRODUCT_1.ordinal()]);
-        double payedPrice = session.purchaseProductCart(userIds[UsersIndex.STORE_OWNER_2.ordinal()], "", "", "", "", "", "", "", "", "", new HashMap<>(), "");
+        session.addProductToCart(userIds[UsersIndex.STORE_OWNER_2.ordinal()],
+                productIds[ProductsIndex.PRODUCT_1.ordinal()],
+                storeIds[StoresIndex.STORE_1.ordinal()] );
+        double payedPrice = session.purchaseProductCart(userIds[UsersIndex.STORE_OWNER_2.ordinal()],
+                "12341234", "4", "2044", "shaun", "123", "12323", new HashMap<>(), "");
         assertEquals(0, payedPrice);
     }
 }

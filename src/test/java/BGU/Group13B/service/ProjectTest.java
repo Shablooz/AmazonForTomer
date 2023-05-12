@@ -79,7 +79,7 @@ public abstract class ProjectTest {
 
     @BeforeEach
     public void setUp() {
-        this.session = Driver.getSession();
+        this.session = SingletonCollection.getSession();
         setUpUsers();
         setUpAdmin();
         setUpStores();
@@ -124,18 +124,7 @@ public abstract class ProjectTest {
         return session.addProduct(userId, storeId, productName, category, price, stockQuantity, description);
     }
 
-    protected void purchaseProductCart(int userId, String address, String creditCardNumber, String creditCardMonth,
-                                       String creditCardYear, String creditCardHolderFirstName,
-                                       String creditCardHolderLastName, String creditCardCcv,
-                                       String id, String creditCardType,
-                                       HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                       String/*store coupons*/ storeCoupon) {
-        session.purchaseProductCart(userId, address, creditCardNumber,
-                creditCardMonth, creditCardYear,
-                creditCardHolderFirstName, creditCardHolderLastName,
-                creditCardCcv, id, creditCardType,
-                productsCoupons, storeCoupon);
-    }
+
 
     protected void purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount) {
         session.purchaseProposalSubmit(userId, storeId, productId, proposedPrice, amount);

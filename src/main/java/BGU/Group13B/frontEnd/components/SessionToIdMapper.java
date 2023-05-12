@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SessionToIdMapper {
 
     private static SessionToIdMapper instance;
-    private ConcurrentHashMap<String, Integer> sessionToId;
+    private final ConcurrentHashMap<String, Integer> sessionToId;
 
     private SessionToIdMapper() {
         // Private constructor to prevent instantiation from outside
@@ -60,7 +60,7 @@ public class SessionToIdMapper {
     public synchronized boolean containsKey(String sessionId) {
         return this.sessionToId.containsKey(sessionId);
     }
-    public void updateCurrentSession(int newId)
+    public synchronized void updateCurrentSession(int newId)
     {
         this.sessionToId.put(VaadinSession.getCurrent().getSession().getId(), newId);
     }

@@ -2,11 +2,14 @@ package BGU.Group13B.service;
 
 import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.User.Message;
+import BGU.Group13B.backend.User.PurchaseFailedException;
 import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.Store;
+import BGU.Group13B.service.entity.ServiceBasketProduct;
+import BGU.Group13B.service.entity.ServiceProduct;
 import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
 
@@ -37,9 +40,25 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public double purchaseProductCart(int userId, String address, String creditCardNumber, String creditCardMonth, String creditCardYear, String creditCardHolderFirstName, String creditCardHolderLastName, String creditCardCcv, String id, String creditCardType, HashMap<Integer, String> productsCoupons, String storeCoupon) {
+    public double purchaseProductCart(int userId, String creditCardNumber, String creditCardMonth, String creditCardYear, String creditCardHolderFirstName, String creditCardCcv, String id, HashMap<Integer, String> productsCoupons, String storeCoupon) {
         if (realSession != null)
-            return realSession.purchaseProductCart(userId, address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType, productsCoupons, storeCoupon);
+            return realSession.purchaseProductCart(userId, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardCcv, id, productsCoupons, storeCoupon);
+        return -1;
+    }
+
+    @Override
+    public Response<VoidResponse> purchaseProductCart(int userId, String creditCardNumber, String creditCardMonth, String creditCardYear, String creditCardHolderFirstName, String creditCardCVV, String id, String address, String city, String country, String zip) {
+        if (realSession != null)
+            return realSession.purchaseProductCart(userId, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardCVV, id, address, city, country, zip);
+        return null;
+    }
+
+
+
+    @Override
+    public double startPurchaseBasketTransaction(int userId, HashMap<Integer, String> productsCoupons, String storeCoupon) throws PurchaseFailedException {
+        if (realSession != null)
+            return realSession.startPurchaseBasketTransaction(userId, productsCoupons, storeCoupon);
         return -1;
     }
 
@@ -101,21 +120,9 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void searchProductByName(String productName) {
+    public void search(String searchWords) {
         if (realSession != null)
-            realSession.searchProductByName(productName);
-    }
-
-    @Override
-    public void searchProductByCategory(String category) {
-        if (realSession != null)
-            realSession.searchProductByCategory(category);
-    }
-
-    @Override
-    public void searchProductByKeywords(List<String> keywords) {
-        if (realSession != null)
-            realSession.searchProductByKeywords(keywords);
+            realSession.search(searchWords);
     }
 
     @Override
@@ -331,6 +338,13 @@ public class ProxySession implements ISession {
     }
 
     @Override
+    public Response<List<ServiceBasketProduct>> getCartContent(int userId) {
+        if(realSession != null)
+            return realSession.getCartContent(userId);
+        return null;
+    }
+
+    @Override
     public void removeProductFromCart(int userId, int storeId, int productId) {
         if (realSession != null)
             realSession.removeProductFromCart(userId, storeId, productId);
@@ -418,9 +432,10 @@ public class ProxySession implements ISession {
         return new ArrayList<>();
     }
 
-    public StoreInfo getStoreInfo(int storeId) {
+    @Override
+    public StoreInfo getStoreInfo(int userId, int storeId) {
         if (realSession != null)
-            return realSession.getStoreInfo(storeId);
+            return realSession.getStoreInfo(userId, storeId);
         return new StoreInfo(new Store(1, 1, "", ""));
     }
 
@@ -439,58 +454,16 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public ProductInfo getStoreProductInfo(int storeId, int productId) {
+    public ProductInfo getStoreProductInfo(int userId, int storeId, int productId) {
         if (realSession != null)
-            return realSession.getStoreProductInfo(storeId, productId);
+            return realSession.getStoreProductInfo(userId, storeId, productId);
         return new ProductInfo(new Product(1, 1, "", "", -1, -1, ""));
     }
 
     @Override
-    public ProductInfo getProductInfo(int productId) {
+    public Set<ProductInfo> getAllStoreProductsInfo(int userId, int storeId) {
         if (realSession != null)
-            return realSession.getProductInfo(productId);
-        return new ProductInfo(new Product(1, 1, "", "", -1, -1, ""));
-    }
-
-    @Override
-    public String getProductName(int productId) {
-        if (realSession != null)
-            return realSession.getProductName(productId);
-        return "";
-    }
-
-    @Override
-    public String getProductCategory(int productId) {
-        if (realSession != null)
-            return realSession.getProductCategory(productId);
-        return "";
-    }
-
-    @Override
-    public double getProductPrice(int productId) {
-        if (realSession != null)
-            return realSession.getProductPrice(productId);
-        return -1;
-    }
-
-    @Override
-    public int getProductStockQuantity(int productId) {
-        if (realSession != null)
-            return realSession.getProductStockQuantity(productId);
-        return -1;
-    }
-
-    @Override
-    public float getProductScore(int productId) {
-        if (realSession != null)
-            return realSession.getProductScore(productId);
-        return -1;
-    }
-
-    @Override
-    public Set<ProductInfo> getAllStoreProductsInfo(int storeId) {
-        if (realSession != null)
-            return realSession.getAllStoreProductsInfo(storeId);
+            return realSession.getAllStoreProductsInfo(userId, storeId);
         return new HashSet<>();
     }
 
@@ -522,6 +495,13 @@ public class ProxySession implements ISession {
     }
 
     @Override
+    public List<ServiceProduct> getAllFailedProductsAfterPayment(int userId) {
+        if (realSession != null)
+            return realSession.getAllFailedProductsAfterPayment(userId);
+        return new ArrayList<>();
+    }
+
+    @Override
     public int enterAsGuest() {
         if (realSession != null)
             return realSession.enterAsGuest();
@@ -547,6 +527,19 @@ public class ProxySession implements ISession {
     }
 
     @Override
+    public double getTotalPriceOfCart(int userId) {
+        if (realSession != null)
+            return realSession.getTotalPriceOfCart(userId);
+        return -1;
+    }
+
+    @Override
+    public void cancelPurchase(int userId) {
+        if(realSession != null)
+            realSession.cancelPurchase(userId);
+    }
+
+    @Override
     public boolean isUserLogged(int userId) {
         if (realSession != null)
             return realSession.isUserLogged(userId);
@@ -558,6 +551,18 @@ public class ProxySession implements ISession {
         if(realSession != null)
             return realSession.getAllUserAssociatedStores(userId);
         return new ArrayList<>();
+    }
+
+    @Override
+    public void hideStore(int userId, int storeId) {
+        if(realSession != null)
+            realSession.hideStore(userId, storeId);
+    }
+
+    @Override
+    public void unhideStore(int userId, int storeId) {
+        if(realSession != null)
+            realSession.unhideStore(userId, storeId);
     }
 
     @Override
