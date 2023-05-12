@@ -265,14 +265,17 @@ public interface ISession {
 
     void getUserPurchaseHistory(int userId);
 
+    Response<VoidResponse> clearMessageToReply(int userId);
+
     /**
      * [#28]
      *
      * @param userId    the user id
      * @param header    the header of the message
      * @param complaint the complaint
+     * @return
      */
-    public void openComplaint(int userId, String header, String complaint);
+    public Response<VoidResponse> openComplaint(int userId, String header, String complaint);
 
     /**
      * [#47]
@@ -280,7 +283,7 @@ public interface ISession {
      * @param userId the user id
      * @return the complaint message
      */
-    public Message getComplaint(int userId);
+    public Response<Message> getComplaint(int userId);
 
     /**
      * [#47]
@@ -289,8 +292,9 @@ public interface ISession {
      * @param receiverId the receiver id
      * @param senderId   the sender id
      * @param messageId  the message id
+     * @return
      */
-    public void markMessageAsReadAdmin(int userId, String receiverId, String senderId, int messageId);
+    public Response<VoidResponse> markMessageAsReadAdmin(int userId, String receiverId, String senderId, int messageId);
 
     /**
      * [#47]
@@ -299,30 +303,32 @@ public interface ISession {
      * @param receiverId the receiver id
      * @param header     the header of the message
      * @param massage    the massage
+     * @return
      */
-    public void sendMassageAdmin(int userId, String receiverId, String header, String massage);
+    public Response<VoidResponse> sendMassageAdmin(int userId, String receiverId, String header, String massage);
 
     /**
      * [#47]
      *
      * @param userId the user id
      * @param answer the answer
+     * @return
      */
-    public void answerComplaint(int userId, String answer);
+    public Response<VoidResponse> answerComplaint(int userId, String answer);
 
 
     /**
      * @param userId the user id
      * @return the message
      */
-    public Message readMessage(int userId);
+    public Response<Message> readMessage(int userId);
 
 
-    void replayMessage(int userId, String message);
+    Response<VoidResponse> replayMessage(int userId, String message);
 
-    Message readOldMessage(int userId);
+    Response<Message> readOldMessage(int userId);
 
-    void refreshOldMessages(int userId);
+    Response<VoidResponse> refreshOldMessages(int userId);
 
     /**
      * [#27]
@@ -331,8 +337,9 @@ public interface ISession {
      * @param header  the header of the message
      * @param massage the massage
      * @param storeId the store id
+     * @return
      */
-    public void sendMassageStore(int userId, String header, String massage, int storeId);
+    public Response<VoidResponse> sendMassageStore(int userId, String header, String massage, int storeId);
 
     /**
      * [#42]
@@ -342,7 +349,7 @@ public interface ISession {
      * @return the message
      */
 
-    public Message readUnreadMassageStore(int userId, int storeId);
+    public Response<Message> readUnreadMassageStore(int userId, int storeId);
 
     /**
      * [#42]
@@ -352,25 +359,27 @@ public interface ISession {
      * @return the message
      */
 
-    public Message readReadMassageStore(int userId, int storeId);
+    public Response<Message> readReadMassageStore(int userId, int storeId);
 
     /**
      * [#42]
      *
      * @param userId the user id
      * @param answer the answer
+     * @return
      */
 
-    public void answerQuestionStore(int userId, String answer);
+    public Response<VoidResponse> answerQuestionStore(int userId, String answer);
 
     /**
      * [#42]
      *
      * @param userId  the user id
      * @param storeId the store id
+     * @return
      */
 
-    public void refreshOldMessageStore(int userId, int storeId);
+    public Response<VoidResponse> refreshOldMessageStore(int userId, int storeId);
 
 
     /**
@@ -380,9 +389,10 @@ public interface ISession {
      * @param review    the review
      * @param storeId   the store id
      * @param productId the product id
+     * @return
      */
 
-    void addReview(int userId, String review, int storeId, int productId);
+    Response<VoidResponse> addReview(int userId, String review, int storeId, int productId);
 
     /**
      * [#25]
@@ -390,9 +400,10 @@ public interface ISession {
      * @param userId    the user id
      * @param storeId   the store id
      * @param productId the product id
+     * @return
      */
 
-    public void removeReview(int userId, int storeId, int productId);
+    public Response<VoidResponse> removeReview(int userId, int storeId, int productId);
 
     /**
      * [#25]
@@ -403,7 +414,7 @@ public interface ISession {
      * @return the review
      */
 
-    public Review getReview(int userId, int storeId, int productId);
+    public Response<Review> getReview(int userId, int storeId, int productId);
 
     /**
      * [#26]
@@ -414,7 +425,7 @@ public interface ISession {
      * @return the score
      */
 
-    public float getProductScore(int userId, int storeId, int productId);
+    public Response<Float> getProductScore(int userId, int storeId, int productId);
 
     /**
      * [#26]
@@ -423,8 +434,9 @@ public interface ISession {
      * @param storeId   the store id
      * @param productId the product id
      * @param score     the score
+     * @return
      */
-    public void addAndSetProductScore(int userId, int storeId, int productId, int score);
+    public Response<VoidResponse> addAndSetProductScore(int userId, int storeId, int productId, int score);
 
     /**
      * [#26]
@@ -432,8 +444,9 @@ public interface ISession {
      * @param userId    the user id
      * @param storeId   the store id
      * @param productId the product id
+     * @return
      */
-    public void removeProductScore(int userId, int storeId, int productId);
+    public Response<VoidResponse> removeProductScore(int userId, int storeId, int productId);
 
     /**
      * [#26]
@@ -441,16 +454,18 @@ public interface ISession {
      * @param userId  the user id
      * @param storeId the store id
      * @param score   the score
+     * @return
      */
-    public void addStoreScore(int userId, int storeId, int score);
+    public Response<VoidResponse> addStoreScore(int userId, int storeId, int score);
 
     /**
      * [#26]
      *
      * @param userId  the user id
      * @param storeId the store id
+     * @return
      */
-    public void removeStoreScore(int userId, int storeId);
+    public Response<VoidResponse> removeStoreScore(int userId, int storeId);
 
     /**
      * [#26]
@@ -458,15 +473,16 @@ public interface ISession {
      * @param userId  the user id
      * @param storeId the store id
      * @param score   the score
+     * @return
      */
-    public void modifyStoreScore(int userId, int storeId, int score);
+    public Response<VoidResponse> modifyStoreScore(int userId, int storeId, int score);
 
     /**
      * @param userId  the user id
      * @param storeId the store id
      * @return the score
      **/
-    public float getStoreScore(int userId, int storeId);
+    public Response<Float> getStoreScore(int userId, int storeId);
 
     /**
      * #20
@@ -995,4 +1011,6 @@ public interface ISession {
      * @param storeId   the store id that will be unhidden
      */
     Response<VoidResponse> unhideStore(int userId, int storeId);
+
+    void pushTest();
 }
