@@ -1,6 +1,7 @@
 package BGU.Group13B.frontEnd.components.views;
 
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
+import BGU.Group13B.service.BroadCaster;
 import BGU.Group13B.service.Session;
 import BGU.Group13B.service.SingletonCollection;
 import com.vaadin.flow.component.Tag;
@@ -79,6 +80,8 @@ public class LoginView extends VerticalLayout {
                             "", "", "");
                     Notification.show("Login successful");
                     SessionToIdMapper.getInstance().updateCurrentSession(newId);
+
+
                     UI.getCurrent().navigate(HomeView.class);
                 }catch (Exception ex){
                     Notification.show("Login failed");

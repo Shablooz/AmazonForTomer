@@ -1,6 +1,7 @@
 package BGU.Group13B.frontEnd.components;
 
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.server.VaadinSessionState;
 
@@ -31,7 +32,9 @@ public class SessionToIdMapper {
         this.sessionToId.put(session, id);
         if(getCurrentSessionId()!=id)
             idToSession.remove(getCurrentSessionId());
-        this.idToSession.put(id,VaadinSession.getCurrent());
+
+        VaadinSession currentSession=VaadinSession.getCurrent();
+        this.idToSession.put(id,currentSession);
     }
 
     //will moistly be used for communication
