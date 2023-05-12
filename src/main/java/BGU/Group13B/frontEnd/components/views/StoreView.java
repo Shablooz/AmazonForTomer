@@ -7,14 +7,19 @@ import BGU.Group13B.service.Response;
 import BGU.Group13B.service.Session;
 import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -26,6 +31,7 @@ import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.vaadin.lineawesome.LineAwesomeIcon;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -53,11 +59,12 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
     private final ProgressBar scoreBar = new ProgressBar();
     private final Div scoreLabel = new Div();
     private final HorizontalLayout bodyLayout = new HorizontalLayout();
-    private final VerticalLayout ProductsLayout = new VerticalLayout();
     private final Accordion categoriesAccordion = new Accordion();
     private final HashMap<String, Grid<ProductInfo>> categoriesToGrids = new HashMap<>();
-    private final Button addProductButton = new Button("Add Product");
+    private final Button addProductButton = new Button(new Icon(VaadinIcon.PLUS));
     private final VerticalLayout workersLayout = new VerticalLayout();
+    private final VerticalLayout productsLayout = new VerticalLayout();
+    private final HorizontalLayout productsHeaderLayout = new HorizontalLayout();
     private final Accordion rolesAccordion = new Accordion();
     private final HashMap<String, Grid<WorkerCard>> rolesToGrids = new HashMap<>();
     private final Button addWorkerButton = new Button("Add Worker");
@@ -72,6 +79,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
 
         demoData();
         init_header();
+        init_body();
 
 
     }
@@ -80,17 +88,18 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
         // Define score bar
         scoreBar.setMax(5);
         scoreBar.setMin(0);
-        scoreBar.setValue(getRoundedStoreScore());
-        scoreBar.setClassName(String.valueOf(getRoundedStoreScore()));
+        double roundedStoreScore = getRoundedScore(storeInfo.storeScore());
+        scoreBar.setValue(roundedStoreScore);
+        scoreBar.setClassName(String.valueOf(roundedStoreScore));
         scoreBar.getStyle().set("margin-top", "0");
 
         // Define score label
-        scoreLabel.setText(String.valueOf(getRoundedStoreScore()));
+        scoreLabel.setText(String.valueOf(roundedStoreScore));
         scoreLabel.getStyle().set("margin-bottom", "0");
 
         // Define score label layout
-        Icon starIcon = new Icon("vaadin", "star-o");
-        starIcon.getStyle().set("font-size", "9px");
+        Component starIcon = LineAwesomeIcon.STAR.create();
+        starIcon.getStyle().set("font-size", "10px");
         starIcon.getStyle().set("margin", "4px");
         starIcon.getStyle().set("margin-right", "0");
         scoreLabelLayout.add(scoreLabel, starIcon);
@@ -110,7 +119,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
 
         // Define category label
         Label categoryLabel = new Label("Category: " + storeInfo.category());
-        categoryLabel.getStyle().set("margin", "0");
+        categoryLabel.getStyle().set("margin-top", "0");
 
         // Define header layout
         headerLayout.add(header_name_score, categoryLabel);
@@ -121,11 +130,52 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
     }
 
 
+    private void init_body(){
+        init_products_section();
+        init_workers_section();
+        bodyLayout.add(productsLayout, workersLayout);
+        add(bodyLayout);
+    }
+
+    private void init_products_section(){
+        for(String category : categoriesToProducts.keySet()){
+            Grid<ProductInfo> grid = new Grid<>();
+            grid.setItems(categoriesToProducts.get(category));
+            grid.addColumn(ProductInfo::name).setHeader("Name");
+            grid.addColumn(ProductInfo::price).setHeader("Price");
+            grid.addColumn(ProductInfo::stockQuantity).setHeader("Stock");
+            grid.addColumn(p -> getRoundedScore(p.score())).setHeader("Rating");
+            categoriesToGrids.put(category, grid);
+
+            //styling
+            grid.getStyle().set("margin", "10px");
+            grid.setAllRowsVisible(true);
+            grid.setMaxWidth("960px");
+            grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
+            grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS);
+        }
+
+        for(String category : categoriesToGrids.keySet()){
+            categoriesAccordion.add(category, categoriesToGrids.get(category));
+        }
+
+        addProductButton.addThemeVariants(ButtonVariant.LUMO_ICON);
+        addProductButton.addThemeVariants(ButtonVariant.LUMO_SMALL);
+        productsHeaderLayout.add(new H2("Products"), addProductButton);
+        productsHeaderLayout.setAlignItems(Alignment.CENTER);
+        productsLayout.add(productsHeaderLayout, categoriesAccordion);
+    }
+
+    private void init_workers_section(){
+
+    }
+
     private void getData(){
 
     }
 
     private void init_categoriesToProducts(){
+        categoriesToProducts = new HashMap<>();
         for(ProductInfo product : products){
             if(!categoriesToProducts.containsKey(product.category())){
                 categoriesToProducts.put(product.category(), new LinkedList<>());
@@ -135,6 +185,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
     }
 
     private void init_rolesToWorkers(){
+        rolesToWorkers = new HashMap<>();
         for(WorkerCard worker : workers){
             if(!rolesToWorkers.containsKey(worker.storeRole())){
                 rolesToWorkers.put(worker.storeRole(), new LinkedList<>());
@@ -147,8 +198,8 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
         //TODO: get from backend
     }
 
-    private double getRoundedStoreScore(){
-        return Math.round(storeInfo.storeScore() * 10.0) / 10.0;
+    private double getRoundedScore(double score){
+        return Math.round(score * 10.0) / 10.0;
     }
 
     private void demoData(){
@@ -176,16 +227,22 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
         workers.add(worker4);
         workers.add(worker5);
 
-        ProductInfo product0 = new ProductInfo(0, 0, "milk", "dairy", 5.0, 10, "milk description", 4.2F);
-        ProductInfo product1 = new ProductInfo(-1, 0, "cheese", "dairy", 10.0, 20, "cheese description", 4.5F);
-        ProductInfo product2 = new ProductInfo(-2, 0, "bread", "bakery", 3.0, 30, "bread description", 4.0F);
-        ProductInfo product3 = new ProductInfo(-3, 0, "butter", "dairy", 7.0, 40, "butter description", 4.1F);
-
         products = new LinkedList<>();
-        products.add(product0);
-        products.add(product1);
-        products.add(product2);
-        products.add(product3);
+        products.add(new ProductInfo(0, 0, "milk", "dairy", 5.0, 10, "milk description", 4.2F));
+        products.add(new ProductInfo(-1, 0, "cheese", "dairy", 10.0, 20, "cheese description", 4.5F));
+        products.add(new ProductInfo(-2, 0, "bread", "bakery", 3.0, 30, "bread description", 4.0F));
+        products.add(new ProductInfo(-3, 0, "butter", "dairy", 7.0, 40, "butter description", 4.1F));
+        products.add(new ProductInfo(-4, 0, "eggs", "dairy", 8.0, 50, "eggs description", 4.3F));
+        products.add(new ProductInfo(-5, 0, "yogurt", "dairy", 6.0, 60, "yogurt description", 4.4F));
+        products.add(new ProductInfo(-6, 0, "cake", "bakery", 12.0, 70, "cake description", 4.6F));
+        products.add(new ProductInfo(-7, 0, "cookies", "bakery", 9.0, 80, "cookies description", 4.7F));
+        products.add(new ProductInfo(-8, 0, "chocolate", "bakery", 11.0, 90, "chocolate description", 4.8F));
+        products.add(new ProductInfo(-9, 0, "pizza", "bakery", 15.0, 100, "pizza description", 4.9F));
+        products.add(new ProductInfo(-10, 0, "water", "drinks", 2.0, 110, "water description", 3.3F));
+        products.add(new ProductInfo(-11, 0, "soda", "drinks", 3.0, 120, "soda description", 2.5F));
+        products.add(new ProductInfo(-12, 0, "juice", "drinks", 4.0, 130, "juice description", 1.7F));
+        products.add(new ProductInfo(-13, 0, "beer", "drinks", 5.0, 140, "beer description", 3.8F));
+        products.add(new ProductInfo(-14, 0, "wine", "drinks", 6.0, 150, "wine description", 2.1F));
 
         init_categoriesToProducts();
         init_rolesToWorkers();
