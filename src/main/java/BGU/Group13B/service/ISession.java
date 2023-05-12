@@ -1019,5 +1019,5 @@ public interface ISession {
      * @param userId    the user id (only an admin can do this action)
      * @param storeId   the store id that will be deleted
      */
-    void deleteStore(int userId, int storeId);
+    Response<VoidResponse> deleteStore(int userId, int storeId);
 }

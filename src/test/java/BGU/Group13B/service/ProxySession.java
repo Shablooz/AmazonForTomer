@@ -566,9 +566,10 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void deleteStore(int userId, int storeId) {
+    public Response<VoidResponse> deleteStore(int userId, int storeId) {
         if(realSession != null)
-            realSession.deleteStore(userId, storeId);
+            return realSession.deleteStore(userId, storeId);
+        return null;
     }
 
     @Override

@@ -1021,12 +1021,12 @@ public class Session implements ISession {
     }
 
     @Override
-    public void deleteStore(int userId, int storeId) {
+    public Response<VoidResponse> deleteStore(int userId, int storeId) {
         try {
             market.deleteStore(userId, storeId);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
