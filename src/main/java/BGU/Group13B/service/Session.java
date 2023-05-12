@@ -265,7 +265,7 @@ public class Session implements ISession {
                     return Response.exception(e);
                 }
             }
-            return Response.exception(new RuntimeException("user is not registered"));
+            return Response.failure("user is not registered");
         }
     }
 

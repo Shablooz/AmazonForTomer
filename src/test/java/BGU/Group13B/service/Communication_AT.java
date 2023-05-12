@@ -127,9 +127,9 @@ public class Communication_AT extends ProjectTest {
 
         double payedPrice = session.purchaseProductCart(userIds[UsersIndex.STORE_OWNER_2.ordinal()],
                 "12341234", "4", "2044", "shaun", "123", "12323", new HashMap<>(), "");
-        assertEquals(products[ProductsIndex.PRODUCT_1.ordinal()][ProductInfo.PRICE.ordinal()],
+        assertEquals(products[ProductsIndex.PRODUCT_1.ordinal()][ProductIndexes.PRICE.ordinal()],
                 payedPrice);
-        int quantity_after = session.getStoreProductInfo(userIds[UsersIndex.STORE_OWNER_2.ordinal()], storeIds[StoresIndex.STORE_1.ordinal()], productIds[ProductsIndex.PRODUCT_1.ordinal()]).stockQuantity();
+        int quantity_after = getStoreProductInfo(userIds[UsersIndex.STORE_OWNER_2.ordinal()], storeIds[StoresIndex.STORE_1.ordinal()], productIds[ProductsIndex.PRODUCT_1.ordinal()]).stockQuantity();
         assertEquals(9, quantity_after);
 
     }
