@@ -5,7 +5,6 @@ import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.util.List;
@@ -125,81 +124,12 @@ public abstract class ProjectTest {
         session.setUserStatus(ADMIN_CREATOR_MASTER_ID, userIds[UsersIndex.ADMIN.ordinal()], 1);
     }
 
-    protected int addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) {
-        Response<Integer> addProductResponse = session.addProduct(userId, storeId, productName, category, price, stockQuantity, description);
-        if(addProductResponse.didntSucceed()) {
+    protected <T> T handleResponse(Response<T> response) {
+        if(response.didntSucceed()) {
             fail();
         }
-        return addProductResponse.getData();
+        return response.getData();
     }
-
-    protected int addStore(int userId, String storeName, String category) {
-        Response<Integer> addStoreResponse = session.addStore(userId, storeName, category);
-        if(addStoreResponse.didntSucceed()) {
-            fail();
-        }
-        return addStoreResponse.getData();
-    }
-
-    protected StoreInfo getStoreInfo(int userId, int storeId) {
-        Response<StoreInfo> storeInfoResponse = session.getStoreInfo(userId, storeId);
-        if(storeInfoResponse.didntSucceed()) {
-            fail();
-        }
-        return storeInfoResponse.getData();
-    }
-
-    protected ProductInfo getStoreProductInfo(int userId, int storeId, int productId) {
-        Response<ProductInfo> productInfoResponse = session.getStoreProductInfo(userId, storeId, productId);
-        if(productInfoResponse.didntSucceed()) {
-            fail();
-        }
-        return productInfoResponse.getData();
-    }
-
-    protected void removeProduct(int userId, int storeId, int productId) {
-        Response<VoidResponse> productInfoResponse = session.removeProduct(userId, storeId, productId);
-        if(productInfoResponse.didntSucceed()) {
-            fail();
-        }
-    }
-
-    protected void setProductStockQuantity(int userId, int storeId, int productId, int quantity) {
-        Response<VoidResponse> productInfoResponse = session.setProductStockQuantity(userId, storeId, productId, quantity);
-        if(productInfoResponse.didntSucceed()) {
-            fail();
-        }
-    }
-
-    protected void setProductPrice(int userId, int storeId, int productId, double price) {
-        Response<VoidResponse> productInfoResponse = session.setProductPrice(userId, storeId, productId, price);
-        if(productInfoResponse.didntSucceed()) {
-            fail();
-        }
-    }
-
-    protected void setProductName(int userId, int storeId, int productId, String name) {
-        Response<VoidResponse> productInfoResponse = session.setProductName(userId, storeId, productId, name);
-        if(productInfoResponse.didntSucceed()) {
-            fail();
-        }
-    }
-
-    protected void setProductDescription(int userId, int storeId, int productId, String description) {
-        Response<VoidResponse> productInfoResponse = session.setProductDescription(userId, storeId, productId, description);
-        if(productInfoResponse.didntSucceed()) {
-            fail();
-        }
-    }
-
-    protected void setProductCategory(int userId, int storeId, int productId, String category) {
-        Response<VoidResponse> productInfoResponse = session.setProductCategory(userId, storeId, productId, category);
-        if(productInfoResponse.didntSucceed()) {
-            fail();
-        }
-    }
-
-
 
     protected void purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount) {
         session.purchaseProposalSubmit(userId, storeId, productId, proposedPrice, amount);
@@ -229,16 +159,16 @@ public abstract class ProjectTest {
         for(int i = 0; i < products.length; i++) {
             products[i][1] = stores[i % stores.length][0]; //storeId
             products[i][2] = stores[i % stores.length][1]; //founder
-            products[i][0] = addProduct((int) stores[i % stores.length][1],
+            products[i][0] = handleResponse(session.addProduct((int) stores[i % stores.length][1],
                     (int) products[i][1], (String) products[i][3], (String) products[i][4],
-                    (double) products[i][5], (int) products[i][6], (String) products[i][7]);
+                    (double) products[i][5], (int) products[i][6], (String) products[i][7]));
         }
     }
 
     private void setUpStores() {
         for (int i = 0; i < stores.length; i++) {
             stores[i][1] = userIds[UsersIndex.STORE_OWNER_1.ordinal() + i];
-            stores[i][0] = addStore(userIds[UsersIndex.STORE_OWNER_1.ordinal() + i], (String) stores[i][2], (String) stores[i][3]);
+            stores[i][0] = handleResponse(session.addStore(userIds[UsersIndex.STORE_OWNER_1.ordinal() + i], (String) stores[i][2], (String) stores[i][3]));
         }
 
     }

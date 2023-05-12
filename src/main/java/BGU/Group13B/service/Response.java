@@ -213,13 +213,12 @@ public class Response<T> {
      * @return true if the status is not SUCCESS, false otherwise
      *
      * @code
-     * inside the ProjectTest class - see ProjectTest::addProduct()
-     * protected int someFunction(...){
-     *     Response<Integer> response = session.someFunction(...)
-     *     if (response.didntSucceed()){
-     *         fail();
-     *     }
-     *     return response.getData();
+     * inside the ProjectTest class - see ProjectTest::handleResponse()
+     * protected <T> T handleResponse(Response<T> response) {
+     *         if(response.didntSucceed()) {
+     *             fail();
+     *         }
+     *         return response.getData();
      * }
      *
      * for testing if failed - see StoreAT::addStore_guest_fail()

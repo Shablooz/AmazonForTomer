@@ -14,8 +14,8 @@ public class StoreAT extends ProjectTest{
 
     @Test
     void addStore_member_success(){
-        int storeId = addStore(userIds[UsersIndex.STORE_OWNER_1.ordinal()], "my store", categories[0]);
-        StoreInfo storeInfo = getStoreInfo(userIds[UsersIndex.STORE_OWNER_1.ordinal()], storeId);
+        int storeId = handleResponse(session.addStore(userIds[UsersIndex.STORE_OWNER_1.ordinal()], "my store", categories[0]));
+        StoreInfo storeInfo = handleResponse(session.getStoreInfo(userIds[UsersIndex.STORE_OWNER_1.ordinal()], storeId));
         assertEquals("my store", storeInfo.storeName());
     }
 
@@ -26,11 +26,11 @@ public class StoreAT extends ProjectTest{
 
     @Test
     void addProduct_storeOwner_success(){
-        int productId = addProduct(userIds[UsersIndex.STORE_OWNER_1.ordinal()],
+        int productId = handleResponse(session.addProduct(userIds[UsersIndex.STORE_OWNER_1.ordinal()],
                 (int) stores[0][0], "my product", "my description",
-                10, 10, "my category");
+                10, 10, "my category"));
 
-        ProductInfo productInfo = getStoreProductInfo(userIds[UsersIndex.STORE_OWNER_1.ordinal()], (int) stores[0][0], productId);
+        ProductInfo productInfo = handleResponse(session.getStoreProductInfo(userIds[UsersIndex.STORE_OWNER_1.ordinal()], (int) stores[0][0], productId));
         assertEquals("my product", productInfo.name());
     }
 
@@ -43,7 +43,7 @@ public class StoreAT extends ProjectTest{
 
     @Test
     void removeProduct_storeOwner_success(){
-        removeProduct((int) products[0][2], (int) products[0][1], (int) products[0][0]);
+        handleResponse(session.removeProduct((int) products[0][2], (int) products[0][1], (int) products[0][0]));
         assertTrue(session.getStoreProductInfo((int) products[0][2], (int) products[0][1], (int) products[0][0]).didntSucceed());
     }
 
@@ -55,8 +55,8 @@ public class StoreAT extends ProjectTest{
     @Test
     void setProductQuantity_storeOwner_success(){
         int stockQuantity = 42;
-        setProductStockQuantity((int) products[0][2], (int) products[0][1], (int) products[0][0], stockQuantity);
-        int quantityAfterSet = getStoreProductInfo((int) products[0][2], (int) products[0][1], (int) products[0][0]).stockQuantity();
+        handleResponse(session.setProductStockQuantity((int) products[0][2], (int) products[0][1], (int) products[0][0], stockQuantity));
+        int quantityAfterSet = handleResponse(session.getStoreProductInfo((int) products[0][2], (int) products[0][1], (int) products[0][0])).stockQuantity();
         assertEquals(stockQuantity, quantityAfterSet);
     }
 
@@ -74,8 +74,8 @@ public class StoreAT extends ProjectTest{
     @Test
     void setProductPrice_storeOwner_success(){
         double price = 42;
-        setProductPrice((int) products[0][2], (int) products[0][1], (int) products[0][0], price);
-        double priceAfterSet = getStoreProductInfo((int) products[0][2], (int) products[0][1], (int) products[0][0]).price();
+        handleResponse(session.setProductPrice((int) products[0][2], (int) products[0][1], (int) products[0][0], price));
+        double priceAfterSet = handleResponse(session.getStoreProductInfo((int) products[0][2], (int) products[0][1], (int) products[0][0])).price();
         assertEquals(price, priceAfterSet);
     }
 
@@ -92,8 +92,8 @@ public class StoreAT extends ProjectTest{
     @Test
     void setProductName_storeOwner_success(){
         String name = "new name";
-        setProductName((int) products[0][2], (int) products[0][1], (int) products[0][0], name);
-        String nameAfterSet = getStoreProductInfo((int) products[0][2], (int) products[0][1], (int) products[0][0]).name();
+        handleResponse(session.setProductName((int) products[0][2], (int) products[0][1], (int) products[0][0], name));
+        String nameAfterSet = handleResponse(session.getStoreProductInfo((int) products[0][2], (int) products[0][1], (int) products[0][0])).name();
         assertEquals(name, nameAfterSet);
     }
 
@@ -105,8 +105,8 @@ public class StoreAT extends ProjectTest{
     @Test
     void setProductDescription_storeOwner_success(){
         String description = "new description";
-        setProductDescription((int) products[0][2], (int) products[0][1], (int) products[0][0], description);
-        String descriptionAfterSet = getStoreProductInfo((int) products[0][2], (int) products[0][1], (int) products[0][0]).description();
+        handleResponse(session.setProductDescription((int) products[0][2], (int) products[0][1], (int) products[0][0], description));
+        String descriptionAfterSet = handleResponse(session.getStoreProductInfo((int) products[0][2], (int) products[0][1], (int) products[0][0])).description();
         assertEquals(description, descriptionAfterSet);
     }
 
@@ -118,8 +118,8 @@ public class StoreAT extends ProjectTest{
     @Test
     void setProductCategory_storeOwner_success(){
         String category = "new category";
-        setProductCategory((int) products[0][2], (int) products[0][1], (int) products[0][0], category);
-        String categoryAfterSet = getStoreProductInfo((int) products[0][2], (int) products[0][1], (int) products[0][0]).category();
+        handleResponse(session.setProductCategory((int) products[0][2], (int) products[0][1], (int) products[0][0], category));
+        String categoryAfterSet = handleResponse(session.getStoreProductInfo((int) products[0][2], (int) products[0][1], (int) products[0][0])).category();
         assertEquals(category, categoryAfterSet);
     }
 

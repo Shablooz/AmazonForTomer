@@ -129,7 +129,7 @@ public class Communication_AT extends ProjectTest {
                 "12341234", "4", "2044", "shaun", "123", "12323", new HashMap<>(), "");
         assertEquals(products[ProductsIndex.PRODUCT_1.ordinal()][ProductIndexes.PRICE.ordinal()],
                 payedPrice);
-        int quantity_after = getStoreProductInfo(userIds[UsersIndex.STORE_OWNER_2.ordinal()], storeIds[StoresIndex.STORE_1.ordinal()], productIds[ProductsIndex.PRODUCT_1.ordinal()]).stockQuantity();
+        int quantity_after = handleResponse(session.getStoreProductInfo(userIds[UsersIndex.STORE_OWNER_2.ordinal()], storeIds[StoresIndex.STORE_1.ordinal()], productIds[ProductsIndex.PRODUCT_1.ordinal()])).stockQuantity();
         assertEquals(9, quantity_after);
 
     }
