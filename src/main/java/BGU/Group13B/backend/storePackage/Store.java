@@ -5,6 +5,7 @@ import BGU.Group13B.backend.Repositories.Interfaces.*;
 import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyImpl.StoreMessageRepositoryNonPersist;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.User.BasketProduct;
+import BGU.Group13B.backend.User.User;
 import BGU.Group13B.backend.User.UserPermissions;
 import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
 import BGU.Group13B.backend.storePackage.discountPolicies.StoreDiscountPolicy;
@@ -877,14 +878,15 @@ public class Store {
     }
 
     //will send a message to all the store's workers except the user with the given id
-    private void notifyAllWorkers(int userId, String msgHeader, String msgBody) {
-        throw new NotImplementedException("TODO - notifyAllWorkers");
-        /* //TODO. the parameters can be changed if needed. make sure to update the function call in the function above (hideStore)
+    private void notifyAllWorkers(int userId, String msgHeader, String msgBody) throws NoPermissionException {
+        User user = userRepository.getUser(userId);
         for(int workerId : this.storePermission.getWorkersInfo().stream().map(WorkerCard::userId).toList()){
-            if(workerId != userId)
-                sendMassage(workerId, msgHeader, msgBody);
+            if(workerId != userId) {
+                String username = userRepository.getUser(workerId).getUserName();
+                user.sendMassageBroad(username, msgHeader, msgBody);
+            }
         }
-         */
+
     }
 
     @DefaultFounderFunctionality
