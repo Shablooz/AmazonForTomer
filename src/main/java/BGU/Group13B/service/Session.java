@@ -63,7 +63,7 @@ public class Session implements ISession {
         int id = 1;
         userRepositoryAsHashmap.addUser(id, new User(id));
         register(id, "kingOfTheSheep", "SheePLover420",
-                "mrsheep@gmail.com", "054-1234567", "1234", "answer3");
+                "mrsheep@gmail.com", "11", "11", "11");
 
     }
 
