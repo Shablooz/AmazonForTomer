@@ -16,13 +16,13 @@ public class Product {
     private double price;
     private String category;
     private String description;
-    private int rank;
     private int stockQuantity;
     private final IProductPurchasePolicyRepository productPurchasePolicy;
     private final ProductDiscountPolicy discountPolicy;
     private final IRepositoryReview repositoryReview;
 
     private boolean deleted = false;
+    private boolean hidden = false;
 
 
     public Product(int productId, int storeId, String name, String category, double price, int stockQuantity, String description) {
@@ -32,7 +32,6 @@ public class Product {
         this.category = category;
         this.setPrice(price);
         this.setStockQuantity(stockQuantity);
-        this.rank = 0;
         this.description = description;
         this.productPurchasePolicy = SingletonCollection.getProductPurchasePolicyRepository();
         this.discountPolicy = new ProductDiscountPolicy(productId);
@@ -41,16 +40,17 @@ public class Product {
         this.productPurchasePolicy.insertPurchasePolicy(storeId, new PurchasePolicy(productId));
     }
 
+    public Product(int productId, int storeId, String name, String category, double price, int stockQuantity, String description, boolean hidden){
+        this(productId, storeId, name, category, price, stockQuantity, description);
+        this.hidden = hidden;
+    }
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public int getRank() {
-        return this.rank;
     }
     public String getCategory() {
         return category;
@@ -165,4 +165,15 @@ public class Product {
         this.description = description;
     }
 
+    public void hide() {
+        this.hidden = true;
+    }
+
+    public boolean isHidden() {
+        return this.hidden;
+    }
+
+    public void unhide() {
+        this.hidden = false;
+    }
 }

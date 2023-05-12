@@ -2,12 +2,10 @@ package BGU.Group13B.frontEnd.components.views;
 
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.service.Session;
-import com.vaadin.flow.component.Component;
+import BGU.Group13B.service.SingletonCollection;
 import com.vaadin.flow.component.Tag;
 
 import com.vaadin.flow.component.UI;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -46,19 +44,16 @@ public class LoginView extends VerticalLayout {
 
     @Autowired
     public LoginView(Session session) {
-        answer1 = new TextField("מה המספר של אמא שלך");
-        answer2 = new TextField("אבא שלך ערומכו?");
-        answer3 = new TextField("What is your favorite book or movie?");
+        answer1 = new TextField("favorite color?");
+        answer2 = new TextField("favorite food?");
+        answer3 = new TextField("bUgAati cOloR?");
 
         authenticationLayout.add(answer1, answer2, answer3, authenticate);
         authenticationLayout.setVisible(false);
-
-        final int guestId = SessionToIdMapper.getInstance().getCurrentSessionId();
-
+        int guestId = SessionToIdMapper.getInstance().getCurrentSessionId();
         // Use UI.access() to access the VaadinSession state on the UI thread
         VaadinSession web_session = VaadinSession.getCurrent();
-        web_session.getSession().getId();
-        RegisterView.setGuestId(guestId);
+        String s_id = web_session.getSession().getId();
 
         setLoginButton(session, guestId);
 
@@ -77,14 +72,17 @@ public class LoginView extends VerticalLayout {
             if(session.checkIfQuestionsExist(username.getValue())){
                 Notification.show("Please answer the questions that u answered when registered!");
                 setAuthenticateButton(session,guestId);
-
                 return;
-            } else if (session.login(guestId, username.getValue(), password.getValue(),
-                    "", "", "") != 0) {
-                Notification.show("Login successful");
-                UI.getCurrent().navigate(HomeView.class);
             } else {
-                Notification.show("Login failed");
+                try {
+                    int newId = session.login(guestId, username.getValue(), password.getValue(),
+                            "", "", "");
+                    Notification.show("Login successful");
+                    SessionToIdMapper.getInstance().updateCurrentSession(newId);
+                    UI.getCurrent().navigate(HomeView.class);
+                }catch (Exception ex){
+                    Notification.show("Login failed");
+                }
             }
         });
     }
@@ -96,17 +94,33 @@ public class LoginView extends VerticalLayout {
         });
     }
 
-
+    private void hideNoneNeededAuthentication(Session session){
+        if(SingletonCollection.getUserRepository().checkIfUserExists(username.getValue()) == null)
+            return;
+        if(!session.SecurityAnswer1Exists(SingletonCollection.getUserRepository().checkIfUserExists(username.getValue()).getUserId())){
+            answer1.setVisible(false);
+        }
+        if(!session.SecurityAnswer2Exists(SingletonCollection.getUserRepository().checkIfUserExists(username.getValue()).getUserId())){
+            answer2.setVisible(false);
+        }
+        if(!session.SecurityAnswer3Exists(SingletonCollection.getUserRepository().checkIfUserExists(username.getValue()).getUserId())){
+            answer3.setVisible(false);
+        }
+    }
     private void setAuthenticateButton(Session session,int guestId){
         authenticationLayout.setVisible(true);
+        answer1.setVisible(true);
+        answer2.setVisible(true);
+        answer3.setVisible(true);
+        hideNoneNeededAuthentication(session);
         authenticate.addClickListener(e -> {
-            int newId =session.login(guestId, username.getValue(), password.getValue(),
-                    answer1.getValue(), answer2.getValue(), answer3.getValue());
-            if ( newId!= 0){
+            try {
+                int newId = session.login(guestId, username.getValue(), password.getValue(),
+                        answer1.getValue(), answer2.getValue(), answer3.getValue());
                 Notification.show("Login successful");
                 SessionToIdMapper.getInstance().updateCurrentSession(newId);
                 UI.getCurrent().navigate(HomeView.class);
-            }else{
+            }catch (Exception ex){
                 Notification.show("Login failed");
             }
 

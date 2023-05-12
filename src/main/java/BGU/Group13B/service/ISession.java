@@ -3,8 +3,15 @@ package BGU.Group13B.service;
 import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.User.Message;
+
+import BGU.Group13B.backend.User.PurchaseFailedException;
+
+import BGU.Group13B.backend.User.UserPermissions;
+
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
+import BGU.Group13B.service.entity.ServiceBasketProduct;
+import BGU.Group13B.service.entity.ServiceProduct;
 import BGU.Group13B.service.info.StoreInfo;
 import BGU.Group13B.service.info.ProductInfo;
 
@@ -33,7 +40,7 @@ public interface ISession {
     /**
      * #19
      * require 2.3
-     *
+     * good for development delete this function, does not check if the item exists in a store
      * @param userId    the user id
      * @param storeId   the store id
      * @param productId the product id
@@ -45,22 +52,29 @@ public interface ISession {
      * require 2.5
      *
      * @param userId                    the user id
-     * @param address                   the address of the user
      * @param creditCardNumber          the credit card number
      * @param creditCardMonth           the credit card month
      * @param creditCardYear            the credit card year
      * @param creditCardHolderFirstName the credit card holder first name
-     * @param creditCardHolderLastName  the credit card holder last name
      * @param creditCardCcv             the credit card ccv
      * @param id                        the id of the card owner
-     * @param creditCardType            the credit card type
      * @return total price paid by the user
      */
-    double purchaseProductCart(int userId, String address, String creditCardNumber, String creditCardMonth,
-                             String creditCardYear, String creditCardHolderFirstName,
-                             String creditCardHolderLastName, String creditCardCcv, String id,
-                             String creditCardType, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                             String/*store coupons*/ storeCoupon);
+    double purchaseProductCart(int userId, String creditCardNumber, String creditCardMonth,
+                               String creditCardYear, String creditCardHolderFirstName,
+                               String creditCardCcv, String id,
+                               HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                               String/*store coupons*/ storeCoupon);
+
+    Response<VoidResponse> purchaseProductCart(int userId, String creditCardNumber,
+                                                      String creditCardMonth, String creditCardYear,
+                                                      String creditCardHolderFirstName,
+                                                      String creditCardCVV, String id,
+                                                      String address, String city, String country,
+                                                      String zip);
+
+    double startPurchaseBasketTransaction(int userId, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                                          String/*store coupons*/ storeCoupon) throws PurchaseFailedException;
 
     /**
      * #50
@@ -162,25 +176,9 @@ public interface ISession {
      * #18
      * require 2.2
      *
-     * @param productName - the name of the product
+     * @param searchWords - the search words
      */
-    void searchProductByName(String productName);
-
-    /**
-     * #18
-     * require 2.2
-     *
-     * @param category - the category of the product
-     */
-    void searchProductByCategory(String category);
-
-    /**
-     * #18
-     * require 2.2
-     *
-     * @param keywords - list of keywords
-     */
-    void searchProductByKeywords(List<String> keywords);
+    void search(String searchWords);
 
     /**
      * #18
@@ -257,7 +255,7 @@ public interface ISession {
     /**
      * #19
      * require 2.3
-     *
+     * good for production
      * @param userId    the user id
      * @param storeId   the store id
      * @param productId the product id
@@ -494,6 +492,8 @@ public interface ISession {
      */
     void getCartDescription(int userId);
 
+    Response<List<ServiceBasketProduct>> getCartContent(int userId);
+
     /**
      * #20
      * require 2.4
@@ -643,9 +643,10 @@ public interface ISession {
      * #17
      * require 2.1
      *
+     * @param userId  the user id
      * @param storeId the store id
      */
-    StoreInfo getStoreInfo(int storeId);
+    StoreInfo getStoreInfo(int userId, int storeId);
 
     /**
      * #17
@@ -667,58 +668,11 @@ public interface ISession {
      * #17
      * require 2.1
      *
+     * @param userId    the user id
      * @param storeId   the store id
      * @param productId the product id
      */
-    ProductInfo getStoreProductInfo(int storeId, int productId);
-
-    /**
-     * #17
-     * require 2.1
-     *
-     * @param productId the product id
-     */
-    ProductInfo getProductInfo(int productId);
-
-    /**
-     * #17
-     * require 2.1
-     *
-     * @param productId the product id
-     */
-    String getProductName(int productId);
-
-    /**
-     * #17
-     * require 2.1
-     *
-     * @param productId the product id
-     */
-    String getProductCategory(int productId);
-
-    /**
-     * #17
-     * require 2.1
-     *
-     * @param productId the product id
-     */
-    double getProductPrice(int productId);
-
-    /**
-     * #17
-     * require 2.1
-     *
-     * @param productId the product id
-     */
-    int getProductStockQuantity(int productId);
-
-    /**
-     * #17
-     * require 2.1
-     *
-     * @param productId the product id
-     */
-    float getProductScore(int productId);
+    ProductInfo getStoreProductInfo(int userId, int storeId, int productId);
 
     /**
      * #17
@@ -726,7 +680,7 @@ public interface ISession {
      *
      * @param storeId the store id
      */
-    Set<ProductInfo> getAllStoreProductsInfo(int storeId);
+    Set<ProductInfo> getAllStoreProductsInfo(int userId, int storeId);
 
     /**
      * #31
@@ -762,6 +716,8 @@ public interface ISession {
      */
     boolean checkIfQuestionsExist(int userId);
 
+
+    List<ServiceProduct> getAllFailedProductsAfterPayment(int userId);
 
     /**
      * #33
@@ -1038,19 +994,11 @@ public interface ISession {
      * */
     List<Integer> getFailedProducts(int userId, int storeId);
 
-    /**
-     * @param userId the user id
-     * @param storeId the store id
-     * @param productId the product id
-     * @throws Exception if the product is not in the store
-     *
-     * */
 
-    /**
-     *
-     * @param userId
-     * @return weather the user is logged or not
-     */
+    double getTotalPriceOfCart(int userId);
+
+    void cancelPurchase(int userId);
+
     boolean isUserLogged(int userId);
 
 
@@ -1060,6 +1008,25 @@ public interface ISession {
      * @return all the user's associated stores (all stores that the user has a role in)
      */
     List<Pair<StoreInfo, String>> getAllUserAssociatedStores(int userId);
+
+
+    /**
+     * #39
+     * require 4.9
+     *
+     * @param userId    the user id (only the founder can do this action)
+     * @param storeId   the store id that will be hidden
+     */
+    void hideStore(int userId, int storeId);
+
+    /**
+     * #40
+     * require 4.10
+     *
+     * @param userId    the user id (only the founder can do this action)
+     * @param storeId   the store id that will be unhidden
+     */
+    void unhideStore(int userId, int storeId);
 
     void pushTest();
 }

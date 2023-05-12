@@ -9,7 +9,7 @@ public interface IBasketProductRepository {
     Optional<List<BasketProduct>> getBasketProducts(int storeId, int userId);
     void removeBasketProducts(int storeId, int userId);
     void addNewProductToBasket(int productId, int storeId, int userId);
-    void changeProductQuantity(int productId, int storeId, int userId, int addedQuantity);
+    void changeProductQuantity(int productId, int storeId, int userId, int newQuantity);
     BasketProduct getBasketProduct(int productId, int storeId, int userId) throws IllegalArgumentException;
 
     void removeBasketProduct(int productId, int userId, int storeId);
