@@ -8,17 +8,34 @@ import com.vaadin.flow.server.VaadinSession;
 
 public class PushNotification {
 
-    public static boolean pushNotification(String message,int id)
+   /* public static boolean pushNotification(String message,int id)
     {
 
-        if(SessionToIdMapper.getInstance().getSession(id)==null)
+        VaadinSession idSession=SessionToIdMapper.getInstance().getSession(id);
+        if(idSession==null)
             return false;
-        SessionToIdMapper.getInstance().getSession(id).access(()->{
+        idSession.access(()->{
             Notification notification= new Notification(message,3000);
             notification.addThemeVariants(NotificationVariant.LUMO_PRIMARY);
             notification.open();
         });
         return true;
 
-    }
+    }*/
+   public static boolean pushNotification(String message,int id) {
+       VaadinSession idSession = SessionToIdMapper.getInstance().getSession(id);
+
+       if (idSession == null) {
+           return false;
+       }
+
+           idSession.access(() -> {
+               Notification notification = new Notification(message, 3000);
+               notification.addThemeVariants(NotificationVariant.LUMO_PRIMARY);
+               notification.open();
+           });
+
+
+       return true;
+   }
 }

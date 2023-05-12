@@ -5,26 +5,22 @@ import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.frontEnd.components.appnav.AppNav;
 import BGU.Group13B.frontEnd.components.appnav.AppNavItem;
+import BGU.Group13B.service.BroadCaster;
 import BGU.Group13B.service.Response;
 import BGU.Group13B.service.Session;
 import BGU.Group13B.service.VoidResponse;
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.html.Footer;
-import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Header;
+import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
-import com.vaadin.flow.component.orderedlayout.FlexLayout;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.Scroller;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.orderedlayout.*;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
@@ -32,6 +28,8 @@ import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.lineawesome.LineAwesomeIcon;
+
+import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY_INLINE;
 
 /**
  * The main view is a top-level placeholder for other views.
@@ -50,6 +48,7 @@ public class MainLayout extends AppLayout {
 
     private Button logoutButton = null;
     private Button signUpButton = null;
+    private int STOREID = 0; //TODO:need to delete
 
     public interface VoidAction {
         void act();
@@ -76,7 +75,39 @@ public class MainLayout extends AppLayout {
         setPrimarySection(Section.DRAWER);
         addDrawerContent();
         addHeaderContent();
+
+        var ui=UI.getCurrent();
+        //Tomer section
+        BroadCaster.register(USERID,newMessage -> {
+            ui.access(()->createSubmitSuccess(newMessage).open());
+        });
     }
+    private Notification createSubmitSuccess(String message) {
+        Notification notification = new Notification();
+        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+
+        Icon icon = VaadinIcon.CHECK_CIRCLE.create();
+        Div info = new Div(new Text(message));
+
+
+
+
+        HorizontalLayout layout = new HorizontalLayout(icon, info,
+                createCloseBtn(notification));
+        layout.setAlignItems(FlexComponent.Alignment.CENTER);
+
+        notification.add(layout);
+
+        return notification;
+    }
+    private Button createCloseBtn(Notification notification) {
+        Button closeBtn = new Button(VaadinIcon.CLOSE_SMALL.create(),
+                clickEvent -> notification.close());
+        closeBtn.addThemeVariants(LUMO_TERTIARY_INLINE);
+
+        return closeBtn;
+    }
+
 
     private void addHeaderContent() {
         DrawerToggle toggle = new DrawerToggle();
@@ -95,10 +126,7 @@ public class MainLayout extends AppLayout {
     private HorizontalLayout rightAlignmentHeaderContext() {
         HorizontalLayout rightAlignment = new HorizontalLayout();
         Button messageButton = messageDialog();
-        Button test =new Button("PUSH");
-        test.addClickListener(event->session.pushTest());
-        rightAlignment.add(test);
-        System.out.println("USERID: " + USERID + " is logged in: " + session.isUserLogged(USERID));
+
         if (session.isUserLogged(USERID))
             rightAlignment.add(messageButton);
 
@@ -157,11 +185,9 @@ public class MainLayout extends AppLayout {
 
         Response<Message> messageResponse = session.readMessage(USERID);
         String message;
-        if(messageResponse.getStatus()== Response.Status.SUCCESS)
-        {
+        if (messageResponse.getStatus() == Response.Status.SUCCESS) {
             message = messageResponse.getData().toString();
-        }else
-        {
+        } else {
             message = messageResponse.getMessage();
         }
 
@@ -188,20 +214,30 @@ public class MainLayout extends AppLayout {
         });
 
 
-    }
-
         nextMessageButton.addClickListener(event -> newMessageDialog(currentDialog));
         sendMessageButton.addClickListener(event -> {
-            Response<VoidResponse> response= session.replayMessage(USERID,inputBody.getValue());
-            Notification notification= new Notification("Message sent",3000);
+            Response<VoidResponse> response = session.replayMessage(USERID, inputBody.getValue());
+            Notification notification = new Notification("Message sent", 3000);
             notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-            if(response.getStatus()== Response.Status.FAILURE){
+            if (response.getStatus() == Response.Status.FAILURE) {
                 notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
                 notification.setText(response.getMessage());
             }
             newMessageDialog(currentDialog);
             notification.open();
         });
+    }
+
+    private void prepareLoginButton(FlexLayout flexLayout) {
+        this.loginButton = new Button("Login");
+        loginButton.addClickListener(event -> getUI().ifPresent(ui -> ui.navigate("login")));
+        flexLayout.add(loginButton);
+    }
+    private void prepareSignUpButton(FlexLayout flexLayout) {
+        signUpButton = new Button("Sign up");
+        signUpButton.addClickListener(event -> getUI().ifPresent(ui -> ui.navigate("register")));
+        flexLayout.add(signUpButton);
+    }
 
     private void prepareLogoutButton(FlexLayout flexLayout) {
         logoutButton = new Button("Logout");
@@ -514,5 +550,207 @@ public class MainLayout extends AppLayout {
     private String getCurrentPageTitle() {
         PageTitle title = getContent().getClass().getAnnotation(PageTitle.class);
         return title == null ? "" : title.value();
+    }
+
+    //TODO:lior - all the functions below are for store - please provide the store id and call to functions that checks if the store owner
+    //TODO: lior- please add button to your store only if the current user is logged in and the button should call to the mainStoreDialog
+
+    private void mainStoreDialog(Dialog currentDialog) {
+
+        currentDialog.removeAll();
+        currentDialog.getFooter().removeAll();
+        currentDialog.getHeader().removeAll();
+
+        currentDialog.setHeaderTitle("My Stores Messages");
+
+        Button closeButton = new Button(new Icon("lumo", "cross"),
+                (e) -> currentDialog.close());
+        currentDialog.getHeader().add(closeButton);
+
+        VerticalLayout buttonsLayout = new VerticalLayout();
+        Button sendMessageToStore = new Button("Send message to Store");
+        sendMessageToStore.addClickListener(event -> {
+            sendMessageToStoreDialog(currentDialog);
+        });
+
+        Button newMessagesStore = new Button("New messages");
+        newMessagesStore.addClickListener(event -> {
+            newMessagesStoreDialog(currentDialog);
+        });
+
+        Button oldMessagesStore = new Button("Old messages");
+        oldMessagesStore.addClickListener(event -> {
+            oldMessagesStoreDialog(currentDialog);
+
+        });
+
+        if(true /*if storeOwner*/)
+        {
+            buttonsLayout.add(newMessagesStore, oldMessagesStore);
+        }
+        if(session.isUserLogged(USERID)/*logged in user*/)
+        {
+            buttonsLayout.add(sendMessageToStore);
+        }
+
+    }
+
+    private void oldMessagesStoreDialog(Dialog currentDialog) {
+        currentDialog.removeAll();
+        currentDialog.getFooter().removeAll();
+        currentDialog.getHeader().removeAll();
+        session.clearMessageToReply(USERID);
+        currentDialog.setHeaderTitle("Old Store Messages");
+
+        Button closeButton = new Button(new Icon("lumo", "cross"),
+                (e) -> currentDialog.close());
+        currentDialog.getHeader().add(closeButton);
+
+        Button jmpMainDialog = new Button("Messages Store Center");
+        Button nextMessageButton = new Button("next message");
+        VerticalLayout verticalDialogMessage = new VerticalLayout();
+        TextArea messageBody = new TextArea();
+        Button refreshMessagesButton = new Button("Refresh Messages");
+        Response<Message> messageResponse = session.readReadMassageStore(USERID,STOREID);
+        String message;
+        if(messageResponse.getStatus()== Response.Status.SUCCESS) {
+            message = messageResponse.getData().toString();
+        }else{
+            message = messageResponse.getMessage();
+        }
+
+        currentDialog.getFooter().add(jmpMainDialog);
+        currentDialog.getFooter().add(refreshMessagesButton, nextMessageButton);
+        currentDialog.add(verticalDialogMessage);
+
+        messageBody.setWidthFull();
+        messageBody.setLabel("The message:");
+        messageBody.setMinWidth("300px");
+        messageBody.setReadOnly(true);
+        messageBody.setValue(message);
+        verticalDialogMessage.add(messageBody);
+
+
+        jmpMainDialog.addClickListener(event -> mainStoreDialog(currentDialog));
+        nextMessageButton.addClickListener(event -> oldMessagesStoreDialog(currentDialog));
+        refreshMessagesButton.addClickListener(event -> {
+            session.refreshOldMessageStore(USERID,STOREID);
+            oldMessagesStoreDialog(currentDialog);
+        });
+
+    }
+
+    private void newMessagesStoreDialog(Dialog currentDialog) {
+        currentDialog.removeAll();
+        currentDialog.getFooter().removeAll();
+        currentDialog.getHeader().removeAll();
+        session.clearMessageToReply(USERID);
+
+        currentDialog.setHeaderTitle("Complaints");
+
+        Button closeButton = new Button(new Icon("lumo", "cross"),
+                (e) -> currentDialog.close());
+        currentDialog.getHeader().add(closeButton);
+
+        Button jmpMainDialog = new Button("Messages Store Center");
+        Button nextMessageButton = new Button("Next Message");
+        VerticalLayout verticalDialogMessage = new VerticalLayout();
+        TextArea messageBody = new TextArea();
+        Button replyButton = new Button("Reply");
+        TextArea inputBody = new TextArea();
+        Button sendMessageButton = new Button("Send Answer");
+        Response<Message> messageResponse = session.readReadMassageStore(USERID, STOREID);
+        String message;
+        if(messageResponse.getStatus()== Response.Status.SUCCESS) {
+            message = messageResponse.getData().toString();
+        }else{
+            message = messageResponse.getMessage();
+        }
+
+        currentDialog.getFooter().add(jmpMainDialog);
+        currentDialog.getFooter().add(nextMessageButton);
+        currentDialog.add(verticalDialogMessage);
+        verticalDialogMessage.add(messageBody);
+        verticalDialogMessage.add(replyButton);
+
+
+        messageBody.setWidthFull();
+        messageBody.setMinWidth("300px");
+        messageBody.setLabel("The Complaint:");
+        messageBody.setReadOnly(true);
+        messageBody.setValue(message);
+        inputBody.setWidthFull();
+        inputBody.setLabel("Answer:");
+
+
+        jmpMainDialog.addClickListener(event -> mainStoreDialog(currentDialog));
+        replyButton.addClickListener(event -> {
+            verticalDialogMessage.remove(replyButton);
+            verticalDialogMessage.add(inputBody, sendMessageButton);
+        });
+
+        nextMessageButton.addClickListener(event -> newMessagesStoreDialog(currentDialog));
+        sendMessageButton.addClickListener(event -> {
+            Response<VoidResponse> response= session.answerQuestionStore(USERID,inputBody.getValue());
+            newMessagesStoreDialog(currentDialog);
+            Notification notification=new Notification("Message sent", 3000);
+            notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+            if(response.getStatus()== Response.Status.FAILURE) {
+                notification.setText(response.getMessage());
+                notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+            }
+            notification.open();
+
+        });
+
+    }
+
+    private void sendMessageToStoreDialog(Dialog currentDialog) {
+        currentDialog.removeAll();
+        currentDialog.getFooter().removeAll();
+        currentDialog.getHeader().removeAll();
+        session.clearMessageToReply(USERID);
+        currentDialog.setHeaderTitle("Send Message");
+
+        Button closeButton = new Button(new Icon("lumo", "cross"),
+                (e) -> currentDialog.close());
+        currentDialog.getHeader().add(closeButton);
+
+        Button jmpMainDialog = new Button("Messages Center");
+        VerticalLayout verticalDialogMessage = new VerticalLayout();
+        TextField inputHeader = new TextField();
+        TextArea inputBody = new TextArea();
+        Button sendMessageButton = new Button("Send Message");
+
+
+        currentDialog.getFooter().add(jmpMainDialog);
+        currentDialog.add(verticalDialogMessage);
+
+        verticalDialogMessage.add(inputHeader);
+        verticalDialogMessage.add(inputBody);
+        verticalDialogMessage.add(sendMessageButton);
+
+
+        inputHeader.setWidthFull();
+        inputHeader.setLabel("Subject:");
+        inputBody.setWidthFull();
+        inputBody.setMinWidth("300px");
+        inputBody.setLabel("Body:");
+
+
+        jmpMainDialog.addClickListener(event -> mainStoreDialog(currentDialog));
+        sendMessageButton.addClickListener(event -> {
+            Response<VoidResponse> messageResponse= session.sendMassageStore(USERID,inputHeader.getValue(),inputBody.getValue(),STOREID);
+            sendMessageToStoreDialog(currentDialog);
+            Notification notification=new Notification("Message sent", 3000);
+            notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+            if(messageResponse.getStatus()== Response.Status.FAILURE){
+                notification.setText(messageResponse.getMessage());
+                notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+            }
+            notification.open();
+
+        });
+
     }
 }

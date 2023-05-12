@@ -2,6 +2,7 @@ package BGU.Group13B.backend.User;
 
 import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.storePackage.Product;
+import BGU.Group13B.service.BroadCaster;
 import BGU.Group13B.service.PushNotification;
 import org.mindrot.jbcrypt.BCrypt;
 import BGU.Group13B.backend.Repositories.Interfaces.IMessageRepository;
@@ -180,11 +181,14 @@ public class User {
         if (!isAdmin())
             throw new NoPermissionException("Only admin can send massages");
         messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), header, massage, receiverId));
-        User receiverNext=SingletonCollection.getUserRepository().getUserByUsername(regularMessageToReply.getSenderId());
-        if(!PushNotification.pushNotification("New Message",receiverNext.getUserId()))
+        User receiverNext=SingletonCollection.getUserRepository().getUserByUsername(receiverId);
+        //if(!PushNotification.pushNotification("New Message",receiverNext.getUserId()))
+         if(!BroadCaster.broadcast(receiverNext.userId,"New Message"))
             receiverNext.setMessageNotification(true);
+        System.out.println("Status: "+receiverNext.getMessageNotification());
     }
 
+    //tdsfds
     //#47
     public void answerComplaint(String answer) throws NoPermissionException {
         if (!isAdmin())
