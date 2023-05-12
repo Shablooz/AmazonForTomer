@@ -40,7 +40,7 @@ public interface ISession {
     /**
      * #19
      * require 2.3
-     *
+     * good for development delete this function, does not check if the item exists in a store
      * @param userId    the user id
      * @param storeId   the store id
      * @param productId the product id
@@ -67,9 +67,11 @@ public interface ISession {
                                String/*store coupons*/ storeCoupon);
 
     Response<VoidResponse> purchaseProductCart(int userId, String creditCardNumber,
-                                               String creditCardMonth, String creditCardYear,
-                                               String creditCardHolderFirstName,
-                                               String creditCardCcv, String id);
+                                                      String creditCardMonth, String creditCardYear,
+                                                      String creditCardHolderFirstName,
+                                                      String creditCardCVV, String id,
+                                                      String address, String city, String country,
+                                                      String zip);
 
     double startPurchaseBasketTransaction(int userId, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
                                           String/*store coupons*/ storeCoupon) throws PurchaseFailedException;
@@ -253,7 +255,7 @@ public interface ISession {
     /**
      * #19
      * require 2.3
-     *
+     * good for production
      * @param userId    the user id
      * @param storeId   the store id
      * @param productId the product id

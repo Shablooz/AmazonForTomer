@@ -35,6 +35,14 @@ public class BasketRepositoryAsHashMap implements IBasketRepository {
         throw new IllegalArgumentException("User already has a basket associated with the storeId: " + storeId);
     }
 
+    //for tests
+    @Override
+    public void addUserBasket(Basket basket) {
+        //removeUserBasket(basket.getUserId(), basket.getStoreId());
+        if (baskets.putIfAbsent(basket.getUserId(), ConcurrentHashMap.newKeySet()) == null)
+            baskets.get(basket.getUserId()).add(basket);
+    }
+
     private boolean noStoreBasket(int userId, int storeId) {
         return baskets.get(userId).stream().noneMatch(basket -> basket.getStoreId() == storeId);
     }

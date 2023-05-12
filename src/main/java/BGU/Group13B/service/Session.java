@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 //made it public for testing purposes - should be private
 @Service
 public class Session implements ISession {
-    private final Market market;
+    private Market market;
     private final IUserRepository userRepository = SingletonCollection.getUserRepository();
     private static final Logger LOGGER_INFO = Logger.getLogger(Session.class.getName());
     private static final Logger LOGGER_ERROR = Logger.getLogger(Session.class.getName());
@@ -46,6 +46,11 @@ public class Session implements ISession {
 
 
     //IMPORTANT need to initialize the session AFTER loading first user (id = 1) from database
+
+    public Session() {
+
+        this(new Market());
+    }
 
     public Session(Market market) {
         this.market = market;
@@ -74,6 +79,7 @@ public class Session implements ISession {
 
     }
 
+    /*good for development no need check if the item exists*/
     @Override
     public void addToCart(int userId, int storeId, int productId) {
         userRepository.getUser(userId).addToCart(storeId, productId);
@@ -91,31 +97,37 @@ public class Session implements ISession {
                     purchaseCart(creditCardNumber, creditCardMonth,
                             creditCardYear, creditCardHolderFirstName,
                             creditCardCcv, id, productsCoupons, storeCoupon);
-        } catch (PurchaseFailedException e) {
+        } catch (PurchaseFailedException | NoPermissionException e) {
             throw new RuntimeException(e);
         }
     }
+
     @Override
     public Response<VoidResponse> purchaseProductCart(int userId, String creditCardNumber,
                                                       String creditCardMonth, String creditCardYear,
                                                       String creditCardHolderFirstName,
-                                                      String creditCardCcv, String id) {
+                                                      String creditCardCVV, String id,
+                                                      String address, String city, String country,
+                                                      String zip) {
         try {
             userRepository.getUser(userId).
-                    purchaseCart(creditCardNumber, creditCardMonth,
+                    purchaseCart(
+                            creditCardNumber, creditCardMonth,
                             creditCardYear, creditCardHolderFirstName,
-                            creditCardCcv, id, new HashMap<>(), "");
+                            creditCardCVV, id,
+                            address, city, country, zip);
             return Response.success();
-        } catch (PurchaseFailedException e) {
+        } catch (PurchaseFailedException | NoPermissionException e) {
             return Response.exception(e);
         }
     }
+
     @Override
     public double startPurchaseBasketTransaction(int userId, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                                 String/*store coupons*/ storeCoupon){
+                                                 String/*store coupons*/ storeCoupon) {
         try {
             return userRepository.getUser(userId).startPurchaseBasketTransaction(productsCoupons, storeCoupon);
-        } catch (PurchaseFailedException e) {
+        } catch (PurchaseFailedException | NoPermissionException e) {
             throw new RuntimeException(e);
         }
     }
@@ -330,14 +342,16 @@ public class Session implements ISession {
             throw new RuntimeException(e);
         }
     }
+
     @Override
-    public void replayMessage(int userId, String message){
+    public void replayMessage(int userId, String message) {
         try {
             userRepositoryAsHashmap.getUser(userId).replayMessage(message);
         } catch (NoPermissionException e) {
             throw new RuntimeException(e);
         }
     }
+
     @Override
     public Message readOldMessage(int userId) {
         try {
@@ -346,9 +360,9 @@ public class Session implements ISession {
             throw new RuntimeException(e);
         }
     }
+
     @Override
-    public void refreshOldMessages(int userId)
-    {
+    public void refreshOldMessages(int userId) {
         try {
             userRepositoryAsHashmap.getUser(userId).refreshOldMessage();
         } catch (NoPermissionException e) {
@@ -493,21 +507,25 @@ public class Session implements ISession {
 
     @Override
     public void getCartDescription(int userId) {
-        userRepositoryAsHashmap.getUser(userId).getCartDescription();
+        try {
+            userRepositoryAsHashmap.getUser(userId).getCartDescription();
+        } catch (NoPermissionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public Response<List<ServiceBasketProduct>> getCartContent(int userId) {
         List<BasketProduct> cartContent;
-        try{
+        try {
             cartContent = userRepositoryAsHashmap.getUser(userId).getCartBasketProducts();
-        }catch (Exception e){
+        } catch (Exception e) {
             return Response.exception(e);
         }
         return Response.success(cartContent.stream().map(ServiceBasketProduct::new).collect(Collectors.toList()));
     }
 
-        @Override
+    @Override
     public void removeProductFromCart(int userId, int storeId, int productId) {
         try {
             userRepositoryAsHashmap.getUser(userId).removeProductFromCart(storeId, productId);
@@ -706,10 +724,11 @@ public class Session implements ISession {
 
     @Override
     public boolean checkIfQuestionsExist(String userName) {
-        if(userRepositoryAsHashmap.checkIfUserExists(userName) == null)
+        if (userRepositoryAsHashmap.checkIfUserExists(userName) == null)
             return false;
         return checkIfQuestionsExist(userRepositoryAsHashmap.checkIfUserExists(userName).getUserId());
     }
+
     @Override
     public void exitSystemAsGuest(int userId) {
         userRepositoryAsHashmap.removeUser(userId);
@@ -736,7 +755,7 @@ public class Session implements ISession {
                 stream().map(ServiceProduct::new).collect(Collectors.toList());
     }
 
-        @Override
+    @Override
     public void allowPurchasePolicyConflicts(int userId, int storeId) {
         try {
             market.allowPurchasePolicyConflicts(userId, storeId);

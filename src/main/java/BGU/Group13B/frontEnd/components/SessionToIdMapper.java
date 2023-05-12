@@ -60,7 +60,7 @@ public class SessionToIdMapper {
     public synchronized boolean containsKey(String sessionId) {
         return this.sessionToId.containsKey(sessionId);
     }
-    public void updateCurrentSession(int newId)
+    public synchronized void updateCurrentSession(int newId)
     {
         this.sessionToId.put(VaadinSession.getCurrent().getSession().getId(), newId);
     }

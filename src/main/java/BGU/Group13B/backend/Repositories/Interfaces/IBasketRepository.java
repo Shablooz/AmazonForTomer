@@ -10,4 +10,6 @@ public interface IBasketRepository {
     public void removeUserBasket(int userId, int storeId);
 
     Basket addUserBasket(int userId, int storeId);
+
+    void addUserBasket(Basket basket);
 }

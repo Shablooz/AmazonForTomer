@@ -210,12 +210,18 @@ public class PaymentView extends Div implements BeforeLeaveObserver {
                 paymentPanel.setOpened(false);
                 return;
             }
-            Response<VoidResponse> response = session.purchaseProductCart(SessionToIdMapper.getInstance().getCurrentSessionId(), cardBinder.getBean().getAccountNumber(),
+            Response<VoidResponse> response = session.purchaseProductCart(
+                    SessionToIdMapper.getInstance().getCurrentSessionId(),
+                    cardBinder.getBean().getAccountNumber(),
                     "" + cardBinder.getBean().getMonth().getValue(),
                     "" + cardBinder.getBean().getYear(),
                     personBinder.getBean().getFirstName() + " " + personBinder.getBean().getLastName(),
                     "" + cardBinder.getBean().getCvv(),
-                    personBinder.getBean().getPersonId());
+                    personBinder.getBean().getPersonId(),
+                    personBinder.getBean().getAddress().getStreet(),
+                    personBinder.getBean().getAddress().getCity(),
+                    personBinder.getBean().getAddress().getCountry(),
+                    personBinder.getBean().getAddress().getZip());
             if (response.getStatus() == Response.Status.FAILURE) {
                 Notification.show("Payment failed you can try again or cancel the purchase");
                 paymentPanel.setOpened(true);
