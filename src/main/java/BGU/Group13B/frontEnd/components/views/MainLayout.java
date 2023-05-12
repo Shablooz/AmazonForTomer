@@ -22,9 +22,6 @@ import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.router.BeforeEnterEvent;
-import com.vaadin.flow.router.BeforeEnterObserver;
-import com.vaadin.flow.router.Location;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.lumo.LumoUtility;
@@ -34,7 +31,7 @@ import org.vaadin.lineawesome.LineAwesomeIcon;
 /**
  * The main view is a top-level placeholder for other views.
  */
-public class MainLayout extends AppLayout  {
+public class MainLayout extends AppLayout {
 
     private H2 viewTitle;
     private final Session session;
@@ -44,10 +41,12 @@ public class MainLayout extends AppLayout  {
     private final String ADMIN = "Admin";
     private final String GUEST = "Guest";
 
-private Button loginButton = null;
+    private Button loginButton = null;
 
     private Button logoutButton = null;
-    private Button signUpButton = null;    public interface VoidAction {
+    private Button signUpButton = null;
+
+    public interface VoidAction {
         void act();
     }
 
@@ -115,7 +114,7 @@ private Button loginButton = null;
         prepareLoginButton(flexLayout);
         prepareLogoutButton(flexLayout);
         prepareSignUpButton(flexLayout);
-        if (!session.isUserLogged(SessionToIdMapper.getInstance().getCurrentSessionId()/*todo change to session*/) ){    //) {
+        if (!session.isUserLogged(SessionToIdMapper.getInstance().getCurrentSessionId()/*todo change to session*/)) {    //) {
             logoutButton.setVisible(false);
         } else {
             loginButton.setVisible(false);
@@ -173,19 +172,19 @@ private Button loginButton = null;
     }
 
 
-    private void prepareLoginButton(FlexLayout flexLayout){
+    private void prepareLoginButton(FlexLayout flexLayout) {
         this.loginButton = new Button("Login");
         loginButton.addClickListener(event -> getUI().ifPresent(ui -> ui.navigate("login")));
         flexLayout.add(loginButton);
     }
 
-    private void prepareSignUpButton(FlexLayout flexLayout){
+    private void prepareSignUpButton(FlexLayout flexLayout) {
         signUpButton = new Button("Sign up");
         signUpButton.addClickListener(event -> getUI().ifPresent(ui -> ui.navigate("register")));
         flexLayout.add(signUpButton);
     }
 
-    private void prepareLogoutButton(FlexLayout flexLayout){
+    private void prepareLogoutButton(FlexLayout flexLayout) {
         logoutButton = new Button("Logout");
         logoutButton.addClickListener(event -> {
             session.logout(SessionToIdMapper.getInstance().getCurrentSessionId());
@@ -194,8 +193,8 @@ private Button loginButton = null;
         });
         flexLayout.add(logoutButton);
     }
-    private void oldMessageDialog(Dialog currentDialog)
-    {
+
+    private void oldMessageDialog(Dialog currentDialog) {
         currentDialog.removeAll();
         currentDialog.getFooter().removeAll();
         currentDialog.getHeader().removeAll();
@@ -410,7 +409,7 @@ private Button loginButton = null;
         nav.addItem(new AppNavItem("Home View", HomeView.class, LineAwesomeIcon.HOME_SOLID.create()));
 
         //my stores
-        if(true){ //TODO! check if the user is logged in
+        if (true) { //TODO! check if the user is logged in
             nav.addItem(new AppNavItem("My Stores", MyStoresView.class, LineAwesomeIcon.STORE_SOLID.create()));
         }
 
@@ -428,7 +427,7 @@ private Button loginButton = null;
     protected void afterNavigation() {
         super.afterNavigation();
         viewTitle.setText(getCurrentPageTitle());
-        if(session.isUserLogged(SessionToIdMapper.getInstance().getCurrentSessionId())) {
+        if (session.isUserLogged(SessionToIdMapper.getInstance().getCurrentSessionId())) {
             this.loginButton.setVisible(false);
             this.signUpButton.setVisible(false);
             this.logoutButton.setVisible(true);

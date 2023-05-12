@@ -41,6 +41,7 @@ public class Cart {
         }
         return totalPrice;
     }
+
     /*returns price after discounts*/
     public double startPurchaseBasketTransaction(HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
                                                  String/*store coupons*/ storeCoupon) throws PurchaseFailedException {
@@ -54,18 +55,25 @@ public class Cart {
         }
         return totalPrice;
     }
+
     public void purchaseCart(String creditCardNumber,
-                                        String creditCardMonth, String creditCardYear,
-                                        String creditCardHolderFirstName,
-                                        String creditCardCcv, String id) throws PurchaseFailedException {
+                             String creditCardMonth, String creditCardYear,
+                             String creditCardHolderFirstName,
+                             String creditCardCVV, String id,
+                             String address, String city, String country,
+                             String zip
+    ) throws PurchaseFailedException {
         var userBaskets = basketRepository.getUserBaskets(userId);
         if (userBaskets.isEmpty()) {
             throw new NoSuchElementException("No baskets in cart");
         }
         for (var basket : userBaskets) {
-            basket.purchaseBasket(creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardCcv, id);
+            basket.purchaseBasket(creditCardNumber, creditCardMonth, creditCardYear,
+                    creditCardHolderFirstName, creditCardCVV, id,
+                    address, city, country, zip);
         }
     }
+
     private boolean isContainsBasket(int storeId, Set<Basket> userBaskets) {
         for (var basket : userBaskets) {
             if (basket.getStoreId() == storeId) {
