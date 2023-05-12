@@ -42,6 +42,7 @@ public class StoreManagementTest {
 
     @BeforeEach
     void setUpEach() {
+        SingletonCollection.reset_system();
         storeRepository = SingletonCollection.getStoreRepository();
         productRepository = SingletonCollection.getProductRepository();
         productPurchasePolicyRepository = SingletonCollection.getProductPurchasePolicyRepository();
@@ -55,8 +56,8 @@ public class StoreManagementTest {
     }
 
 
-    @AfterEach
-    void tearDown() {
+    @AfterAll
+    static void tearDown() {
         SingletonCollection.reset_system();
     }
 
