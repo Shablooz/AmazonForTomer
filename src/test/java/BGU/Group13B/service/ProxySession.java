@@ -182,153 +182,177 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void openComplaint(int userId, String header, String complaint) {
+    public Response<VoidResponse> openComplaint(int userId, String header, String complaint) {
         if (realSession != null)
-            realSession.openComplaint(userId, header, complaint);
+            return realSession.openComplaint(userId, header, complaint);
+        return Response.success(new VoidResponse());
     }
 
     @Override
-    public Message getComplaint(int userId) {
+    public Response<Message> getComplaint(int userId) {
         if (realSession != null)
             return realSession.getComplaint(userId);
-        return Message.constractMessage("", -1, "", "", "");
+        return Response.success(Message.constractMessage("", -1, "", "", ""));
     }
 
     @Override
-    public void markMessageAsReadAdmin(int userId, String receiverId, String senderId, int messageId) {
+    public Response<VoidResponse> markMessageAsReadAdmin(int userId, String receiverId, String senderId, int messageId) {
         if (realSession != null)
-            realSession.markMessageAsReadAdmin(userId, receiverId, senderId, messageId);
+           return  realSession.markMessageAsReadAdmin(userId, receiverId, senderId, messageId);
+        return Response.success(new VoidResponse());
     }
 
     @Override
-    public void sendMassageAdmin(int userId, String receiverId, String header, String massage) {
+    public Response<VoidResponse> sendMassageAdmin(int userId, String receiverId, String header, String massage) {
         if (realSession != null)
-            realSession.sendMassageAdmin(userId, receiverId, header, massage);
+            return   realSession.sendMassageAdmin(userId, receiverId, header, massage);
+        return Response.success(new VoidResponse());
     }
 
     @Override
-    public void answerComplaint(int userId, String answer) {
+    public Response<VoidResponse> answerComplaint(int userId, String answer) {
         if (realSession != null)
-            realSession.answerComplaint(userId, answer);
+           return realSession.answerComplaint(userId, answer);
+        return Response.success(new VoidResponse());
     }
 
     @Override
-    public Message readMessage(int userId) {
+    public Response<Message> readMessage(int userId) {
         if (realSession != null)
             return realSession.readMessage(userId);
-        return Message.constractMessage("", -1, "", "", "");
+        return Response.success(Message.constractMessage("", -1, "", "", ""));
     }
     @Override
-    public void replayMessage(int userId, String massage) {
+    public Response<VoidResponse> clearMessageToReply(int userId) {
         if (realSession != null)
-            realSession.replayMessage(userId,massage);
+            return realSession.clearMessageToReply(userId);
+        return Response.success(new VoidResponse());
     }
+
     @Override
-    public Message readOldMessage(int userId) {
+    public Response<VoidResponse> replayMessage(int userId, String massage) {
+        if (realSession != null)
+            return  realSession.replayMessage(userId,massage);
+        return Response.success(new VoidResponse());
+    }
+
+    @Override
+    public Response<Message> readOldMessage(int userId) {
         if (realSession != null)
             return realSession.readOldMessage(userId);
-        return Message.constractMessage("", -1, "", "", "");
+        return Response.success(Message.constractMessage("", -1, "", "", ""));
     }
     @Override
-    public void refreshOldMessages(int userId)
+    public Response<VoidResponse> refreshOldMessages(int userId)
     {
         if (realSession != null)
-            realSession.refreshOldMessages(userId);
+           return  realSession.refreshOldMessages(userId);
+        return  Response.success(new VoidResponse());
     }
 
     @Override
-    public void sendMassageStore(int userId, String header, String massage, int storeId) {
+    public Response<VoidResponse> sendMassageStore(int userId, String header, String massage, int storeId) {
         if (realSession != null)
-            realSession.sendMassageStore(userId, header, massage, storeId);
+            return realSession.sendMassageStore(userId, header, massage, storeId);
+        return Response.success(new VoidResponse());
     }
 
     @Override
-    public Message readUnreadMassageStore(int userId, int storeId) {
+    public Response<Message> readUnreadMassageStore(int userId, int storeId) {
         if (realSession != null)
             return realSession.readUnreadMassageStore(userId, storeId);
-        return Message.constractMessage("", -1, "", "", "");
+        return Response.success(Message.constractMessage("", -1, "", "", ""));
     }
 
     @Override
-    public Message readReadMassageStore(int userId, int storeId) {
+    public Response<Message> readReadMassageStore(int userId, int storeId) {
         if (realSession != null)
             return realSession.readReadMassageStore(userId, storeId);
-        return Message.constractMessage("", -1, "", "", "");
+        return Response.success(Message.constractMessage("", -1, "", "", ""));
     }
 
     @Override
-    public void answerQuestionStore(int userId, String answer) {
+    public Response<VoidResponse> answerQuestionStore(int userId, String answer) {
         if (realSession != null)
-            realSession.answerQuestionStore(userId, answer);
+            return realSession.answerQuestionStore(userId, answer);
+        return Response.success(new VoidResponse());
     }
 
     @Override
-    public void refreshOldMessageStore(int userId, int storeId) {
+    public Response<VoidResponse> refreshOldMessageStore(int userId, int storeId) {
         if (realSession != null)
-            realSession.refreshOldMessageStore(userId, storeId);
+            return realSession.refreshOldMessageStore(userId, storeId);
+        return Response.success(new VoidResponse());
     }
 
     @Override
-    public void addReview(int userId, String review, int storeId, int productId) {
+    public Response<VoidResponse> addReview(int userId, String review, int storeId, int productId) {
         if (realSession != null)
-            realSession.addReview(userId, review, storeId, productId);
+             return realSession.addReview(userId, review, storeId, productId);
+        return Response.success(new VoidResponse());
     }
 
     @Override
-    public void removeReview(int userId, int storeId, int productId) {
+    public Response<VoidResponse> removeReview(int userId, int storeId, int productId) {
         if (realSession != null)
-            realSession.removeReview(userId, storeId, productId);
+            return realSession.removeReview(userId, storeId, productId);
+        return Response.success(new VoidResponse());
     }
 
     @Override
-    public Review getReview(int userId, int storeId, int productId) {
+    public Response<Review> getReview(int userId, int storeId, int productId) {
         if (realSession != null)
             return realSession.getReview(userId, storeId, productId);
-        return new Review("", -1, -1, -1);
+        return Response.success( new Review("", -1, -1, -1));
     }
 
     @Override
-    public float getProductScore(int userId, int storeId, int productId) {
+    public Response<Float> getProductScore(int userId, int storeId, int productId) {
         if (realSession != null)
             return realSession.getProductScore(userId, storeId, productId);
-        return -1;
+        return Response.success((float) -1);
     }
 
     @Override
-    public void addAndSetProductScore(int userId, int storeId, int productId, int score) {
+    public Response<VoidResponse> addAndSetProductScore(int userId, int storeId, int productId, int score) {
         if (realSession != null)
-            realSession.addAndSetProductScore(userId, storeId, productId, score);
+            return realSession.addAndSetProductScore(userId, storeId, productId, score);
+        return Response.success(new VoidResponse());
     }
 
     @Override
-    public void removeProductScore(int userId, int storeId, int productId) {
+    public Response<VoidResponse> removeProductScore(int userId, int storeId, int productId) {
         if (realSession != null)
-            realSession.removeProductScore(userId, storeId, productId);
+            return realSession.removeProductScore(userId, storeId, productId);
+        return Response.success(new VoidResponse());
     }
 
     @Override
-    public void addStoreScore(int userId, int storeId, int score) {
+    public Response<VoidResponse> addStoreScore(int userId, int storeId, int score) {
         if (realSession != null)
-            realSession.addStoreScore(userId, storeId, score);
+            return realSession.addStoreScore(userId, storeId, score);
+        return Response.success(new VoidResponse());
     }
 
     @Override
-    public void removeStoreScore(int userId, int storeId) {
+    public Response<VoidResponse> removeStoreScore(int userId, int storeId) {
         if (realSession != null)
-            realSession.removeStoreScore(userId, storeId);
+            return realSession.removeStoreScore(userId, storeId);
+        return Response.success(new VoidResponse());
     }
 
     @Override
-    public void modifyStoreScore(int userId, int storeId, int score) {
+    public Response<VoidResponse> modifyStoreScore(int userId, int storeId, int score) {
         if (realSession != null)
-            realSession.modifyStoreScore(userId, storeId, score);
+            return realSession.modifyStoreScore(userId, storeId, score);
+        return Response.success(new VoidResponse());
     }
 
     @Override
-    public float getStoreScore(int userId, int storeId) {
+    public Response<Float> getStoreScore(int userId, int storeId) {
         if (realSession != null)
             return realSession.getStoreScore(userId, storeId);
-        return -1;
+        return Response.success( (float)-1);
     }
 
     @Override
@@ -553,6 +577,8 @@ public class ProxySession implements ISession {
         return new ArrayList<>();
     }
 
+
+
     @Override
     public void hideStore(int userId, int storeId) {
         if(realSession != null)
@@ -708,5 +734,9 @@ public class ProxySession implements ISession {
     public void removeProductDiscount(int userId, int storeId, int productId, int discountId) {
         if (realSession != null)
             realSession.removeProductDiscount(userId, storeId, productId, discountId);
+    }
+    @Override
+    public void pushTest() {
+        realSession.pushTest();
     }
 }

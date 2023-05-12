@@ -21,4 +21,7 @@ public interface IUserRepository {
 
     //returns an id for a new user - this id is unique
     int getNewUserId();
+
+    //TODO in the future this will be replaced with taking a user by username in the database - tomer use this method
+    User getUserByUsername(String username);
 }
