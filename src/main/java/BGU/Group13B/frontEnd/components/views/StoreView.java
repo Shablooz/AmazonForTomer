@@ -10,6 +10,8 @@ import BGU.Group13B.service.info.StoreInfo;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.accordion.Accordion;
+import com.vaadin.flow.component.avatar.AvatarGroup;
+import com.vaadin.flow.component.avatar.AvatarGroup.AvatarGroupItem;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
@@ -36,6 +38,8 @@ import org.vaadin.lineawesome.LineAwesomeIcon;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 
 @PageTitle("Store")
@@ -63,13 +67,14 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
     private final HashMap<String, Grid<ProductInfo>> categoriesToGrids = new HashMap<>();
     private final Button addProductButton = new Button(new Icon(VaadinIcon.PLUS));
     private final VerticalLayout workersLayout = new VerticalLayout();
+    private final HorizontalLayout workersHeaderLayout = new HorizontalLayout();
     private final VerticalLayout productsLayout = new VerticalLayout();
     private final HorizontalLayout productsHeaderLayout = new HorizontalLayout();
     private final Accordion rolesAccordion = new Accordion();
-    private final HashMap<String, Grid<WorkerCard>> rolesToGrids = new HashMap<>();
-    private final Button addWorkerButton = new Button("Add Worker");
+    private final HashMap<String, AvatarGroup> rolesToAvatarGroup = new HashMap<>();
+    private final Button addWorkerButton = new Button(new Icon(VaadinIcon.PLUS));
     private final Button hideStoreButton = new Button("Hide Store");
-    private final Button editStoreButton = new Button("Delete Store");
+    private final Button deleteStoreButton = new Button("Delete Store");
     private final HorizontalLayout bottomButtonsLayout = new HorizontalLayout();
 
 
@@ -80,9 +85,11 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
         demoData();
         init_header();
         init_body();
+        init_bottomButtons();
 
 
     }
+
 
     private void init_header(){
         // Define score bar
@@ -134,7 +141,25 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
         init_products_section();
         init_workers_section();
         bodyLayout.add(productsLayout, workersLayout);
+        bodyLayout.setSizeFull();
         add(bodyLayout);
+    }
+
+    private void init_bottomButtons() {
+        hideStoreButton.addClickListener(e -> {
+            Notification notification = new Notification("Store hidden", 3000);
+            notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+            notification.open();
+        });
+        deleteStoreButton.addClickListener(e -> {
+            Notification notification = new Notification("Store deleted", 3000);
+            notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+            notification.open();
+        });
+        bottomButtonsLayout.add(hideStoreButton, deleteStoreButton);
+        bottomButtonsLayout.setAlignItems(Alignment.CENTER);
+        bottomButtonsLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+        add(bottomButtonsLayout);
     }
 
     private void init_products_section(){
@@ -167,6 +192,37 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
     }
 
     private void init_workers_section(){
+        for(UserPermissions.StoreRole role : rolesToWorkers.keySet()){
+            AvatarGroup avatarGroup = new AvatarGroup();
+            avatarGroup.setItems(rolesToWorkers.get(role).stream().map(w -> new AvatarGroupItem(getUsername(w))).collect(Collectors.toList()));
+            rolesToAvatarGroup.put(roleToStringTitle(role), avatarGroup);
+
+            //styling
+            avatarGroup.setMaxItemsVisible(5);
+        }
+
+        //ensure founder is first
+        if(rolesToAvatarGroup.containsKey("Founder")){
+            rolesAccordion.add("Founder", rolesToAvatarGroup.get("Founder"));
+        }
+
+        for(String role : rolesToAvatarGroup.keySet()){
+            if(!role.equals("Founder")){
+                rolesAccordion.add(rolesToAvatarGroup.get(role).getItems().size() > 1 ? role + "s" : role,
+                        rolesToAvatarGroup.get(role));
+            }
+        }
+
+        addWorkerButton.addThemeVariants(ButtonVariant.LUMO_ICON);
+        addWorkerButton.addThemeVariants(ButtonVariant.LUMO_SMALL);
+        workersHeaderLayout.add(new H2("Workers"), addWorkerButton);
+        workersHeaderLayout.setAlignItems(Alignment.CENTER);
+        workersLayout.add(workersHeaderLayout, rolesAccordion);
+
+        //uncomment to align workers to the right
+        //workersLayout.getStyle().set("margin-left", "auto");
+        //workersLayout.setMaxWidth("200px");
+
 
     }
 
@@ -200,6 +256,22 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
 
     private double getRoundedScore(double score){
         return Math.round(score * 10.0) / 10.0;
+    }
+
+    private String getUsername(WorkerCard worker){
+        return userIdToUsername.get(worker.userId());
+    }
+
+    private String roleToStringTitle(UserPermissions.StoreRole role){
+        String roleString = role.toString();
+        String[] words = roleString.split("\\s+");
+        StringBuilder sb = new StringBuilder();
+        for (String word : words) {
+            sb.append(Character.toUpperCase(word.charAt(0)));
+            sb.append(word.substring(1).toLowerCase());
+            sb.append(" ");
+        }
+        return sb.toString().trim();
     }
 
     private void demoData(){
