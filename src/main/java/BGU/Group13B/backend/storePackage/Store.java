@@ -945,4 +945,10 @@ public class Store {
     public boolean isHidden() {
         return hidden;
     }
+
+
+
+    public int getStoreFounder() {
+        return storePermission.getStoreFounder(storeId);
+    }
 }

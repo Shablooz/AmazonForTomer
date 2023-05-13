@@ -57,10 +57,10 @@ public class ProxySession implements ISession {
 
 
     @Override
-    public double startPurchaseBasketTransaction(int userId, HashMap<Integer, String> productsCoupons, String storeCoupon) throws PurchaseFailedException {
+    public Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, HashMap<Integer, String> productsCoupons, String storeCoupon) throws PurchaseFailedException {
         if (realSession != null)
             return realSession.startPurchaseBasketTransaction(userId, productsCoupons, storeCoupon);
-        return -1;
+        return null;
     }
 
 
@@ -560,10 +560,17 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public Response<String> getUserPurchaseHistory(int userId) throws Exception {
+    public Response<String> getUserPurchaseHistory(int userId) {
         if (realSession != null)
             return realSession.getUserPurchaseHistory(userId);
         return null;
+    }
+
+    @Override
+    public int getStoreFounder(int storeId) {
+        if (realSession != null)
+            return realSession.getStoreFounder(storeId);
+        return -1;
     }
 
     @Override

@@ -58,12 +58,40 @@ public class ServiceBasketProduct extends AbstractEntity {
     public String getCategory() {
         return category;
     }
+
+
     public void setQuantity(String quantity) {
         this.quantity = Integer.parseInt(quantity);
     }
+
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
 
+    @Override
+    public String toString() {
+        return String.format(
+                """      
+                    <table>
+                        <tr>
+                            <td><b>Product name:</b></td>
+                            <td>%s</td>
+                        </tr>
+                        <tr>
+                            <td><b>Quantity:</b></td>
+                            <td>%d</td>
+                        </tr>
+                        <tr>
+                            <td><b>Price:</b></td>
+                            <td>%.2f</td>
+                        </tr>
+                        <tr>
+                            <td><b>Subtotal:</b></td>
+                            <td>%.2f</td>
+                        </tr>
+                    </table>
+                              
+                """, name, quantity, price, subtotal);
+    }
 
 }

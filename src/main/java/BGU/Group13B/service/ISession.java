@@ -4,7 +4,6 @@ import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.User.PurchaseFailedException;
-import BGU.Group13B.backend.User.UserPermissions;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
@@ -71,8 +70,6 @@ public interface ISession {
                                                       String address, String city, String country,
                                                       String zip);
 
-    double startPurchaseBasketTransaction(int userId, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                          String/*store coupons*/ storeCoupon) throws PurchaseFailedException;
 
     /**
      * #50
@@ -1027,4 +1024,9 @@ public interface ISession {
     Response<String> getUserPurchaseHistory(int userId) throws Exception;
 
     Response<VoidResponse> fetchMessages(int userId);
+
+    int getStoreFounder(int storeId);
+    Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                                                                            String/*store coupons*/ storeCoupon) throws PurchaseFailedException;
+
 }

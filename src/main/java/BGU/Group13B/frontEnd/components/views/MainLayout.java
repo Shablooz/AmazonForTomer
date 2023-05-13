@@ -8,6 +8,7 @@ import BGU.Group13B.service.BroadCaster;
 import BGU.Group13B.service.Response;
 import BGU.Group13B.service.Session;
 import BGU.Group13B.service.VoidResponse;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
@@ -94,8 +95,12 @@ public class MainLayout extends AppLayout{
         notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
 
         Icon icon = VaadinIcon.CHECK_CIRCLE.create();
-        Div info = new Div(new Text(message));
-
+        Div info;
+        try {
+            info = new Div(new Html(message));
+        }catch (IllegalArgumentException ignore){
+            info = new Div(new Text(message));
+        }
 
 
 
