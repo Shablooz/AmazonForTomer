@@ -92,13 +92,15 @@ public class Session implements ISession {
                                       String creditCardHolderFirstName,
                                       String creditCardCcv, String id,
                                       HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                      String/*store coupons*/ storeCoupon) throws NoPermissionException, PurchaseFailedException {
-
-            return userRepository.getUser(userId).
-                    purchaseCart(creditCardNumber, creditCardMonth,
-                            creditCardYear, creditCardHolderFirstName,
-                            creditCardCcv, id, productsCoupons, storeCoupon);
-
+                                      String/*store coupons*/ storeCoupon){
+            try {
+                return userRepository.getUser(userId).
+                        purchaseCart(creditCardNumber, creditCardMonth,
+                                creditCardYear, creditCardHolderFirstName,
+                                creditCardCcv, id, productsCoupons, storeCoupon);
+            }catch (PurchaseFailedException | NoPermissionException e) {
+                throw new RuntimeException(e);
+            }
     }
 
     @Override
@@ -1057,9 +1059,9 @@ public class Session implements ISession {
     }
 
     @Override
-    public int getStoreOwner(int storeId) {
+    public int getStoreFounder(int storeId) {
         try {
-            return market.getStoreOwner(storeId);
+            return market.getStoreFounder(storeId);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

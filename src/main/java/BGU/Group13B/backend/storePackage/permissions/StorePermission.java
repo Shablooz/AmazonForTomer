@@ -65,29 +65,28 @@ public class StorePermission {
         validateStoreVisibility(userId, isStoreHidden);
 
         //check for the user's permissions
-        if(userStoreFunctionPermissions.containsKey(userId)){
+        if (userStoreFunctionPermissions.containsKey(userId)) {
             return userStoreFunctionPermissions.get(userId).contains(storeFunctionName);
-        }
-        else if(userToStoreRole.containsKey(userId)){
+        } else if (userToStoreRole.containsKey(userId)) {
             return defaultStoreRoleFunctionalities.get(userToStoreRole.get(userId)).contains(storeFunctionName);
         }
         return false;
     }
 
-    public void validateStoreVisibility(int userId, boolean isStoreHidden) throws NoPermissionException{
-        if(isStoreHidden && !this.hasAccessWhileHidden(userId))
+    public void validateStoreVisibility(int userId, boolean isStoreHidden) throws NoPermissionException {
+        if (isStoreHidden && !this.hasAccessWhileHidden(userId))
             throw new NoPermissionException("This store does not exist");
     }
 
-    public boolean hasAccessWhileHidden(int userId){
+    public boolean hasAccessWhileHidden(int userId) {
         return userToStoreRole.containsKey(userId) &&
                 (userToStoreRole.get(userId) == StoreRole.FOUNDER || userToStoreRole.get(userId) == StoreRole.OWNER);
     }
 
-    public Set<Integer/*userId*/> getAllUsersWithPermission(String storeFunctionName){
+    public Set<Integer/*userId*/> getAllUsersWithPermission(String storeFunctionName) {
         Set<Integer> usersWithPermission = new HashSet<>();
         for (var entry : userStoreFunctionPermissions.entrySet()) {
-            if(entry.getValue().contains(storeFunctionName)){
+            if (entry.getValue().contains(storeFunctionName)) {
                 usersWithPermission.add(entry.getKey());
             }
         }
@@ -97,10 +96,9 @@ public class StorePermission {
     public void addOwnerPermission(int newOwnerId, int appointerId) throws ChangePermissionException {
         //check if not already in that role
         StoreRole userRole = userToStoreRole.get(newOwnerId);
-        if(userRole == StoreRole.FOUNDER || userRole == StoreRole.OWNER){
+        if (userRole == StoreRole.FOUNDER || userRole == StoreRole.OWNER) {
             throw new ChangePermissionException("Cannot grant owner title to a user who is already an owner");
-        }
-        else {
+        } else {
             userToStoreRole.put(newOwnerId, StoreRole.OWNER);
             // Check if the appointerId is already present in the appointedOwnersMap
             Set<Integer> appointees = appointedOwnersMap.get(appointerId);
@@ -122,10 +120,9 @@ public class StorePermission {
 
         if (!(removeOwnerRole == StoreRole.OWNER || (removeManager && removeOwnerRole == StoreRole.MANAGER))) {
             throw new ChangePermissionException("Cannot remove owner title from a user who is not an owner");
-        }
-        else if(appointedOwnersMap.getOrDefault(removerId, Collections.emptySet()).contains(removeOwnerId)){
+        } else if (appointedOwnersMap.getOrDefault(removerId, Collections.emptySet()).contains(removeOwnerId)) {
             Set<Integer> underlingsToRemove = appointedOwnersMap.get(removeOwnerId);
-            if(underlingsToRemove != null){
+            if (underlingsToRemove != null) {
                 for (Integer underlingId : underlingsToRemove) {
                     removeUsersId.add(underlingId);
                     List<Integer> recursiveFiringList = removeOwnerPermission(underlingId, removeOwnerId, true);
@@ -135,8 +132,7 @@ public class StorePermission {
             appointedOwnersMap.get(removerId).remove(removeOwnerId);
             userToStoreRole.remove(removeOwnerId);
             removeUsersId.add(removeOwnerId);
-        }
-        else {
+        } else {
             throw new ChangePermissionException("Cannot remove owner title from an owner you didn't appoint");
         }
         return removeUsersId;
@@ -145,10 +141,9 @@ public class StorePermission {
     public void addManagerPermission(int newManagerId, int appointerId) throws ChangePermissionException {
         //check if not already in that role
         StoreRole userRole = userToStoreRole.get(newManagerId);
-        if(userRole == StoreRole.FOUNDER || userRole == StoreRole.OWNER || userRole == StoreRole.MANAGER){
+        if (userRole == StoreRole.FOUNDER || userRole == StoreRole.OWNER || userRole == StoreRole.MANAGER) {
             throw new ChangePermissionException("Cannot grant manager title to a user who is aleady a manager");
-        }
-        else {
+        } else {
             userToStoreRole.put(newManagerId, StoreRole.MANAGER);
             // Check if the appointerId is already present in the appointedOwnersMap
             Set<Integer> appointees = appointedOwnersMap.get(appointerId);
@@ -169,39 +164,40 @@ public class StorePermission {
 
         if (removeManagerRole != StoreRole.MANAGER) {
             throw new ChangePermissionException("Cannot remove manager title from a user who is not a manager");
-        }
-        else if(appointedOwnersMap.getOrDefault(removerId, Collections.emptySet()).contains(removeManagerId)){
+        } else if (appointedOwnersMap.getOrDefault(removerId, Collections.emptySet()).contains(removeManagerId)) {
             appointedOwnersMap.get(removerId).remove(removeManagerId);
             userToStoreRole.remove(removeManagerId);
-        }
-        else {
+        } else {
             throw new ChangePermissionException("Cannot remove manager title from an owner you didn't appoint");
         }
     }
 
-    public List<WorkerCard> getWorkersInfo(){
+    public List<WorkerCard> getWorkersInfo() {
         List<WorkerCard> workerCards = new ArrayList<>();
         for (Map.Entry<Integer, StoreRole> entry : userToStoreRole.entrySet()) {
             List<String> userPermissions = new ArrayList<>();
             //TODO: add user permissions
             Integer userId = entry.getKey();
             StoreRole role = entry.getValue();
-            WorkerCard workerCard = new WorkerCard(userId, role,userPermissions);
+            WorkerCard workerCard = new WorkerCard(userId, role, userPermissions);
             workerCards.add(workerCard);
         }
         return workerCards;
     }
 
-    public StoreRole getUserPermission(int userId){
+    public StoreRole getUserPermission(int userId) {
         return userToStoreRole.get(userId);
     }
 
-    public void clearForTest(){
+    public void clearForTest() {
         userToStoreRole.clear();
         appointedOwnersMap.clear();
     }
-    public int getStoreOwner(int storeId){
-        throw new UnsupportedOperationException();
-        //return storeToOwner.get(storeId);/*fixme*/
+
+    public int getStoreFounder(int storeId) {
+       /*throw new UnsupportedOperationException();*/
+        return 1;//for testing
     }
+
+
 }

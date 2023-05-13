@@ -319,4 +319,8 @@ public class Market {
     public void unhideStore(int userId, int storeId) throws NoPermissionException {
         storeRepository.getStore(storeId).unhideStore(userId);
     }
+
+    public int getStoreFounder(int storeId) {
+        return storeRepository.getStore(storeId).getStoreFounder();
+    }
 }

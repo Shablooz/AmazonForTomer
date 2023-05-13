@@ -84,15 +84,18 @@ public class Basket {
         finalPrice = calculateStoreDiscount(totalAmount, storeCoupon);
         return finalPrice;
     }
-    public Pair<Double,List<BasketProduct>> startPurchaseBasketTransactionWithSuccessful(HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                                                                         String/*store coupons*/ storeCoupon) throws PurchaseFailedException {
+
+    public Pair<Double, List<BasketProduct>> startPurchaseBasketTransactionWithSuccessful(HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                                                                                          String/*store coupons*/ storeCoupon) throws PurchaseFailedException {
+        successfulProducts.clear();
+        failedProducts.clear();
         scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduledFuture = scheduler.schedule(this::restoreProductsStock, idealTime, unitsToRestore);
         getSuccessfulProducts();
         double totalAmount = getTotalAmount(productsCoupons);
         //calculate the total price of the products by the store discount policy
-        return Pair.of(calculateStoreDiscount(totalAmount, storeCoupon),
-                new LinkedList<>(successfulProducts));
+        finalPrice = calculateStoreDiscount(totalAmount, storeCoupon);
+        return Pair.of(finalPrice, new LinkedList<>(successfulProducts));
     }
 
     public void purchaseBasket(String creditCardNumber,

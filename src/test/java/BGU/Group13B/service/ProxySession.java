@@ -572,6 +572,13 @@ public class ProxySession implements ISession {
     }
 
     @Override
+    public int getStoreFounder(int storeId) {
+        if (realSession != null)
+            return realSession.getStoreFounder(storeId);
+        return -1;
+    }
+
+    @Override
     public List<Pair<StoreInfo, String>> getAllUserAssociatedStores(int userId) {
         if(realSession != null)
             return realSession.getAllUserAssociatedStores(userId);

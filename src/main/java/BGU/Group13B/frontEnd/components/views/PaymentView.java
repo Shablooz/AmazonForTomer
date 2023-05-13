@@ -522,19 +522,19 @@ public class PaymentView extends Div implements BeforeLeaveObserver {
         if (!paymentSuccessful) {
             session.cancelPurchase(SessionToIdMapper.getInstance().getCurrentSessionId());
             Notification.show("Payment cancelled");
-        }
-        sendPurchaseMessageToStoreOwners();
+        }else
+            sendPurchaseMessageToStoreOwners();
     }
 
     private void sendPurchaseMessageToStoreOwners() {
         int me = SessionToIdMapper.getInstance().getCurrentSessionId();
-        Set<Integer> storeOwners =
+        Set<Integer> storesFounder =
                 successfulItems.stream().
                         map(ServiceBasketProduct::getStoreId).
-                        map(session::getStoreOwner).collect(Collectors.toSet());
+                        map(session::getStoreFounder).collect(Collectors.toSet());
 
-        for (int storeOwner : storeOwners) {
-            BroadCaster.broadcast(storeOwner,
+        for (int storeFounder : storesFounder) {
+            BroadCaster.broadcast(1/*fixme change to store Founder*/,
 
                     String.format("""
                                     Customer %s %s with id %d has made a purchase

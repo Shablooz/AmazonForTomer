@@ -6,8 +6,6 @@ import BGU.Group13B.backend.User.Message;
 
 import BGU.Group13B.backend.User.PurchaseFailedException;
 
-import BGU.Group13B.backend.User.UserPermissions;
-
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
@@ -1032,7 +1030,7 @@ public interface ISession {
      */
     Response<String> getUserPurchaseHistory(int userId);
 
-    int getStoreOwner(int storeId);
+    int getStoreFounder(int storeId);
     Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
                                                                             String/*store coupons*/ storeCoupon) throws PurchaseFailedException;
 
