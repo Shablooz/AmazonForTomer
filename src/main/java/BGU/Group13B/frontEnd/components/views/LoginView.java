@@ -6,11 +6,18 @@ import BGU.Group13B.service.Session;
 import BGU.Group13B.service.SingletonCollection;
 import com.vaadin.flow.component.Tag;
 
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
@@ -19,6 +26,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY_INLINE;
 
 
 @Tag("login-view")
@@ -41,6 +49,7 @@ public class LoginView extends VerticalLayout {
     private final TextField answer2;
 
     private final VerticalLayout authenticationLayout = new VerticalLayout();
+
 
 
     @Autowired
@@ -78,17 +87,28 @@ public class LoginView extends VerticalLayout {
                 try {
                     int newId = session.login(guestId, username.getValue(), password.getValue(),
                             "", "", "");
+
+
                     Notification.show("Login successful");
                     SessionToIdMapper.getInstance().updateCurrentSession(newId);
-
-
                     UI.getCurrent().navigate(HomeView.class);
+
+                    var ui=UI.getCurrent();
+                    //Tomer section
+                    BroadCaster.register(newId,newMessage -> {
+                        ui.access(()->createSubmitSuccess(newMessage).open());
+                    });
+
+
+                    session.fetchMessages(newId);
+
                 }catch (Exception ex){
                     Notification.show("Login failed");
                 }
             }
         });
     }
+
 
 
     private void setregisterButton(){
@@ -123,12 +143,47 @@ public class LoginView extends VerticalLayout {
                 Notification.show("Login successful");
                 SessionToIdMapper.getInstance().updateCurrentSession(newId);
                 UI.getCurrent().navigate(HomeView.class);
+
+                var ui=UI.getCurrent();
+                //Tomer section
+                BroadCaster.register(newId,newMessage -> {
+                    ui.access(()->createSubmitSuccess(newMessage).open());
+                });
+
+
+                session.fetchMessages(newId);
+
             }catch (Exception ex){
                 Notification.show("Login failed");
             }
 
 
         });
+    }
+    private Notification createSubmitSuccess(String message) {
+        Notification notification = new Notification();
+        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+
+        Icon icon = VaadinIcon.CHECK_CIRCLE.create();
+        Div info = new Div(new Text(message));
+
+
+
+
+        HorizontalLayout layout = new HorizontalLayout(icon, info,
+                createCloseBtn(notification));
+        layout.setAlignItems(FlexComponent.Alignment.CENTER);
+
+        notification.add(layout);
+
+        return notification;
+    }
+    private Button createCloseBtn(Notification notification) {
+        Button closeBtn = new Button(VaadinIcon.CLOSE_SMALL.create(),
+                clickEvent -> notification.close());
+        closeBtn.addThemeVariants(LUMO_TERTIARY_INLINE);
+
+        return closeBtn;
     }
 
 

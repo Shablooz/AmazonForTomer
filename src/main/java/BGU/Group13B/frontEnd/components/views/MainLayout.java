@@ -8,6 +8,7 @@ import BGU.Group13B.service.BroadCaster;
 import BGU.Group13B.service.Response;
 import BGU.Group13B.service.Session;
 import BGU.Group13B.service.VoidResponse;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
@@ -22,6 +23,8 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.*;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.lumo.LumoUtility;
@@ -33,7 +36,7 @@ import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY_INLIN
 /**
  * The main view is a top-level placeholder for other views.
  */
-public class MainLayout extends AppLayout {
+public class MainLayout extends AppLayout{
 
     private H2 viewTitle;
     private final Session session;
@@ -49,6 +52,9 @@ public class MainLayout extends AppLayout {
     private Button signUpButton = null;
     private int STOREID = 0; //TODO:need to delete
 
+
+
+
     public interface VoidAction {
         void act();
     }
@@ -57,6 +63,7 @@ public class MainLayout extends AppLayout {
         if (USERID == 0)
             USERID = SessionToIdMapper.getInstance().getCurrentSessionId();
     }
+
 
     @Autowired
     public MainLayout(Session session) {
@@ -75,19 +82,25 @@ public class MainLayout extends AppLayout {
         addDrawerContent();
         addHeaderContent();
 
+
         var ui=UI.getCurrent();
         //Tomer section
         BroadCaster.register(USERID,newMessage -> {
             ui.access(()->createSubmitSuccess(newMessage).open());
         });
+        session.fetchMessages(USERID);
     }
     private Notification createSubmitSuccess(String message) {
         Notification notification = new Notification();
         notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
 
         Icon icon = VaadinIcon.CHECK_CIRCLE.create();
-        Div info = new Div(new Text(message));
-
+        Div info;
+        try {
+            info = new Div(new Html(message));
+        }catch (IllegalArgumentException ignore){
+            info = new Div(new Text(message));
+        }
 
 
 

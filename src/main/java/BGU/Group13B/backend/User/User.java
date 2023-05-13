@@ -4,6 +4,7 @@ import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.service.BroadCaster;
 import BGU.Group13B.service.PushNotification;
+import BGU.Group13B.service.entity.ServiceBasketProduct;
 import org.mindrot.jbcrypt.BCrypt;
 import BGU.Group13B.backend.Repositories.Interfaces.IMessageRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
@@ -144,6 +145,16 @@ public class User {
 
         this.isLoggedIn = true;
 
+
+    }
+    public void fetchMessages() throws NoPermissionException
+    {
+        if (!isRegistered())
+            throw new NoPermissionException("Only registered users can fetch messages");
+        if(getAndSetMessageNotification())
+        {
+            BroadCaster.broadcast(this.userId,"New Message");
+        }
     }
 
     public String getUserName() {
@@ -183,8 +194,9 @@ public class User {
         messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), header, massage, receiverId));
         User receiverNext=SingletonCollection.getUserRepository().getUserByUsername(receiverId);
         //if(!PushNotification.pushNotification("New Message",receiverNext.getUserId()))
-         if(!BroadCaster.broadcast(receiverNext.userId,"New Message"))
+         if(!receiverNext.isLoggedIn() || !BroadCaster.broadcast(receiverNext.userId,"New Message"))
             receiverNext.setMessageNotification(true);
+        System.out.println("ReceiverNext: "+receiverNext.userName+" LoggedIn: "+receiverNext.isLoggedIn());
         System.out.println("Status: "+receiverNext.getMessageNotification());
     }
 
@@ -198,7 +210,7 @@ public class User {
         messageRepository.markAsRead(regularMessageToReply.getReceiverId(), regularMessageToReply.getSenderId(), regularMessageToReply.getMessageId());
         messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), "RE: " + regularMessageToReply.getHeader(), answer, regularMessageToReply.getSenderId()));
         User receiverNext=SingletonCollection.getUserRepository().getUserByUsername(regularMessageToReply.getSenderId());
-        if(!PushNotification.pushNotification("New Message",receiverNext.getUserId()))
+        if(!receiverNext.isLoggedIn() || !BroadCaster.broadcast(receiverNext.userId,"New Message"))
             receiverNext.setMessageNotification(true);
         regularMessageToReply = null;
     }
@@ -223,7 +235,8 @@ public class User {
             throw new IllegalArgumentException("no message to answer");
         messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), "RE: " + regularMessageToReply.getHeader(), answer, regularMessageToReply.getSenderId()));
         User receiverNext=SingletonCollection.getUserRepository().getUserByUsername(regularMessageToReply.getSenderId());
-        if(!PushNotification.pushNotification("New Message",receiverNext.getUserId()))
+
+        if(!receiverNext.isLoggedIn() || !BroadCaster.broadcast(receiverNext.userId,"New Message"))
             receiverNext.setMessageNotification(true);
         regularMessageToReply = null;
     }
@@ -385,8 +398,8 @@ public class User {
                 country, zip);
     }
 
-    public double startPurchaseBasketTransaction(HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                                 String/*store coupons*/ storeCoupon) throws PurchaseFailedException, NoPermissionException {
+    public Pair<Double, List<BasketProduct>> startPurchaseBasketTransaction(HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                                                                                   String/*store coupons*/ storeCoupon) throws PurchaseFailedException, NoPermissionException {
         if (isRegistered() && !isLoggedIn)
             throw new NoPermissionException("Only logged in users can purchase cart");
         return cart.startPurchaseBasketTransaction(productsCoupons, storeCoupon);
@@ -502,6 +515,11 @@ public class User {
     }
 
     public synchronized boolean getMessageNotification() {
+        return messageNotification;
+    }
+    public synchronized boolean getAndSetMessageNotification() {
+        boolean messageNotification = this.messageNotification;
+        this.messageNotification= false;
         return messageNotification;
     }
 

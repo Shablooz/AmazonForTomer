@@ -5,9 +5,11 @@ import BGU.Group13B.frontEnd.components.views.viewEntity.Address;
 import BGU.Group13B.frontEnd.components.views.viewEntity.Card;
 import BGU.Group13B.frontEnd.components.views.viewEntity.Country;
 import BGU.Group13B.frontEnd.components.views.viewEntity.Person;
+import BGU.Group13B.service.BroadCaster;
 import BGU.Group13B.service.Response;
 import BGU.Group13B.service.Session;
 import BGU.Group13B.service.VoidResponse;
+import BGU.Group13B.service.entity.ServiceBasketProduct;
 import BGU.Group13B.service.entity.ServiceProduct;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.accordion.Accordion;
@@ -40,6 +42,7 @@ import java.time.format.TextStyle;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -78,6 +81,7 @@ public class PaymentView extends Div implements BeforeLeaveObserver {
     private Component combinedDateView;
     private final Session session;
     private boolean paymentSuccessful;
+    private List<ServiceBasketProduct> successfulItems;
 
     public PaymentView(Session session) {
         this.session = session;
@@ -127,7 +131,9 @@ public class PaymentView extends Div implements BeforeLeaveObserver {
     }
 
     private HorizontalLayout getPricesLayout(Session session, double totalPriceBeforeDiscount) {
-        totalPriceAfterDiscount = session.startPurchaseBasketTransaction(SessionToIdMapper.getInstance().getCurrentSessionId(), new HashMap<>(), "");
+        var priceAndSuccessful = session.startPurchaseBasketTransaction(SessionToIdMapper.getInstance().getCurrentSessionId(), new HashMap<>(), "");
+        totalPriceAfterDiscount = priceAndSuccessful.getFirst();
+        successfulItems = priceAndSuccessful.getSecond();
         Span spanBeforeDiscountTitle = new Span("Total price before discount: ");
         Span spanBeforeDiscount = new Span(String.valueOf(totalPriceBeforeDiscount));
         spanBeforeDiscount.getStyle().set("text-decoration", "line-through");
@@ -516,6 +522,42 @@ public class PaymentView extends Div implements BeforeLeaveObserver {
         if (!paymentSuccessful) {
             session.cancelPurchase(SessionToIdMapper.getInstance().getCurrentSessionId());
             Notification.show("Payment cancelled");
+        } else
+            sendPurchaseMessageToStoreOwners();
+    }
+
+    private void sendPurchaseMessageToStoreOwners() {
+        int me = SessionToIdMapper.getInstance().getCurrentSessionId();
+        Set<Integer> storesFounder =
+                successfulItems.stream().
+                        map(ServiceBasketProduct::getStoreId).
+                        map(session::getStoreFounder).collect(Collectors.toSet());
+
+        for (int storeFounder : storesFounder) {
+            BroadCaster.broadcast(1/*fixme change to store Founder*/,
+
+                    String.format("""
+                                    <div>
+                                    <br>Customer <b>%s %s</b> has made a purchase!<br>
+                                    <br>Total price paid: <b>%.2f</b><br>
+                                    Products bought:<br>
+                                    %s
+                                    </div>
+                                    """,
+                            personBinder.getBean().getFirstName(),
+                            personBinder.getBean().getLastName(),
+                            totalPriceAfterDiscount,
+                            boughtItems()));
+            BroadCaster.broadcast(1, "test no html in body");
+
         }
+    }
+
+    private String boughtItems() {
+        StringBuilder sb = new StringBuilder();
+        for (ServiceBasketProduct sbp : successfulItems) {
+            sb.append(sbp.toString());
+        }
+        return sb.toString();
     }
 }

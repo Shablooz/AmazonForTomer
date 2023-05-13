@@ -85,15 +85,15 @@ public class Session implements ISession {
                                       String creditCardHolderFirstName,
                                       String creditCardCcv, String id,
                                       HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                      String/*store coupons*/ storeCoupon) {
-        try {
-            return userRepository.getUser(userId).
-                    purchaseCart(creditCardNumber, creditCardMonth,
-                            creditCardYear, creditCardHolderFirstName,
-                            creditCardCcv, id, productsCoupons, storeCoupon);
-        } catch (PurchaseFailedException | NoPermissionException e) {
-            throw new RuntimeException(e);
-        }
+                                      String/*store coupons*/ storeCoupon){
+            try {
+                return userRepository.getUser(userId).
+                        purchaseCart(creditCardNumber, creditCardMonth,
+                                creditCardYear, creditCardHolderFirstName,
+                                creditCardCcv, id, productsCoupons, storeCoupon);
+            }catch (PurchaseFailedException | NoPermissionException e) {
+                throw new RuntimeException(e);
+            }
     }
 
     @Override
@@ -117,10 +117,12 @@ public class Session implements ISession {
     }
 
     @Override
-    public double startPurchaseBasketTransaction(int userId, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                                 String/*store coupons*/ storeCoupon) {
+    public Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                                                                                   String/*store coupons*/ storeCoupon) {
         try {
-            return userRepository.getUser(userId).startPurchaseBasketTransaction(productsCoupons, storeCoupon);
+            var priceSuccessfulItems =  userRepository.getUser(userId).startPurchaseBasketTransaction(productsCoupons, storeCoupon);
+            return new Pair<>(priceSuccessfulItems.getFirst(),
+                    priceSuccessfulItems.getSecond().stream().map(ServiceBasketProduct::new).collect(Collectors.toList()));
         } catch (PurchaseFailedException | NoPermissionException e) {
             throw new RuntimeException(e);
         }
@@ -1037,6 +1039,15 @@ public class Session implements ISession {
     }
 
     @Override
+    public int getStoreFounder(int storeId) {
+        try {
+            return market.getStoreFounder(storeId);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public Response<VoidResponse> deleteStore(int userId, int storeId) {
         try {
             market.deleteStore(userId, storeId);
@@ -1046,5 +1057,15 @@ public class Session implements ISession {
         }
     }
 
+
+    @Override
+    public Response<VoidResponse> fetchMessages(int userId) {
+        try {
+            userRepositoryAsHashmap.getUser(userId).fetchMessages();
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
 
 }

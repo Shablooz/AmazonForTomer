@@ -266,6 +266,8 @@ public class SingletonCollection {
     }
 
     public static Session getSession() {
+        if(session == null)
+            session = new Session(market == null ? new Market() : market);
         return session;
     }
 

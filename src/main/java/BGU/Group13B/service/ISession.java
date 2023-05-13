@@ -70,8 +70,6 @@ public interface ISession {
                                                       String address, String city, String country,
                                                       String zip);
 
-    double startPurchaseBasketTransaction(int userId, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                          String/*store coupons*/ storeCoupon) throws PurchaseFailedException;
 
     /**
      * #50
@@ -1026,4 +1024,11 @@ public interface ISession {
      * @throws Exception
      */
     Response<String> getUserPurchaseHistory(int userId) throws Exception;
+
+    Response<VoidResponse> fetchMessages(int userId);
+
+    int getStoreFounder(int storeId);
+    Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                                                                            String/*store coupons*/ storeCoupon) throws PurchaseFailedException;
+
 }
