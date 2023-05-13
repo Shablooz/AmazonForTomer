@@ -12,6 +12,7 @@ import BGU.Group13B.service.entity.ServiceBasketProduct;
 import BGU.Group13B.service.entity.ServiceProduct;
 import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
+import com.vaadin.flow.router.QueryParameters;
 
 import java.time.LocalDateTime;
 
@@ -120,9 +121,10 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void search(String searchWords) {
+    public Response<List<ProductInfo>> search(String searchWords) {
         if (realSession != null)
             realSession.search(searchWords);
+        return null;
     }
 
     @Override
@@ -173,12 +175,6 @@ public class ProxySession implements ISession {
     public void addProductToCart(int userId, int productId, int storeId) {
         if (realSession != null)
             realSession.addProductToCart(userId, productId, storeId);
-    }
-
-    @Override
-    public void getUserPurchaseHistory(int userId) {
-        if (realSession != null)
-            realSession.getUserPurchaseHistory(userId);
     }
 
     @Override
@@ -561,6 +557,13 @@ public class ProxySession implements ISession {
         if (realSession != null)
             return realSession.isUserLogged(userId);
         return false;
+    }
+
+    @Override
+    public Response<String> getUserPurchaseHistory(int userId) throws Exception {
+        if (realSession != null)
+            return realSession.getUserPurchaseHistory(userId);
+        return null;
     }
 
     @Override

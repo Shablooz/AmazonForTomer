@@ -509,4 +509,8 @@ public class User {
     public void cancelPurchase() {
         cart.cancelPurchase();
     }
+
+    public String getPurchaseHistory() {
+       return purchaseHistoryRepository.getAllPurchases(userId);
+    }
 }
