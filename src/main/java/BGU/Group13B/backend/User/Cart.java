@@ -1,5 +1,6 @@
 package BGU.Group13B.backend.User;
 
+import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.Repositories.Interfaces.IBasketRepository;
 import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
@@ -43,18 +44,19 @@ public class Cart {
     }
 
     /*returns price after discounts*/
-    public double startPurchaseBasketTransaction(HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                                 String/*store coupons*/ storeCoupon) throws PurchaseFailedException {
+    public Pair<Double, List<BasketProduct>> startPurchaseBasketTransaction(HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                                                                            String/*store coupons*/ storeCoupon) throws PurchaseFailedException {
         var userBaskets = basketRepository.getUserBaskets(userId);
-        List<BasketProduct> basketProducts = new LinkedList<>();
+        List<BasketProduct> successfulProducts = new LinkedList<>();
         if (userBaskets.isEmpty()) {
             throw new NoSuchElementException("No baskets in cart");
         }
         double totalPrice = 0;
         for (var basket : userBaskets) {
-            totalPrice += basket.startPurchaseBasketTransaction(productsCoupons, storeCoupon);
+            totalPrice += basket.startPurchaseBasketTransactionWithSuccessful(productsCoupons, storeCoupon).getFirst();
+            successfulProducts.addAll(basket.startPurchaseBasketTransactionWithSuccessful(productsCoupons, storeCoupon).getSecond());
         }
-        return totalPrice;
+        return Pair.of(totalPrice, successfulProducts);
     }
 
     public void purchaseCart(String creditCardNumber,
