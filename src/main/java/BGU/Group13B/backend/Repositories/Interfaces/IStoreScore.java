@@ -10,4 +10,6 @@ public interface IStoreScore {
     float getStoreScore(int storeId);
 
     int getNumberOfScores(int storeId);
+
+    void clearStoreScore(int storeId);
 }

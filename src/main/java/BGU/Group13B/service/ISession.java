@@ -1008,6 +1008,15 @@ public interface ISession {
      */
     Response<VoidResponse> unhideStore(int userId, int storeId);
 
+    /**
+     * #45
+     * require 6.1
+     *
+     * @param userId    the user id (only an admin can do this action)
+     * @param storeId   the store id that will be deleted
+     */
+    Response<VoidResponse> deleteStore(int userId, int storeId);
+
     void pushTest();
 
     /**
@@ -1016,4 +1025,6 @@ public interface ISession {
      * @throws Exception
      */
     Response<String> getUserPurchaseHistory(int userId) throws Exception;
+
+    Response<VoidResponse> fetchMessages(int userId);
 }

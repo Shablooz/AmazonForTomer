@@ -590,6 +590,13 @@ public class ProxySession implements ISession {
     }
 
     @Override
+    public Response<VoidResponse> deleteStore(int userId, int storeId) {
+        if(realSession != null)
+            return realSession.deleteStore(userId, storeId);
+        return null;
+    }
+
+    @Override
     public Response<VoidResponse> allowPurchasePolicyConflicts(int userId, int storeId) {
         if (realSession != null)
             return realSession.allowPurchasePolicyConflicts(userId, storeId);
@@ -746,4 +753,10 @@ public class ProxySession implements ISession {
     public void pushTest() {
         realSession.pushTest();
     }
+
+    @Override
+    public Response<VoidResponse> fetchMessages(int userId) {
+        return realSession.fetchMessages(userId);
+    }
+
 }

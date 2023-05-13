@@ -26,4 +26,9 @@ public class StorePermissionsRepositoryAsHashmap implements IStorePermissionsRep
     public void reset() {
         integerStorePermissionConcurrentHashMap.clear();
     }
+
+    @Override
+    public void deleteStorePermissions(int storeId) {
+        integerStorePermissionConcurrentHashMap.remove(storeId);
+    }
 }
