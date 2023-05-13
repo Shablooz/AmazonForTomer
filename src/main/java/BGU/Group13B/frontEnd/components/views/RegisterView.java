@@ -46,6 +46,7 @@ public class RegisterView extends VerticalLayout {
             try {
                 session.register(SessionToIdMapper.getInstance().getCurrentSessionId()/*temp*/, username.getValue(), password.getValue(), email.getValue(),
                         answer1.getValue(), answer2.getValue(), answer3.getValue());
+                Notification.show("Registered successfully");
                 UI.getCurrent().navigate(LoginView.class);
             }catch (Exception exp){
                 Notification.show(exp.getMessage());

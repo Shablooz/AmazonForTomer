@@ -735,4 +735,10 @@ public class ProxySession implements ISession {
     public void pushTest() {
         realSession.pushTest();
     }
+
+    @Override
+    public Response<VoidResponse> fetchMessages(int userId) {
+        return realSession.fetchMessages(userId);
+    }
+
 }
