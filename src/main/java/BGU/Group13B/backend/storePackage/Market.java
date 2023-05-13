@@ -141,15 +141,15 @@ public class Market {
         return storeRepository.addStore(founderId, storeName, category);
     }
 
-    public List<Product> searchProductByName(String productName) {
+    public List<ProductInfo> searchProductByName(String productName) {
         return searcher.searchByName(productName);
     }
 
-    public List<Product> searchProductByCategory(String category) {
+    public List<ProductInfo> searchProductByCategory(String category) {
         return searcher.searchByCategory(category);
     }
 
-    public List<Product> searchProductByKeywords(String keywords) {
+    public List<ProductInfo> searchProductByKeywords(String keywords) {
         return searcher.searchByKeywords(keywords);
     }
 

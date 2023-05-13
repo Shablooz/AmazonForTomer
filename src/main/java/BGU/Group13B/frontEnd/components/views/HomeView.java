@@ -28,6 +28,7 @@ public class HomeView extends VerticalLayout implements BeforeEnterObserver {
         //center the text
         setAlignItems(Alignment.CENTER);
         String sourceLink = "https://i.dailymail.co.uk/i/pix/2012/11/01/article-2226519-15CC7B9F000005DC-738_634x471.jpg";
+
         /*CSS code*/
         getStyle().set("background-image", "url(" + sourceLink + ")");
         getStyle().set("background-size", "cover");

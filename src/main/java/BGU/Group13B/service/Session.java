@@ -5,6 +5,7 @@ import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.User.*;
 import BGU.Group13B.backend.storePackage.Market;
+import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
@@ -12,6 +13,7 @@ import BGU.Group13B.service.entity.ServiceBasketProduct;
 import BGU.Group13B.service.entity.ServiceProduct;
 import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
+import com.vaadin.flow.router.QueryParameters;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,6 +24,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import static BGU.Group13B.service.Response.Status.FAILURE;
+import static BGU.Group13B.service.Response.Status.SUCCESS;
 
 /**
  * IMPORTANT need to initialize the session AFTER loading first user (id = 1) from database
@@ -47,7 +52,6 @@ public class Session implements ISession {
     //IMPORTANT need to initialize the session AFTER loading first user (id = 1) from database
 
     public Session() {
-
         this(new Market());
     }
 
@@ -197,13 +201,18 @@ public class Session implements ISession {
         }
     }
 
-
-
     @Override
-    public void search(String searchWords) {
-        market.searchProductByKeywords(searchWords);
-        market.searchProductByCategory(searchWords);
-        market.searchProductByName(searchWords);
+    public Response<List<ProductInfo>> search(String searchWords) {
+        try {
+            List<ProductInfo> products = new LinkedList<>();
+            products.addAll(market.searchProductByKeywords(searchWords));
+            products.addAll(market.searchProductByCategory(searchWords));
+            products.addAll(market.searchProductByName(searchWords));
+            return Response.success(products);
+        }
+        catch (Exception e){
+            return Response.exception(e);
+        }
     }
 
     @Override
@@ -279,12 +288,6 @@ public class Session implements ISession {
         } catch (Exception e) {
             //TODO: handle exception
         }
-    }
-
-
-    @Override
-    public void getUserPurchaseHistory(int userId) {
-        //TODO: implement
     }
 
     @Override
@@ -1005,6 +1008,15 @@ public class Session implements ISession {
         return userRepositoryAsHashmap.getUser(userId).isLoggedIn();
     }
 
+    @Override
+    public Response<String> getUserPurchaseHistory(int userId) {
+        try {
+            isUserLogged(userId);
+            return Response.success(userRepositoryAsHashmap.getUser(userId).getPurchaseHistory());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
 
 
     @Override

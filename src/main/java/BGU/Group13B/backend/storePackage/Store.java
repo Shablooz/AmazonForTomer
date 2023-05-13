@@ -312,7 +312,7 @@ public class Store {
         if(hidden)
             return this.productRepository.addHiddenProduct(storeId, productName, category, price, stockQuantity, description);
 
-        return this.productRepository.addProduct(storeId, productName, category, price, stockQuantity, description);
+        return this.productRepository.addProduct(storeId, productName, category, price, stockQuantity, description).getProductId();
     }
 
     public double calculatePriceOfBasket(double totalAmountBeforeStoreDiscountPolicy,
