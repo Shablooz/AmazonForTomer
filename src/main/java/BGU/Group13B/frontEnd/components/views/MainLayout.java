@@ -54,7 +54,6 @@ public class MainLayout extends AppLayout{
 
 
 
-
     public interface VoidAction {
         void act();
     }
@@ -85,9 +84,7 @@ public class MainLayout extends AppLayout{
 
         var ui=UI.getCurrent();
         //Tomer section
-        BroadCaster.register(USERID,newMessage -> {
-            ui.access(()->createSubmitSuccess(newMessage).open());
-        });
+        BroadCaster.register(USERID,newMessage -> ui.access(()->createSubmitSuccess(newMessage).open()));
         session.fetchMessages(USERID);
     }
     private Notification createSubmitSuccess(String message) {
@@ -535,7 +532,7 @@ public class MainLayout extends AppLayout{
         nav.addItem(new AppNavItem("Home View", HomeView.class, LineAwesomeIcon.HOME_SOLID.create()));
 
         //my stores
-        if (true) { //TODO! check if the user is logged in
+        if (session.isUserLogged(SessionToIdMapper.getInstance().getCurrentSessionId())) {
             nav.addItem(new AppNavItem("My Stores", MyStoresView.class, LineAwesomeIcon.STORE_SOLID.create()));
         }
 
