@@ -3,9 +3,11 @@ package BGU.Group13B.frontEnd.components.views;
 import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.storePackage.Store;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
+import BGU.Group13B.service.Response;
 import BGU.Group13B.service.Session;
 import BGU.Group13B.service.info.StoreInfo;
 import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.accordion.AccordionPanel;
@@ -22,6 +24,9 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.IntegerField;
+import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,8 +58,8 @@ public class MyStoresView extends VerticalLayout implements BeforeEnterObserver 
         this.session = session;
         enterStoreButton.setEnabled(false);
 
-        //List<Pair<StoreInfo, String>> userStoresAndRoles = session.getAllUserAssociatedStores(userId);
-        List<Pair<StoreInfo, String>> userStoresAndRoles = getDemoStoresAndRoles();
+        List<Pair<StoreInfo, String>> userStoresAndRoles = session.getAllUserAssociatedStores(userId);
+        //List<Pair<StoreInfo, String>> userStoresAndRoles = getDemoStoresAndRoles();
 
         for (Pair<StoreInfo, String> pair : userStoresAndRoles) {
             if (!rolesToStores.containsKey(pair.getSecond())) {
@@ -62,10 +67,11 @@ public class MyStoresView extends VerticalLayout implements BeforeEnterObserver 
             }
             rolesToStores.get(pair.getSecond()).add(pair.getFirst());
         }
+        String[] roles = {"FOUNDER", "OWNER", "MANGER"};
+        for (String role : roles) {
 
-        for (String role : rolesToStores.keySet()) {
-            Grid<StoreInfo> grid = new Grid<>();
-            grid.setItems(rolesToStores.get(role));
+            var grid = new Grid<StoreInfo>();
+            grid.setItems(!rolesToStores.containsKey(role) ? new LinkedList<>() : rolesToStores.get(role));
             grid.addColumn(StoreInfo::storeName).setHeader("Name");
             grid.addColumn(StoreInfo::category).setHeader("Category");
             grid.addColumn(StoreInfo::storeScore).setHeader("Score");
@@ -109,9 +115,13 @@ public class MyStoresView extends VerticalLayout implements BeforeEnterObserver 
             rolesToGrids.put(role, grid);
         }
 
+        initButtons();
+    }
+
+    private void initButtons() {
         //buttons actions
         enterStoreButton.addClickListener(e -> navigateToStore());
-        createStoreButton.addClickListener(e -> navigateToCreateStore());
+        createStoreButton.addClickListener(e -> addStoreDialog());
 
 
         //add the role headers and the grids to the view
@@ -123,6 +133,74 @@ public class MyStoresView extends VerticalLayout implements BeforeEnterObserver 
         //add the buttons to the view in horizontal layout
         buttonsLayout.add(createStoreButton, enterStoreButton);
         add(buttonsLayout);
+    }
+
+    private void addStoreDialog() {
+        Dialog dialog = new Dialog();
+        dialog.setWidth("350px");
+        dialog.setHeight("550px");
+        dialog.setCloseOnEsc(true);
+        dialog.setCloseOnOutsideClick(true);
+
+        H2 dialogTitle = new H2("Add Store");
+        TextField storeName = new TextField("Name");
+        TextField storeCategory = new TextField("Category");
+
+        Button confirmButton = new Button("Confirm");
+        confirmButton.addClickListener(e2 -> {
+
+            handleResponseAndRefresh(session.addStore(userId, storeName.getValue(), storeCategory.getValue()));
+            dialog.close();
+        });
+
+
+        VerticalLayout dialogLayout = new VerticalLayout();
+        dialogLayout.add(dialogTitle, storeName, storeCategory, confirmButton);
+        dialogLayout.setSpacing(false);
+        dialogLayout.setAlignItems(Alignment.STRETCH);
+
+        dialog.add(dialogLayout);
+        dialog.open();
+    }
+
+    private void handleResponseAndRefresh(Response<Integer> response) {
+        String navInCaseOfFailure = "mystores";
+        if (response.didntSucceed()) {
+            Notification errorNotification = Notification.show("Error: " + response.getMessage());
+            errorNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+            UI.getCurrent().navigate(navInCaseOfFailure);
+            return;
+        }
+        updateGrid();
+    }
+
+    private void updateGrid() {
+        this.removeAll();
+        /*var storesAndRoles = getDemoStoresAndRoles();
+        //convert to Map<String, List<StoreInfo>>
+        var storesAndRolesMap =
+                storesAndRoles.
+                        stream().
+                        collect(Collectors.
+                                groupingBy(Pair::getSecond,
+                                        Collectors.mapping(Pair::getFirst, Collectors.toList())));*/
+
+        for(var entry : rolesToGrids.entrySet()){
+            String role = entry.getKey();
+            var storeInfoList =
+                    new ArrayList<>(session.getAllUserAssociatedStores(userId).
+                            stream().
+                            filter(pair -> pair.getSecond().equals(role))
+                            .map(Pair::getFirst).toList());
+            //for development
+//            storeInfoList.addAll(storesAndRolesMap.get(role));
+            entry.getValue().setItems(storeInfoList);
+            add(new H3("Role: " + role));
+            add(entry.getValue());
+        }
+        buttonsLayout.add(createStoreButton, enterStoreButton);
+        add(buttonsLayout);
+
     }
 
     private void navigateToStore(){
