@@ -262,9 +262,6 @@ public interface ISession {
      */
     void addProductToCart(int userId, int productId, int storeId);
 
-
-    void getUserPurchaseHistory(int userId);
-
     Response<VoidResponse> clearMessageToReply(int userId);
 
     /**
@@ -1029,4 +1026,11 @@ public interface ISession {
     void unhideStore(int userId, int storeId);
 
     void pushTest();
+
+    /**
+     * @param userId the user id
+     * @return the user's purchase history
+     * @throws Exception
+     */
+    Response<String> getUserPurchaseHistory(int userId) throws Exception;
 }

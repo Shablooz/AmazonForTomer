@@ -176,12 +176,6 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void getUserPurchaseHistory(int userId) {
-        if (realSession != null)
-            realSession.getUserPurchaseHistory(userId);
-    }
-
-    @Override
     public Response<VoidResponse> openComplaint(int userId, String header, String complaint) {
         if (realSession != null)
             return realSession.openComplaint(userId, header, complaint);
@@ -568,6 +562,13 @@ public class ProxySession implements ISession {
         if (realSession != null)
             return realSession.isUserLogged(userId);
         return false;
+    }
+
+    @Override
+    public Response<String> getUserPurchaseHistory(int userId) throws Exception {
+        if (realSession != null)
+            return realSession.getUserPurchaseHistory(userId);
+        return null;
     }
 
     @Override

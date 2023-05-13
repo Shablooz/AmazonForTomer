@@ -1,12 +1,16 @@
 package BGU.Group13B.backend.User;
 
+import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
+import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
+import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.service.SingletonCollection;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import java.util.HashMap;
 
@@ -19,6 +23,9 @@ class UserTest {
     private User user5;
 
     private IUserRepository userRepository = SingletonCollection.getUserRepository();
+    private IPurchaseHistoryRepository purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
+
+    private IStoreRepository storeRepository= SingletonCollection.getStoreRepository();
 
     private final String goodUsername1 = "goodUsername1";
     private final String goodUsername2 = "greatname";
@@ -202,8 +209,7 @@ class UserTest {
         user.login(goodUsername1, goodPassword1, "yellow", "", "");
         SingletonCollection.getUserRepository().addUser(newUserId, user);
         int storeId = SingletonCollection.getStoreRepository().addStore(newUserId, "store1", "media");
-        int productId = SingletonCollection.getProductRepository().addProduct(storeId, "product1", "media", 10.0, 10, "very nice product");
-
+        int productId = SingletonCollection.getProductRepository().addProduct(storeId, "product1", "media", 10.0, 10, "very nice product").getProductId();
         //action
         try {
             //user is logged in
@@ -214,7 +220,37 @@ class UserTest {
         } catch (Exception e) {
             Assertions.fail(e.getMessage());
         }
+    }
 
+    @Test
+    void purchaseUserHistory(){
+        user1.register(goodUsername1, goodPassword1, goodEmail1, "yellow", "", "");
+        user1.login(goodUsername1, goodPassword1, "yellow", "", "");
+        int storeId1 = SingletonCollection.getStoreRepository().addStore(user2.getUserId(), "Electronics store", "electronics");
+        Product product1 = SingletonCollection.getProductRepository().addProduct(storeId1, "Dell computer", "electronics", 1000, 50, "Good and stable laptop.");
+        Product product2 = SingletonCollection.getProductRepository().addProduct(storeId1, "HP computer", "electronics", 6000, 0, "Good and stable pc.");
+        Product product3 = SingletonCollection.getProductRepository().addProduct(storeId1, "Dell computer A12", "electronics", 2000, 1, "Good and stable laptop.");
+        BasketProduct basketProduct1= new BasketProduct(product1);
+        basketProduct1.setQuantity(2);
+        BasketProduct basketProduct2= new BasketProduct(product2);
+        BasketProduct basketProduct3= new BasketProduct(product3);
+        basketProduct3.setQuantity(3);
+        ConcurrentLinkedQueue<BasketProduct> basketProducts1 = new ConcurrentLinkedQueue<>();
+        basketProducts1.add(basketProduct1);
+        basketProducts1.add(basketProduct2);
+        ConcurrentLinkedQueue<BasketProduct> basketProducts2 = new ConcurrentLinkedQueue<>();
+        basketProducts2.add(basketProduct2);
+        basketProducts2.add(basketProduct3);
+        PurchaseHistory purchaseHistory1 = purchaseHistoryRepository.addPurchase(user1.getUserId(), storeId1, basketProducts1, 8000);
+        PurchaseHistory purchaseHistory2 = purchaseHistoryRepository.addPurchase(user1.getUserId(), storeId1, basketProducts2, 12000);
+        Assertions.assertEquals(purchaseHistory1.toString()+'\n'+purchaseHistory2 +'\n',user1.getPurchaseHistory());
+    }
+
+    @Test
+    void purchaseUserHistory_Empty() {
+        user1.register(goodUsername1, goodPassword1, goodEmail1, "yellow", "", "");
+        user1.login(goodUsername1, goodPassword1, "yellow", "", "");
+        Assertions.assertEquals("", user1.getPurchaseHistory());
     }
 
     @Test
@@ -227,7 +263,7 @@ class UserTest {
         user.login(goodUsername1, goodPassword1, "yellow", "", "");
         SingletonCollection.getUserRepository().addUser(newUserId, user);
         int storeId = SingletonCollection.getStoreRepository().addStore(newUserId, "store1", "media");
-        int productId = SingletonCollection.getProductRepository().addProduct(storeId, "product1", "media", 10.0, 10, "very nice product");
+        int productId = SingletonCollection.getProductRepository().addProduct(storeId, "product1", "media", 10.0, 10, "very nice product").getProductId();
         try {
             //user is logged in
             user.addProductToCart(productId, storeId);

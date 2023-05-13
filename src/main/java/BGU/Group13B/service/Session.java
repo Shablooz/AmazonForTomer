@@ -23,6 +23,9 @@ import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import static BGU.Group13B.service.Response.Status.FAILURE;
+import static BGU.Group13B.service.Response.Status.SUCCESS;
+
 /**
  * IMPORTANT need to initialize the session AFTER loading first user (id = 1) from database
  */
@@ -47,7 +50,6 @@ public class Session implements ISession {
     //IMPORTANT need to initialize the session AFTER loading first user (id = 1) from database
 
     public Session() {
-
         this(new Market());
     }
 
@@ -279,12 +281,6 @@ public class Session implements ISession {
         } catch (Exception e) {
             //TODO: handle exception
         }
-    }
-
-
-    @Override
-    public void getUserPurchaseHistory(int userId) {
-        //TODO: implement
     }
 
     @Override
@@ -1005,6 +1001,15 @@ public class Session implements ISession {
         return userRepositoryAsHashmap.getUser(userId).isLoggedIn();
     }
 
+    @Override
+    public Response<String> getUserPurchaseHistory(int userId) {
+        try {
+            isUserLogged(userId);
+            return Response.success(userRepositoryAsHashmap.getUser(userId).getPurchaseHistory());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
 
 
     @Override
