@@ -2,6 +2,7 @@ package BGU.Group13B.frontEnd;
 
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import com.vaadin.flow.component.page.AppShellConfigurator;
+import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 import org.springframework.boot.SpringApplication;
@@ -20,6 +21,7 @@ import java.util.Timer;
 @SpringBootApplication
 @Theme(value = "trading-system", variant = Lumo.DARK)
 @ComponentScan(basePackages = "BGU.Group13B")
+@Push
 public class Application implements AppShellConfigurator {
 
     public static void main(String[] args) {

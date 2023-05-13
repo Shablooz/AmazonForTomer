@@ -27,6 +27,7 @@ public class MessageRepositorySingle implements IMessageRepository {
     public void sendMassage(Message message) {
         addEntryIfNotExist(message.getReceiverId());
         unreadMessages.get(message.getReceiverId()).add(message);
+
     }
 
     @Override

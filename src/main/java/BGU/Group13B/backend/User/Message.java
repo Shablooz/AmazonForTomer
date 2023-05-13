@@ -39,4 +39,8 @@ public class Message {
     public String getHeader() {
         return Header;
     }
+
+    public String toString(){
+        return "Sender User Name:\t"+senderId+"\n\nHeader:\t"+Header+"\n\nBody:\n"+message;
+    }
 }
