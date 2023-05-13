@@ -1,4 +1,5 @@
 package BGU.Group13B.frontEnd.components.views;
+
 import BGU.Group13B.frontEnd.components.Searcher.Searcher;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
@@ -36,7 +37,7 @@ import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY_INLIN
 /**
  * The main view is a top-level placeholder for other views.
  */
-public class MainLayout extends AppLayout{
+public class MainLayout extends AppLayout {
 
     private H2 viewTitle;
     private final Session session;
@@ -51,7 +52,6 @@ public class MainLayout extends AppLayout{
     private Button logoutButton = null;
     private Button signUpButton = null;
     private int STOREID = 0; //TODO:need to delete
-
 
 
     public interface VoidAction {
@@ -82,11 +82,12 @@ public class MainLayout extends AppLayout{
         addHeaderContent();
 
 
-        var ui=UI.getCurrent();
+        var ui = UI.getCurrent();
         //Tomer section
-        BroadCaster.register(USERID,newMessage -> ui.access(()->createSubmitSuccess(newMessage).open()));
+        BroadCaster.register(USERID, newMessage -> ui.access(() -> createSubmitSuccess(newMessage).open()));
         session.fetchMessages(USERID);
     }
+
     private Notification createSubmitSuccess(String message) {
         Notification notification = new Notification();
         notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
@@ -95,10 +96,9 @@ public class MainLayout extends AppLayout{
         Div info;
         try {
             info = new Div(new Html(message));
-        }catch (IllegalArgumentException ignore){
+        } catch (IllegalArgumentException ignore) {
             info = new Div(new Text(message));
         }
-
 
 
         HorizontalLayout layout = new HorizontalLayout(icon, info,
@@ -109,6 +109,7 @@ public class MainLayout extends AppLayout{
 
         return notification;
     }
+
     private Button createCloseBtn(Notification notification) {
         Button closeBtn = new Button(VaadinIcon.CLOSE_SMALL.create(),
                 clickEvent -> notification.close());
@@ -129,7 +130,7 @@ public class MainLayout extends AppLayout{
         cartButton.addClickListener(event -> getUI().ifPresent(ui -> ui.navigate("cart")));
 
         HorizontalLayout rightAlignment = rightAlignmentHeaderContext();
-      
+
         addToNavbar(true, toggle, viewTitle, cartButton, rightAlignment, searcher);
     }
 
@@ -160,7 +161,7 @@ public class MainLayout extends AppLayout{
         prepareLoginButton(flexLayout);
         prepareLogoutButton(flexLayout);
         prepareSignUpButton(flexLayout);
-        if (!session.isUserLogged(SessionToIdMapper.getInstance().getCurrentSessionId()/*todo change to session*/)) {    //) {
+        if (!session.isUserLogged(SessionToIdMapper.getInstance().getCurrentSessionId())) {
             logoutButton.setVisible(false);
         } else {
             loginButton.setVisible(false);
@@ -171,7 +172,7 @@ public class MainLayout extends AppLayout{
         horizontalLayout.setWidthFull();
         horizontalLayout.add(flexLayout);
 
-        addToDrawer( header, scroller, horizontalLayout, createFooter());
+        addToDrawer(header, scroller, horizontalLayout, createFooter());
     }
 
     private void newMessageDialog(Dialog currentDialog) {
@@ -243,6 +244,7 @@ public class MainLayout extends AppLayout{
         loginButton.addClickListener(event -> getUI().ifPresent(ui -> ui.navigate("login")));
         flexLayout.add(loginButton);
     }
+
     private void prepareSignUpButton(FlexLayout flexLayout) {
         signUpButton = new Button("Sign up");
         signUpButton.addClickListener(event -> getUI().ifPresent(ui -> ui.navigate("register")));
@@ -277,9 +279,9 @@ public class MainLayout extends AppLayout{
         Button refreshMessagesButton = new Button("Refresh Messages");
         Response<Message> messageResponse = session.readOldMessage(USERID);
         String message;
-        if(messageResponse.getStatus()== Response.Status.SUCCESS) {
+        if (messageResponse.getStatus() == Response.Status.SUCCESS) {
             message = messageResponse.getData().toString();
-        }else{
+        } else {
             message = messageResponse.getMessage();
         }
 
@@ -337,11 +339,11 @@ public class MainLayout extends AppLayout{
 
         jmpMainDialog.addClickListener(event -> mainDialog(currentDialog));
         sendMessageButton.addClickListener(event -> {
-            Response<VoidResponse> messageResponse= session.openComplaint(USERID,inputHeader.getValue(),inputBody.getValue());
+            Response<VoidResponse> messageResponse = session.openComplaint(USERID, inputHeader.getValue(), inputBody.getValue());
             openComplaintDialog(currentDialog);
-            Notification notification=new Notification("Complaint sent", 3000);
+            Notification notification = new Notification("Complaint sent", 3000);
             notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-            if(messageResponse.getStatus()== Response.Status.FAILURE){
+            if (messageResponse.getStatus() == Response.Status.FAILURE) {
                 notification.setText(messageResponse.getMessage());
                 notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
             }
@@ -369,9 +371,9 @@ public class MainLayout extends AppLayout{
         Button sendMessageButton = new Button("Send Answer");
         Response<Message> messageResponse = session.getComplaint(USERID);
         String message;
-        if(messageResponse.getStatus()== Response.Status.SUCCESS) {
+        if (messageResponse.getStatus() == Response.Status.SUCCESS) {
             message = messageResponse.getData().toString();
-        }else{
+        } else {
             message = messageResponse.getMessage();
         }
 
@@ -399,11 +401,11 @@ public class MainLayout extends AppLayout{
 
         nextMessageButton.addClickListener(event -> showComplaintDialog(currentDialog));
         sendMessageButton.addClickListener(event -> {
-            Response<VoidResponse> response= session.answerComplaint(USERID,inputBody.getValue());
+            Response<VoidResponse> response = session.answerComplaint(USERID, inputBody.getValue());
             showComplaintDialog(currentDialog);
-            Notification notification=new Notification("Message sent", 3000);
+            Notification notification = new Notification("Message sent", 3000);
             notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-            if(response.getStatus()== Response.Status.FAILURE) {
+            if (response.getStatus() == Response.Status.FAILURE) {
                 notification.setText(response.getMessage());
                 notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
             }
@@ -451,11 +453,11 @@ public class MainLayout extends AppLayout{
 
         jmpMainDialog.addClickListener(event -> mainDialog(currentDialog));
         sendMessageButton.addClickListener(event -> {
-            Response<VoidResponse> messageResponse= session.sendMassageAdmin(USERID,receiverName.getValue(),inputHeader.getValue(),inputBody.getValue());
+            Response<VoidResponse> messageResponse = session.sendMassageAdmin(USERID, receiverName.getValue(), inputHeader.getValue(), inputBody.getValue());
             sendMessageDialog(currentDialog);
-            Notification notification=new Notification("Message sent", 3000);
+            Notification notification = new Notification("Message sent", 3000);
             notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-            if(messageResponse.getStatus()== Response.Status.FAILURE){
+            if (messageResponse.getStatus() == Response.Status.FAILURE) {
                 notification.setText(messageResponse.getMessage());
                 notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
             }
@@ -546,7 +548,6 @@ public class MainLayout extends AppLayout{
     }
 
 
-
     private Footer createFooter() {
         Footer layout = new Footer();
 
@@ -601,12 +602,10 @@ public class MainLayout extends AppLayout{
 
         });
 
-        if(true /*if storeOwner*/)
-        {
+        if (true /*if storeOwner*/) {
             buttonsLayout.add(newMessagesStore, oldMessagesStore);
         }
-        if(session.isUserLogged(USERID)/*logged in user*/)
-        {
+        if (session.isUserLogged(USERID)/*logged in user*/) {
             buttonsLayout.add(sendMessageToStore);
         }
 
@@ -628,11 +627,11 @@ public class MainLayout extends AppLayout{
         VerticalLayout verticalDialogMessage = new VerticalLayout();
         TextArea messageBody = new TextArea();
         Button refreshMessagesButton = new Button("Refresh Messages");
-        Response<Message> messageResponse = session.readReadMassageStore(USERID,STOREID);
+        Response<Message> messageResponse = session.readReadMassageStore(USERID, STOREID);
         String message;
-        if(messageResponse.getStatus()== Response.Status.SUCCESS) {
+        if (messageResponse.getStatus() == Response.Status.SUCCESS) {
             message = messageResponse.getData().toString();
-        }else{
+        } else {
             message = messageResponse.getMessage();
         }
 
@@ -651,7 +650,7 @@ public class MainLayout extends AppLayout{
         jmpMainDialog.addClickListener(event -> mainStoreDialog(currentDialog));
         nextMessageButton.addClickListener(event -> oldMessagesStoreDialog(currentDialog));
         refreshMessagesButton.addClickListener(event -> {
-            session.refreshOldMessageStore(USERID,STOREID);
+            session.refreshOldMessageStore(USERID, STOREID);
             oldMessagesStoreDialog(currentDialog);
         });
 
@@ -678,9 +677,9 @@ public class MainLayout extends AppLayout{
         Button sendMessageButton = new Button("Send Answer");
         Response<Message> messageResponse = session.readReadMassageStore(USERID, STOREID);
         String message;
-        if(messageResponse.getStatus()== Response.Status.SUCCESS) {
+        if (messageResponse.getStatus() == Response.Status.SUCCESS) {
             message = messageResponse.getData().toString();
-        }else{
+        } else {
             message = messageResponse.getMessage();
         }
 
@@ -708,11 +707,11 @@ public class MainLayout extends AppLayout{
 
         nextMessageButton.addClickListener(event -> newMessagesStoreDialog(currentDialog));
         sendMessageButton.addClickListener(event -> {
-            Response<VoidResponse> response= session.answerQuestionStore(USERID,inputBody.getValue());
+            Response<VoidResponse> response = session.answerQuestionStore(USERID, inputBody.getValue());
             newMessagesStoreDialog(currentDialog);
-            Notification notification=new Notification("Message sent", 3000);
+            Notification notification = new Notification("Message sent", 3000);
             notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-            if(response.getStatus()== Response.Status.FAILURE) {
+            if (response.getStatus() == Response.Status.FAILURE) {
                 notification.setText(response.getMessage());
                 notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
             }
@@ -757,11 +756,11 @@ public class MainLayout extends AppLayout{
 
         jmpMainDialog.addClickListener(event -> mainStoreDialog(currentDialog));
         sendMessageButton.addClickListener(event -> {
-            Response<VoidResponse> messageResponse= session.sendMassageStore(USERID,inputHeader.getValue(),inputBody.getValue(),STOREID);
+            Response<VoidResponse> messageResponse = session.sendMassageStore(USERID, inputHeader.getValue(), inputBody.getValue(), STOREID);
             sendMessageToStoreDialog(currentDialog);
-            Notification notification=new Notification("Message sent", 3000);
+            Notification notification = new Notification("Message sent", 3000);
             notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-            if(messageResponse.getStatus()== Response.Status.FAILURE){
+            if (messageResponse.getStatus() == Response.Status.FAILURE) {
                 notification.setText(messageResponse.getMessage());
                 notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
             }
