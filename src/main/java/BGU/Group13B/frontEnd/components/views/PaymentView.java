@@ -522,7 +522,7 @@ public class PaymentView extends Div implements BeforeLeaveObserver {
         if (!paymentSuccessful) {
             session.cancelPurchase(SessionToIdMapper.getInstance().getCurrentSessionId());
             Notification.show("Payment cancelled");
-        }else
+        } else
             sendPurchaseMessageToStoreOwners();
     }
 
@@ -537,14 +537,18 @@ public class PaymentView extends Div implements BeforeLeaveObserver {
             BroadCaster.broadcast(1/*fixme change to store Founder*/,
 
                     String.format("""
-                                    Customer %s %s with id %d has made a purchase
-                                    Total price payed: %f
-                                    Products bought:
+                                    <div>
+                                    <br>Customer <b>%s %s</b> has made a purchase!<br>
+                                    <br>Total price paid: <b>%.2f</b><br>
+                                    Products bought:<br>
                                     %s
+                                    </div>
                                     """,
                             personBinder.getBean().getFirstName(),
                             personBinder.getBean().getLastName(),
-                            me, totalPriceAfterDiscount, boughtItems()));
+                            totalPriceAfterDiscount,
+                            boughtItems()));
+            BroadCaster.broadcast(1, "test no html in body");
 
         }
     }

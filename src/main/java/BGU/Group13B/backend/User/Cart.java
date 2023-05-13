@@ -53,8 +53,9 @@ public class Cart {
         }
         double totalPrice = 0;
         for (var basket : userBaskets) {
-            totalPrice += basket.startPurchaseBasketTransactionWithSuccessful(productsCoupons, storeCoupon).getFirst();
-            successfulProducts.addAll(basket.startPurchaseBasketTransactionWithSuccessful(productsCoupons, storeCoupon).getSecond());
+            var transaction = basket.startPurchaseBasketTransactionWithSuccessful(productsCoupons, storeCoupon);
+            totalPrice += transaction.getFirst();
+            successfulProducts.addAll(transaction.getSecond());
         }
         return Pair.of(totalPrice, successfulProducts);
     }
