@@ -3,16 +3,14 @@ package BGU.Group13B.service;
 import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.User.PurchaseFailedException;
-import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.storePackage.Review;
-import BGU.Group13B.backend.storePackage.Store;
+import BGU.Group13B.service.entity.ReviewService;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
 import BGU.Group13B.service.entity.ServiceProduct;
 import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
-import com.vaadin.flow.router.QueryParameters;
 
 import java.time.LocalDateTime;
 
@@ -300,6 +298,13 @@ public class ProxySession implements ISession {
         if (realSession != null)
             return realSession.getReview(userId, storeId, productId);
         return Response.success( new Review("", -1, -1, -1));
+    }
+
+    @Override
+    public Response<List<ReviewService>> getAllReviews(int userId, int storeId, int productId) {
+        if (realSession != null)
+            return realSession.getAllReviews(userId, storeId, productId);
+        return Response.success( null);
     }
 
     @Override

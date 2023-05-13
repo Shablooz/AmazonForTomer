@@ -4,6 +4,7 @@ import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.Repositories.Interfaces.IRepositoryReview;
 import BGU.Group13B.backend.storePackage.Review;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ReviewRepoSingle implements IRepositoryReview {
@@ -35,6 +36,11 @@ public class ReviewRepoSingle implements IRepositoryReview {
     public Review getReview(int storeId, int productId, int userId) {
         implementations.putIfAbsent(Pair.of(storeId, productId),new ReviewRepositoryAsList());
         return implementations.get(Pair.of(storeId, productId)).getReview(storeId,productId,userId);
+    }
+    @Override
+    public List<Review> getAllReviews(int storeId, int productId) {
+        implementations.putIfAbsent(Pair.of(storeId, productId),new ReviewRepositoryAsList());
+        return implementations.get(Pair.of(storeId, productId)).getAllReviews(storeId,productId);
     }
 
     @Override

@@ -311,6 +311,9 @@ public class User {
     public Review getReview(int storeId, int productId) throws NoPermissionException {
         return market.getReview(storeId, productId, this.userId);
     }
+    public List<Review> getAllReviews(int storeId, int productId,int userId) throws NoPermissionException {
+        return market.getAllReviews(storeId, productId);
+    }
 
     //#26
     public float getProductScore(int storeId, int productId) throws NoPermissionException {

@@ -5,28 +5,21 @@ import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.User.*;
 import BGU.Group13B.backend.storePackage.Market;
-import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
+import BGU.Group13B.service.entity.ReviewService;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
 import BGU.Group13B.service.entity.ServiceProduct;
 import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
-import com.vaadin.flow.router.QueryParameters;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
-import static BGU.Group13B.service.Response.Status.FAILURE;
-import static BGU.Group13B.service.Response.Status.SUCCESS;
 
 /**
  * IMPORTANT need to initialize the session AFTER loading first user (id = 1) from database
@@ -460,7 +453,20 @@ public class Session implements ISession {
             return Response.exception(e);
         }
     }
-
+    @Override
+    public Response<List<ReviewService>> getAllReviews(int userId, int storeId, int productId) {
+        try {
+            List<Review> reviews=userRepositoryAsHashmap.getUser(userId).getAllReviews(storeId, productId,userId);
+            List<ReviewService> reviewServices=new ArrayList<>();
+            int i=0;
+            for (Review review:reviews) {
+                reviewServices.add(new ReviewService(userRepositoryAsHashmap.getUser(userId).getUserName(),review.getReview()));
+            }
+            return Response.success( reviewServices);
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
     @Override
     public Response<Float> getProductScore(int userId, int storeId, int productId) {
         try {
