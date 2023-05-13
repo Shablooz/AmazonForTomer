@@ -38,7 +38,6 @@ public class Searcher extends HorizontalLayout{
                 Notification.show(exception.getMessage());
             }
         });
-
         add(searchField, searchButton);
         setWidth("600%");
     }
