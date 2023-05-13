@@ -4,6 +4,7 @@ import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.service.BroadCaster;
 import BGU.Group13B.service.PushNotification;
+import BGU.Group13B.service.entity.ServiceBasketProduct;
 import org.mindrot.jbcrypt.BCrypt;
 import BGU.Group13B.backend.Repositories.Interfaces.IMessageRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
@@ -374,8 +375,8 @@ public class User {
                 country, zip);
     }
 
-    public double startPurchaseBasketTransaction(HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                                 String/*store coupons*/ storeCoupon) throws PurchaseFailedException, NoPermissionException {
+    public Pair<Double, List<BasketProduct>> startPurchaseBasketTransaction(HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                                                                                   String/*store coupons*/ storeCoupon) throws PurchaseFailedException, NoPermissionException {
         if (isRegistered() && !isLoggedIn)
             throw new NoPermissionException("Only logged in users can purchase cart");
         return cart.startPurchaseBasketTransaction(productsCoupons, storeCoupon);

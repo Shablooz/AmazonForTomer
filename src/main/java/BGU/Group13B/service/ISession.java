@@ -73,8 +73,6 @@ public interface ISession {
                                                       String address, String city, String country,
                                                       String zip);
 
-    double startPurchaseBasketTransaction(int userId, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                          String/*store coupons*/ storeCoupon) throws PurchaseFailedException;
 
     /**
      * #50

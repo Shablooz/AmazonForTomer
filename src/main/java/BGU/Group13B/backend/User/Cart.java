@@ -46,6 +46,7 @@ public class Cart {
     public double startPurchaseBasketTransaction(HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
                                                  String/*store coupons*/ storeCoupon) throws PurchaseFailedException {
         var userBaskets = basketRepository.getUserBaskets(userId);
+        List<BasketProduct> basketProducts = new LinkedList<>();
         if (userBaskets.isEmpty()) {
             throw new NoSuchElementException("No baskets in cart");
         }

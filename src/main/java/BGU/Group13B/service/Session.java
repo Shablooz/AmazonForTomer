@@ -92,15 +92,13 @@ public class Session implements ISession {
                                       String creditCardHolderFirstName,
                                       String creditCardCcv, String id,
                                       HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                      String/*store coupons*/ storeCoupon) {
-        try {
+                                      String/*store coupons*/ storeCoupon) throws NoPermissionException, PurchaseFailedException {
+
             return userRepository.getUser(userId).
                     purchaseCart(creditCardNumber, creditCardMonth,
                             creditCardYear, creditCardHolderFirstName,
                             creditCardCcv, id, productsCoupons, storeCoupon);
-        } catch (PurchaseFailedException | NoPermissionException e) {
-            throw new RuntimeException(e);
-        }
+
     }
 
     @Override
@@ -124,10 +122,12 @@ public class Session implements ISession {
     }
 
     @Override
-    public double startPurchaseBasketTransaction(int userId, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                                 String/*store coupons*/ storeCoupon) {
+    public Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                                                                                   String/*store coupons*/ storeCoupon) {
         try {
-            return userRepository.getUser(userId).startPurchaseBasketTransaction(productsCoupons, storeCoupon);
+            var priceSuccessfulItems =  userRepository.getUser(userId).startPurchaseBasketTransaction(productsCoupons, storeCoupon);
+            return new Pair<>(priceSuccessfulItems.getFirst(),
+                    priceSuccessfulItems.getSecond().stream().map(ServiceBasketProduct::new).collect(Collectors.toList()));
         } catch (PurchaseFailedException | NoPermissionException e) {
             throw new RuntimeException(e);
         }
@@ -1054,6 +1054,15 @@ public class Session implements ISession {
     public void pushTest()
     {
         PushNotification.pushNotification("MY TEST!",2);
+    }
+
+    @Override
+    public int getStoreOwner(int storeId) {
+        try {
+            return market.getStoreOwner(storeId);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
