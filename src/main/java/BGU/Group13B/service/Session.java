@@ -8,6 +8,7 @@ import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
+import BGU.Group13B.service.entity.ReviewService;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
 import BGU.Group13B.service.entity.ServiceProduct;
 import BGU.Group13B.service.info.ProductInfo;
@@ -16,10 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -87,15 +85,15 @@ public class Session implements ISession {
                                       String creditCardHolderFirstName,
                                       String creditCardCcv, String id,
                                       HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                      String/*store coupons*/ storeCoupon) {
-        try {
-            return userRepository.getUser(userId).
-                    purchaseCart(creditCardNumber, creditCardMonth,
-                            creditCardYear, creditCardHolderFirstName,
-                            creditCardCcv, id, productsCoupons, storeCoupon);
-        } catch (PurchaseFailedException | NoPermissionException e) {
-            throw new RuntimeException(e);
-        }
+                                      String/*store coupons*/ storeCoupon){
+            try {
+                return userRepository.getUser(userId).
+                        purchaseCart(creditCardNumber, creditCardMonth,
+                                creditCardYear, creditCardHolderFirstName,
+                                creditCardCcv, id, productsCoupons, storeCoupon);
+            }catch (PurchaseFailedException | NoPermissionException e) {
+                throw new RuntimeException(e);
+            }
     }
 
     @Override
@@ -119,10 +117,12 @@ public class Session implements ISession {
     }
 
     @Override
-    public double startPurchaseBasketTransaction(int userId, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                                 String/*store coupons*/ storeCoupon) {
+    public Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                                                                                   String/*store coupons*/ storeCoupon) {
         try {
-            return userRepository.getUser(userId).startPurchaseBasketTransaction(productsCoupons, storeCoupon);
+            var priceSuccessfulItems =  userRepository.getUser(userId).startPurchaseBasketTransaction(productsCoupons, storeCoupon);
+            return new Pair<>(priceSuccessfulItems.getFirst(),
+                    priceSuccessfulItems.getSecond().stream().map(ServiceBasketProduct::new).collect(Collectors.toList()));
         } catch (PurchaseFailedException | NoPermissionException e) {
             throw new RuntimeException(e);
         }
@@ -455,7 +455,20 @@ public class Session implements ISession {
             return Response.exception(e);
         }
     }
-
+    @Override
+    public Response<List<ReviewService>> getAllReviews(int userId, int storeId, int productId) {
+        try {
+            List<Review> reviews=userRepositoryAsHashmap.getUser(userId).getAllReviews(storeId, productId,userId);
+            List<ReviewService> reviewServices=new ArrayList<>();
+            int i=0;
+            for (Review review:reviews) {
+                reviewServices.add(new ReviewService(userRepositoryAsHashmap.getUser(userId).getUserName(),review.getReview()));
+            }
+            return Response.success( reviewServices);
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
     @Override
     public Response<Float> getProductScore(int userId, int storeId, int productId) {
         try {
@@ -1023,6 +1036,15 @@ public class Session implements ISession {
     public void pushTest()
     {
         PushNotification.pushNotification("MY TEST!",2);
+    }
+
+    @Override
+    public int getStoreFounder(int storeId) {
+        try {
+            return market.getStoreFounder(storeId);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

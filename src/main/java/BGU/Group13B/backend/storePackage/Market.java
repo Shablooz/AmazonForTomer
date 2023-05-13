@@ -72,6 +72,9 @@ public class Market {
     public Review getReview(int storeId, int productId, int userId) throws NoPermissionException {
         return storeRepository.getStore(storeId).getReview(productId, userId);
     }
+    public List<Review> getAllReviews(int productId,int storeId) throws NoPermissionException {
+        return storeRepository.getStore(storeId).getAllReviews(productId);
+    }
 
     public float getProductScore(int storeId, int productId, int userId) throws NoPermissionException {
         return storeRepository.getStore(storeId).getProductScore(userId, productId);
@@ -310,6 +313,10 @@ public class Market {
 
     public void unhideStore(int userId, int storeId) throws NoPermissionException {
         storeRepository.getStore(storeId).unhideStore(userId);
+    }
+
+    public int getStoreFounder(int storeId) {
+        return storeRepository.getStore(storeId).getStoreFounder();
     }
 
     public void deleteStore(int userId, int storeId) throws NoPermissionException {

@@ -28,9 +28,10 @@ public class BasketProductRepositoryAsHashMap implements IBasketProductRepositor
 
     @Override
     public void removeBasketProducts(int storeId, int userId) {
-        basketProducts.remove(Pair.of(storeId, userId)).orElseThrow(
+       getBasketProducts(storeId, userId).ifPresent(List::clear);
+        /* basketProducts.remove(Pair.of(storeId, userId)).orElseThrow(
                 () -> new IllegalArgumentException("There is not basket for store with id: " + storeId + " and user with id: " + userId));
-    }
+    */}
 
 
 

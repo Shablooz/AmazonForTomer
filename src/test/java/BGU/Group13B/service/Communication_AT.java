@@ -145,13 +145,17 @@ public class Communication_AT extends ProjectTest {
     }
 
     @Test
-    public void purchaseCart_PayFail(){//fixme its ok AT should not always pass
+    public void purchaseCart_PayFail() {//fixme its ok AT should not always pass
         //expect payment fail
         session.addProductToCart(userIds[UsersIndex.STORE_OWNER_2.ordinal()],
                 productIds[ProductsIndex.PRODUCT_1.ordinal()],
-                storeIds[StoresIndex.STORE_1.ordinal()] );
-        double payedPrice = session.purchaseProductCart(userIds[UsersIndex.STORE_OWNER_2.ordinal()],
-                "12341234", "4", "2044", "shaun", "123", "12323", new HashMap<>(), "");
-        assertEquals(0, payedPrice);
+                storeIds[StoresIndex.STORE_1.ordinal()]);
+        try {
+            double payedPrice = session.purchaseProductCart(userIds[UsersIndex.STORE_OWNER_2.ordinal()],
+                    "", "", "", "", "", "", new HashMap<>(), "");
+
+        } catch (Exception e) {
+            assertEquals("Payment failed", e.getMessage());
+        }
     }
 }

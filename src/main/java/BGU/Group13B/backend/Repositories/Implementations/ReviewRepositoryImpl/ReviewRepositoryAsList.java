@@ -43,6 +43,11 @@ public class ReviewRepositoryAsList implements IRepositoryReview {
     }
 
     @Override
+    public List<Review> getAllReviews(int storeId, int productId) {
+        return reviews.values().stream().toList();
+    }
+
+    @Override
     public float getProductScore(int storeId, int productId) {
         Integer sum = scores.reduceValues(0, Integer::sum);
         if(sum!=null)

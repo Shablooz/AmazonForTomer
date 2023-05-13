@@ -1,5 +1,6 @@
 package BGU.Group13B.frontEnd.components.views;
 
+import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.service.Session;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.contextmenu.MenuItem;
@@ -10,16 +11,12 @@ import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.menubar.MenuBarVariant;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.BeforeEnterEvent;
-import com.vaadin.flow.router.BeforeEnterObserver;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Route(value = "", layout = MainLayout.class)
-public class HomeView extends VerticalLayout implements BeforeEnterObserver {
-    private  final Session session;
-
-
+public class HomeView extends VerticalLayout implements BeforeEnterObserver, AfterNavigationObserver {
+    private final Session session;
 
     @Autowired
     public HomeView(Session session) {
@@ -73,5 +70,13 @@ public class HomeView extends VerticalLayout implements BeforeEnterObserver {
         component.getElement().getStyle().set("position", "absolute");
         component.getElement().getStyle().set("top", "0");
         component.getElement().getStyle().set("left", "25");
+    }
+
+    @Override
+    public void afterNavigation(AfterNavigationEvent event) {
+        if (SessionToIdMapper.getInstance().refreshRequired()) {
+            UI.getCurrent().getPage().reload();
+            SessionToIdMapper.getInstance().setRefreshRequired(false);
+        }
     }
 }

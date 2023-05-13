@@ -1,5 +1,6 @@
 package BGU.Group13B.backend.User;
 
+import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.Repositories.Interfaces.IBasketProductRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductHistoryRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
@@ -42,7 +43,7 @@ public class Basket {
         this.calculatePriceOfBasket = SingletonCollection.getCalculatePriceOfBasket();
         this.successfulProducts = new ConcurrentLinkedQueue<>();
         this.failedProducts = new ConcurrentLinkedQueue<>();
-        this.purchaseHistoryRepository= SingletonCollection.getPurchaseHistoryRepository();
+        this.purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
         deliveryAdapter = SingletonCollection.getDeliveryAdapter();
     }
 
@@ -84,12 +85,25 @@ public class Basket {
         return finalPrice;
     }
 
-        public void purchaseBasket(String creditCardNumber,
-                                   String creditCardMonth, String creditCardYear,
-                                   String creditCardHolderFirstName,
-                                   String creditCardCVV, String id,
-                                   String address, String city, String country,
-                                   String zip) throws PurchaseFailedException {
+    public Pair<Double, List<BasketProduct>> startPurchaseBasketTransactionWithSuccessful(HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                                                                                          String/*store coupons*/ storeCoupon) throws PurchaseFailedException {
+        successfulProducts.clear();
+        failedProducts.clear();
+        scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduledFuture = scheduler.schedule(this::restoreProductsStock, idealTime, unitsToRestore);
+        getSuccessfulProducts();
+        double totalAmount = getTotalAmount(productsCoupons);
+        //calculate the total price of the products by the store discount policy
+        finalPrice = calculateStoreDiscount(totalAmount, storeCoupon);
+        return Pair.of(finalPrice, new LinkedList<>(successfulProducts));
+    }
+
+    public void purchaseBasket(String creditCardNumber,
+                               String creditCardMonth, String creditCardYear,
+                               String creditCardHolderFirstName,
+                               String creditCardCVV, String id,
+                               String address, String city, String country,
+                               String zip) throws PurchaseFailedException {
 
         if (!paymentAdapter.pay(creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardCVV, id)) {
             throw new PurchaseFailedException("Payment failed");
@@ -106,8 +120,8 @@ public class Basket {
             productHistoryRepository.addProductToHistory(basketProduct, userId);
         }
         purchaseHistoryRepository.addPurchase(userId, storeId, successfulProducts, finalPrice);
-            basketProductRepository.removeBasketProducts(storeId, userId);
-            successfulProducts.clear();
+        basketProductRepository.removeBasketProducts(storeId, userId);
+        successfulProducts.clear();
 
     }
 

@@ -4,14 +4,13 @@ import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.User.PurchaseFailedException;
-import BGU.Group13B.backend.User.UserPermissions;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
+import BGU.Group13B.service.entity.ReviewService;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
 import BGU.Group13B.service.entity.ServiceProduct;
 import BGU.Group13B.service.info.StoreInfo;
 import BGU.Group13B.service.info.ProductInfo;
-import com.vaadin.flow.router.QueryParameters;
 
 import java.time.LocalDateTime;
 
@@ -71,8 +70,6 @@ public interface ISession {
                                                       String address, String city, String country,
                                                       String zip);
 
-    double startPurchaseBasketTransaction(int userId, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                          String/*store coupons*/ storeCoupon) throws PurchaseFailedException;
 
     /**
      * #50
@@ -411,6 +408,8 @@ public interface ISession {
      */
 
     public Response<Review> getReview(int userId, int storeId, int productId);
+
+    Response<List<ReviewService>> getAllReviews(int userId, int storeId, int productId);
 
     /**
      * [#26]
@@ -1024,7 +1023,12 @@ public interface ISession {
      * @return the user's purchase history
      * @throws Exception
      */
-    Response<String> getUserPurchaseHistory(int userId) throws Exception;
+    Response<String> getUserPurchaseHistory(int userId);
 
     Response<VoidResponse> fetchMessages(int userId);
+
+    int getStoreFounder(int storeId);
+    Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                                                                            String/*store coupons*/ storeCoupon) throws PurchaseFailedException;
+
 }

@@ -1,18 +1,20 @@
 package BGU.Group13B.frontEnd.components;
 
 
+import BGU.Group13B.backend.Pair;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.server.VaadinSessionState;
 
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class SessionToIdMapper {
 
     private static SessionToIdMapper instance;
-    private final ConcurrentHashMap<String, Integer> sessionToId;
+    private final ConcurrentHashMap<String, Pair<Integer/*user id*/, AtomicBoolean/*refresh required*/>> sessionToId;
     private ConcurrentHashMap<Integer, VaadinSession> idToSession;
 
     private SessionToIdMapper() {
@@ -29,7 +31,7 @@ public class SessionToIdMapper {
     }
 
     public synchronized void add(String session, int id) {
-        this.sessionToId.put(session, id);
+        this.sessionToId.put(session, Pair.of(id, new AtomicBoolean(false)));
         if(getCurrentSessionId()!=id)
             idToSession.remove(getCurrentSessionId());
 
@@ -39,14 +41,14 @@ public class SessionToIdMapper {
 
     //will moistly be used for communication
     public synchronized int get(String session) {
-        return this.sessionToId.get(session);
+        return this.sessionToId.get(session).getFirst();
     }
     public synchronized VaadinSession getSession(int id) {
         return this.idToSession.get(id);
     }
 
     public synchronized int getCurrentSessionId() {
-        return this.sessionToId.get(VaadinSession.getCurrent().getSession().getId());
+        return this.sessionToId.get(VaadinSession.getCurrent().getSession().getId()).getFirst();
     }
 
     public synchronized TimerTask kickExpired() {
@@ -73,7 +75,16 @@ public class SessionToIdMapper {
     }
     public synchronized void updateCurrentSession(int newId)
     {
-        this.sessionToId.put(VaadinSession.getCurrent().getSession().getId(), newId);
+        this.sessionToId.put(VaadinSession.getCurrent().getSession().getId(), Pair.of(newId, new AtomicBoolean(false)));
+    }
+
+    //synchronize is not really needed here
+    public synchronized boolean refreshRequired() {
+        return this.sessionToId.get(VaadinSession.getCurrent().getSession().getId()).getSecond().get();
+    }
+    //synchronize is not really needed here
+    public synchronized void setRefreshRequired(boolean refreshRequired) {
+        this.sessionToId.get(VaadinSession.getCurrent().getSession().getId()).getSecond().set(refreshRequired);
     }
 }
 
