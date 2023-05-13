@@ -75,7 +75,7 @@ public class Session implements ISession {
     public Response<Integer> addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) {
         try {
             return Response.success(market.addProduct(userId, storeId, productName, category, price, stockQuantity, description));
-        } catch (NoPermissionException e) {
+        } catch (Exception e) {
             return Response.exception(e);
         }
     }
