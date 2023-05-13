@@ -46,6 +46,7 @@ import java.util.stream.Collectors;
 @Route(value = "store", layout = MainLayout.class)
 public class StoreView extends VerticalLayout implements HasUrlParameter<Integer> {
 
+    private final Session session;
     private final int userId = SessionToIdMapper.getInstance().getCurrentSessionId();
     private int storeId = -1;
     private StoreInfo storeInfo;
@@ -78,14 +79,17 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
     private final HorizontalLayout bottomButtonsLayout = new HorizontalLayout();
 
 
+
     @Autowired
     public StoreView(Session session) {
         super();
+        this.session = session;
 
         demoData();
         init_header();
         init_body();
         init_bottomButtons();
+        setSizeFull();
 
 
     }
@@ -147,9 +151,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
 
     private void init_bottomButtons() {
         hideStoreButton.addClickListener(e -> {
-            Notification notification = new Notification("Store hidden", 3000);
-            notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
-            notification.open();
+            handleResponse(session.hideStore(userId, storeId));
         });
         deleteStoreButton.addClickListener(e -> {
             Notification notification = new Notification("Store deleted", 3000);
@@ -157,8 +159,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
             notification.open();
         });
         bottomButtonsLayout.add(hideStoreButton, deleteStoreButton);
-        bottomButtonsLayout.setAlignItems(Alignment.CENTER);
-        bottomButtonsLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+        bottomButtonsLayout.getStyle().set("margin-top", "auto");
         add(bottomButtonsLayout);
     }
 
@@ -220,8 +221,8 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
         workersLayout.add(workersHeaderLayout, rolesAccordion);
 
         //uncomment to align workers to the right
-        //workersLayout.getStyle().set("margin-left", "auto");
-        //workersLayout.setMaxWidth("200px");
+        workersLayout.getStyle().set("margin-left", "auto");
+        workersLayout.setMaxWidth("200px");
 
 
     }
