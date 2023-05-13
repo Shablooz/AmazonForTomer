@@ -6,11 +6,11 @@ import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.User.PurchaseFailedException;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
+import BGU.Group13B.service.entity.ReviewService;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
 import BGU.Group13B.service.entity.ServiceProduct;
 import BGU.Group13B.service.info.StoreInfo;
 import BGU.Group13B.service.info.ProductInfo;
-import com.vaadin.flow.router.QueryParameters;
 
 import java.time.LocalDateTime;
 
@@ -408,6 +408,8 @@ public interface ISession {
      */
 
     public Response<Review> getReview(int userId, int storeId, int productId);
+
+    Response<List<ReviewService>> getAllReviews(int userId, int storeId, int productId);
 
     /**
      * [#26]

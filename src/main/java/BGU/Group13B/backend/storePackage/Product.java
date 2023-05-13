@@ -2,6 +2,8 @@ package BGU.Group13B.backend.storePackage;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IProductPurchasePolicyRepository;
 import java.time.LocalDateTime;
+import java.util.List;
+
 import BGU.Group13B.backend.Repositories.Interfaces.IRepositoryReview;
 import BGU.Group13B.backend.storePackage.discountPolicies.ProductDiscountPolicy;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
@@ -105,6 +107,9 @@ public class Product {
     }
     public Review getReview(int userId){
         return repositoryReview.getReview(storeId,productId,userId);
+    }
+    public List<Review> getAllReviews(){
+        return repositoryReview.getAllReviews(storeId,productId);
     }
     public float getProductScore(){
         return repositoryReview.getProductScore(storeId,productId);

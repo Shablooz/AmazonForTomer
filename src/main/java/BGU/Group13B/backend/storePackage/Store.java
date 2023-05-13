@@ -248,6 +248,12 @@ public class Store {
             throw new IllegalArgumentException("Product with id: " + productId + " does not exist in store: " + this.storeId);
         return product.getReview(userId);
     }
+    public List<Review> getAllReviews(int productId){//TODO:maybe need to add validateStoreVisibility
+        Product product = productRepository.getStoreProductById(productId, this.storeId);
+        if (product == null)
+            throw new IllegalArgumentException("Product with id: " + productId + " does not exist in store: " + this.storeId);
+        return product.getAllReviews();
+    }
 
     public float getProductScore(int productId, int userId) throws NoPermissionException {
         this.storePermission.validateStoreVisibility(userId, hidden);
