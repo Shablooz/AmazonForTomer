@@ -6,6 +6,7 @@ import BGU.Group13B.backend.storePackage.WorkerCard;
 
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class StorePermission {
 
@@ -55,9 +56,15 @@ public class StorePermission {
         return methodName.substring(index + 1);
     }
 
-    public boolean checkPermission(int userId) {
+    public boolean checkPermission(int userId, boolean isStoreHidden) throws NoPermissionException {
         String fullMethodCallName = Thread.currentThread().getStackTrace()[2].getMethodName();
         String storeFunctionName = getFunctionName(fullMethodCallName);
+
+        //will throw exception if the store is hidden and the user doesn't have permission to view it
+        //I did it here in order to avoid future bugs that can happen if we forget to check it in every function
+        validateStoreVisibility(userId, isStoreHidden);
+
+        //check for the user's permissions
         if(userStoreFunctionPermissions.containsKey(userId)){
             return userStoreFunctionPermissions.get(userId).contains(storeFunctionName);
         }
@@ -66,6 +73,17 @@ public class StorePermission {
         }
         return false;
     }
+
+    public void validateStoreVisibility(int userId, boolean isStoreHidden) throws NoPermissionException{
+        if(isStoreHidden && !this.hasAccessWhileHidden(userId))
+            throw new NoPermissionException("This store does not exist");
+    }
+
+    public boolean hasAccessWhileHidden(int userId){
+        return userToStoreRole.containsKey(userId) &&
+                (userToStoreRole.get(userId) == StoreRole.FOUNDER || userToStoreRole.get(userId) == StoreRole.OWNER);
+    }
+
     public Set<Integer/*userId*/> getAllUsersWithPermission(String storeFunctionName){
         Set<Integer> usersWithPermission = new HashSet<>();
         for (var entry : userStoreFunctionPermissions.entrySet()) {

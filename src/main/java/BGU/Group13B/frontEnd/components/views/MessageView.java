@@ -3,15 +3,13 @@ package BGU.Group13B.frontEnd.components.views;
 import BGU.Group13B.service.Session;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 @Route(value = "messages", layout = MainLayout.class)
 @PageTitle("messages")
 public class MessageView extends VerticalLayout {

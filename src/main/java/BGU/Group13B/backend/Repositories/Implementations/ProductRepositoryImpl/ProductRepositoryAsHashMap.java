@@ -30,12 +30,13 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
     }
 
   
-    public synchronized int addProduct(int storeId, String name, String category, double price, int stockQuantity, String description) {
+    public synchronized Product addProduct(int storeId, String name, String category, double price, int stockQuantity, String description) {
         if (!storeProducts.containsKey(storeId))
             storeProducts.put(storeId, new ConcurrentSkipListSet<>(Comparator.comparingInt(Product::getProductId)));
         int productId = productIdCounter.getAndIncrement();
-        storeProducts.get(storeId).add(new Product(productId, storeId, name, category, price, stockQuantity, description));
-        return productId;
+        Product product=new Product(productId, storeId, name, category, price, stockQuantity, description);
+        storeProducts.get(storeId).add(product);
+        return product;
     }
 
 
@@ -131,5 +132,32 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
     public void reset() {
         storeProducts.clear();
         productIdCounter.set(0);
+    }
+
+    @Override
+    public void hideAllStoreProducts(int storeId) {
+        if(!storeProducts.containsKey(storeId))
+            return;
+        getStoreProducts(storeId).orElseThrow(
+                () -> new IllegalArgumentException("Store " + storeId + " not found")
+        ).forEach(Product::hide);
+    }
+
+    @Override
+    public void unhideAllStoreProducts(int storeId) {
+        if(!storeProducts.containsKey(storeId))
+            return;
+        getStoreProducts(storeId).orElseThrow(
+                () -> new IllegalArgumentException("Store " + storeId + " not found")
+        ).forEach(Product::unhide);
+    }
+
+    @Override
+    public synchronized int addHiddenProduct(int storeId, String name, String category, double price, int stockQuantity, String description) {
+        if (!storeProducts.containsKey(storeId))
+            storeProducts.put(storeId, new ConcurrentSkipListSet<>(Comparator.comparingInt(Product::getProductId)));
+        int productId = productIdCounter.getAndIncrement();
+        storeProducts.get(storeId).add(new Product(productId, storeId, name, category, price, stockQuantity, description, true));
+        return productId;
     }
 }

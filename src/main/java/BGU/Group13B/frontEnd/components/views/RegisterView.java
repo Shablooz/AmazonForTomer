@@ -5,6 +5,7 @@ import BGU.Group13B.service.Session;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.PasswordField;
@@ -51,7 +52,6 @@ public class RegisterView extends VerticalLayout {
             }
         });
         FormLayout formLayout = new FormLayout();
-
         formLayout.add(username, password, email,answer1,answer2,answer3);
         add(formLayout, registerButton);
     }

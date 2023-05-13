@@ -24,6 +24,7 @@ import BGU.Group13B.backend.System.Searcher;
 import BGU.Group13B.backend.storePackage.AlertManager;
 import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
+import BGU.Group13B.backend.storePackage.payment.PaymentAPI;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
 import BGU.Group13B.service.callbacks.AddToUserCart;
 import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
@@ -80,6 +81,7 @@ public class SingletonCollection {
     private static AlertManager alertManager;
     private static Searcher searcher;
     private static Market market;
+    private static Session session;
 
     private static final String LOG_FILE_NAME = "info_logger.txt";
     private static final String ERROR_LOG_FILE_NAME = "error_logger.txt";
@@ -105,19 +107,21 @@ public class SingletonCollection {
         reviewRepository = new ReviewRepoSingle();
         messageRepository = new MessageRepositorySingle();
         storeScoreRepository = new StoreScoreSingle();
-
         userPermissionRepository = new UserPermissionRepositoryAsHashmap();
         storePermissionRepository = new StorePermissionsRepositoryAsHashmap();
 
+
         //adapters
-        deliveryAdapter = null; //TODO
-        paymentAdapter = (address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCVV, id, creditCardType, successfulProducts, failedProducts, totalAmount) -> true;  //TODO
+        deliveryAdapter = new PaymentAPI();
+        paymentAdapter = new PaymentAPI();
 
 
         //additional classes
         alertManager = new AlertManager(userRepository);
         searcher = new Searcher(productRepository, storeRepository);
         market = new Market();
+        //session = new Session(market);//super bug sad shaun at 3:38 am
+
     }
 
     public static void reset_system()
@@ -145,13 +149,13 @@ public class SingletonCollection {
 
 
         //adapters
-        deliveryAdapter = null; //TODO
 
 
         //additional classes
         alertManager = new AlertManager(userRepository);
         searcher = new Searcher(productRepository, storeRepository);
         market = new Market();
+        session = new Session(market);
     }
 
     private SingletonCollection() {
@@ -259,6 +263,10 @@ public class SingletonCollection {
 
     public static IUserPermissionRepository getUserPermissionRepository(){
         return userPermissionRepository;
+    }
+
+    public static Session getSession() {
+        return session;
     }
 
     /**

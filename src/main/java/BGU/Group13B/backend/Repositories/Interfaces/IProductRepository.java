@@ -12,7 +12,7 @@ public interface IProductRepository {//deeded because it contains the product qu
 
     void removeStoreProduct(int productId, int storeId);
 
-    int addProduct(int storeId, String name, String category, double price, int stockQuantity, String description);
+    Product addProduct(int storeId, String name, String category, double price, int stockQuantity, String description);
 
     List<Product> getProductByName(String name);
 
@@ -27,4 +27,10 @@ public interface IProductRepository {//deeded because it contains the product qu
     void removeStoreProducts(int storeId);
 
     void reset();
+
+    void hideAllStoreProducts(int storeId);
+
+    void unhideAllStoreProducts(int storeId);
+
+    int addHiddenProduct(int storeId, String name, String category, double price, int stockQuantity, String description);
 }

@@ -8,10 +8,12 @@ import BGU.Group13B.service.info.StoreInfo;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.accordion.AccordionPanel;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -38,6 +40,7 @@ public class MyStoresView extends VerticalLayout {
     HorizontalLayout buttonsLayout = new HorizontalLayout();
     private final Button createStoreButton = new Button("Create Store");
     private final Button enterStoreButton = new Button("Enter Store");
+
 
     @Autowired
     public MyStoresView(Session session){
@@ -115,7 +118,6 @@ public class MyStoresView extends VerticalLayout {
         //add the buttons to the view in horizontal layout
         buttonsLayout.add(createStoreButton, enterStoreButton);
         add(buttonsLayout);
-
     }
 
     private void navigateToStore(){
@@ -165,4 +167,7 @@ public class MyStoresView extends VerticalLayout {
 
         return userStoresAndRoles;
     }
+
+
+
 }
