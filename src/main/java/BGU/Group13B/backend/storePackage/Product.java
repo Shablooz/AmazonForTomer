@@ -165,6 +165,10 @@ public class Product {
         this.description = description;
     }
 
+    public String getSeller(){
+        return SingletonCollection.getStoreRepository().getStore(storeId).getStoreName();
+    }
+  
     public void hide() {
         this.hidden = true;
     }

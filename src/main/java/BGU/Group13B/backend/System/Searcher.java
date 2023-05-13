@@ -3,6 +3,7 @@ package BGU.Group13B.backend.System;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
 import BGU.Group13B.backend.storePackage.Product;
+import BGU.Group13B.service.info.ProductInfo;
 
 import java.util.Collection;
 import java.lang.reflect.Array;
@@ -22,22 +23,37 @@ public class Searcher {
         this.storeRepository = storeRepository;
         products = new LinkedList<>();
     }
-    public List<Product> searchByName(String name) {
+    public List<ProductInfo> searchByName(String name) {
         products = productRepository.getProductByName(name);
         filterHiddenProducts();
-        return products;
+        List<ProductInfo> productsInfo = new LinkedList<>();
+        for(Product product: products) {
+            productsInfo.add(new ProductInfo(product));
+        }
+        return productsInfo;
+
     }
-    public List<Product> searchByCategory(String category) {
+    public List<ProductInfo> searchByCategory(String category) {
         products = productRepository.getProductByCategory(category);
         filterHiddenProducts();
-        return products;
+        List<ProductInfo> productsInfo = new LinkedList<>();
+        for(Product product: products) {
+            productsInfo.add(new ProductInfo(product));
+        }
+        return productsInfo;
     }
-    public List<Product> searchByKeywords(String Keywords) {
+  
+    public List<ProductInfo> searchByKeywords(String Keywords) {
         String[] keywords = Keywords.split(" ");
         products = productRepository.getProductByKeywords(Arrays.asList(keywords));
         filterHiddenProducts();
-        return products;
+        List<ProductInfo> productsInfo = new LinkedList<>();
+        for (Product product : products) {
+             productsInfo.add(new ProductInfo(product));
+            }
+         return productsInfo;
     }
+    
     public List<Product> filterByPriceRange(int minPrice, int maxPrice) {
         filterHiddenProducts();
         List<Product> newProducts = new LinkedList<>();
@@ -81,8 +97,6 @@ public class Searcher {
                 newProducts.add(product);
             }
         }
-
-
 
         products = newProducts;
         return products;

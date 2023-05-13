@@ -4,6 +4,7 @@ import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
 import BGU.Group13B.backend.storePackage.*;
 import BGU.Group13B.service.SingletonCollection;
+import BGU.Group13B.service.info.ProductInfo;
 import org.junit.jupiter.api.*;
 
 import java.lang.reflect.Array;
@@ -89,9 +90,9 @@ public class MarketTest {
     @Test
     void searchProductByName() {
         try {
-            List<Product> products = market.searchProductByName(productName1);
+            List<ProductInfo> products = market.searchProductByName(productName1);
             assertEquals(2, products.size());
-            assertEquals(2, products.stream().filter(p -> p.getName().contains(productName1)).count());
+            assertEquals(2, products.stream().filter(p -> p.name().contains(productName1)).count());
 
         } catch (Exception e) {
             fail("Exception was thrown");
@@ -101,9 +102,9 @@ public class MarketTest {
     @Test
     void searchProductByCategory() {
         try {
-            List<Product> products = market.searchProductByCategory(productCategory1);
+            List<ProductInfo> products = market.searchProductByCategory(productCategory1);
             assertEquals(4, products.size());
-            assertEquals(4, products.stream().filter(p -> p.getCategory().contains(productCategory1)).count());
+            assertEquals(4, products.stream().filter(p -> p.category().contains(productCategory1)).count());
 
         } catch (Exception e) {
             fail("Exception was thrown");
@@ -126,9 +127,9 @@ public class MarketTest {
     @Test
     void searchProductByKeywords() {
         try {
-            List<Product> products = market.searchProductByKeywords(productKeywords);
+            List<ProductInfo> products = market.searchProductByKeywords(productKeywords);
             assertEquals(4, products.size());
-            assertEquals(4, products.stream().filter(p -> checkIfContainsSomeKeywords(productKeywords, p.getDescription())).count());
+            assertEquals(4, products.stream().filter(p -> checkIfContainsSomeKeywords(productKeywords, p.description())).count());
         } catch (Exception e) {
         }
     }

@@ -12,6 +12,7 @@ import BGU.Group13B.service.entity.ServiceBasketProduct;
 import BGU.Group13B.service.entity.ServiceProduct;
 import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
+import com.vaadin.flow.router.QueryParameters;
 
 import java.time.LocalDateTime;
 
@@ -120,9 +121,10 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void search(String searchWords) {
+    public Response<List<ProductInfo>> search(String searchWords) {
         if (realSession != null)
             realSession.search(searchWords);
+        return null;
     }
 
     @Override
