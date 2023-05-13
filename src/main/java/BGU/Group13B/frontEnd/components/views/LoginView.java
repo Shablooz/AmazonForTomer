@@ -21,6 +21,8 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
@@ -32,7 +34,7 @@ import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY_INLIN
 @Tag("login-view")
 @Route(value = "login", layout = MainLayout.class)
 @PageTitle("Login")
-public class LoginView extends VerticalLayout {
+public class LoginView extends VerticalLayout implements BeforeEnterObserver {
 
     private final TextField username = new TextField("Username");
 
@@ -49,10 +51,11 @@ public class LoginView extends VerticalLayout {
     private final TextField answer2;
 
     private final VerticalLayout authenticationLayout = new VerticalLayout();
-
+    private final Session session;
 
     @Autowired
     public LoginView(Session session) {
+        this.session = session;
         answer1 = new TextField("favorite color?");
         answer2 = new TextField("favorite food?");
         answer3 = new TextField("bUgAati cOloR?");
@@ -185,4 +188,11 @@ public class LoginView extends VerticalLayout {
     }
 
 
+    @Override
+    public void beforeEnter(BeforeEnterEvent event) {
+        int userId = SessionToIdMapper.getInstance().getCurrentSessionId();
+        if(session.isUserLogged(userId))
+            event.rerouteTo(HomeView.class);
+
+    }
 }

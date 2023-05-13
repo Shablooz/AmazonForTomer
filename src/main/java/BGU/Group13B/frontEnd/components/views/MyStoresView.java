@@ -5,31 +5,36 @@ import BGU.Group13B.backend.storePackage.Store;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.service.Session;
 import BGU.Group13B.service.info.StoreInfo;
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.accordion.AccordionPanel;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.router.OptionalParameter;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.flow.component.button.Button;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY_INLINE;
+
 @PageTitle("My Stores")
 @Route(value = "mystores", layout = MainLayout.class)
-public class MyStoresView extends VerticalLayout {
+public class MyStoresView extends VerticalLayout implements BeforeEnterObserver {
 
     private final int userId = SessionToIdMapper.getInstance().getCurrentSessionId();
     private final HashMap<String, List<StoreInfo>> rolesToStores = new HashMap<>();
@@ -41,11 +46,11 @@ public class MyStoresView extends VerticalLayout {
     private final Button createStoreButton = new Button("Create Store");
     private final Button enterStoreButton = new Button("Enter Store");
 
-
+    private final Session session;
     @Autowired
     public MyStoresView(Session session){
         super();
-
+        this.session = session;
         enterStoreButton.setEnabled(false);
 
         //List<Pair<StoreInfo, String>> userStoresAndRoles = session.getAllUserAssociatedStores(userId);
@@ -169,5 +174,33 @@ public class MyStoresView extends VerticalLayout {
     }
 
 
+    @Override
+    public void beforeEnter(BeforeEnterEvent event) {
+        if(!session.isUserLogged(userId)){
+            createReportError("Permission denied, please login first.").open();
+            event.rerouteTo(LoginView.class);
+        }
+    }
+    private Notification createReportError(String msg) {
+        Notification notification = new Notification();
+        notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
 
+        Icon icon = VaadinIcon.WARNING.create();
+        Div info = new Div(new Text(msg));
+
+        HorizontalLayout layout = new HorizontalLayout(icon, info,
+                createCloseBtn(notification));
+        layout.setAlignItems(FlexComponent.Alignment.CENTER);
+
+        notification.add(layout);
+
+        return notification;
+    }
+    private Button createCloseBtn(Notification notification) {
+        Button closeBtn = new Button(VaadinIcon.CLOSE_SMALL.create(),
+                clickEvent -> notification.close());
+        closeBtn.addThemeVariants(LUMO_TERTIARY_INLINE);
+
+        return closeBtn;
+    }
 }
