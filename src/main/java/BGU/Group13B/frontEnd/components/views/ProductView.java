@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Map;
 
 @PageTitle("product")
-@Route(value = "product/:productId/:storeId", layout = MainLayout.class)
+//@Route(value = "product/:productId/:storeId", layout = MainLayout.class)
 public class ProductView extends VerticalLayout implements HasUrlParameter<Map<String, Integer>> {
 
     private int productId;

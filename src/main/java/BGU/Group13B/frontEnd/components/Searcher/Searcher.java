@@ -14,6 +14,8 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.QueryParameters;
 
+import java.util.HashMap;
+
 import static org.apache.el.lang.ELArithmetic.add;
 
 
@@ -28,11 +30,23 @@ public class Searcher extends HorizontalLayout{
         searchField.setPlaceholder("Search by name, category or keywords...");
         searchButton = new Button();
         searchButton.setIcon(VaadinIcon.SEARCH.create());
+//        searchButton.addClickListener(e -> {
+//            try {
+//                String searchTerm = searchField.getValue();
+//              searchButton.addClickListener(event ->
+//                      getUI().ifPresent(ui -> ui.navigate("searcher/" + searchTerm)));
+//            } catch (Exception exception) {
+//                Notification.show(exception.getMessage());
+//            }
+//        });
+
         searchButton.addClickListener(e -> {
             try {
                 String searchTerm = searchField.getValue();
-              searchButton.addClickListener(event ->
-                      getUI().ifPresent(ui -> ui.navigate("searcher/" + searchTerm)));
+                HashMap map=new HashMap();
+                map.put("searchTerm",searchTerm);
+                QueryParameters queryParams = QueryParameters.simple(map);
+                navigateToSearchResults(queryParams);
             } catch (Exception exception) {
                 Notification.show(exception.getMessage());
             }
@@ -41,4 +55,11 @@ public class Searcher extends HorizontalLayout{
         add(searchField, searchButton);
         setWidth("600%");
     }
+
+    private void navigateToSearchResults(QueryParameters queryParams) {
+        getUI().ifPresent(ui -> ui.navigate("Search results", queryParams));
+    }
 }
+
+
+

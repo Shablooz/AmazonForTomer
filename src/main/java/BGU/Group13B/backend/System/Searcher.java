@@ -39,13 +39,14 @@ public class Searcher {
         return productsInfo;
     }
     public List<ProductInfo> searchByKeywords(String Keywords) {
-        String[] keywords = Keywords.split(" ");
-        products = productRepository.getProductByKeywords(Arrays.asList(keywords));
-        List<ProductInfo> productsInfo = new LinkedList<>();
-        for(Product product: products) {
-            productsInfo.add(new ProductInfo(product));
-        }
-        return productsInfo;
+            String[] keywords = Keywords.split(" ");
+            products = productRepository.getProductByKeywords(Arrays.asList(keywords));
+            List<ProductInfo> productsInfo = new LinkedList<>();
+            for (Product product : products) {
+                productsInfo.add(new ProductInfo(product));
+            }
+            return productsInfo;
+       // else throw new IllegalArgumentException("Keywords cannot be null");
     }
     public List<Product> filterByPriceRange(int minPrice, int maxPrice) {
         List<Product> newProducts = new LinkedList<>();
