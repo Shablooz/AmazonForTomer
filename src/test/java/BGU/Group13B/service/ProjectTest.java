@@ -2,11 +2,14 @@ package BGU.Group13B.service;
 
 import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.System.SystemInfo;
-import org.junit.jupiter.api.AfterEach;
+import BGU.Group13B.service.info.ProductInfo;
+import BGU.Group13B.service.info.StoreInfo;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 
-import java.util.HashMap;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public abstract class ProjectTest {
 
@@ -26,7 +29,7 @@ public abstract class ProjectTest {
 
     protected final String[] categories = {"Electronics", "Computers", "Phones", "Tablets", "TVs", "Audio", "Peripherals"};
 
-    enum ProductInfo {
+    enum ProductIndexes {
         PRODUCT_ID, STORE_ID, STORE_FOUNDER_ID, NAME, CATEGORY, PRICE, QUANTITY, DESCRIPTION
     }
 
@@ -79,6 +82,7 @@ public abstract class ProjectTest {
 
     @BeforeEach
     public void setUp() {
+        SingletonCollection.reset_system();
         this.session = SingletonCollection.getSession();
         setUpUsers();
         setUpAdmin();
@@ -87,8 +91,8 @@ public abstract class ProjectTest {
         setUpProducts();
     }
 
-    @AfterEach
-    public void teardown() {
+    @AfterAll
+    public static void teardown() {
         SingletonCollection.reset_system();
     }
 
@@ -120,11 +124,12 @@ public abstract class ProjectTest {
         session.setUserStatus(ADMIN_CREATOR_MASTER_ID, userIds[UsersIndex.ADMIN.ordinal()], 1);
     }
 
-    protected int addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) {
-        return session.addProduct(userId, storeId, productName, category, price, stockQuantity, description);
+    protected <T> T handleResponse(Response<T> response) {
+        if(response.didntSucceed()) {
+            fail();
+        }
+        return response.getData();
     }
-
-
 
     protected void purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount) {
         session.purchaseProposalSubmit(userId, storeId, productId, proposedPrice, amount);
@@ -154,16 +159,16 @@ public abstract class ProjectTest {
         for(int i = 0; i < products.length; i++) {
             products[i][1] = stores[i % stores.length][0]; //storeId
             products[i][2] = stores[i % stores.length][1]; //founder
-            products[i][0] = session.addProduct((int) stores[i % stores.length][1],
+            products[i][0] = handleResponse(session.addProduct((int) stores[i % stores.length][1],
                     (int) products[i][1], (String) products[i][3], (String) products[i][4],
-                    (double) products[i][5], (int) products[i][6], (String) products[i][7]);
+                    (double) products[i][5], (int) products[i][6], (String) products[i][7]));
         }
     }
 
     private void setUpStores() {
         for (int i = 0; i < stores.length; i++) {
             stores[i][1] = userIds[UsersIndex.STORE_OWNER_1.ordinal() + i];
-            stores[i][0] = session.addStore(userIds[UsersIndex.STORE_OWNER_1.ordinal() + i], (String) stores[i][2], (String) stores[i][3]);
+            stores[i][0] = handleResponse(session.addStore(userIds[UsersIndex.STORE_OWNER_1.ordinal() + i], (String) stores[i][2], (String) stores[i][3]));
         }
 
     }
