@@ -81,6 +81,7 @@ public class PaymentView extends Div implements BeforeLeaveObserver {
     private Component combinedDateView;
     private final Session session;
     private boolean paymentSuccessful;
+    private List<ServiceBasketProduct> successfulItems;
 
     public PaymentView(Session session) {
         this.session = session;
@@ -130,7 +131,9 @@ public class PaymentView extends Div implements BeforeLeaveObserver {
     }
 
     private HorizontalLayout getPricesLayout(Session session, double totalPriceBeforeDiscount) {
-        totalPriceAfterDiscount = session.startPurchaseBasketTransaction(SessionToIdMapper.getInstance().getCurrentSessionId(), new HashMap<>(), "");
+        var priceAndSuccessful = session.startPurchaseBasketTransaction(SessionToIdMapper.getInstance().getCurrentSessionId(), new HashMap<>(), "");
+        totalPriceAfterDiscount = priceAndSuccessful.getFirst();
+        successfulItems = priceAndSuccessful.getSecond();
         Span spanBeforeDiscountTitle = new Span("Total price before discount: ");
         Span spanBeforeDiscount = new Span(String.valueOf(totalPriceBeforeDiscount));
         spanBeforeDiscount.getStyle().set("text-decoration", "line-through");
