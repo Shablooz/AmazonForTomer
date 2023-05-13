@@ -43,10 +43,11 @@ public class Searcher extends HorizontalLayout{
         searchButton.addClickListener(e -> {
             try {
                 String searchTerm = searchField.getValue();
-                HashMap map=new HashMap();
-                map.put("searchTerm",searchTerm);
-                QueryParameters queryParams = QueryParameters.simple(map);
-                navigateToSearchResults(queryParams);
+                getUI().ifPresent(ui -> ui.navigate("Search results/" + searchTerm));
+//                HashMap map=new HashMap();
+//                map.put("searchTerm",searchTerm);
+//                QueryParameters queryParams = QueryParameters.simple(map);
+//                navigateToSearchResults(queryParams);
             } catch (Exception exception) {
                 Notification.show(exception.getMessage());
             }

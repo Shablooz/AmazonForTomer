@@ -42,7 +42,7 @@ public class Searcher {
         }
         return productsInfo;
     }
-  
+
     public List<ProductInfo> searchByKeywords(String Keywords) {
         String[] keywords = Keywords.split(" ");
         products = productRepository.getProductByKeywords(Arrays.asList(keywords));
@@ -53,7 +53,7 @@ public class Searcher {
             }
          return productsInfo;
     }
-    
+
     public List<Product> filterByPriceRange(int minPrice, int maxPrice) {
         filterHiddenProducts();
         List<Product> newProducts = new LinkedList<>();
