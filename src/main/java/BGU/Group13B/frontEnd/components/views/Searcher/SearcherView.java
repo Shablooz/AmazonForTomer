@@ -45,6 +45,11 @@ public class SearcherView extends VerticalLayout implements HasUrlParameter<Stri
         productGrid.addColumn(ProductInfo::price).setHeader("Price");
         productGrid.addColumn(ProductInfo::score).setHeader("Score");
         productGrid.addColumn(ProductInfo::seller).setHeader("Seller");
+        productGrid.addItemClickListener(event -> {
+            ProductInfo clickedProduct = event.getItem();
+            //navigate to product page
+            getUI().ifPresent(ui -> ui.navigate("product/" + clickedProduct.productId() + "/" + clickedProduct.storeId()));
+        });
         add(productGrid);
     }
 }
