@@ -240,6 +240,14 @@ public class User {
         regularMessageToReply = null;
     }
 
+    public void sendMassageBroad(String receiverName, String header, String massage) throws NoPermissionException {
+        messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), header, massage, receiverName));
+        User receiverNext=SingletonCollection.getUserRepository().getUserByUsername(receiverName);
+        if(!BroadCaster.broadcast(receiverNext.userId,"New Message"))
+            receiverNext.setMessageNotification(true);
+        System.out.println("Status: "+receiverNext.getMessageNotification());
+    }
+
     public Message readOldMessage() throws NoPermissionException {
         if (!isRegistered())
             throw new NoPermissionException("Only registered users can read massages");

@@ -1,9 +1,12 @@
 package BGU.Group13B.backend.storePackage;
 
 import BGU.Group13B.backend.Repositories.Interfaces.*;
+import BGU.Group13B.backend.User.User;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.service.Session;
 import BGU.Group13B.service.SingletonCollection;
+import jdk.jshell.spi.ExecutionControl;
+import org.apache.commons.lang3.NotImplementedException;
 import org.junit.jupiter.api.*;
 
 import java.util.Collection;
@@ -13,13 +16,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class StoreManagementTest {
     private static IStoreRepository storeRepository;
-    private static IStorePurchasePolicyRepository storePurchasePolicyRepository;
-    private static IStoreDiscountsRepository storeDiscountsRepository;
     private static IProductRepository productRepository;
     private static IProductPurchasePolicyRepository productPurchasePolicyRepository;
-    private static IProductDiscountsRepository productDiscountsRepository;
-    private static IStorePermissionsRepository storePermissionsRepository;
-    private final int founderId = 1;
+    private static IUserRepository userRepository;
+
+    private final int adminId = 1;
+    private int founderId;
+    private int guestId;
+
     private final String storeName = "storeName";
     private final String category = "category";
     private final String productName = "productName";
@@ -30,22 +34,30 @@ public class StoreManagementTest {
     private int storeId;
     private Store store;
 
+    private int addUser() {
+        int userId = userRepository.getNewUserId();
+        userRepository.addUser(userId, new User(userId));
+        return userId;
+    }
+
     @BeforeEach
     void setUpEach() {
+        SingletonCollection.reset_system();
         storeRepository = SingletonCollection.getStoreRepository();
-        storePurchasePolicyRepository = SingletonCollection.getStorePurchasePolicyRepository();
-        storeDiscountsRepository = SingletonCollection.getStoreDiscountsRepository();
         productRepository = SingletonCollection.getProductRepository();
         productPurchasePolicyRepository = SingletonCollection.getProductPurchasePolicyRepository();
-        productDiscountsRepository = SingletonCollection.getProductDiscountsRepository();
-        storePermissionsRepository = SingletonCollection.getStorePermissionRepository();
+        userRepository = SingletonCollection.getUserRepository();
+
+        founderId = addUser();
+        guestId = addUser();
+
         storeId = storeRepository.addStore(founderId, storeName, category);
         store = storeRepository.getStore(storeId);
     }
 
 
-    @AfterEach
-    void tearDown() {
+    @AfterAll
+    static void tearDown() {
         SingletonCollection.reset_system();
     }
 
@@ -148,7 +160,7 @@ public class StoreManagementTest {
     @Test
     void addProductTest_noPermission_fail(){
         try{
-            store.addProduct(founderId + 1, productName, category, price, stockQuantity, description);
+            store.addProduct(guestId, productName, category, price, stockQuantity, description);
             fail();
         }
         catch (NoPermissionException ignored){}
@@ -266,7 +278,7 @@ public class StoreManagementTest {
     void deleteProductTest_noPermission_fail(){
         try{
             int productId = addProduct1();
-            store.removeProduct(founderId + 1, productId);
+            store.removeProduct(guestId, productId);
             fail();
         }
         catch (NoPermissionException ignored){}
@@ -405,7 +417,7 @@ public class StoreManagementTest {
         try{
             int productId = addProduct1();
             String newName = "new name";
-            store.setProductName(founderId + 1, productId, newName);
+            store.setProductName(guestId, productId, newName);
             fail();
         }
         catch (NoPermissionException ignored){}
@@ -543,7 +555,7 @@ public class StoreManagementTest {
     @Test
     void hideStoreTest_noPermission_fail(){
         try {
-            store.hideStore(founderId + 1);
+            store.hideStore(guestId);
             fail();
         } catch (NoPermissionException e) {
             assertTrue(true);
@@ -567,7 +579,7 @@ public class StoreManagementTest {
     void hideStoreTest_noPermissionToViewProducts_fail(){
         try {
             store.hideStore(founderId);
-            store.getAllStoreProducts(founderId + 1);
+            store.getAllStoreProducts(guestId);
             fail();
         } catch (NoPermissionException e) {
             assertTrue(true);
@@ -579,7 +591,7 @@ public class StoreManagementTest {
         try {
             int productId = addProduct1();
             store.hideStore(founderId);
-            store.getStoreProduct(founderId + 1, productId);
+            store.getStoreProduct(guestId, productId);
             fail();
         } catch (NoPermissionException e) {
             assertTrue(true);
@@ -623,7 +635,7 @@ public class StoreManagementTest {
     void unhideStoreTest_noPermission_fail(){
         try {
             store.hideStore(founderId);
-            store.unhideStore(founderId + 1);
+            store.unhideStore(guestId);
             fail();
         } catch (NoPermissionException e) {
             assertTrue(true);
@@ -636,6 +648,44 @@ public class StoreManagementTest {
             store.unhideStore(founderId);
             fail();
         } catch (Exception e) {
+            assertTrue(true);
+        }
+    }
+
+    @Test
+    void deleteStoreTest_simpleCase_success(){
+        try{
+            int productId = addProduct1();
+            Product product = store.getStoreProduct(adminId, productId);
+
+            store.deleteStore(adminId);
+            assertTrue(product.isDeleted());
+            assertTrue(store.getAllStoreProducts(adminId).isEmpty());
+            storeRepository.getStore(storeId); //should throw exception
+
+        } catch (NoPermissionException | NotImplementedException e) {
+            fail();
+        } catch (Exception e){
+            assertTrue(true);
+        }
+    }
+
+    @Test
+    void deleteStoreTest_noPermission_guest_fail(){
+        try{
+            store.deleteStore(guestId);
+            fail();
+        } catch (NoPermissionException e){
+            assertTrue(true);
+        }
+    }
+
+    @Test
+    void deleteStoreTest_noPermission_founder_fail(){
+        try{
+            store.deleteStore(founderId);
+            fail();
+        } catch (NoPermissionException e){
             assertTrue(true);
         }
     }

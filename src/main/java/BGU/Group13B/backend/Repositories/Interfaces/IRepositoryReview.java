@@ -11,4 +11,6 @@ public interface IRepositoryReview {
 
     void addAndSetProductScore(int storeId, int productId, int userId, int score);
     void removeProductScore(int storeId, int productId, int userId);
+
+    void removeProductData(int storeId, int productId);
 }

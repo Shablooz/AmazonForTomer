@@ -51,7 +51,6 @@ public class Response<T> {
     }
 
 
-
     /**
      * The Status enum represents the status of the response.
      * It can be SUCCESS, PARTIAL_SUCCESS, or FAILURE.
@@ -207,6 +206,27 @@ public class Response<T> {
                 .message(e.getMessage())
                 .status(Status.FAILURE)
                 .build();
+    }
+
+
+    /**
+     * @return true if the status is not SUCCESS, false otherwise
+     *
+     * @code
+     * inside the ProjectTest class - see ProjectTest::handleResponse()
+     * protected <T> T handleResponse(Response<T> response) {
+     *         if(response.didntSucceed()) {
+     *             fail();
+     *         }
+     *         return response.getData();
+     * }
+     *
+     * for testing if failed - see StoreAT::addStore_guest_fail()
+     * assertTrue(session.someFunction(...).didntSucceed());
+     *
+     */
+    public boolean didntSucceed() {
+        return this.status != Status.SUCCESS;
     }
 
 

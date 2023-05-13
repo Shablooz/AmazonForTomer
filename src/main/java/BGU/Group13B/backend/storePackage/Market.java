@@ -208,14 +208,6 @@ public class Market {
         return storeRepository.getStore(storeId).getStoreInfo(userId);
     }
 
-    public String getStoreName(int storeId) {
-        return storeRepository.getStore(storeId).getStoreName();
-    }
-
-    public String getStoreCategory(int storeId) {
-        return storeRepository.getStore(storeId).getCategory();
-    }
-
     public ProductInfo getStoreProductInfo(int userId, int storeId, int productId) throws NoPermissionException {
         return storeRepository.getStore(storeId).getStoreProduct(userId, productId).getProductInfo();
     }
@@ -318,5 +310,9 @@ public class Market {
 
     public void unhideStore(int userId, int storeId) throws NoPermissionException {
         storeRepository.getStore(storeId).unhideStore(userId);
+    }
+
+    public void deleteStore(int userId, int storeId) throws NoPermissionException {
+        storeRepository.getStore(storeId).deleteStore(userId);
     }
 }

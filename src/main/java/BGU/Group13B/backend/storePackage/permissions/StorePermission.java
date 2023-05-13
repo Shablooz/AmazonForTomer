@@ -1,8 +1,12 @@
 package BGU.Group13B.backend.storePackage.permissions;
 
+import BGU.Group13B.backend.Repositories.Interfaces.IUserPermissionRepository;
+import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
+import BGU.Group13B.backend.User.UserPermissions;
 import BGU.Group13B.backend.User.UserPermissions.StoreRole;
 import BGU.Group13B.backend.storePackage.Store;
 import BGU.Group13B.backend.storePackage.WorkerCard;
+import BGU.Group13B.service.SingletonCollection;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -14,6 +18,8 @@ public class StorePermission {
     private final HashMap<StoreRole, Set<String>> defaultStoreRoleFunctionalities;
     private final HashMap<Integer/*userId*/, StoreRole> userToStoreRole;
     private final HashMap<Integer/*got appointed by*/, Set<Integer>/*appointee*/> appointedOwnersMap;
+
+    private final IUserPermissionRepository userPermissionRepository = SingletonCollection.getUserPermissionRepository();
 
     public StorePermission(int founderId) {
         userStoreFunctionPermissions = new HashMap<>();
@@ -36,10 +42,12 @@ public class StorePermission {
         for (Method method : storeClass.getMethods()) {
             if (method.isAnnotationPresent(DefaultManagerFunctionality.class))
                 storeManagerFunctions.add(getFunctionName(method));
+
             if (method.isAnnotationPresent(DefaultOwnerFunctionality.class))
                 storeOwnerFunctions.add(method.getName());
-            //the founder can do every function
-            storeFounderFunctions.add(method.getName());
+
+            if (method.isAnnotationPresent(DefaultFounderFunctionality.class))
+                storeFounderFunctions.add(method.getName());
         }
         defaultStoreRoleFunctionalities.put(StoreRole.MANAGER, storeManagerFunctions);
         defaultStoreRoleFunctionalities.put(StoreRole.OWNER, storeOwnerFunctions);
@@ -57,6 +65,11 @@ public class StorePermission {
     }
 
     public boolean checkPermission(int userId, boolean isStoreHidden) throws NoPermissionException {
+        //check if the user is admin
+        if(hasAdminPermission(userId)){
+            return true;
+        }
+
         String fullMethodCallName = Thread.currentThread().getStackTrace()[2].getMethodName();
         String storeFunctionName = getFunctionName(fullMethodCallName);
 
@@ -72,6 +85,11 @@ public class StorePermission {
             return defaultStoreRoleFunctionalities.get(userToStoreRole.get(userId)).contains(storeFunctionName);
         }
         return false;
+    }
+
+    private boolean hasAdminPermission(int userId)  {
+        return userPermissionRepository.getUserPermission(userId).getUserPermissionStatus()
+                .equals(UserPermissions.UserPermissionStatus.ADMIN);
     }
 
     public void validateStoreVisibility(int userId, boolean isStoreHidden) throws NoPermissionException{

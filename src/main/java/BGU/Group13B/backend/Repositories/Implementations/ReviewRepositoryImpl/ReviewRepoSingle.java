@@ -10,7 +10,7 @@ public class ReviewRepoSingle implements IRepositoryReview {
 
 
 
-    ConcurrentHashMap<Pair<Integer,Integer> /*store Id */,ReviewRepositoryAsList> implementations;
+    ConcurrentHashMap<Pair<Integer /*storeId*/, Integer /*productId*/>,ReviewRepositoryAsList> implementations;
 
 
     public ReviewRepoSingle() {
@@ -21,44 +21,44 @@ public class ReviewRepoSingle implements IRepositoryReview {
 
     @Override
     public void addReview(String review, int storeId, int productId, int userId) {
-        var pair= new Pair<>(storeId,productId);
-        implementations.putIfAbsent(pair,new ReviewRepositoryAsList());
-        implementations.get(pair).addReview(review,storeId,productId,userId);
+        implementations.putIfAbsent(Pair.of(storeId, productId),new ReviewRepositoryAsList());
+        implementations.get(Pair.of(storeId, productId)).addReview(review,storeId,productId,userId);
     }
 
     @Override
     public void removeReview(int storeId, int productId, int userId) {
-        var pair= new Pair<>(storeId,productId);
-        implementations.putIfAbsent(pair,new ReviewRepositoryAsList());
-        implementations.get(pair).removeReview(storeId,productId,userId);
+        implementations.putIfAbsent(Pair.of(storeId, productId) ,new ReviewRepositoryAsList());
+        implementations.get(Pair.of(storeId, productId)).removeReview(storeId,productId,userId);
     }
 
     @Override
     public Review getReview(int storeId, int productId, int userId) {
-        var pair= new Pair<>(storeId,productId);
-        implementations.putIfAbsent(pair,new ReviewRepositoryAsList());
-        return implementations.get(pair).getReview(storeId,productId,userId);
+        implementations.putIfAbsent(Pair.of(storeId, productId),new ReviewRepositoryAsList());
+        return implementations.get(Pair.of(storeId, productId)).getReview(storeId,productId,userId);
     }
 
     @Override
     public float getProductScore(int storeId, int productId) {
-        var pair= new Pair<>(storeId,productId);
-        implementations.putIfAbsent(pair,new ReviewRepositoryAsList());
-        return implementations.get(pair).getProductScore(storeId,productId);
+        implementations.putIfAbsent(Pair.of(storeId, productId),new ReviewRepositoryAsList());
+        return implementations.get(Pair.of(storeId, productId)).getProductScore(storeId,productId);
     }
 
     @Override
     public void addAndSetProductScore(int storeId, int productId, int userId, int score) {
-        var pair= new Pair<>(storeId,productId);
-        implementations.putIfAbsent(pair,new ReviewRepositoryAsList());
-        implementations.get(pair).addAndSetProductScore(storeId,productId,userId,score);
+        implementations.putIfAbsent(Pair.of(storeId, productId),new ReviewRepositoryAsList());
+        implementations.get(Pair.of(storeId, productId)).addAndSetProductScore(storeId,productId,userId,score);
     }
 
     @Override
     public void removeProductScore(int storeId, int productId, int userId) {
-        var pair= new Pair<>(storeId,productId);
-        implementations.putIfAbsent(pair,new ReviewRepositoryAsList());
-        implementations.get(pair).removeProductScore(storeId,productId,userId);
+        implementations.putIfAbsent(Pair.of(storeId, productId),new ReviewRepositoryAsList());
+        implementations.get(Pair.of(storeId, productId)).removeProductScore(storeId,productId,userId);
+    }
+
+    @Override
+    public void removeProductData(int storeId, int productId) {
+        //won't throw an error if the product doesn't exist / has no reviews
+        implementations.remove(Pair.of(storeId, productId));
     }
 
 }

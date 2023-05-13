@@ -51,4 +51,9 @@ public class StoreDiscountPolicy implements DiscountPolicy {
     public void removeDiscount(int discountId) {
         storeDiscounts.removeStoreDiscount(storeId, discountId);
     }
+
+    @Override
+    public void removeAllDiscounts() {
+        storeDiscounts.removeStoreDiscounts(storeId);
+    }
 }

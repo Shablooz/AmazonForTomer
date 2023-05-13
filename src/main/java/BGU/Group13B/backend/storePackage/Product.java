@@ -153,7 +153,10 @@ public class Product {
         this.discountPolicy.removeDiscount(discountId);
     }
 
-    public void markAsDeleted() {
+    public synchronized void delete() {
+        repositoryReview.removeProductData(storeId,productId);
+        productPurchasePolicy.removeAllProductPurchasePolicies(storeId,productId);
+        discountPolicy.removeAllDiscounts();
         this.deleted = true;
     }
 

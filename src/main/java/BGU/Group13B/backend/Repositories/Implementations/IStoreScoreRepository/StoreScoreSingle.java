@@ -41,4 +41,9 @@ public class StoreScoreSingle implements IStoreScore {
         implementations.putIfAbsent(storeId,new StoreScoreImplNotPer());
         return implementations.get(storeId).getNumberOfScores(storeId);
     }
+
+    @Override
+    public void clearStoreScore(int storeId) {
+        implementations.remove(storeId);
+    }
 }
