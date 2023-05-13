@@ -565,7 +565,7 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public Response<String> getUserPurchaseHistory(int userId) throws Exception {
+    public Response<String> getUserPurchaseHistory(int userId) {
         if (realSession != null)
             return realSession.getUserPurchaseHistory(userId);
         return null;
