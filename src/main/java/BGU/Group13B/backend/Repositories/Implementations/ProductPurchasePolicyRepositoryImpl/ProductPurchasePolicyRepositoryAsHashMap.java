@@ -109,5 +109,13 @@ public class ProductPurchasePolicyRepositoryAsHashMap implements IProductPurchas
         storeProductPolicies.clear();
     }
 
+    @Override
+    public void removeAllProductPurchasePolicies(int storeId, int productId) {
+        if(!storeProductPolicies.containsKey(storeId))
+            return;
+        storeProductPolicies.get(storeId).removeIf(p -> p.getParentId() == productId);
+
+    }
+
 
 }

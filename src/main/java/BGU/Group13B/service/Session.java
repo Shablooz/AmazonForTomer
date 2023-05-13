@@ -23,9 +23,6 @@ import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import static BGU.Group13B.service.Response.Status.FAILURE;
-import static BGU.Group13B.service.Response.Status.SUCCESS;
-
 /**
  * IMPORTANT need to initialize the session AFTER loading first user (id = 1) from database
  */
@@ -70,14 +67,12 @@ public class Session implements ISession {
     }
 
     @Override
-    public int addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) {
+    public Response<Integer> addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) {
         try {
-            return market.addProduct(userId, storeId, productName, category, price, stockQuantity, description);
+            return Response.success(market.addProduct(userId, storeId, productName, category, price, stockQuantity, description));
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
-
     }
 
     /*good for development no need check if the item exists*/
@@ -201,13 +196,18 @@ public class Session implements ISession {
         }
     }
 
-
-
     @Override
-    public void search(String searchWords) {
-        market.searchProductByKeywords(searchWords);
-        market.searchProductByCategory(searchWords);
-        market.searchProductByName(searchWords);
+    public Response<List<ProductInfo>> search(String searchWords) {
+        try {
+            List<ProductInfo> products = new LinkedList<>();
+            products.addAll(market.searchProductByKeywords(searchWords));
+            products.addAll(market.searchProductByCategory(searchWords));
+            products.addAll(market.searchProductByName(searchWords));
+            return Response.success(products);
+        }
+        catch (Exception e){
+            return Response.exception(e);
+        }
     }
 
     @Override
@@ -258,21 +258,19 @@ public class Session implements ISession {
     }
 
     @Override
-    public int addStore(int userId, String storeName, String category) {
+    public Response<Integer> addStore(int userId, String storeName, String category) {
         User user = userRepositoryAsHashmap.getUser(userId);
         synchronized (user) {
             if (user.isRegistered()) {
                 try {
                     int storeId = market.addStore(userId, storeName, category);
                     user.addPermission(storeId, UserPermissions.StoreRole.FOUNDER);
-                    return storeId;
+                    return Response.success(storeId);
                 } catch (Exception e) {
-                    //TODO: handle exception
-                    throw new RuntimeException(e);
+                    return Response.exception(e);
                 }
             }
-            //TODO: handle exception
-            throw new RuntimeException("user is not registered");
+            return Response.failure("user is not registered");
         }
     }
 
@@ -557,52 +555,52 @@ public class Session implements ISession {
         }
     }
 
-    public void setProductName(int userId, int storeId, int productId, String name) {
+    public Response<VoidResponse> setProductName(int userId, int storeId, int productId, String name) {
         try {
             market.setProductName(userId, storeId, productId, name);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void setProductCategory(int userId, int storeId, int productId, String category) {
+    public Response<VoidResponse> setProductCategory(int userId, int storeId, int productId, String category) {
         try {
             market.setProductCategory(userId, storeId, productId, category);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void setProductPrice(int userId, int storeId, int productId, double price) {
+    public Response<VoidResponse> setProductPrice(int userId, int storeId, int productId, double price) {
         try {
             market.setProductPrice(userId, storeId, productId, price);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void setProductStockQuantity(int userId, int storeId, int productId, int stockQuantity) {
+    public Response<VoidResponse> setProductStockQuantity(int userId, int storeId, int productId, int stockQuantity) {
         try {
             market.setProductStockQuantity(userId, storeId, productId, stockQuantity);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void setProductDescription(int userId, int storeId, int productId, String description) {
+    public Response<VoidResponse> setProductDescription(int userId, int storeId, int productId, String description) {
         try {
             market.setProductDescription(userId, storeId, productId, description);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
@@ -615,12 +613,12 @@ public class Session implements ISession {
 
 
     @Override
-    public void removeProduct(int userId, int storeId, int productId) {
+    public Response<VoidResponse> removeProduct(int userId, int storeId, int productId) {
         try {
             market.removeProduct(userId, storeId, productId);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
@@ -668,42 +666,20 @@ public class Session implements ISession {
         return userRepositoryAsHashmap.getUser(userId).getStoresAndRoles();
     }
 
-    public StoreInfo getStoreInfo(int userId, int storeId) {
+    public Response<StoreInfo> getStoreInfo(int userId, int storeId) {
         try {
-            return market.getStoreInfo(userId, storeId);
+            return Response.success(market.getStoreInfo(userId, storeId));
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public String getStoreName(int storeId) {
+    public Response<ProductInfo> getStoreProductInfo(int userId, int storeId, int productId) {
         try {
-            return market.getStoreName(storeId);
+            return Response.success(market.getStoreProductInfo(userId, storeId, productId));
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public String getStoreCategory(int storeId) {
-        try {
-            return market.getStoreCategory(storeId);
-        } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public ProductInfo getStoreProductInfo(int userId, int storeId, int productId) {
-        try {
-            return market.getStoreProductInfo(userId, storeId, productId);
-        } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
@@ -717,12 +693,11 @@ public class Session implements ISession {
     }
 
     @Override
-    public Set<ProductInfo> getAllStoreProductsInfo(int userId, int storeId) {
+    public Response<Set<ProductInfo>> getAllStoreProductsInfo(int userId, int storeId) {
         try {
-            return market.getAllStoreProductsInfo(userId, storeId);
+            return Response.success(market.getAllStoreProductsInfo(userId, storeId));
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
@@ -779,222 +754,216 @@ public class Session implements ISession {
     }
 
     @Override
-    public void allowPurchasePolicyConflicts(int userId, int storeId) {
+    public Response<VoidResponse> allowPurchasePolicyConflicts(int userId, int storeId) {
         try {
             market.allowPurchasePolicyConflicts(userId, storeId);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void disallowPurchasePolicyConflicts(int userId, int storeId) {
+    public Response<VoidResponse> disallowPurchasePolicyConflicts(int userId, int storeId) {
         try {
             market.disallowPurchasePolicyConflicts(userId, storeId);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void setStorePurchaseQuantityUpperBound(int userId, int storeId, int upperBound) {
+    public Response<VoidResponse> setStorePurchaseQuantityUpperBound(int userId, int storeId, int upperBound) {
         try {
             market.setStorePurchaseQuantityUpperBound(userId, storeId, upperBound);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void setStorePurchaseQuantityLowerBound(int userId, int storeId, int lowerBound) {
+    public Response<VoidResponse> setStorePurchaseQuantityLowerBound(int userId, int storeId, int lowerBound) {
         try {
             market.setStorePurchaseQuantityLowerBound(userId, storeId, lowerBound);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void setStorePurchaseQuantityBounds(int userId, int storeId, int lowerBound, int upperBound) {
+    public Response<VoidResponse> setStorePurchaseQuantityBounds(int userId, int storeId, int lowerBound, int upperBound) {
         try {
             market.setStorePurchaseQuantityBounds(userId, storeId, lowerBound, upperBound);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void setStorePurchasePriceUpperBound(int userId, int storeId, int upperBound) {
+    public Response<VoidResponse> setStorePurchasePriceUpperBound(int userId, int storeId, int upperBound) {
         try {
             market.setStorePurchasePriceUpperBound(userId, storeId, upperBound);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void setStorePurchasePriceLowerBound(int userId, int storeId, int lowerBound) {
+    public Response<VoidResponse> setStorePurchasePriceLowerBound(int userId, int storeId, int lowerBound) {
         try {
             market.setStorePurchasePriceLowerBound(userId, storeId, lowerBound);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void setStorePurchasePriceBounds(int userId, int storeId, int lowerBound, int upperBound) {
+    public Response<VoidResponse> setStorePurchasePriceBounds(int userId, int storeId, int lowerBound, int upperBound) {
         try {
             market.setStorePurchasePriceBounds(userId, storeId, lowerBound, upperBound);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void setProductPurchaseQuantityUpperBound(int userId, int storeId, int productId, int upperBound) {
+    public Response<VoidResponse> setProductPurchaseQuantityUpperBound(int userId, int storeId, int productId, int upperBound) {
         try {
             market.setProductPurchaseQuantityUpperBound(userId, storeId, productId, upperBound);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void setProductPurchaseQuantityLowerBound(int userId, int storeId, int productId, int lowerBound) {
+    public Response<VoidResponse> setProductPurchaseQuantityLowerBound(int userId, int storeId, int productId, int lowerBound) {
         try {
             market.setProductPurchaseQuantityLowerBound(userId, storeId, productId, lowerBound);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void setProductPurchaseQuantityBounds(int userId, int storeId, int productId, int lowerBound, int upperBound) {
+    public Response<VoidResponse> setProductPurchaseQuantityBounds(int userId, int storeId, int productId, int lowerBound, int upperBound) {
         try {
             market.setProductPurchaseQuantityBounds(userId, storeId, productId, lowerBound, upperBound);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void setProductPurchasePriceUpperBound(int userId, int storeId, int productId, int upperBound) {
+    public Response<VoidResponse> setProductPurchasePriceUpperBound(int userId, int storeId, int productId, int upperBound) {
         try {
             market.setProductPurchasePriceUpperBound(userId, storeId, productId, upperBound);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void setProductPurchasePriceLowerBound(int userId, int storeId, int productId, int lowerBound) {
+    public Response<VoidResponse> setProductPurchasePriceLowerBound(int userId, int storeId, int productId, int lowerBound) {
         try {
             market.setProductPurchasePriceLowerBound(userId, storeId, productId, lowerBound);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void setProductPurchasePriceBounds(int userId, int storeId, int productId, int lowerBound, int upperBound) {
+    public Response<VoidResponse> setProductPurchasePriceBounds(int userId, int storeId, int productId, int lowerBound, int upperBound) {
         try {
             market.setProductPurchasePriceBounds(userId, storeId, productId, lowerBound, upperBound);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public int addStoreVisibleDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate) {
+    public Response<Integer> addStoreVisibleDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate) {
         try {
-            return market.addStoreVisibleDiscount(userId, storeId, discountPercentage, discountLastDate);
+            return Response.success(market.addStoreVisibleDiscount(userId, storeId, discountPercentage, discountLastDate));
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public int addStoreConditionalDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount) {
+    public Response<Integer> addStoreConditionalDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount) {
         try {
-            return market.addStoreConditionalDiscount(userId, storeId, discountPercentage, discountLastDate, minPriceForDiscount, quantityForDiscount);
+            return Response.success(market.addStoreConditionalDiscount(userId, storeId, discountPercentage, discountLastDate, minPriceForDiscount, quantityForDiscount));
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public int addStoreHiddenDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate, String code) {
+    public Response<Integer> addStoreHiddenDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate, String code) {
         try {
-            return market.addStoreHiddenDiscount(userId, storeId, discountPercentage, discountLastDate, code);
+            return Response.success(market.addStoreHiddenDiscount(userId, storeId, discountPercentage, discountLastDate, code));
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void removeStoreDiscount(int userId, int storeId, int discountId) {
+    public Response<VoidResponse> removeStoreDiscount(int userId, int storeId, int discountId) {
         try {
             market.removeStoreDiscount(userId, storeId, discountId);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public int addProductVisibleDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate) {
+    public Response<Integer> addProductVisibleDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate) {
         try {
-            return market.addProductVisibleDiscount(userId, storeId, productId, discountPercentage, discountLastDate);
+            return Response.success(market.addProductVisibleDiscount(userId, storeId, productId, discountPercentage, discountLastDate));
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public int addProductConditionalDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount) {
+    public Response<Integer> addProductConditionalDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount) {
         try {
-            return market.addProductConditionalDiscount(userId, storeId, productId, discountPercentage, discountLastDate, minPriceForDiscount, quantityForDiscount);
+            return Response.success(market.addProductConditionalDiscount(userId, storeId, productId, discountPercentage, discountLastDate, minPriceForDiscount, quantityForDiscount));
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public int addProductHiddenDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate, String code) {
+    public Response<Integer> addProductHiddenDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate, String code) {
         try {
-            return market.addProductHiddenDiscount(userId, storeId, productId, discountPercentage, discountLastDate, code);
+            return Response.success(market.addProductHiddenDiscount(userId, storeId, productId, discountPercentage, discountLastDate, code));
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void removeProductDiscount(int userId, int storeId, int productId, int discountId) {
+    public Response<VoidResponse> removeProductDiscount(int userId, int storeId, int productId, int discountId) {
         try {
             market.removeProductDiscount(userId, storeId, productId, discountId);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
@@ -1033,22 +1002,22 @@ public class Session implements ISession {
     }
 
     @Override
-    public void hideStore(int userId, int storeId) {
+    public Response<VoidResponse> hideStore(int userId, int storeId) {
         try {
             market.hideStore(userId, storeId);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void unhideStore(int userId, int storeId) {
+    public Response<VoidResponse> unhideStore(int userId, int storeId) {
         try {
             market.unhideStore(userId, storeId);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
@@ -1064,6 +1033,27 @@ public class Session implements ISession {
             return market.getStoreFounder(storeId);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Response<VoidResponse> deleteStore(int userId, int storeId) {
+        try {
+            market.deleteStore(userId, storeId);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+
+    @Override
+    public Response<VoidResponse> fetchMessages(int userId) {
+        try {
+            userRepositoryAsHashmap.getUser(userId).fetchMessages();
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
         }
     }
 

@@ -1,6 +1,5 @@
 package BGU.Group13B.frontEnd.components.views;
-
-
+import BGU.Group13B.frontEnd.components.Searcher.Searcher;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.frontEnd.components.appnav.AppNav;
@@ -23,6 +22,8 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.*;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.lumo.LumoUtility;
@@ -34,7 +35,7 @@ import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY_INLIN
 /**
  * The main view is a top-level placeholder for other views.
  */
-public class MainLayout extends AppLayout {
+public class MainLayout extends AppLayout{
 
     private H2 viewTitle;
     private final Session session;
@@ -50,6 +51,9 @@ public class MainLayout extends AppLayout {
     private Button signUpButton = null;
     private int STOREID = 0; //TODO:need to delete
 
+
+
+
     public interface VoidAction {
         void act();
     }
@@ -58,6 +62,7 @@ public class MainLayout extends AppLayout {
         if (USERID == 0)
             USERID = SessionToIdMapper.getInstance().getCurrentSessionId();
     }
+
 
     @Autowired
     public MainLayout(Session session) {
@@ -76,11 +81,13 @@ public class MainLayout extends AppLayout {
         addDrawerContent();
         addHeaderContent();
 
+
         var ui=UI.getCurrent();
         //Tomer section
         BroadCaster.register(USERID,newMessage -> {
             ui.access(()->createSubmitSuccess(newMessage).open());
         });
+        session.fetchMessages(USERID);
     }
     private Notification createSubmitSuccess(String message) {
         Notification notification = new Notification();
@@ -112,6 +119,7 @@ public class MainLayout extends AppLayout {
     private void addHeaderContent() {
         DrawerToggle toggle = new DrawerToggle();
         toggle.getElement().setAttribute("aria-label", "Menu toggle");
+        Searcher searcher = new Searcher();
 
         viewTitle = new H2();
         viewTitle.addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.Margin.NONE);
@@ -119,8 +127,8 @@ public class MainLayout extends AppLayout {
         cartButton.addClickListener(event -> getUI().ifPresent(ui -> ui.navigate("cart")));
 
         HorizontalLayout rightAlignment = rightAlignmentHeaderContext();
-
-        addToNavbar(true, toggle, viewTitle, cartButton, rightAlignment);
+      
+        addToNavbar(true, toggle, viewTitle, cartButton, rightAlignment, searcher);
     }
 
     private HorizontalLayout rightAlignmentHeaderContext() {
@@ -161,7 +169,7 @@ public class MainLayout extends AppLayout {
         horizontalLayout.setWidthFull();
         horizontalLayout.add(flexLayout);
 
-        addToDrawer(header, scroller, horizontalLayout, createFooter());
+        addToDrawer( header, scroller, horizontalLayout, createFooter());
     }
 
     private void newMessageDialog(Dialog currentDialog) {
@@ -529,6 +537,13 @@ public class MainLayout extends AppLayout {
 
         return nav;
     }
+
+    private Searcher createSearcher() {
+        Searcher searcher = new Searcher();
+        return searcher;
+    }
+
+
 
     private Footer createFooter() {
         Footer layout = new Footer();

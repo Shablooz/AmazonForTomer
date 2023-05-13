@@ -48,4 +48,9 @@ public class ProductDiscountPolicy implements DiscountPolicy {
     public void removeDiscount(int discountId) {
         productDiscounts.removeProductDiscount(productId, discountId);
     }
+
+    @Override
+    public void removeAllDiscounts() {
+        productDiscounts.removeProductDiscounts(productId);
+    }
 }

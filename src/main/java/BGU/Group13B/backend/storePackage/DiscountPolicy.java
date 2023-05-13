@@ -10,4 +10,6 @@ public interface DiscountPolicy {
     int addHiddenDiscount(double discountPercentage, LocalDateTime discountLastDate, String code);
 
     void removeDiscount(int discountId);
+
+    void removeAllDiscounts();
 }

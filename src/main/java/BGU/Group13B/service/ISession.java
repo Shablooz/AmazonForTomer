@@ -3,15 +3,14 @@ package BGU.Group13B.service;
 import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.User.Message;
-
 import BGU.Group13B.backend.User.PurchaseFailedException;
-
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
 import BGU.Group13B.service.entity.ServiceProduct;
 import BGU.Group13B.service.info.StoreInfo;
 import BGU.Group13B.service.info.ProductInfo;
+import com.vaadin.flow.router.QueryParameters;
 
 import java.time.LocalDateTime;
 
@@ -33,7 +32,7 @@ public interface ISession {
      * @param description   the product description
      * @return              the product id
      */
-    int addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description);
+    Response<Integer> addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description);
 
     /**
      * #19
@@ -173,8 +172,9 @@ public interface ISession {
      * require 2.2
      *
      * @param searchWords - the search words
+     * @return
      */
-    void search(String searchWords);
+    Response<List<ProductInfo>> search(String searchWords);
 
     /**
      * #18
@@ -245,7 +245,7 @@ public interface ISession {
      * @param category  the store category, currently a free text
      * @return the store id
      */
-    int addStore(int userId, String storeName, String category);
+    Response<Integer> addStore(int userId, String storeName, String category);
 
 
     /**
@@ -518,7 +518,7 @@ public interface ISession {
      * @param productId the product id
      * @param name      the name of the product
      */
-    void setProductName(int userId, int storeId, int productId, String name);
+    Response<VoidResponse> setProductName(int userId, int storeId, int productId, String name);
 
     /**
      * #32
@@ -529,7 +529,7 @@ public interface ISession {
      * @param productId the product id
      * @param category  the category of the product
      */
-    void setProductCategory(int userId, int storeId, int productId, String category);
+    Response<VoidResponse> setProductCategory(int userId, int storeId, int productId, String category);
 
     /**
      * #32
@@ -540,7 +540,7 @@ public interface ISession {
      * @param productId the product id
      * @param price     the price of the product
      */
-    void setProductPrice(int userId, int storeId, int productId, double price);
+    Response<VoidResponse> setProductPrice(int userId, int storeId, int productId, double price);
 
     /**
      * #32
@@ -551,7 +551,7 @@ public interface ISession {
      * @param productId     the product id
      * @param stockQuantity the stock quantity of the product
      */
-    void setProductStockQuantity(int userId, int storeId, int productId, int stockQuantity);
+    Response<VoidResponse> setProductStockQuantity(int userId, int storeId, int productId, int stockQuantity);
 
     /**
      * #32
@@ -562,17 +562,17 @@ public interface ISession {
      * @param productId     the product id
      * @param description   the product description
      */
-    void setProductDescription(int userId, int storeId, int productId, String description);
+    Response<VoidResponse> setProductDescription(int userId, int storeId, int productId, String description);
 
     /**
-     * #13
-     * require 1.1
+     * #32
+     * require 4.1
      *
      * @param userId    the user id
      * @param storeId   the store id
      * @param productId the product id to remove
      */
-    void removeProduct(int userId, int storeId, int productId);
+    Response<VoidResponse> removeProduct(int userId, int storeId, int productId);
 
 
     /**
@@ -639,23 +639,7 @@ public interface ISession {
      * @param userId  the user id
      * @param storeId the store id
      */
-    StoreInfo getStoreInfo(int userId, int storeId);
-
-    /**
-     * #17
-     * require 2.1
-     *
-     * @param storeId the store id
-     */
-    String getStoreName(int storeId);
-
-    /**
-     * #17
-     * require 2.1
-     *
-     * @param storeId the store id
-     */
-    String getStoreCategory(int storeId);
+    Response<StoreInfo> getStoreInfo(int userId, int storeId);
 
     /**
      * #17
@@ -665,7 +649,7 @@ public interface ISession {
      * @param storeId   the store id
      * @param productId the product id
      */
-    ProductInfo getStoreProductInfo(int userId, int storeId, int productId);
+    Response<ProductInfo> getStoreProductInfo(int userId, int storeId, int productId);
 
     /**
      * #17
@@ -673,7 +657,7 @@ public interface ISession {
      *
      * @param storeId the store id
      */
-    Set<ProductInfo> getAllStoreProductsInfo(int userId, int storeId);
+    Response<Set<ProductInfo>> getAllStoreProductsInfo(int userId, int storeId);
 
     /**
      * #31
@@ -719,7 +703,7 @@ public interface ISession {
      * @param userId  the user id
      * @param storeId the store id
      */
-    void allowPurchasePolicyConflicts(int userId, int storeId);
+    Response<VoidResponse> allowPurchasePolicyConflicts(int userId, int storeId);
 
     /**
      * #33
@@ -728,7 +712,7 @@ public interface ISession {
      * @param userId  the user id
      * @param storeId the store id
      */
-    void disallowPurchasePolicyConflicts(int userId, int storeId);
+    Response<VoidResponse> disallowPurchasePolicyConflicts(int userId, int storeId);
 
     /**
      * #33
@@ -738,7 +722,7 @@ public interface ISession {
      * @param storeId    the store id
      * @param upperBound the upper bound of the quantity
      */
-    void setStorePurchaseQuantityUpperBound(int userId, int storeId, int upperBound);
+    Response<VoidResponse> setStorePurchaseQuantityUpperBound(int userId, int storeId, int upperBound);
 
     /**
      * #33
@@ -748,7 +732,7 @@ public interface ISession {
      * @param storeId    the store id
      * @param lowerBound the lower bound of the quantity
      */
-    void setStorePurchaseQuantityLowerBound(int userId, int storeId, int lowerBound);
+    Response<VoidResponse> setStorePurchaseQuantityLowerBound(int userId, int storeId, int lowerBound);
 
     /**
      * #33
@@ -756,75 +740,75 @@ public interface ISession {
      *
      * @param userId     the user id
      * @param storeId    the store id
-     * @param lowerBound the lower bound of the quantity
-     * @param upperBound the upper bound of the quantity
-     */
-    void setStorePurchaseQuantityBounds(int userId, int storeId, int lowerBound, int upperBound);
-
-    /**
-     * #33
-     * require 4.3
-     *
-     * @param userId     the user id
-     * @param storeId    the store id
-     * @param upperBound the upper bound of the price
-     */
-    void setStorePurchasePriceUpperBound(int userId, int storeId, int upperBound);
-
-    /**
-     * #33
-     * require 4.3
-     *
-     * @param userId     the user id
-     * @param storeId    the store id
-     * @param lowerBound the lower bound of the price
-     */
-    void setStorePurchasePriceLowerBound(int userId, int storeId, int lowerBound);
-
-    /**
-     * #33
-     * require 4.3
-     *
-     * @param userId     the user id
-     * @param storeId    the store id
-     * @param lowerBound the lower bound of the price
-     * @param upperBound the upper bound of the price
-     */
-    void setStorePurchasePriceBounds(int userId, int storeId, int lowerBound, int upperBound);
-
-    /**
-     * #33
-     * require 4.3
-     *
-     * @param userId     the user id
-     * @param storeId    the store id
-     * @param productId  the product id
-     * @param upperBound the upper bound of the quantity
-     */
-    void setProductPurchaseQuantityUpperBound(int userId, int storeId, int productId, int upperBound);
-
-    /**
-     * #33
-     * require 4.3
-     *
-     * @param userId     the user id
-     * @param storeId    the store id
-     * @param productId  the product id
-     * @param lowerBound the lower bound of the quantity
-     */
-    void setProductPurchaseQuantityLowerBound(int userId, int storeId, int productId, int lowerBound);
-
-    /**
-     * #33
-     * require 4.3
-     *
-     * @param userId     the user id
-     * @param storeId    the store id
-     * @param productId  the product id
      * @param lowerBound the lower bound of the quantity
      * @param upperBound the upper bound of the quantity
      */
-    void setProductPurchaseQuantityBounds(int userId, int storeId, int productId, int lowerBound, int upperBound);
+    Response<VoidResponse> setStorePurchaseQuantityBounds(int userId, int storeId, int lowerBound, int upperBound);
+
+    /**
+     * #33
+     * require 4.3
+     *
+     * @param userId     the user id
+     * @param storeId    the store id
+     * @param upperBound the upper bound of the price
+     */
+    Response<VoidResponse> setStorePurchasePriceUpperBound(int userId, int storeId, int upperBound);
+
+    /**
+     * #33
+     * require 4.3
+     *
+     * @param userId     the user id
+     * @param storeId    the store id
+     * @param lowerBound the lower bound of the price
+     */
+    Response<VoidResponse> setStorePurchasePriceLowerBound(int userId, int storeId, int lowerBound);
+
+    /**
+     * #33
+     * require 4.3
+     *
+     * @param userId     the user id
+     * @param storeId    the store id
+     * @param lowerBound the lower bound of the price
+     * @param upperBound the upper bound of the price
+     */
+    Response<VoidResponse> setStorePurchasePriceBounds(int userId, int storeId, int lowerBound, int upperBound);
+
+    /**
+     * #33
+     * require 4.3
+     *
+     * @param userId     the user id
+     * @param storeId    the store id
+     * @param productId  the product id
+     * @param upperBound the upper bound of the quantity
+     */
+    Response<VoidResponse> setProductPurchaseQuantityUpperBound(int userId, int storeId, int productId, int upperBound);
+
+    /**
+     * #33
+     * require 4.3
+     *
+     * @param userId     the user id
+     * @param storeId    the store id
+     * @param productId  the product id
+     * @param lowerBound the lower bound of the quantity
+     */
+    Response<VoidResponse> setProductPurchaseQuantityLowerBound(int userId, int storeId, int productId, int lowerBound);
+
+    /**
+     * #33
+     * require 4.3
+     *
+     * @param userId     the user id
+     * @param storeId    the store id
+     * @param productId  the product id
+     * @param lowerBound the lower bound of the quantity
+     * @param upperBound the upper bound of the quantity
+     */
+    Response<VoidResponse> setProductPurchaseQuantityBounds(int userId, int storeId, int productId, int lowerBound, int upperBound);
 
     /**
      * #33
@@ -835,7 +819,7 @@ public interface ISession {
      * @param productId  the product id
      * @param upperBound the upper bound of the price
      */
-    void setProductPurchasePriceUpperBound(int userId, int storeId, int productId, int upperBound);
+    Response<VoidResponse> setProductPurchasePriceUpperBound(int userId, int storeId, int productId, int upperBound);
 
     /**
      * #33
@@ -846,7 +830,7 @@ public interface ISession {
      * @param productId  the product id
      * @param lowerBound the lower bound of the price
      */
-    void setProductPurchasePriceLowerBound(int userId, int storeId, int productId, int lowerBound);
+    Response<VoidResponse> setProductPurchasePriceLowerBound(int userId, int storeId, int productId, int lowerBound);
 
     /**
      * #33
@@ -858,7 +842,7 @@ public interface ISession {
      * @param lowerBound the lower bound of the price
      * @param upperBound the upper bound of the price
      */
-    void setProductPurchasePriceBounds(int userId, int storeId, int productId, int lowerBound, int upperBound);
+    Response<VoidResponse> setProductPurchasePriceBounds(int userId, int storeId, int productId, int lowerBound, int upperBound);
 
     /**
      * #33
@@ -870,7 +854,7 @@ public interface ISession {
      * @param discountLastDate   the discount last date. when expired, the discount will be removed
      * @return the discount id
      */
-    int addStoreVisibleDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate);
+    Response<Integer> addStoreVisibleDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate);
 
     /**
      * #33
@@ -884,7 +868,7 @@ public interface ISession {
      * @param quantityForDiscount the quantity for the discount to be applied
      * @return the discount id
      */
-    int addStoreConditionalDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount);
+    Response<Integer> addStoreConditionalDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount);
 
     /**
      * #33
@@ -897,7 +881,7 @@ public interface ISession {
      * @param code               the code for the discount
      * @return the discount id
      */
-    int addStoreHiddenDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate, String code);
+    Response<Integer> addStoreHiddenDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate, String code);
 
     /**
      * #33
@@ -907,7 +891,7 @@ public interface ISession {
      * @param storeId    the store id
      * @param discountId the discount id to be removed
      */
-    void removeStoreDiscount(int userId, int storeId, int discountId);
+    Response<VoidResponse> removeStoreDiscount(int userId, int storeId, int discountId);
 
     /**
      * #33
@@ -920,7 +904,7 @@ public interface ISession {
      * @param discountLastDate   the discount last date. when expired, the discount will be removed
      * @return the discount id
      */
-    int addProductVisibleDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate);
+    Response<Integer> addProductVisibleDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate);
 
     /**
      * #33
@@ -935,7 +919,7 @@ public interface ISession {
      * @param quantityForDiscount the quantity for the discount to be applied
      * @return the discount id
      */
-    int addProductConditionalDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount);
+    Response<Integer> addProductConditionalDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount);
 
     /**
      * #33
@@ -949,7 +933,7 @@ public interface ISession {
      * @param code               the code for the discount
      * @return the discount id
      */
-    int addProductHiddenDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate, String code);
+    Response<Integer> addProductHiddenDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate, String code);
 
     /**
      * #33
@@ -960,7 +944,7 @@ public interface ISession {
      * @param productId  the product id
      * @param discountId the discount id to be removed
      */
-    void removeProductDiscount(int userId, int storeId, int productId, int discountId);
+    Response<VoidResponse> removeProductDiscount(int userId, int storeId, int productId, int discountId);
 
     /**
      * #13
@@ -1010,7 +994,7 @@ public interface ISession {
      * @param userId    the user id (only the founder can do this action)
      * @param storeId   the store id that will be hidden
      */
-    void hideStore(int userId, int storeId);
+    Response<VoidResponse> hideStore(int userId, int storeId);
 
     /**
      * #40
@@ -1019,7 +1003,16 @@ public interface ISession {
      * @param userId    the user id (only the founder can do this action)
      * @param storeId   the store id that will be unhidden
      */
-    void unhideStore(int userId, int storeId);
+    Response<VoidResponse> unhideStore(int userId, int storeId);
+
+    /**
+     * #45
+     * require 6.1
+     *
+     * @param userId    the user id (only an admin can do this action)
+     * @param storeId   the store id that will be deleted
+     */
+    Response<VoidResponse> deleteStore(int userId, int storeId);
 
     void pushTest();
 
@@ -1028,7 +1021,9 @@ public interface ISession {
      * @return the user's purchase history
      * @throws Exception
      */
-    Response<String> getUserPurchaseHistory(int userId);
+    Response<String> getUserPurchaseHistory(int userId) throws Exception;
+
+    Response<VoidResponse> fetchMessages(int userId);
 
     int getStoreFounder(int storeId);
     Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,

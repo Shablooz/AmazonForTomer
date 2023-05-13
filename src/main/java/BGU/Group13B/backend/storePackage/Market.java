@@ -141,15 +141,15 @@ public class Market {
         return storeRepository.addStore(founderId, storeName, category);
     }
 
-    public List<Product> searchProductByName(String productName) {
+    public List<ProductInfo> searchProductByName(String productName) {
         return searcher.searchByName(productName);
     }
 
-    public List<Product> searchProductByCategory(String category) {
+    public List<ProductInfo> searchProductByCategory(String category) {
         return searcher.searchByCategory(category);
     }
 
-    public List<Product> searchProductByKeywords(String keywords) {
+    public List<ProductInfo> searchProductByKeywords(String keywords) {
         return searcher.searchByKeywords(keywords);
     }
 
@@ -206,14 +206,6 @@ public class Market {
 
     public StoreInfo getStoreInfo(int userId, int storeId) throws NoPermissionException {
         return storeRepository.getStore(storeId).getStoreInfo(userId);
-    }
-
-    public String getStoreName(int storeId) {
-        return storeRepository.getStore(storeId).getStoreName();
-    }
-
-    public String getStoreCategory(int storeId) {
-        return storeRepository.getStore(storeId).getCategory();
     }
 
     public ProductInfo getStoreProductInfo(int userId, int storeId, int productId) throws NoPermissionException {
@@ -322,5 +314,9 @@ public class Market {
 
     public int getStoreFounder(int storeId) {
         return storeRepository.getStore(storeId).getStoreFounder();
+    }
+
+    public void deleteStore(int userId, int storeId) throws NoPermissionException {
+        storeRepository.getStore(storeId).deleteStore(userId);
     }
 }

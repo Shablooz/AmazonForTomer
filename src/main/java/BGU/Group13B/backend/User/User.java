@@ -145,6 +145,16 @@ public class User {
 
         this.isLoggedIn = true;
 
+
+    }
+    public void fetchMessages() throws NoPermissionException
+    {
+        if (!isRegistered())
+            throw new NoPermissionException("Only registered users can fetch messages");
+        if(getAndSetMessageNotification())
+        {
+            BroadCaster.broadcast(this.userId,"New Message");
+        }
     }
 
     public String getUserName() {
@@ -184,8 +194,9 @@ public class User {
         messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), header, massage, receiverId));
         User receiverNext=SingletonCollection.getUserRepository().getUserByUsername(receiverId);
         //if(!PushNotification.pushNotification("New Message",receiverNext.getUserId()))
-         if(!BroadCaster.broadcast(receiverNext.userId,"New Message"))
+         if(!receiverNext.isLoggedIn() || !BroadCaster.broadcast(receiverNext.userId,"New Message"))
             receiverNext.setMessageNotification(true);
+        System.out.println("ReceiverNext: "+receiverNext.userName+" LoggedIn: "+receiverNext.isLoggedIn());
         System.out.println("Status: "+receiverNext.getMessageNotification());
     }
 
@@ -199,7 +210,7 @@ public class User {
         messageRepository.markAsRead(regularMessageToReply.getReceiverId(), regularMessageToReply.getSenderId(), regularMessageToReply.getMessageId());
         messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), "RE: " + regularMessageToReply.getHeader(), answer, regularMessageToReply.getSenderId()));
         User receiverNext=SingletonCollection.getUserRepository().getUserByUsername(regularMessageToReply.getSenderId());
-        if(!PushNotification.pushNotification("New Message",receiverNext.getUserId()))
+        if(!receiverNext.isLoggedIn() || !BroadCaster.broadcast(receiverNext.userId,"New Message"))
             receiverNext.setMessageNotification(true);
         regularMessageToReply = null;
     }
@@ -224,9 +235,18 @@ public class User {
             throw new IllegalArgumentException("no message to answer");
         messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), "RE: " + regularMessageToReply.getHeader(), answer, regularMessageToReply.getSenderId()));
         User receiverNext=SingletonCollection.getUserRepository().getUserByUsername(regularMessageToReply.getSenderId());
-        if(!PushNotification.pushNotification("New Message",receiverNext.getUserId()))
+
+        if(!receiverNext.isLoggedIn() || !BroadCaster.broadcast(receiverNext.userId,"New Message"))
             receiverNext.setMessageNotification(true);
         regularMessageToReply = null;
+    }
+
+    public void sendMassageBroad(String receiverName, String header, String massage) throws NoPermissionException {
+        messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), header, massage, receiverName));
+        User receiverNext=SingletonCollection.getUserRepository().getUserByUsername(receiverName);
+        if(!BroadCaster.broadcast(receiverNext.userId,"New Message"))
+            receiverNext.setMessageNotification(true);
+        System.out.println("Status: "+receiverNext.getMessageNotification());
     }
 
     public Message readOldMessage() throws NoPermissionException {
@@ -492,6 +512,11 @@ public class User {
     }
 
     public synchronized boolean getMessageNotification() {
+        return messageNotification;
+    }
+    public synchronized boolean getAndSetMessageNotification() {
+        boolean messageNotification = this.messageNotification;
+        this.messageNotification= false;
         return messageNotification;
     }
 

@@ -1,6 +1,7 @@
 package BGU.Group13B.frontEnd.components.views;
 
 import BGU.Group13B.service.Session;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.contextmenu.SubMenu;
 import com.vaadin.flow.component.html.H1;
@@ -16,7 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Route(value = "", layout = MainLayout.class)
 public class HomeView extends VerticalLayout implements BeforeEnterObserver {
-    private final Session session;
+    private  final Session session;
+
+
 
     @Autowired
     public HomeView(Session session) {
@@ -28,6 +31,7 @@ public class HomeView extends VerticalLayout implements BeforeEnterObserver {
         //center the text
         setAlignItems(Alignment.CENTER);
         String sourceLink = "https://i.dailymail.co.uk/i/pix/2012/11/01/article-2226519-15CC7B9F000005DC-738_634x471.jpg";
+
         /*CSS code*/
         getStyle().set("background-image", "url(" + sourceLink + ")");
         getStyle().set("background-size", "cover");
@@ -44,10 +48,7 @@ public class HomeView extends VerticalLayout implements BeforeEnterObserver {
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
 
-       /* if (!session.isUserLoggedIn()) {
-            event.rerouteTo(LoginView.class);
-            //UI.getCurrent().navigate(LoginView.class);
-        }*/
+
     }
 
     public MenuBar buildMenuBar() {
