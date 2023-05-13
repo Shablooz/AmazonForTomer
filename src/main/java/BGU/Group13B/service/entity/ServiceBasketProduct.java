@@ -65,6 +65,14 @@ public class ServiceBasketProduct extends AbstractEntity {
         this.quantity = quantity;
     }
 
-
+    @Override
+    public String toString() {
+        return String.format("""
+                Product name: %s
+                Quantity: %d
+                Price: %.2f
+                Subtotal: %.2f
+                """, name, quantity, price, subtotal);
+    }
 
 }
