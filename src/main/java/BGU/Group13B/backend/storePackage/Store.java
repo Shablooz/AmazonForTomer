@@ -5,6 +5,7 @@ import BGU.Group13B.backend.Repositories.Interfaces.*;
 import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyImpl.StoreMessageRepositoryNonPersist;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.User.BasketProduct;
+import BGU.Group13B.backend.User.PurchaseHistory;
 import BGU.Group13B.backend.User.User;
 import BGU.Group13B.backend.User.UserPermissions;
 import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
@@ -923,6 +924,15 @@ public class Store {
 
         //notify workers
         notifyAllWorkers(userId, "Store Deleted", "The store " + this.storeName + " has been deleted by and admin");
+    }
+
+    @DefaultFounderFunctionality
+    @DefaultOwnerFunctionality
+    public List<PurchaseHistory> getStorePurchaseHistory(int userId) throws NoPermissionException {
+        if(!this.storePermission.checkPermission(userId, hidden))
+            throw new NoPermissionException("User " + userId + " has no permission to get the store purchase history: " + this.storeId);
+
+        return purchaseHistoryRepository.getStorePurchaseHistory(storeId);
     }
 
     private void deleteAllStoreScores() {

@@ -129,6 +129,15 @@ public class Session implements ISession {
     }
 
     @Override
+    public Response<List<PurchaseHistory>> getStorePurchaseHistory(int userId, int storeId) {
+        try {
+            return Response.success(market.getStorePurchaseHistory(userId, storeId));
+        } catch (NoPermissionException e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
     public void purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount) {
         try {
             market.purchaseProposalSubmit(userId, storeId, productId, proposedPrice, amount);

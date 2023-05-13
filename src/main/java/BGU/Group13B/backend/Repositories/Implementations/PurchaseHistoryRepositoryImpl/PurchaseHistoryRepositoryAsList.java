@@ -62,4 +62,15 @@ public class PurchaseHistoryRepositoryAsList implements IPurchaseHistoryReposito
     public void reset() {
         purchaseHistories.clear();
     }
+
+    @Override
+    public List<PurchaseHistory> getStorePurchaseHistory(int storeId) {
+        List<PurchaseHistory> purchases = new LinkedList<>();
+        for (PurchaseHistory purchaseHistory : purchaseHistories) {
+            if (purchaseHistory.getStoreId() == storeId) {
+                purchases.add(purchaseHistory);
+            }
+        }
+        return purchases;
+    }
 }

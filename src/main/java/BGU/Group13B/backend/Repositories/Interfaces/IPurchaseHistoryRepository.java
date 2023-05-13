@@ -17,5 +17,7 @@ public interface IPurchaseHistoryRepository {
     public PurchaseHistory addPurchase(int userId, int storeId, ConcurrentLinkedQueue<BasketProduct> products, double price);
 
     void reset();
+
+    List<PurchaseHistory> getStorePurchaseHistory(int storeId);
 }
 
