@@ -3,6 +3,7 @@ package BGU.Group13B.service;
 import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.User.PurchaseFailedException;
+import BGU.Group13B.backend.User.PurchaseHistory;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.storePackage.Review;
@@ -58,6 +59,13 @@ public class ProxySession implements ISession {
     public Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, HashMap<Integer, String> productsCoupons, String storeCoupon) throws PurchaseFailedException {
         if (realSession != null)
             return realSession.startPurchaseBasketTransaction(userId, productsCoupons, storeCoupon);
+        return null;
+    }
+
+    @Override
+    public Response<List<PurchaseHistory>> getStorePurchaseHistory(int userId, int storeId) {
+        if(realSession != null)
+            return realSession.getStorePurchaseHistory(userId, storeId);
         return null;
     }
 

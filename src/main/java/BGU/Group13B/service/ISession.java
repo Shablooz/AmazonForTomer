@@ -4,6 +4,7 @@ import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.User.PurchaseFailedException;
+import BGU.Group13B.backend.User.PurchaseHistory;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.service.entity.ReviewService;
@@ -1031,4 +1032,13 @@ public interface ISession {
     Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
                                                                             String/*store coupons*/ storeCoupon) throws PurchaseFailedException;
 
+    /**
+     * #43
+     * require 4.13
+     *
+     * @param userId    the user id
+     * @param storeId   the store id
+     * @return          the store purchase history
+     */
+    Response<List<PurchaseHistory>> getStorePurchaseHistory(int userId, int storeId);
 }

@@ -5,6 +5,7 @@ import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
 import BGU.Group13B.backend.System.Searcher;
 import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.Message;
+import BGU.Group13B.backend.User.PurchaseHistory;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 import BGU.Group13B.service.SingletonCollection;
@@ -321,5 +322,9 @@ public class Market {
 
     public void deleteStore(int userId, int storeId) throws NoPermissionException {
         storeRepository.getStore(storeId).deleteStore(userId);
+    }
+
+    public List<PurchaseHistory> getStorePurchaseHistory(int userId, int storeId) throws NoPermissionException {
+        return storeRepository.getStore(storeId).getStorePurchaseHistory(userId);
     }
 }
