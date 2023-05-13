@@ -5,9 +5,11 @@ import BGU.Group13B.frontEnd.components.views.viewEntity.Address;
 import BGU.Group13B.frontEnd.components.views.viewEntity.Card;
 import BGU.Group13B.frontEnd.components.views.viewEntity.Country;
 import BGU.Group13B.frontEnd.components.views.viewEntity.Person;
+import BGU.Group13B.service.BroadCaster;
 import BGU.Group13B.service.Response;
 import BGU.Group13B.service.Session;
 import BGU.Group13B.service.VoidResponse;
+import BGU.Group13B.service.entity.ServiceBasketProduct;
 import BGU.Group13B.service.entity.ServiceProduct;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.accordion.Accordion;
@@ -40,6 +42,7 @@ import java.time.format.TextStyle;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -517,5 +520,37 @@ public class PaymentView extends Div implements BeforeLeaveObserver {
             session.cancelPurchase(SessionToIdMapper.getInstance().getCurrentSessionId());
             Notification.show("Payment cancelled");
         }
+        sendPurchaseMessageToStoreOwners();
+    }
+
+    private void sendPurchaseMessageToStoreOwners() {
+        int me = SessionToIdMapper.getInstance().getCurrentSessionId();
+        Set<Integer> storeOwners =
+                successfulItems.stream().
+                        map(ServiceBasketProduct::getStoreId).
+                        map(session::getStoreOwner).collect(Collectors.toSet());
+
+        for (int storeOwner : storeOwners) {
+            BroadCaster.broadcast(storeOwner,
+
+                    String.format("""
+                                    Customer %s %s with id %d has made a purchase
+                                    Total price payed: %f
+                                    Products bought:
+                                    %s
+                                    """,
+                            personBinder.getBean().getFirstName(),
+                            personBinder.getBean().getLastName(),
+                            me, totalPriceAfterDiscount, boughtItems()));
+
+        }
+    }
+
+    private String boughtItems() {
+        StringBuilder sb = new StringBuilder();
+        for (ServiceBasketProduct sbp : successfulItems) {
+            sb.append(sbp.toString());
+        }
+        return sb.toString();
     }
 }
