@@ -1025,4 +1025,6 @@ public interface ISession {
      * @throws Exception
      */
     Response<String> getUserPurchaseHistory(int userId) throws Exception;
+
+    Response<VoidResponse> fetchMessages(int userId);
 }
