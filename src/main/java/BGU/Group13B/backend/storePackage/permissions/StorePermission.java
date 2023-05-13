@@ -200,4 +200,8 @@ public class StorePermission {
         userToStoreRole.clear();
         appointedOwnersMap.clear();
     }
+    public int getStoreOwner(int storeId){
+        throw new UnsupportedOperationException();
+        //return storeToOwner.get(storeId);/*fixme*/
+    }
 }

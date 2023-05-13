@@ -1032,5 +1032,10 @@ public interface ISession {
      * @return the user's purchase history
      * @throws Exception
      */
-    Response<String> getUserPurchaseHistory(int userId) throws Exception;
+    Response<String> getUserPurchaseHistory(int userId);
+
+    int getStoreOwner(int storeId);
+    Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                                                                            String/*store coupons*/ storeCoupon) throws PurchaseFailedException;
+
 }
