@@ -262,9 +262,6 @@ public interface ISession {
      */
     void addProductToCart(int userId, int productId, int storeId);
 
-
-    void getUserPurchaseHistory(int userId);
-
     Response<VoidResponse> clearMessageToReply(int userId);
 
     /**

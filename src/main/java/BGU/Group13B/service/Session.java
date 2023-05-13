@@ -294,7 +294,6 @@ public class Session implements ISession {
     }
 
     public Response<VoidResponse> openComplaint(int userId, String header, String complaint) {
-    public void openComplaint(int userId, String header, String complaint) {
         try {
             userRepositoryAsHashmap.getUser(userId).openComplaint(header, complaint);
             return Response.success(new VoidResponse());
@@ -1003,18 +1002,12 @@ public class Session implements ISession {
     }
 
     @Override
-    public Response<String> getUserPurchaseHistory(int userId) throws Exception {
+    public Response<String> getUserPurchaseHistory(int userId) {
         try {
-            isUserLoggedIn();
-            Response.Builder<String> builder = new Response.Builder<String>().data(userRepositoryAsHashmap.getUser(userId).getPurchaseHistory());
-            builder.message("User purchase history");
-            builder.status(SUCCESS);
-            return builder.build();
+            isUserLogged(userId);
+            return Response.success(userRepositoryAsHashmap.getUser(userId).getPurchaseHistory());
         } catch (Exception e) {
-            Response.Builder<String> builder = new Response.Builder<String>().data(null);
-            builder.message(e.getMessage());
-            builder.status(FAILURE);
-            return builder.build();
+            return Response.exception(e);
         }
     }
 

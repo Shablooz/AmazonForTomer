@@ -10,10 +10,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import java.util.HashMap;
@@ -213,7 +209,18 @@ class UserTest {
         user.login(goodUsername1, goodPassword1, "yellow", "", "");
         SingletonCollection.getUserRepository().addUser(newUserId, user);
         int storeId = SingletonCollection.getStoreRepository().addStore(newUserId, "store1", "media");
-        int productId = SingletonCollection.getProductRepository().addProduct(storeId, "product1", "media", 10.0, 10, "very nice product");
+        int productId = SingletonCollection.getProductRepository().addProduct(storeId, "product1", "media", 10.0, 10, "very nice product").getProductId();
+        //action
+        try {
+            //user is logged in
+            user.addProductToCart(productId, storeId);
+            double pricePayed = user.purchaseCart("12345678", "12", "2033", "Shaun",
+                    "123", "12345678", new HashMap<>(), "");
+            Assertions.assertEquals(10.0, pricePayed);
+        } catch (Exception e) {
+            Assertions.fail(e.getMessage());
+        }
+    }
 
     @Test
     void purchaseUserHistory(){
@@ -240,22 +247,10 @@ class UserTest {
     }
 
     @Test
-    void purchaseUserHistory_Empty(){
+    void purchaseUserHistory_Empty() {
         user1.register(goodUsername1, goodPassword1, goodEmail1, "yellow", "", "");
         user1.login(goodUsername1, goodPassword1, "yellow", "", "");
-        Assertions.assertEquals("",user1.getPurchaseHistory());
-    }
-        //action
-        try {
-            //user is logged in
-            user.addProductToCart(productId, storeId);
-            double pricePayed = user.purchaseCart("12345678", "12", "2033", "Shaun",
-                    "123", "12345678", new HashMap<>(), "");
-            Assertions.assertEquals(10.0, pricePayed);
-        } catch (Exception e) {
-            Assertions.fail(e.getMessage());
-        }
-
+        Assertions.assertEquals("", user1.getPurchaseHistory());
     }
 
     @Test
@@ -268,7 +263,7 @@ class UserTest {
         user.login(goodUsername1, goodPassword1, "yellow", "", "");
         SingletonCollection.getUserRepository().addUser(newUserId, user);
         int storeId = SingletonCollection.getStoreRepository().addStore(newUserId, "store1", "media");
-        int productId = SingletonCollection.getProductRepository().addProduct(storeId, "product1", "media", 10.0, 10, "very nice product");
+        int productId = SingletonCollection.getProductRepository().addProduct(storeId, "product1", "media", 10.0, 10, "very nice product").getProductId();
         try {
             //user is logged in
             user.addProductToCart(productId, storeId);

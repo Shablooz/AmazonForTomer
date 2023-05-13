@@ -31,6 +31,7 @@ public class Basket {
     private int idealTime = 5;
     private TimeUnit unitsToRestore = TimeUnit.MINUTES;
     private ScheduledExecutorService scheduler;
+    private double finalPrice;
 
     public Basket(int userId, int storeId) {
         this.userId = userId;
@@ -79,7 +80,8 @@ public class Basket {
         getSuccessfulProducts();
         double totalAmount = getTotalAmount(productsCoupons);
         //calculate the total price of the products by the store discount policy
-        return calculateStoreDiscount(totalAmount, storeCoupon);
+        finalPrice = calculateStoreDiscount(totalAmount, storeCoupon);
+        return finalPrice;
     }
 
         public void purchaseBasket(String creditCardNumber,
@@ -103,7 +105,7 @@ public class Basket {
         for (BasketProduct basketProduct : successfulProducts) {
             productHistoryRepository.addProductToHistory(basketProduct, userId);
         }
-        purchaseHistoryRepository.addPurchase(userId, storeId, successfulProducts,totalAmount);
+        purchaseHistoryRepository.addPurchase(userId, storeId, successfulProducts, finalPrice);
             basketProductRepository.removeBasketProducts(storeId, userId);
             successfulProducts.clear();
 
