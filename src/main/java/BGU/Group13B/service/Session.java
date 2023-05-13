@@ -8,6 +8,8 @@ import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
+import BGU.Group13B.service.entity.ServiceBasketProduct;
+import BGU.Group13B.service.entity.ServiceProduct;
 import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
 import org.springframework.stereotype.Service;
@@ -15,9 +17,11 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import static BGU.Group13B.service.Response.Status.FAILURE;
 import static BGU.Group13B.service.Response.Status.SUCCESS;
@@ -29,7 +33,7 @@ import static BGU.Group13B.service.Response.Status.SUCCESS;
 //made it public for testing purposes - should be private
 @Service
 public class Session implements ISession {
-    private final Market market;
+    private Market market;
     private final IUserRepository userRepository = SingletonCollection.getUserRepository();
     private static final Logger LOGGER_INFO = Logger.getLogger(Session.class.getName());
     private static final Logger LOGGER_ERROR = Logger.getLogger(Session.class.getName());
@@ -61,7 +65,8 @@ public class Session implements ISession {
         int id = 1;
         userRepositoryAsHashmap.addUser(id, new User(id));
         register(id, "kingOfTheSheep", "SheePLover420",
-                "mrsheep@gmail.com", "054-1234567", "1234", "answer3");
+                "mrsheep@gmail.com", "11", "11", "11");
+
     }
 
     @Override
@@ -75,24 +80,55 @@ public class Session implements ISession {
 
     }
 
+    /*good for development no need check if the item exists*/
     @Override
     public void addToCart(int userId, int storeId, int productId) {
         userRepository.getUser(userId).addToCart(storeId, productId);
     }
 
     @Override
-    public double purchaseProductCart(int userId, String address, String creditCardNumber,
+    public double purchaseProductCart(int userId, String creditCardNumber,
                                       String creditCardMonth, String creditCardYear,
-                                      String creditCardHolderFirstName, String creditCardHolderLastName,
-                                      String creditCardCcv, String id, String creditCardType,
+                                      String creditCardHolderFirstName,
+                                      String creditCardCcv, String id,
                                       HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
                                       String/*store coupons*/ storeCoupon) {
         try {
             return userRepository.getUser(userId).
-                    purchaseCart(address, creditCardNumber, creditCardMonth,
-                            creditCardYear, creditCardHolderFirstName, creditCardHolderLastName,
-                            creditCardCcv, id, creditCardType, productsCoupons, storeCoupon);
-        } catch (PurchaseFailedException e) {
+                    purchaseCart(creditCardNumber, creditCardMonth,
+                            creditCardYear, creditCardHolderFirstName,
+                            creditCardCcv, id, productsCoupons, storeCoupon);
+        } catch (PurchaseFailedException | NoPermissionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Response<VoidResponse> purchaseProductCart(int userId, String creditCardNumber,
+                                                      String creditCardMonth, String creditCardYear,
+                                                      String creditCardHolderFirstName,
+                                                      String creditCardCVV, String id,
+                                                      String address, String city, String country,
+                                                      String zip) {
+        try {
+            userRepository.getUser(userId).
+                    purchaseCart(
+                            creditCardNumber, creditCardMonth,
+                            creditCardYear, creditCardHolderFirstName,
+                            creditCardCVV, id,
+                            address, city, country, zip);
+            return Response.success();
+        } catch (PurchaseFailedException | NoPermissionException e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public double startPurchaseBasketTransaction(int userId, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                                                 String/*store coupons*/ storeCoupon) {
+        try {
+            return userRepository.getUser(userId).startPurchaseBasketTransaction(productsCoupons, storeCoupon);
+        } catch (PurchaseFailedException | NoPermissionException e) {
             throw new RuntimeException(e);
         }
     }
@@ -147,39 +183,29 @@ public class Session implements ISession {
     public synchronized void register(int userId, String username, String password,
                                       String email, String answer1, String answer2, String answer3) {
         User user = userRepositoryAsHashmap.getUser(userId);
-        try {
-            //the first "if" might not be necessary when we will connect to web
-            if (this.userRepositoryAsHashmap.checkIfUserWithEmailExists(email)) {
-                throw new IllegalArgumentException("user with this email already exists!");//temporary
-            }
-            if (!user.isRegistered()) {
-                if (userRepositoryAsHashmap.checkIfUserExists(username) == null) {
-                    user.register(username, password, email, answer1, answer2, answer3);
-                } else {
-                    throw new IllegalArgumentException("user with this username already exists!");
-                }
-            } else {
-                throw new IllegalArgumentException("already registered!");
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+
+        //the first "if" might not be necessary when we will connect to web
+        if (this.userRepositoryAsHashmap.checkIfUserWithEmailExists(email)) {
+            throw new IllegalArgumentException("user with this email already exists!");//temporary
         }
-
+        if (!user.isRegistered()) {
+            if (userRepositoryAsHashmap.checkIfUserExists(username) == null) {
+                user.register(username, password, email, answer1, answer2, answer3);
+            } else {
+                throw new IllegalArgumentException("user with this username already exists!");
+            }
+        } else {
+            throw new IllegalArgumentException("already registered!");
+        }
     }
 
-    @Override
-    public void searchProductByName(String productName) {
-        market.searchProductByName(productName);
-    }
+
 
     @Override
-    public void searchProductByCategory(String category) {
-        market.searchProductByCategory(category);
-    }
-
-    @Override
-    public void searchProductByKeywords(List<String> keywords) {
-        market.searchProductByKeywords(keywords);
+    public void search(String searchWords) {
+        market.searchProductByKeywords(searchWords);
+        market.searchProductByCategory(searchWords);
+        market.searchProductByName(searchWords);
     }
 
     @Override
@@ -257,199 +283,268 @@ public class Session implements ISession {
         }
     }
 
+    @Override
+    public Response<VoidResponse> clearMessageToReply(int userId) {
+        try {
+            userRepositoryAsHashmap.getUser(userId).clearMessageToReply();
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    public Response<VoidResponse> openComplaint(int userId, String header, String complaint) {
     public void openComplaint(int userId, String header, String complaint) {
         try {
             userRepositoryAsHashmap.getUser(userId).openComplaint(header, complaint);
-        } catch (NoPermissionException e) {
-            throw new RuntimeException(e);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
         }
     }
 
 
-    public Message getComplaint(int userId) {
+    public Response<Message> getComplaint(int userId) {
         try {
-            return userRepositoryAsHashmap.getUser(userId).getComplaint();
-        } catch (NoPermissionException e) {
-            throw new RuntimeException(e);
+            return Response.success(userRepositoryAsHashmap.getUser(userId).getComplaint());
+        }catch (Exception e){
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void markMessageAsReadAdmin(int userId, String receiverId, String senderId, int messageId) {
+    public Response<VoidResponse> markMessageAsReadAdmin(int userId, String receiverId, String senderId, int messageId) {
         try {
             userRepositoryAsHashmap.getUser(userId).markMessageAsReadAdmin(receiverId, senderId, messageId);
-        } catch (NoPermissionException e) {
-            throw new RuntimeException(e);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void sendMassageAdmin(int userId, String receiverId, String header, String massage) {
+    public Response<VoidResponse> sendMassageAdmin(int userId, String receiverId, String header, String massage) {
         try {
             if (userRepository.checkIfUserExists(receiverId) == null)
                 throw new RuntimeException("receiver Id not found");
             userRepositoryAsHashmap.getUser(userId).sendMassageAdmin(receiverId, header, massage);
-        } catch (NoPermissionException e) {
-            throw new RuntimeException(e);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void answerComplaint(int userId, String answer) {
+    public Response<VoidResponse> answerComplaint(int userId, String answer) {
         try {
             userRepositoryAsHashmap.getUser(userId).answerComplaint(answer);
-        } catch (NoPermissionException e) {
-            throw new RuntimeException(e);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
         }
     }
 
     @Override
-    public Message readMessage(int userId) {
+    public Response<Message> readMessage(int userId) {
         try {
-            return userRepositoryAsHashmap.getUser(userId).readMassage();
-        } catch (NoPermissionException e) {
-            throw new RuntimeException(e);
+            return Response.success(userRepositoryAsHashmap.getUser(userId).readMassage());
+        } catch (Exception e) {
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void sendMassageStore(int userId, String header, String massage, int storeId) {
+    public Response<VoidResponse> replayMessage(int userId, String message) {
+        try {
+            userRepositoryAsHashmap.getUser(userId).replayMessage(message);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Message> readOldMessage(int userId) {
+        try {
+            return Response.success(userRepositoryAsHashmap.getUser(userId).readOldMessage());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<VoidResponse> refreshOldMessages(int userId) {
+        try {
+            userRepositoryAsHashmap.getUser(userId).refreshOldMessage();
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<VoidResponse> sendMassageStore(int userId, String header, String massage, int storeId) {
         try {
             userRepositoryAsHashmap.getUser(userId).sendMassageStore(header, massage, storeId);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public Message readUnreadMassageStore(int userId, int storeId) {
+    public Response<Message> readUnreadMassageStore(int userId, int storeId) {
         try {
-            return userRepositoryAsHashmap.getUser(userId).readUnreadMassageStore(storeId);
+            return Response.success(userRepositoryAsHashmap.getUser(userId).readUnreadMassageStore(storeId));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Message> readReadMassageStore(int userId, int storeId) {
+        try {
+            return Response.success( userRepositoryAsHashmap.getUser(userId).readReadMassageStore(storeId));
         } catch (NoPermissionException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public Message readReadMassageStore(int userId, int storeId) {
-        try {
-            return userRepositoryAsHashmap.getUser(userId).readReadMassageStore(storeId);
-        } catch (NoPermissionException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public void answerQuestionStore(int userId, String answer) {
+    public Response<VoidResponse> answerQuestionStore(int userId, String answer) {
         try {
             userRepositoryAsHashmap.getUser(userId).answerQuestionStore(answer);
-        } catch (NoPermissionException e) {
-            throw new RuntimeException(e);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void refreshOldMessageStore(int userId, int storeId) {
+    public Response<VoidResponse> refreshOldMessageStore(int userId, int storeId) {
         try {
             userRepositoryAsHashmap.getUser(userId).refreshOldMessageStore(storeId);
-        } catch (NoPermissionException e) {
-            throw new RuntimeException(e);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void addReview(int userId, String review, int storeId, int productId) {
+    public Response<VoidResponse> addReview(int userId, String review, int storeId, int productId) {
         try {
             userRepositoryAsHashmap.getUser(userId).addReview(review, storeId, productId);
-        } catch (NoPermissionException e) {
-            throw new RuntimeException(e);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void removeReview(int userId, int storeId, int productId) {
+    public Response<VoidResponse> removeReview(int userId, int storeId, int productId) {
         try {
             userRepositoryAsHashmap.getUser(userId).removeReview(storeId, productId);
-        } catch (NoPermissionException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public Review getReview(int userId, int storeId, int productId) {
-        try {
-            return userRepositoryAsHashmap.getUser(userId).getReview(storeId, productId);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public float getProductScore(int userId, int storeId, int productId) {
+    public Response<Review> getReview(int userId, int storeId, int productId) {
         try {
-            return userRepositoryAsHashmap.getUser(userId).getProductScore(storeId, productId);
+            return Response.success( userRepositoryAsHashmap.getUser(userId).getReview(storeId, productId));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void addAndSetProductScore(int userId, int storeId, int productId, int score) {
+    public Response<Float> getProductScore(int userId, int storeId, int productId) {
+        try {
+            return Response.success(userRepositoryAsHashmap.getUser(userId).getProductScore(storeId, productId));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<VoidResponse> addAndSetProductScore(int userId, int storeId, int productId, int score) {
         try {
             userRepositoryAsHashmap.getUser(userId).addAndSetProductScore(storeId, productId, score);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void removeProductScore(int userId, int storeId, int productId) {
+    public Response<VoidResponse> removeProductScore(int userId, int storeId, int productId) {
         try {
             userRepositoryAsHashmap.getUser(userId).removeProductScore(storeId, productId);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void addStoreScore(int userId, int storeId, int score) {
+    public Response<VoidResponse> addStoreScore(int userId, int storeId, int score) {
         try {
             userRepositoryAsHashmap.getUser(userId).addStoreScore(storeId, score);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void removeStoreScore(int userId, int storeId) {
+    public Response<VoidResponse> removeStoreScore(int userId, int storeId) {
         try {
             userRepositoryAsHashmap.getUser(userId).removeStoreScore(storeId);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public void modifyStoreScore(int userId, int storeId, int score) {
+    public Response<VoidResponse> modifyStoreScore(int userId, int storeId, int score) {
         try {
             userRepositoryAsHashmap.getUser(userId).modifyStoreScore(storeId, score);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
-    public float getStoreScore(int userId, int storeId) {
+    public Response<Float> getStoreScore(int userId, int storeId) {
         try {
-            return userRepositoryAsHashmap.getUser(userId).getStoreScore(storeId);
+            return Response.success( userRepositoryAsHashmap.getUser(userId).getStoreScore(storeId));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
     @Override
     public void getCartDescription(int userId) {
-        userRepositoryAsHashmap.getUser(userId).getCartDescription();
+        try {
+            userRepositoryAsHashmap.getUser(userId).getCartDescription();
+        } catch (NoPermissionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Response<List<ServiceBasketProduct>> getCartContent(int userId) {
+        List<BasketProduct> cartContent;
+        try {
+            cartContent = userRepositoryAsHashmap.getUser(userId).getCartBasketProducts();
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+        return Response.success(cartContent.stream().map(ServiceBasketProduct::new).collect(Collectors.toList()));
     }
 
     @Override
@@ -572,9 +667,9 @@ public class Session implements ISession {
         return userRepositoryAsHashmap.getUser(userId).getStoresAndRoles();
     }
 
-    public StoreInfo getStoreInfo(int storeId) {
+    public StoreInfo getStoreInfo(int userId, int storeId) {
         try {
-            return market.getStoreInfo(storeId);
+            return market.getStoreInfo(userId, storeId);
         } catch (Exception e) {
             //TODO: handle exception
             throw new RuntimeException(e);
@@ -602,39 +697,9 @@ public class Session implements ISession {
     }
 
     @Override
-    public ProductInfo getStoreProductInfo(int storeId, int productId) {
+    public ProductInfo getStoreProductInfo(int userId, int storeId, int productId) {
         try {
-            return market.getStoreProductInfo(storeId, productId);
-        } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public ProductInfo getProductInfo(int productId) {
-        try {
-            return market.getProductInfo(productId);
-        } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public String getProductName(int productId) {
-        try {
-            return market.getProductName(productId);
-        } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public String getProductCategory(int productId) {
-        try {
-            return market.getProductCategory(productId);
+            return market.getStoreProductInfo(userId, storeId, productId);
         } catch (Exception e) {
             //TODO: handle exception
             throw new RuntimeException(e);
@@ -650,39 +715,10 @@ public class Session implements ISession {
         }
     }
 
-    public double getProductPrice(int productId) {
-        try {
-            return market.getProductPrice(productId);
-        } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
-        }
-    }
-
     @Override
-    public int getProductStockQuantity(int productId) {
+    public Set<ProductInfo> getAllStoreProductsInfo(int userId, int storeId) {
         try {
-            return market.getProductStockQuantity(productId);
-        } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public float getProductScore(int productId) {
-        try {
-            return market.getProductScore(productId);
-        } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public Set<ProductInfo> getAllStoreProductsInfo(int storeId) {
-        try {
-            return market.getAllStoreProductsInfo(storeId);
+            return market.getAllStoreProductsInfo(userId, storeId);
         } catch (Exception e) {
             //TODO: handle exception
             throw new RuntimeException(e);
@@ -709,6 +745,13 @@ public class Session implements ISession {
     }
 
     @Override
+    public boolean checkIfQuestionsExist(String userName) {
+        if (userRepositoryAsHashmap.checkIfUserExists(userName) == null)
+            return false;
+        return checkIfQuestionsExist(userRepositoryAsHashmap.checkIfUserExists(userName).getUserId());
+    }
+
+    @Override
     public void exitSystemAsGuest(int userId) {
         userRepositoryAsHashmap.removeUser(userId);
     }
@@ -716,6 +759,22 @@ public class Session implements ISession {
     @Override
     public List<Integer> getFailedProducts(int userId, int storeId) {
         return userRepository.getUser(userId).getFailedProducts(storeId);
+    }
+
+    @Override
+    public double getTotalPriceOfCart(int userId) {
+        return userRepository.getUser(userId).getTotalPriceOfCart();
+    }
+
+    @Override
+    public void cancelPurchase(int userId) {
+        userRepository.getUser(userId).cancelPurchase();
+    }
+
+    @Override
+    public List<ServiceProduct> getAllFailedProductsAfterPayment(int userId) {
+        return userRepository.getUser(userId).getAllFailedProductsAfterPayment().
+                stream().map(ServiceProduct::new).collect(Collectors.toList());
     }
 
     @Override
@@ -960,7 +1019,48 @@ public class Session implements ISession {
     }
 
 
-    public boolean isUserLoggedIn() {
-        return false;
+    @Override
+    public List<Pair<StoreInfo, String>> getAllUserAssociatedStores(int userId) {
+        try{
+            List<Pair<Integer, String>> storeIdsAndRoles = getStoresOfUser(userId);
+            //map each storeId to storeInfo
+            List<Pair<StoreInfo, String>> storeInfosAndRoles = new LinkedList<>();
+            for(Pair<Integer, String> storeIdAndRole : storeIdsAndRoles){
+                StoreInfo storeInfo = market.getStoreInfo(userId, storeIdAndRole.getFirst());
+                storeInfosAndRoles.add(Pair.of(storeInfo, storeIdAndRole.getSecond()));
+            }
+            return storeInfosAndRoles;
+        }
+        catch(Exception e){
+            //TODO: handle exception
+            throw new RuntimeException(e);
+        }
     }
+
+    @Override
+    public void hideStore(int userId, int storeId) {
+        try {
+            market.hideStore(userId, storeId);
+        } catch (Exception e) {
+            //TODO: handle exception
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void unhideStore(int userId, int storeId) {
+        try {
+            market.unhideStore(userId, storeId);
+        } catch (Exception e) {
+            //TODO: handle exception
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void pushTest()
+    {
+        PushNotification.pushNotification("MY TEST!",2);
+    }
+
 }

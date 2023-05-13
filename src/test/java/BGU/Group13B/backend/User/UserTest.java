@@ -4,6 +4,7 @@ import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
 import BGU.Group13B.backend.storePackage.Product;
+import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.service.SingletonCollection;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -14,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import java.util.HashMap;
 
 class UserTest {
 
@@ -54,6 +57,7 @@ class UserTest {
     private final String badEmail1 = "tefsadgvnspoiseropgesrgpoe123542@gmail.com";
     private final String badEmail2 = "hello@gmail.lmao";
     private final String badEmail3 = "a@waaaail.com";
+    private User user;
 
 
     @BeforeEach
@@ -185,8 +189,9 @@ class UserTest {
 
         }
     }
+
     @Test
-    void passwordEncryption(){
+    void passwordEncryption() {
         user1.register(goodUsername1, goodPassword1, goodEmail1, "yellow", "", "");
         user2.register(goodUsername2, goodPassword1, goodEmail2, "", "yak", "");
         Assertions.assertTrue(user1.SecurityAnswer1Exists());
@@ -198,6 +203,17 @@ class UserTest {
         Assertions.assertTrue(user2.SecurityAnswer2Exists());
     }
 
+    @Test
+    void purchaseCartLoginLogoutSuccess() {
+        //setup
+        SingletonCollection.reset_system();
+        int newUserId = SingletonCollection.getUserRepository().getNewUserId();
+        User user = new User(newUserId);
+        user.register(goodUsername1, goodPassword1, "email@gmail.com", "yellow", "", "");
+        user.login(goodUsername1, goodPassword1, "yellow", "", "");
+        SingletonCollection.getUserRepository().addUser(newUserId, user);
+        int storeId = SingletonCollection.getStoreRepository().addStore(newUserId, "store1", "media");
+        int productId = SingletonCollection.getProductRepository().addProduct(storeId, "product1", "media", 10.0, 10, "very nice product");
 
     @Test
     void purchaseUserHistory(){
@@ -229,5 +245,54 @@ class UserTest {
         user1.login(goodUsername1, goodPassword1, "yellow", "", "");
         Assertions.assertEquals("",user1.getPurchaseHistory());
     }
+        //action
+        try {
+            //user is logged in
+            user.addProductToCart(productId, storeId);
+            double pricePayed = user.purchaseCart("12345678", "12", "2033", "Shaun",
+                    "123", "12345678", new HashMap<>(), "");
+            Assertions.assertEquals(10.0, pricePayed);
+        } catch (Exception e) {
+            Assertions.fail(e.getMessage());
+        }
 
+    }
+
+    @Test
+    void purchaseCartLoginLogoutFail() {
+        //setup
+        SingletonCollection.reset_system();
+        int newUserId = SingletonCollection.getUserRepository().getNewUserId();
+        user = new User(newUserId);
+        user.register(goodUsername1, goodPassword1, "email@gmail.com", "yellow", "", "");
+        user.login(goodUsername1, goodPassword1, "yellow", "", "");
+        SingletonCollection.getUserRepository().addUser(newUserId, user);
+        int storeId = SingletonCollection.getStoreRepository().addStore(newUserId, "store1", "media");
+        int productId = SingletonCollection.getProductRepository().addProduct(storeId, "product1", "media", 10.0, 10, "very nice product");
+        try {
+            //user is logged in
+            user.addProductToCart(productId, storeId);
+            user.logout();
+            double pricePayed = user.purchaseCart("12345678", "12", "2033", "Shaun",
+                    "123", "12345678", new HashMap<>(), "");
+            Assertions.fail();//should not get here
+        } catch (NoPermissionException e) {
+            Assertions.assertEquals("Only logged in users can purchase cart", e.getMessage());
+        } catch (Exception e) {
+            Assertions.fail(e.getMessage());
+        }
+    }
+    @Test
+    void purchaseCartLoginLogoutSuccess2() {
+        purchaseCartLoginLogoutFail();
+        user.login(goodUsername1, goodPassword1, "yellow", "", "");
+        try {
+            //user is logged in
+            double pricePayed = user.purchaseCart("12345678", "12", "2033", "Shaun",
+                    "123", "12345678", new HashMap<>(), "");
+            Assertions.assertEquals(10.0, pricePayed);
+        } catch (Exception e) {
+            Assertions.fail(e.getMessage());
+        }
+    }
 }

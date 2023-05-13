@@ -14,7 +14,6 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
-
 @Route(value = "", layout = MainLayout.class)
 public class HomeView extends VerticalLayout implements BeforeEnterObserver {
     private final Session session;
@@ -23,6 +22,7 @@ public class HomeView extends VerticalLayout implements BeforeEnterObserver {
     public HomeView(Session session) {
         this.session = session;
         // You can initialise any data required for the connected UI components here.
+        //joining as a guest
         //congratulations on logging in
         add(new H1("Welcome to the Super Duper Market!"));
         //center the text
@@ -37,10 +37,8 @@ public class HomeView extends VerticalLayout implements BeforeEnterObserver {
         getStyle().set("height", "100vh");
         getStyle().set("width", "100vw");
 
-        /*
-            MenuBar menuBar = buildMenuBar();
-            add(menuBar);
-        */
+       /* MenuBar menuBar = buildMenuBar();
+        add(menuBar);*/
     }
 
     @Override
@@ -73,6 +71,6 @@ public class HomeView extends VerticalLayout implements BeforeEnterObserver {
     private void setPosition(MenuBar component) {
         component.getElement().getStyle().set("position", "absolute");
         component.getElement().getStyle().set("top", "0");
-        component.getElement().getStyle().set("left", "0");
+        component.getElement().getStyle().set("left", "25");
     }
 }

@@ -14,8 +14,8 @@ public class StoreAT extends ProjectTest{
     @Test
     void addStore_member_success(){
         int storeId = session.addStore(userIds[UsersIndex.STORE_OWNER_1.ordinal()], "my store", categories[0]);
-        StoreInfo storeInfo = session.getStoreInfo(storeId);
-        assertEquals("my store", storeInfo.getStoreName());
+        StoreInfo storeInfo = session.getStoreInfo(userIds[UsersIndex.STORE_OWNER_1.ordinal()], storeId);
+        assertEquals("my store", storeInfo.storeName());
     }
 
     @Test
@@ -34,7 +34,7 @@ public class StoreAT extends ProjectTest{
                 (int) stores[0][0], "my product", "my description",
                 10, 10, "my category");
 
-        BGU.Group13B.service.info.ProductInfo productInfo = session.getProductInfo(productId);
+        BGU.Group13B.service.info.ProductInfo productInfo = session.getStoreProductInfo(userIds[UsersIndex.STORE_OWNER_1.ordinal()], (int) stores[0][0], productId);
         assertEquals("my product", productInfo.name());
     }
 
@@ -53,7 +53,7 @@ public class StoreAT extends ProjectTest{
     void removeProduct_storeOwner_success(){
         session.removeProduct((int) products[0][2], (int) products[0][1], (int) products[0][0]);
         try{
-            session.getProductInfo((int) products[0][0]);
+            session.getStoreProductInfo((int) products[0][2], (int) products[0][1], (int) products[0][0]);
             fail();
         }
         catch (Exception ignore){}
@@ -72,7 +72,8 @@ public class StoreAT extends ProjectTest{
     void setProductQuantity_storeOwner_success(){
         int stockQuantity = 42;
         session.setProductStockQuantity((int) products[0][2], (int) products[0][1], (int) products[0][0], stockQuantity);
-        assertEquals(stockQuantity, session.getProductInfo((int) products[0][0]).stockQuantity());
+        int quantityAfterSet = session.getStoreProductInfo((int) products[0][2], (int) products[0][1], (int) products[0][0]).stockQuantity();
+        assertEquals(stockQuantity, quantityAfterSet);
     }
 
     @Test
@@ -95,9 +96,10 @@ public class StoreAT extends ProjectTest{
 
     @Test
     void setProductPrice_storeOwner_success(){
-        int price = 42;
+        double price = 42;
         session.setProductPrice((int) products[0][2], (int) products[0][1], (int) products[0][0], price);
-        assertEquals(price, session.getProductInfo((int) products[0][0]).price());
+        double priceAfterSet = session.getStoreProductInfo((int) products[0][2], (int) products[0][1], (int) products[0][0]).price();
+        assertEquals(price, priceAfterSet);
     }
 
     @Test
@@ -122,7 +124,8 @@ public class StoreAT extends ProjectTest{
     void setProductName_storeOwner_success(){
         String name = "new name";
         session.setProductName((int) products[0][2], (int) products[0][1], (int) products[0][0], name);
-        assertEquals(name, session.getProductInfo((int) products[0][0]).name());
+        String nameAfterSet = session.getStoreProductInfo((int) products[0][2], (int) products[0][1], (int) products[0][0]).name();
+        assertEquals(name, nameAfterSet);
     }
 
     @Test
@@ -138,7 +141,8 @@ public class StoreAT extends ProjectTest{
     void setProductDescription_storeOwner_success(){
         String description = "new description";
         session.setProductDescription((int) products[0][2], (int) products[0][1], (int) products[0][0], description);
-        assertEquals(description, session.getProductInfo((int) products[0][0]).description());
+        String descriptionAfterSet = session.getStoreProductInfo((int) products[0][2], (int) products[0][1], (int) products[0][0]).description();
+        assertEquals(description, descriptionAfterSet);
     }
 
     @Test
@@ -154,7 +158,7 @@ public class StoreAT extends ProjectTest{
     void setProductCategory_storeOwner_success(){
         String category = "new category";
         session.setProductCategory((int) products[0][2], (int) products[0][1], (int) products[0][0], category);
-        assertEquals(category, session.getProductInfo((int) products[0][0]).category());
+        String categoryAfterSet = session.getStoreProductInfo((int) products[0][2], (int) products[0][1], (int) products[0][0]).category();
     }
 
     @Test

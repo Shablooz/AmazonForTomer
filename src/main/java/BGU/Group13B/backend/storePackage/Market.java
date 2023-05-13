@@ -34,7 +34,7 @@ public class Market {
 
     //Tomer
     //#27
-    public void sendMassage(Message message, int userId, int storeId) { //need to check how to send message back to the user
+    public void sendMassage(Message message, int userId, int storeId) throws NoPermissionException { //need to check how to send message back to the user
         storeRepository.getStore(storeId).sendMassage(message, userId);
     }
 
@@ -61,27 +61,27 @@ public class Market {
         storeRepository.getStore(storeId).refreshMessages(userId);
     }
 
-    public void addReview(String review, int storeId, int productId, int userId) { //TODO:check get store impl
+    public void addReview(String review, int storeId, int productId, int userId) throws NoPermissionException { //TODO:check get store impl
         storeRepository.getStore(storeId).addReview(review, productId, userId);
     }
 
-    public void removeReview(int storeId, int productId, int userId) {
+    public void removeReview(int storeId, int productId, int userId) throws NoPermissionException {
         storeRepository.getStore(storeId).removeReview(productId, userId);
     }
 
-    public Review getReview(int storeId, int productId, int userId) {
+    public Review getReview(int storeId, int productId, int userId) throws NoPermissionException {
         return storeRepository.getStore(storeId).getReview(productId, userId);
     }
 
-    public float getProductScore(int storeId, int productId) {
-        return storeRepository.getStore(storeId).getProductScore(productId);
+    public float getProductScore(int storeId, int productId, int userId) throws NoPermissionException {
+        return storeRepository.getStore(storeId).getProductScore(userId, productId);
     }
 
-    public void addAndSetProductScore(int storeId, int productId, int userId, int score) {
+    public void addAndSetProductScore(int storeId, int productId, int userId, int score) throws NoPermissionException {
         storeRepository.getStore(storeId).addAndSetProductScore(productId, userId, score);
     }
 
-    public void removeProductScore(int storeId, int productId, int userId) {
+    public void removeProductScore(int storeId, int productId, int userId) throws NoPermissionException {
         storeRepository.getStore(storeId).removeProductScore(productId, userId);
     }
 
@@ -90,15 +90,15 @@ public class Market {
         return storeRepository.getStore(storeId).addProduct(userId, productName, category, price, stockQuantity, description);
     }
 
-    public void addStoreScore(int userId, int storeId, int score) {
+    public void addStoreScore(int userId, int storeId, int score) throws NoPermissionException {
         storeRepository.getStore(storeId).addStoreScore(userId, score);
     }
 
-    public void removeStoreScore(int userId, int storeId) {
+    public void removeStoreScore(int userId, int storeId) throws NoPermissionException {
         storeRepository.getStore(storeId).removeStoreScore(userId);
     }
 
-    public void modifyStoreScore(int userId, int storeId, int score) {
+    public void modifyStoreScore(int userId, int storeId, int score) throws NoPermissionException {
         storeRepository.getStore(storeId).modifyStoreScore(userId, score);
     }
 
@@ -149,7 +149,7 @@ public class Market {
         return searcher.searchByCategory(category);
     }
 
-    public List<Product> searchProductByKeywords(List<String> keywords) {
+    public List<Product> searchProductByKeywords(String keywords) {
         return searcher.searchByKeywords(keywords);
     }
 
@@ -204,8 +204,8 @@ public class Market {
         storeRepository.getStore(storeId).removeProduct(userId, productId);
     }
 
-    public StoreInfo getStoreInfo(int storeId) {
-        return storeRepository.getStore(storeId).getStoreInfo();
+    public StoreInfo getStoreInfo(int userId, int storeId) throws NoPermissionException {
+        return storeRepository.getStore(storeId).getStoreInfo(userId);
     }
 
     public String getStoreName(int storeId) {
@@ -216,36 +216,12 @@ public class Market {
         return storeRepository.getStore(storeId).getCategory();
     }
 
-    public ProductInfo getStoreProductInfo(int storeId, int productId) {
-        return storeRepository.getStore(storeId).getStoreProduct(productId).getProductInfo();
+    public ProductInfo getStoreProductInfo(int userId, int storeId, int productId) throws NoPermissionException {
+        return storeRepository.getStore(storeId).getStoreProduct(userId, productId).getProductInfo();
     }
 
-    public ProductInfo getProductInfo(int productId) {
-        return searcher.getProductById(productId).getProductInfo();
-    }
-
-    public String getProductName(int productId) {
-        return searcher.getProductById(productId).getName();
-    }
-
-    public String getProductCategory(int productId) {
-        return searcher.getProductById(productId).getCategory();
-    }
-
-    public double getProductPrice(int productId) {
-        return searcher.getProductById(productId).getPrice();
-    }
-
-    public int getProductStockQuantity(int productId) {
-        return searcher.getProductById(productId).getStockQuantity();
-    }
-
-    public float getProductScore(int productId) {
-        return searcher.getProductById(productId).getProductScore();
-    }
-
-    public Set<ProductInfo> getAllStoreProductsInfo(int storeId) {
-        return storeRepository.getStore(storeId).getAllStoreProducts().stream().map(Product::getProductInfo).collect(Collectors.toSet());
+    public Set<ProductInfo> getAllStoreProductsInfo(int userId, int storeId) throws NoPermissionException {
+        return storeRepository.getStore(storeId).getAllStoreProducts(userId).stream().map(Product::getProductInfo).collect(Collectors.toSet());
     }
 
     public void allowPurchasePolicyConflicts(int userId, int storeId) throws NoPermissionException {
@@ -336,5 +312,11 @@ public class Market {
         storeRepository.getStore(storeId).removeProductDiscount(userId, productId, discountId);
     }
 
+    public void hideStore(int userId, int storeId) throws NoPermissionException {
+        storeRepository.getStore(storeId).hideStore(userId);
+    }
 
+    public void unhideStore(int userId, int storeId) throws NoPermissionException {
+        storeRepository.getStore(storeId).unhideStore(userId);
+    }
 }

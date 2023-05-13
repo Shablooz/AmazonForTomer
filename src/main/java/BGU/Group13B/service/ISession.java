@@ -3,8 +3,15 @@ package BGU.Group13B.service;
 import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.User.Message;
+
+import BGU.Group13B.backend.User.PurchaseFailedException;
+
+import BGU.Group13B.backend.User.UserPermissions;
+
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
+import BGU.Group13B.service.entity.ServiceBasketProduct;
+import BGU.Group13B.service.entity.ServiceProduct;
 import BGU.Group13B.service.info.StoreInfo;
 import BGU.Group13B.service.info.ProductInfo;
 
@@ -33,7 +40,7 @@ public interface ISession {
     /**
      * #19
      * require 2.3
-     *
+     * good for development delete this function, does not check if the item exists in a store
      * @param userId    the user id
      * @param storeId   the store id
      * @param productId the product id
@@ -45,22 +52,29 @@ public interface ISession {
      * require 2.5
      *
      * @param userId                    the user id
-     * @param address                   the address of the user
      * @param creditCardNumber          the credit card number
      * @param creditCardMonth           the credit card month
      * @param creditCardYear            the credit card year
      * @param creditCardHolderFirstName the credit card holder first name
-     * @param creditCardHolderLastName  the credit card holder last name
      * @param creditCardCcv             the credit card ccv
      * @param id                        the id of the card owner
-     * @param creditCardType            the credit card type
      * @return total price paid by the user
      */
-    double purchaseProductCart(int userId, String address, String creditCardNumber, String creditCardMonth,
-                             String creditCardYear, String creditCardHolderFirstName,
-                             String creditCardHolderLastName, String creditCardCcv, String id,
-                             String creditCardType, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                             String/*store coupons*/ storeCoupon);
+    double purchaseProductCart(int userId, String creditCardNumber, String creditCardMonth,
+                               String creditCardYear, String creditCardHolderFirstName,
+                               String creditCardCcv, String id,
+                               HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                               String/*store coupons*/ storeCoupon);
+
+    Response<VoidResponse> purchaseProductCart(int userId, String creditCardNumber,
+                                                      String creditCardMonth, String creditCardYear,
+                                                      String creditCardHolderFirstName,
+                                                      String creditCardCVV, String id,
+                                                      String address, String city, String country,
+                                                      String zip);
+
+    double startPurchaseBasketTransaction(int userId, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                                          String/*store coupons*/ storeCoupon) throws PurchaseFailedException;
 
     /**
      * #50
@@ -162,25 +176,9 @@ public interface ISession {
      * #18
      * require 2.2
      *
-     * @param productName - the name of the product
+     * @param searchWords - the search words
      */
-    void searchProductByName(String productName);
-
-    /**
-     * #18
-     * require 2.2
-     *
-     * @param category - the category of the product
-     */
-    void searchProductByCategory(String category);
-
-    /**
-     * #18
-     * require 2.2
-     *
-     * @param keywords - list of keywords
-     */
-    void searchProductByKeywords(List<String> keywords);
+    void search(String searchWords);
 
     /**
      * #18
@@ -257,12 +255,17 @@ public interface ISession {
     /**
      * #19
      * require 2.3
-     *
+     * good for production
      * @param userId    the user id
      * @param storeId   the store id
      * @param productId the product id
      */
     void addProductToCart(int userId, int productId, int storeId);
+
+
+    void getUserPurchaseHistory(int userId);
+
+    Response<VoidResponse> clearMessageToReply(int userId);
 
     /**
      * [#28]
@@ -270,8 +273,9 @@ public interface ISession {
      * @param userId    the user id
      * @param header    the header of the message
      * @param complaint the complaint
+     * @return
      */
-    public void openComplaint(int userId, String header, String complaint);
+    public Response<VoidResponse> openComplaint(int userId, String header, String complaint);
 
     /**
      * [#47]
@@ -279,7 +283,7 @@ public interface ISession {
      * @param userId the user id
      * @return the complaint message
      */
-    public Message getComplaint(int userId);
+    public Response<Message> getComplaint(int userId);
 
     /**
      * [#47]
@@ -288,8 +292,9 @@ public interface ISession {
      * @param receiverId the receiver id
      * @param senderId   the sender id
      * @param messageId  the message id
+     * @return
      */
-    public void markMessageAsReadAdmin(int userId, String receiverId, String senderId, int messageId);
+    public Response<VoidResponse> markMessageAsReadAdmin(int userId, String receiverId, String senderId, int messageId);
 
     /**
      * [#47]
@@ -298,24 +303,32 @@ public interface ISession {
      * @param receiverId the receiver id
      * @param header     the header of the message
      * @param massage    the massage
+     * @return
      */
-    public void sendMassageAdmin(int userId, String receiverId, String header, String massage);
+    public Response<VoidResponse> sendMassageAdmin(int userId, String receiverId, String header, String massage);
 
     /**
      * [#47]
      *
      * @param userId the user id
      * @param answer the answer
+     * @return
      */
-    public void answerComplaint(int userId, String answer);
+    public Response<VoidResponse> answerComplaint(int userId, String answer);
 
 
     /**
      * @param userId the user id
      * @return the message
      */
-    public Message readMessage(int userId);
+    public Response<Message> readMessage(int userId);
 
+
+    Response<VoidResponse> replayMessage(int userId, String message);
+
+    Response<Message> readOldMessage(int userId);
+
+    Response<VoidResponse> refreshOldMessages(int userId);
 
     /**
      * [#27]
@@ -324,8 +337,9 @@ public interface ISession {
      * @param header  the header of the message
      * @param massage the massage
      * @param storeId the store id
+     * @return
      */
-    public void sendMassageStore(int userId, String header, String massage, int storeId);
+    public Response<VoidResponse> sendMassageStore(int userId, String header, String massage, int storeId);
 
     /**
      * [#42]
@@ -335,7 +349,7 @@ public interface ISession {
      * @return the message
      */
 
-    public Message readUnreadMassageStore(int userId, int storeId);
+    public Response<Message> readUnreadMassageStore(int userId, int storeId);
 
     /**
      * [#42]
@@ -345,25 +359,27 @@ public interface ISession {
      * @return the message
      */
 
-    public Message readReadMassageStore(int userId, int storeId);
+    public Response<Message> readReadMassageStore(int userId, int storeId);
 
     /**
      * [#42]
      *
      * @param userId the user id
      * @param answer the answer
+     * @return
      */
 
-    public void answerQuestionStore(int userId, String answer);
+    public Response<VoidResponse> answerQuestionStore(int userId, String answer);
 
     /**
      * [#42]
      *
      * @param userId  the user id
      * @param storeId the store id
+     * @return
      */
 
-    public void refreshOldMessageStore(int userId, int storeId);
+    public Response<VoidResponse> refreshOldMessageStore(int userId, int storeId);
 
 
     /**
@@ -373,9 +389,10 @@ public interface ISession {
      * @param review    the review
      * @param storeId   the store id
      * @param productId the product id
+     * @return
      */
 
-    void addReview(int userId, String review, int storeId, int productId);
+    Response<VoidResponse> addReview(int userId, String review, int storeId, int productId);
 
     /**
      * [#25]
@@ -383,9 +400,10 @@ public interface ISession {
      * @param userId    the user id
      * @param storeId   the store id
      * @param productId the product id
+     * @return
      */
 
-    public void removeReview(int userId, int storeId, int productId);
+    public Response<VoidResponse> removeReview(int userId, int storeId, int productId);
 
     /**
      * [#25]
@@ -396,7 +414,7 @@ public interface ISession {
      * @return the review
      */
 
-    public Review getReview(int userId, int storeId, int productId);
+    public Response<Review> getReview(int userId, int storeId, int productId);
 
     /**
      * [#26]
@@ -407,7 +425,7 @@ public interface ISession {
      * @return the score
      */
 
-    public float getProductScore(int userId, int storeId, int productId);
+    public Response<Float> getProductScore(int userId, int storeId, int productId);
 
     /**
      * [#26]
@@ -416,8 +434,9 @@ public interface ISession {
      * @param storeId   the store id
      * @param productId the product id
      * @param score     the score
+     * @return
      */
-    public void addAndSetProductScore(int userId, int storeId, int productId, int score);
+    public Response<VoidResponse> addAndSetProductScore(int userId, int storeId, int productId, int score);
 
     /**
      * [#26]
@@ -425,8 +444,9 @@ public interface ISession {
      * @param userId    the user id
      * @param storeId   the store id
      * @param productId the product id
+     * @return
      */
-    public void removeProductScore(int userId, int storeId, int productId);
+    public Response<VoidResponse> removeProductScore(int userId, int storeId, int productId);
 
     /**
      * [#26]
@@ -434,16 +454,18 @@ public interface ISession {
      * @param userId  the user id
      * @param storeId the store id
      * @param score   the score
+     * @return
      */
-    public void addStoreScore(int userId, int storeId, int score);
+    public Response<VoidResponse> addStoreScore(int userId, int storeId, int score);
 
     /**
      * [#26]
      *
      * @param userId  the user id
      * @param storeId the store id
+     * @return
      */
-    public void removeStoreScore(int userId, int storeId);
+    public Response<VoidResponse> removeStoreScore(int userId, int storeId);
 
     /**
      * [#26]
@@ -451,15 +473,16 @@ public interface ISession {
      * @param userId  the user id
      * @param storeId the store id
      * @param score   the score
+     * @return
      */
-    public void modifyStoreScore(int userId, int storeId, int score);
+    public Response<VoidResponse> modifyStoreScore(int userId, int storeId, int score);
 
     /**
      * @param userId  the user id
      * @param storeId the store id
      * @return the score
      **/
-    public float getStoreScore(int userId, int storeId);
+    public Response<Float> getStoreScore(int userId, int storeId);
 
     /**
      * #20
@@ -468,6 +491,8 @@ public interface ISession {
      * @param userId the user id
      */
     void getCartDescription(int userId);
+
+    Response<List<ServiceBasketProduct>> getCartContent(int userId);
 
     /**
      * #20
@@ -618,9 +643,10 @@ public interface ISession {
      * #17
      * require 2.1
      *
+     * @param userId  the user id
      * @param storeId the store id
      */
-    StoreInfo getStoreInfo(int storeId);
+    StoreInfo getStoreInfo(int userId, int storeId);
 
     /**
      * #17
@@ -642,58 +668,11 @@ public interface ISession {
      * #17
      * require 2.1
      *
+     * @param userId    the user id
      * @param storeId   the store id
      * @param productId the product id
      */
-    ProductInfo getStoreProductInfo(int storeId, int productId);
-
-    /**
-     * #17
-     * require 2.1
-     *
-     * @param productId the product id
-     */
-    ProductInfo getProductInfo(int productId);
-
-    /**
-     * #17
-     * require 2.1
-     *
-     * @param productId the product id
-     */
-    String getProductName(int productId);
-
-    /**
-     * #17
-     * require 2.1
-     *
-     * @param productId the product id
-     */
-    String getProductCategory(int productId);
-
-    /**
-     * #17
-     * require 2.1
-     *
-     * @param productId the product id
-     */
-    double getProductPrice(int productId);
-
-    /**
-     * #17
-     * require 2.1
-     *
-     * @param productId the product id
-     */
-    int getProductStockQuantity(int productId);
-
-    /**
-     * #17
-     * require 2.1
-     *
-     * @param productId the product id
-     */
-    float getProductScore(int productId);
+    ProductInfo getStoreProductInfo(int userId, int storeId, int productId);
 
     /**
      * #17
@@ -701,7 +680,7 @@ public interface ISession {
      *
      * @param storeId the store id
      */
-    Set<ProductInfo> getAllStoreProductsInfo(int storeId);
+    Set<ProductInfo> getAllStoreProductsInfo(int userId, int storeId);
 
     /**
      * #31
@@ -737,6 +716,8 @@ public interface ISession {
      */
     boolean checkIfQuestionsExist(int userId);
 
+
+    List<ServiceProduct> getAllFailedProductsAfterPayment(int userId);
 
     /**
      * #33
@@ -995,6 +976,8 @@ public interface ISession {
      */
     int enterAsGuest();
 
+    boolean checkIfQuestionsExist(String userName);
+
     /**
      * #13
      * require 1.1
@@ -1011,20 +994,41 @@ public interface ISession {
      * */
     List<Integer> getFailedProducts(int userId, int storeId);
 
-    /**
-     * @param userId the user id
-     * @param storeId the store id
-     * @param productId the product id
-     * @throws Exception if the product is not in the store
-     *
-     * */
+
+    double getTotalPriceOfCart(int userId);
+
+    void cancelPurchase(int userId);
+
+    boolean isUserLogged(int userId);
+
 
     /**
      *
-     * @param userId
-     * @return weather the user is logged or not
+     * @param userId the user id
+     * @return all the user's associated stores (all stores that the user has a role in)
      */
-    boolean isUserLogged(int userId);
+    List<Pair<StoreInfo, String>> getAllUserAssociatedStores(int userId);
+
+
+    /**
+     * #39
+     * require 4.9
+     *
+     * @param userId    the user id (only the founder can do this action)
+     * @param storeId   the store id that will be hidden
+     */
+    void hideStore(int userId, int storeId);
+
+    /**
+     * #40
+     * require 4.10
+     *
+     * @param userId    the user id (only the founder can do this action)
+     * @param storeId   the store id that will be unhidden
+     */
+    void unhideStore(int userId, int storeId);
+
+    void pushTest();
 
     /**
      * @param userId the user id

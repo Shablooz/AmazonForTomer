@@ -1,5 +1,6 @@
 package BGU.Group13B.backend.Repositories.Interfaces;
 
+import BGU.Group13B.backend.User.User;
 import BGU.Group13B.backend.storePackage.Store;
 import BGU.Group13B.service.SingletonCollection;
 import org.junit.jupiter.api.AfterEach;
@@ -30,7 +31,7 @@ class IStoreRepositoryTest {
 
     @Test
     void addStoreTest_simpleCase_success(){
-        int founderId = 1;
+        int founderId = getFounderId();
         String storeName = "storeName";
         String category = "category";
 
@@ -42,9 +43,15 @@ class IStoreRepositoryTest {
         assertEquals(category, result.getCategory());
     }
 
+    public static int getFounderId() {
+        int founderId = SingletonCollection.getUserRepository().getNewUserId();
+        SingletonCollection.getUserRepository().addUser(founderId, new User(founderId));
+        return founderId;
+    }
+
     @RepeatedTest(10)
     void addStoreThreadTest_success(){
-        int founderId = 1;
+        int founderId = getFounderId();
         String storeNamePrefix = "storeName";
         String category = "category";
         int numOfThreads = 100;

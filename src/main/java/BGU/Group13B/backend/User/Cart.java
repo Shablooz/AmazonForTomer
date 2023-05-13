@@ -23,11 +23,11 @@ public class Cart {
         this.calculatePriceOfBasket = SingletonCollection.getCalculatePriceOfBasket();
     }
 
-    public double purchaseCart(String address, String creditCardNumber,
+    public double purchaseCart(String creditCardNumber,
                                String creditCardMonth, String creditCardYear,
-                               String creditCardHolderFirstName, String creditCardHolderLastName,
+                               String creditCardHolderFirstName,
                                String creditCardCcv, String id,
-                               String creditCardType, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                               HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
                                String/*store coupons*/ storeCoupon) throws PurchaseFailedException {
         var userBaskets = basketRepository.getUserBaskets(userId);
         if (userBaskets.isEmpty()) {
@@ -35,11 +35,43 @@ public class Cart {
         }
         double totalPrice = 0;
         for (var basket : userBaskets) {
-            totalPrice += basket.purchaseBasket(address, creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardHolderLastName, creditCardCcv, id, creditCardType,
+            totalPrice += basket.purchaseBasket(creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardCcv, id,
                     productsCoupons, storeCoupon);
 
         }
         return totalPrice;
+    }
+
+    /*returns price after discounts*/
+    public double startPurchaseBasketTransaction(HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                                                 String/*store coupons*/ storeCoupon) throws PurchaseFailedException {
+        var userBaskets = basketRepository.getUserBaskets(userId);
+        if (userBaskets.isEmpty()) {
+            throw new NoSuchElementException("No baskets in cart");
+        }
+        double totalPrice = 0;
+        for (var basket : userBaskets) {
+            totalPrice += basket.startPurchaseBasketTransaction(productsCoupons, storeCoupon);
+        }
+        return totalPrice;
+    }
+
+    public void purchaseCart(String creditCardNumber,
+                             String creditCardMonth, String creditCardYear,
+                             String creditCardHolderFirstName,
+                             String creditCardCVV, String id,
+                             String address, String city, String country,
+                             String zip
+    ) throws PurchaseFailedException {
+        var userBaskets = basketRepository.getUserBaskets(userId);
+        if (userBaskets.isEmpty()) {
+            throw new NoSuchElementException("No baskets in cart");
+        }
+        for (var basket : userBaskets) {
+            basket.purchaseBasket(creditCardNumber, creditCardMonth, creditCardYear,
+                    creditCardHolderFirstName, creditCardCVV, id,
+                    address, city, country, zip);
+        }
     }
 
     private boolean isContainsBasket(int storeId, Set<Basket> userBaskets) {
@@ -84,6 +116,15 @@ public class Cart {
         return cartContent;
     }
 
+    public List<BasketProduct> getCartBasketProducts() {
+        List<BasketProduct> cartContent = new LinkedList<>();
+        var userBaskets = basketRepository.getUserBaskets(userId);
+        for (var basket : userBaskets) {
+            cartContent.addAll(basket.getBasketProducts());
+        }
+        return cartContent;
+    }
+
 
     public void removeProduct(int storeId, int productId) throws Exception {
         var userBaskets = basketRepository.getUserBaskets(userId);
@@ -111,5 +152,27 @@ public class Cart {
         return basketRepository.getUserBaskets(userId).stream().
                 filter(basket -> basket.getStoreId() == storeId).findFirst().get().
                 getFailedProducts().stream().map(BasketProduct::getProductId).toList();
+    }
+
+    public List<Product> getAllFailedProductsAfterPayment() {
+        List<Product> failedProducts = new LinkedList<>();
+        for (var basket : basketRepository.getUserBaskets(userId)) {
+            failedProducts.addAll(basket.getFailedProducts().stream().map(BasketProduct::getProduct).toList());
+        }
+        return failedProducts;
+    }
+
+    public double getTotalPriceOfCartBeforeDiscount() {
+        double totalPrice = 0;
+        for (var basket : basketRepository.getUserBaskets(userId)) {
+            totalPrice += basket.getTotalPriceOfBasketBeforeDiscount();
+        }
+        return totalPrice;
+    }
+
+    public void cancelPurchase() {
+        for (var basket : basketRepository.getUserBaskets(userId)) {
+            basket.cancelPurchase();
+        }
     }
 }
