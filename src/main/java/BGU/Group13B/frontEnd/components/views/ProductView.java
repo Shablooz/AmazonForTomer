@@ -1,6 +1,7 @@
 package BGU.Group13B.frontEnd.components.views;
 
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
+import BGU.Group13B.service.Response;
 import BGU.Group13B.service.Session;
 import BGU.Group13B.service.info.ProductInfo;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -45,7 +46,7 @@ public class ProductView extends VerticalLayout implements HasUrlParameter<Strin
         start();
     }
     private void start(){
-        ProductInfo info=session.getStoreProductInfo(userId,storeId,productId);
+        ProductInfo info = session.getStoreProductInfo(userId,storeId,productId).getData(); //TODO: CHECK ON ERRORS
         seller = new TextField(info.seller());
         name = new TextField(info.name());
         category = new TextField(info.category());
