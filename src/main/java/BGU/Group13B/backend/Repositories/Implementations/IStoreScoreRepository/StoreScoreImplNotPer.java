@@ -51,4 +51,9 @@ public class StoreScoreImplNotPer implements IStoreScore {
         return storeScore.size();
     }
 
+    @Override
+    public void clearStoreScore(int storeId) {
+        storeScore.clear();
+    }
+
 }

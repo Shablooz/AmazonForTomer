@@ -1030,4 +1030,15 @@ public class Session implements ISession {
         PushNotification.pushNotification("MY TEST!",2);
     }
 
+    @Override
+    public Response<VoidResponse> deleteStore(int userId, int storeId) {
+        try {
+            market.deleteStore(userId, storeId);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+
 }
