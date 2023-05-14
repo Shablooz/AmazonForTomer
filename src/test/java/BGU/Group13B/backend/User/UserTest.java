@@ -5,11 +5,14 @@ import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
 import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
+import BGU.Group13B.service.Session;
 import BGU.Group13B.service.SingletonCollection;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import java.util.HashMap;
@@ -251,6 +254,53 @@ class UserTest {
         user1.register(goodUsername1, goodPassword1, goodEmail1, "yellow", "", "");
         user1.login(goodUsername1, goodPassword1, "yellow", "", "");
         Assertions.assertEquals("", user1.getPurchaseHistory());
+    }
+
+    @Test
+    void purchaseUserHistoryAsAdmin(){ //user history
+        Session session = SingletonCollection.getSession();
+        user2.register(goodUsername2, goodPassword2, goodEmail2, "", "yak", "");
+        user2.login(goodUsername2, goodPassword2, "", "yak", "");
+        int storeId1 = SingletonCollection.getStoreRepository().addStore(user2.getUserId(), "Electronics store", "electronics");
+        Product product1 = SingletonCollection.getProductRepository().addProduct(storeId1, "Dell computer", "electronics", 1000, 50, "Good and stable laptop.");
+        Product product2 = SingletonCollection.getProductRepository().addProduct(storeId1, "HP computer", "electronics", 6000, 0, "Good and stable pc.");
+        BasketProduct basketProduct1= new BasketProduct(product1);
+        basketProduct1.setQuantity(2);
+        BasketProduct basketProduct2= new BasketProduct(product2);
+        ConcurrentLinkedQueue<BasketProduct> basketProducts1 = new ConcurrentLinkedQueue<>();
+        basketProducts1.add(basketProduct1);
+        basketProducts1.add(basketProduct2);
+        PurchaseHistory purchaseHistory1 = purchaseHistoryRepository.addPurchase(user1.getUserId(), storeId1, basketProducts1, 8000);
+        user2.logout();
+        User admin= userRepository.getUser(1);
+        admin.login("kingOfTheSheep","SheePLover420","11","11","11");
+        session.getUserPurchaseHistoryAsAdmin(user1.getUserId(),admin.getUserId());
+        Assertions.assertEquals(purchaseHistory1.toString()+'\n',user1.getPurchaseHistory());
+        admin.logout();
+    }
+
+    @Test
+    void purchaseStoreHistoryAsAdmin(){ //storeHistory
+        Session session = SingletonCollection.getSession();
+        user2.register(goodUsername2, goodPassword2, goodEmail2, "", "yak", "");
+        user2.login(goodUsername2, goodPassword2, "", "yak", "");
+        int storeId1 = SingletonCollection.getStoreRepository().addStore(user2.getUserId(), "Electronics store", "electronics");
+        Product product1 = SingletonCollection.getProductRepository().addProduct(storeId1, "Dell computer", "electronics", 1000, 50, "Good and stable laptop.");
+        Product product2 = SingletonCollection.getProductRepository().addProduct(storeId1, "HP computer", "electronics", 6000, 0, "Good and stable pc.");
+        BasketProduct basketProduct1= new BasketProduct(product1);
+        basketProduct1.setQuantity(2);
+        BasketProduct basketProduct2= new BasketProduct(product2);
+        ConcurrentLinkedQueue<BasketProduct> basketProducts1 = new ConcurrentLinkedQueue<>();
+        basketProducts1.add(basketProduct1);
+        basketProducts1.add(basketProduct2);
+        PurchaseHistory purchaseHistory1 = purchaseHistoryRepository.addPurchase(user1.getUserId(), storeId1, basketProducts1, 8000);
+        user2.logout();
+        User admin= userRepository.getUser(1);
+        admin.login("kingOfTheSheep","SheePLover420","11","11","11");
+        List<PurchaseHistory> history= session.getStorePurchaseHistoryAsAdmin(storeId1,admin.getUserId()).getData();
+        Assertions.assertEquals(1,history.size());
+        Assertions.assertEquals(purchaseHistory1,history.get(0));
+        admin.logout();
     }
 
     @Test
