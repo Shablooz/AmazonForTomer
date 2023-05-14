@@ -411,8 +411,8 @@ public class Session implements ISession {
     public Response<Message> readReadMassageStore(int userId, int storeId) {
         try {
             return Response.success( userRepositoryAsHashmap.getUser(userId).readReadMassageStore(storeId));
-        } catch (NoPermissionException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            return Response.exception(e);
         }
     }
 

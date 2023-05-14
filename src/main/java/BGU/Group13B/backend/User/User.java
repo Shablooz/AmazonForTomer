@@ -284,7 +284,7 @@ public class User {
     //42
 
     public Message readReadMassageStore(int storeId) throws NoPermissionException {
-        return market.getUnreadMessages(this.userId, storeId);
+        return market.getReadMessages(this.userId, storeId);
     }
 
     //42
