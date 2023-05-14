@@ -1,0 +1,10 @@
+package BGU.Group13B.backend.User;
+
+public record UserCard(int userId, String userName, String email, UserPermissions userPermissions) {
+    public UserCard(int userId, String userName, String email, UserPermissions userPermissions){
+        this.userId = userId;
+        this.userName = userName;
+        this.email = email;
+        this.userPermissions = userPermissions;
+    }
+}
