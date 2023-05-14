@@ -185,7 +185,7 @@ public interface ISession {
      * @param minPrice - the minimum price of the product
      * @param maxPrice - the maximum price of the product
      */
-    void filterByPriceRange(int minPrice, int maxPrice);
+    Response<List<ProductInfo>> filterByPriceRange(int minPrice, int maxPrice);
 
     /**
      * #18
@@ -194,7 +194,7 @@ public interface ISession {
      * @param minRating - the minimum rating of the product
      * @param maxRating - the maximum rating of the product
      */
-    void filterByProductRank(int minRating, int maxRating);
+    Response<List<ProductInfo>> filterByProductRank(int minRating, int maxRating);
 
     /**
      * #18
@@ -202,7 +202,7 @@ public interface ISession {
      *
      * @param category - the category of the product
      */
-    void filterByCategory(String category);
+    Response<List<ProductInfo>> filterByCategory(String category);
 
     /**
      * #18
@@ -211,7 +211,7 @@ public interface ISession {
      * @param minRating - the minimum rating of the store
      * @param maxRating - the maximum rating of the store
      */
-    void filterByStoreRank(int minRating, int maxRating);
+    Response<List<ProductInfo>> filterByStoreRank(int minRating, int maxRating);
 
     /**
      * #16
@@ -258,7 +258,7 @@ public interface ISession {
      * @param storeId   the store id
      * @param productId the product id
      */
-    void addProductToCart(int userId, int productId, int storeId);
+    Response<VoidResponse> addProductToCart(int userId, int productId, int storeId);
 
     Response<VoidResponse> clearMessageToReply(int userId);
 
@@ -487,7 +487,7 @@ public interface ISession {
      *
      * @param userId the user id
      */
-    void getCartDescription(int userId);
+    Response<String> getCartDescription(int userId);
 
     Response<List<ServiceBasketProduct>> getCartContent(int userId);
 
@@ -988,7 +988,7 @@ public interface ISession {
      * @param userId the user id
      * @return all the user's associated stores (all stores that the user has a role in)
      */
-    List<Pair<StoreInfo, String>> getAllUserAssociatedStores(int userId);
+    Response<List<Pair<StoreInfo, String>>> getAllUserAssociatedStores(int userId);
 
 
     /**
@@ -1026,6 +1026,9 @@ public interface ISession {
      * @throws Exception
      */
     Response<String> getUserPurchaseHistory(int userId);
+    Response<String> getUserPurchaseHistoryAsAdmin(int userId, int adminId);
+    Response<List<PurchaseHistory>> getStorePurchaseHistoryAsAdmin(int storeId, int adminId);
+
 
     Response<VoidResponse> fetchMessages(int userId);
 

@@ -170,27 +170,31 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void filterByPriceRange(int minPrice, int maxPrice) {
+    public Response<List<ProductInfo>> filterByPriceRange(int minPrice, int maxPrice) {
         if (realSession != null)
             realSession.filterByPriceRange(minPrice, maxPrice);
+        return null;
     }
 
     @Override
-    public void filterByProductRank(int minRating, int maxRating) {
+    public Response<List<ProductInfo>> filterByProductRank(int minRating, int maxRating) {
         if (realSession != null)
             realSession.filterByProductRank(minRating, maxRating);
+        return null;
     }
 
     @Override
-    public void filterByCategory(String category) {
+    public Response<List<ProductInfo>> filterByCategory(String category) {
         if (realSession != null)
             realSession.filterByCategory(category);
+        return null;
     }
 
     @Override
-    public void filterByStoreRank(int minRating, int maxRating) {
+    public Response<List<ProductInfo>> filterByStoreRank(int minRating, int maxRating) {
         if (realSession != null)
             realSession.filterByStoreRank(minRating, maxRating);
+        return null;
     }
 
     @Override
@@ -214,10 +218,12 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void addProductToCart(int userId, int productId, int storeId) {
+    public Response<VoidResponse> addProductToCart(int userId, int productId, int storeId) {
         if (realSession != null)
-            realSession.addProductToCart(userId, productId, storeId);
+            return realSession.addProductToCart(userId, productId, storeId);
+        return Response.success(new VoidResponse());
     }
+
 
     @Override
     public Response<VoidResponse> openComplaint(int userId, String header, String complaint) {
@@ -401,9 +407,10 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void getCartDescription(int userId) {
+    public Response<String> getCartDescription(int userId) {
         if (realSession != null)
             realSession.getCartDescription(userId);
+        return null;
     }
 
     @Override
@@ -616,6 +623,20 @@ public class ProxySession implements ISession {
     }
 
     @Override
+    public Response<String> getUserPurchaseHistoryAsAdmin(int userId, int adminId) {
+        if (realSession != null)
+            return realSession.getUserPurchaseHistoryAsAdmin(userId, adminId);
+        return null;
+    }
+
+    @Override
+    public Response<List<PurchaseHistory>> getStorePurchaseHistoryAsAdmin(int storeId, int adminId) {
+        if (realSession != null)
+            return realSession.getStorePurchaseHistoryAsAdmin(storeId, adminId);
+        return null;
+    }
+
+    @Override
     public int getStoreFounder(int storeId) {
         if (realSession != null)
             return realSession.getStoreFounder(storeId);
@@ -623,10 +644,10 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public List<Pair<StoreInfo, String>> getAllUserAssociatedStores(int userId) {
+    public Response<List<Pair<StoreInfo, String>>> getAllUserAssociatedStores(int userId) {
         if(realSession != null)
             return realSession.getAllUserAssociatedStores(userId);
-        return new ArrayList<>();
+        return null;
     }
 
 

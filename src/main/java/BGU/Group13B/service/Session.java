@@ -219,23 +219,39 @@ public class Session implements ISession {
     }
 
     @Override
-    public void filterByPriceRange(int minPrice, int maxPrice) {
-        market.filterByPriceRange(minPrice, maxPrice);
+    public Response<List<ProductInfo>> filterByPriceRange(int minPrice, int maxPrice) {
+        try {
+            return Response.success(market.filterByPriceRange(minPrice, maxPrice));
+        }catch (Exception e){
+            return Response.exception(e);
+        }
     }
 
     @Override
-    public void filterByProductRank(int minRating, int maxRating) {
-        market.filterByProductRank(minRating, maxRating);
+    public Response<List<ProductInfo>> filterByProductRank(int minRating, int maxRating) {
+        try {
+            return Response.success(market.filterByProductRank(minRating, maxRating));
+        }catch (Exception e){
+            return Response.exception(e);
+        }
     }
 
     @Override
-    public void filterByCategory(String category) {
-        market.filterByCategory(category);
+    public Response<List<ProductInfo>> filterByCategory(String category) {
+        try {
+            return Response.success(market.filterByCategory(category));
+        }catch (Exception e){
+            return Response.exception(e);
+        }
     }
 
     @Override
-    public void filterByStoreRank(int minRating, int maxRating) {
-        market.filterByStoreRank(minRating, maxRating);
+    public Response<List<ProductInfo>> filterByStoreRank(int minRating, int maxRating) {
+        try {
+            return Response.success(market.filterByStoreRank(minRating, maxRating));
+        }catch (Exception e){
+            return Response.exception(e);
+        }
     }
 
     @Override
@@ -283,11 +299,12 @@ public class Session implements ISession {
     }
 
     @Override
-    public void addProductToCart(int userId, int productId, int storeId) {
+    public Response<VoidResponse> addProductToCart(int userId, int productId, int storeId) {
         try {
             userRepositoryAsHashmap.getUser(userId).addProductToCart(productId, storeId);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            //TODO: handle exception
+            return Response.exception(e);
         }
     }
 
@@ -548,9 +565,9 @@ public class Session implements ISession {
     }
 
     @Override
-    public void getCartDescription(int userId) {
+    public Response<String> getCartDescription(int userId) {
         try {
-            userRepositoryAsHashmap.getUser(userId).getCartDescription();
+            return Response.success( userRepositoryAsHashmap.getUser(userId).getCartDescription());
         } catch (NoPermissionException e) {
             throw new RuntimeException(e);
         }
@@ -1005,21 +1022,25 @@ public class Session implements ISession {
 
 
     @Override
-    public List<Pair<StoreInfo, String>> getAllUserAssociatedStores(int userId) {
+    public Response<List<Pair<StoreInfo, String>>> getAllUserAssociatedStores(int userId) {
+        List<Pair<Integer, String>> storeIdsAndRoles;
         try{
-            List<Pair<Integer, String>> storeIdsAndRoles = getStoresOfUser(userId);
-            //map each storeId to storeInfo
-            List<Pair<StoreInfo, String>> storeInfosAndRoles = new LinkedList<>();
-            for(Pair<Integer, String> storeIdAndRole : storeIdsAndRoles){
+            storeIdsAndRoles = getStoresOfUser(userId);
+        }
+        catch(Exception e){
+            return Response.exception(e);
+        }
+
+        List<Pair<StoreInfo, String>> storeInfosAndRoles = new LinkedList<>();
+        for(Pair<Integer, String> storeIdAndRole : storeIdsAndRoles){
+            try{
                 StoreInfo storeInfo = market.getStoreInfo(userId, storeIdAndRole.getFirst());
                 storeInfosAndRoles.add(Pair.of(storeInfo, storeIdAndRole.getSecond()));
             }
-            return storeInfosAndRoles;
+            catch(Exception ignored){
+            }
         }
-        catch(Exception e){
-            //TODO: handle exception
-            throw new RuntimeException(e);
-        }
+        return Response.success(storeInfosAndRoles);
     }
 
     @Override
@@ -1073,6 +1094,31 @@ public class Session implements ISession {
         try {
             userRepositoryAsHashmap.getUser(userId).fetchMessages();
             return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+    @Override
+    public Response<String> getUserPurchaseHistoryAsAdmin(int userId, int adminId){
+        //change to return purchaseHistory
+        try {
+            if (!getUserStatus(adminId).equals("Admin") || !isUserLogged(adminId)) {
+                throw new NoPermissionException("The user is not an admin or is not logged in");
+            }
+            User user = userRepositoryAsHashmap.getUser(userId);
+            return Response.success(user.getPurchaseHistory());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<List<PurchaseHistory>> getStorePurchaseHistoryAsAdmin(int storeId, int adminId){
+        try {
+            if (!getUserStatus(adminId).equals("Admin") || !isUserLogged(adminId)) {
+                throw new NoPermissionException("The user is not an admin or is not logged in");
+            }
+            return Response.success(market.getStorePurchaseHistoryAsAdmin(storeId, adminId));
         } catch (Exception e) {
             return Response.exception(e);
         }
