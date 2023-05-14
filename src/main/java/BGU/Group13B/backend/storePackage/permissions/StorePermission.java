@@ -1,7 +1,6 @@
 package BGU.Group13B.backend.storePackage.permissions;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IUserPermissionRepository;
-import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
 import BGU.Group13B.backend.User.UserPermissions;
 import BGU.Group13B.backend.User.UserPermissions.StoreRole;
 import BGU.Group13B.backend.storePackage.Store;
@@ -10,7 +9,7 @@ import BGU.Group13B.service.SingletonCollection;
 
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.stream.Collectors;
 
 public class StorePermission {
 
@@ -193,10 +192,9 @@ public class StorePermission {
     public List<WorkerCard> getWorkersInfo() {
         List<WorkerCard> workerCards = new ArrayList<>();
         for (Map.Entry<Integer, StoreRole> entry : userToStoreRole.entrySet()) {
-            List<String> userPermissions = new ArrayList<>();
-            //TODO: add user permissions
             Integer userId = entry.getKey();
             StoreRole role = entry.getValue();
+            List<String> userPermissions = new ArrayList<>(userStoreFunctionPermissions.get(userId));
             WorkerCard workerCard = new WorkerCard(userId, role, userPermissions);
             workerCards.add(workerCard);
         }
@@ -217,5 +215,11 @@ public class StorePermission {
         return 1;//for testing
     }
 
+    public List<Integer> getStoreOwners(){
+        return userToStoreRole.entrySet().stream()
+                .filter(entry -> entry.getValue() == StoreRole.OWNER)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+    }
 
 }

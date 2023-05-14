@@ -16,6 +16,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,6 +35,7 @@ class StoreTest {
     private static AlertManager alertManager;
     private static String msg;
     private int tUserOwnerId;
+    private int tUserOwnerId2;
     private int tUserId;
     private int tUserId2;
     private int storeId1;
@@ -226,6 +228,9 @@ class StoreTest {
         tUserOwnerId = SingletonCollection.getUserRepository().getNewUserId();
         SingletonCollection.getUserRepository().addUser(tUserOwnerId, new User(tUserOwnerId));
 
+        tUserOwnerId2 = SingletonCollection.getUserRepository().getNewUserId();
+        SingletonCollection.getUserRepository().addUser(tUserOwnerId2, new User(tUserOwnerId2));
+
         tUserId = SingletonCollection.getUserRepository().getNewUserId();
         SingletonCollection.getUserRepository().addUser(tUserId, new User(tUserId));
         tUser = SingletonCollection.getUserRepository().getUser(tUserId);
@@ -358,6 +363,192 @@ class StoreTest {
         } catch (NoPermissionException | ChangePermissionException e) {
             fail(e);
         } finally {
+            customTearDown();
+        }
+    }
+
+
+    @RepeatedTest(25)
+    void addOwnerMultiThreadTest() {
+        customSetUp();
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
+
+        Callable<Boolean> task1 = () -> {
+            try {
+                omTestStore.addOwner(tUserOwnerId, tUserId);
+                return true;
+            } catch (NoPermissionException | ChangePermissionException e) {
+                return false;
+            }
+        };
+
+        Callable<Boolean> task2 = () -> {
+            try {
+                omTestStore.addOwner(tUserOwnerId2, tUserId);
+                return true;
+            } catch (NoPermissionException | ChangePermissionException e) {
+                return false;
+            }
+        };
+
+        Future<Boolean> future1 = executorService.submit(task1);
+        Future<Boolean> future2 = executorService.submit(task2);
+
+        try {
+            // Ensure both tasks have completed
+            boolean task1Result = future1.get();
+            boolean task2Result = future2.get();
+
+            // Check if one succeeded and the other failed
+            Assertions.assertTrue((task1Result && !task2Result) || (!task1Result && task2Result));
+
+        } catch (InterruptedException | ExecutionException e) {
+            fail(e);
+        } finally {
+            executorService.shutdown(); // Always shut down executor service
+            customTearDown();
+        }
+    }
+
+
+    @RepeatedTest(25)
+    void removeOwnerMultiThreadTest() {
+        customSetUp();
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
+
+        // We add owner in the setup.
+        try {
+            omTestStore.addOwner(tUserOwnerId, tUserId);
+        } catch (NoPermissionException | ChangePermissionException e) {
+            fail(e);
+        }
+
+        Callable<Boolean> task1 = () -> {
+            try {
+                omTestStore.removeOwner(tUserOwnerId, tUserId);
+                return true;
+            } catch (NoPermissionException | ChangePermissionException e) {
+                return false;
+            }
+        };
+
+        Callable<Boolean> task2 = () -> {
+            try {
+                omTestStore.removeOwner(tUserOwnerId2, tUserId);
+                return true;
+            } catch (NoPermissionException | ChangePermissionException e) {
+                return false;
+            }
+        };
+
+        Future<Boolean> future1 = executorService.submit(task1);
+        Future<Boolean> future2 = executorService.submit(task2);
+
+        try {
+            // Ensure both tasks have completed
+            boolean task1Result = future1.get();
+            boolean task2Result = future2.get();
+
+            // Check if one succeeded and the other failed
+            Assertions.assertTrue((task1Result && !task2Result) || (!task1Result && task2Result));
+
+        } catch (InterruptedException | ExecutionException e) {
+            fail(e);
+        } finally {
+            executorService.shutdown(); // Always shut down executor service
+            customTearDown();
+        }
+    }
+
+
+    @RepeatedTest(25)
+    void addManagerMultiThreadTest() {
+        customSetUp();
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
+
+        Callable<Boolean> task1 = () -> {
+            try {
+                omTestStore.addManager(tUserOwnerId, tUserId);
+                return true;
+            } catch (NoPermissionException | ChangePermissionException e) {
+                return false;
+            }
+        };
+
+        Callable<Boolean> task2 = () -> {
+            try {
+                omTestStore.addManager(tUserOwnerId2, tUserId);
+                return true;
+            } catch (NoPermissionException | ChangePermissionException e) {
+                return false;
+            }
+        };
+
+        Future<Boolean> future1 = executorService.submit(task1);
+        Future<Boolean> future2 = executorService.submit(task2);
+
+        try {
+            // Ensure both tasks have completed
+            boolean task1Result = future1.get();
+            boolean task2Result = future2.get();
+
+            // Check if one succeeded and the other failed
+            Assertions.assertTrue((task1Result && !task2Result) || (!task1Result && task2Result));
+
+        } catch (InterruptedException | ExecutionException e) {
+            fail(e);
+        } finally {
+            executorService.shutdown(); // Always shut down executor service
+            customTearDown();
+        }
+    }
+
+
+    @RepeatedTest(25)
+    void removeManagerMultiThreadTest() {
+        customSetUp();
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
+
+        // We add manager in the setup.
+        try {
+            omTestStore.addManager(tUserOwnerId, tUserId);
+        } catch (NoPermissionException | ChangePermissionException e) {
+            fail(e);
+        }
+
+        Callable<Boolean> task1 = () -> {
+            try {
+                omTestStore.removeManager(tUserOwnerId, tUserId);
+                return true;
+            } catch (NoPermissionException | ChangePermissionException e) {
+                return false;
+            }
+        };
+
+        Callable<Boolean> task2 = () -> {
+            try {
+                omTestStore.removeManager(tUserOwnerId2, tUserId);
+                return true;
+            } catch (NoPermissionException | ChangePermissionException e) {
+                return false;
+            }
+        };
+
+        Future<Boolean> future1 = executorService.submit(task1);
+        Future<Boolean> future2 = executorService.submit(task2);
+
+        try {
+            // Ensure both tasks have completed
+            boolean task1Result = future1.get();
+            boolean task2Result = future2.get();
+
+            // Check if one succeeded and the other failed
+            Assertions.assertTrue((task1Result && !task2Result) || (!task1Result && task2Result));
+
+        } catch (InterruptedException | ExecutionException e) {
+            fail(e);
+        } finally {
+            executorService.shutdown(); // Always shut down executor service
             customTearDown();
         }
     }
