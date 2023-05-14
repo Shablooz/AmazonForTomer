@@ -1077,4 +1077,12 @@ public class Session implements ISession {
         }
     }
 
+    public UserCard getUserInfo(int userId, int userInfoId){
+        try {
+            return market.getUserInfo(userId, userInfoId);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

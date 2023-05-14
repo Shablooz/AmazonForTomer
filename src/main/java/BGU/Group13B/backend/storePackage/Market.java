@@ -328,7 +328,9 @@ public class Market {
         return storeRepository.getStore(storeId).getStorePurchaseHistory(userId);
     }
 
-    public UserCard getUserInfo(int userId){
-        return SingletonCollection.getUserRepository().getUser(userId).getUserCard();
+    public UserCard getUserInfo(int userId, int userInfoId) throws NoPermissionException {
+        if(!SingletonCollection.getUserRepository().getUser(userId).isAdmin())
+            throw new NoPermissionException("Only admins can access this function");
+        return SingletonCollection.getUserRepository().getUser(userInfoId).getUserCard();
     }
 }
