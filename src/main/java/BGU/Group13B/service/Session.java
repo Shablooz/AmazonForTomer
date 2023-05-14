@@ -1004,21 +1004,25 @@ public class Session implements ISession {
 
 
     @Override
-    public List<Pair<StoreInfo, String>> getAllUserAssociatedStores(int userId) {
+    public Response<List<Pair<StoreInfo, String>>> getAllUserAssociatedStores(int userId) {
+        List<Pair<Integer, String>> storeIdsAndRoles;
         try{
-            List<Pair<Integer, String>> storeIdsAndRoles = getStoresOfUser(userId);
-            //map each storeId to storeInfo
-            List<Pair<StoreInfo, String>> storeInfosAndRoles = new LinkedList<>();
-            for(Pair<Integer, String> storeIdAndRole : storeIdsAndRoles){
+            storeIdsAndRoles = getStoresOfUser(userId);
+        }
+        catch(Exception e){
+            return Response.exception(e);
+        }
+
+        List<Pair<StoreInfo, String>> storeInfosAndRoles = new LinkedList<>();
+        for(Pair<Integer, String> storeIdAndRole : storeIdsAndRoles){
+            try{
                 StoreInfo storeInfo = market.getStoreInfo(userId, storeIdAndRole.getFirst());
                 storeInfosAndRoles.add(Pair.of(storeInfo, storeIdAndRole.getSecond()));
             }
-            return storeInfosAndRoles;
+            catch(Exception ignored){
+            }
         }
-        catch(Exception e){
-            //TODO: handle exception
-            throw new RuntimeException(e);
-        }
+        return Response.success(storeInfosAndRoles);
     }
 
     @Override

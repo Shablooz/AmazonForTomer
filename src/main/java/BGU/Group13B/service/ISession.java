@@ -987,7 +987,7 @@ public interface ISession {
      * @param userId the user id
      * @return all the user's associated stores (all stores that the user has a role in)
      */
-    List<Pair<StoreInfo, String>> getAllUserAssociatedStores(int userId);
+    Response<List<Pair<StoreInfo, String>>> getAllUserAssociatedStores(int userId);
 
 
     /**
