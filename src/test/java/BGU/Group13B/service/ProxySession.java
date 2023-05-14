@@ -7,6 +7,7 @@ import BGU.Group13B.backend.User.PurchaseHistory;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.storePackage.Review;
+import BGU.Group13B.backend.storePackage.WorkerCard;
 import BGU.Group13B.service.entity.ReviewService;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
 import BGU.Group13B.service.entity.ServiceProduct;
@@ -66,6 +67,41 @@ public class ProxySession implements ISession {
     public Response<List<PurchaseHistory>> getStorePurchaseHistory(int userId, int storeId) {
         if(realSession != null)
             return realSession.getStorePurchaseHistory(userId, storeId);
+        return null;
+    }
+
+    @Override
+    public Response<VoidResponse> addOwner(int userId, int newOwnerId, int storeId) {
+        if(realSession != null)
+            return realSession.addOwner(userId, newOwnerId, storeId);
+        return null;
+    }
+
+    @Override
+    public Response<VoidResponse> removeOwner(int userId, int removeOwnerId, int storeId) {
+        if(realSession != null)
+            return realSession.removeOwner(userId, removeOwnerId, storeId);
+        return null;
+    }
+
+    @Override
+    public Response<VoidResponse> addManager(int userId, int newManagerId, int storeId) {
+        if(realSession != null)
+            return realSession.addManager(userId, newManagerId, storeId);
+        return null;
+    }
+
+    @Override
+    public Response<VoidResponse> removeManager(int userId, int removeManagerId, int storeId) {
+        if(realSession != null)
+            return realSession.removeManager(userId, removeManagerId, storeId);
+        return null;
+    }
+
+    @Override
+    public List<WorkerCard> getStoreWorkersInfo(int userId, int storeId) {
+        if(realSession != null)
+            return realSession.getStoreWorkersInfo(userId, storeId);
         return null;
     }
 

@@ -6,6 +6,7 @@ import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.User.*;
 import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.Review;
+import BGU.Group13B.backend.storePackage.WorkerCard;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.service.entity.ReviewService;
@@ -1074,6 +1075,65 @@ public class Session implements ISession {
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<VoidResponse> addOwner(int userId, int newOwnerId, int storeId) {
+        try {
+            market.addOwner(userId, newOwnerId, storeId);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<VoidResponse> removeOwner(int userId, int removeOwnerId, int storeId) {
+        try {
+            market.removeOwner(userId, removeOwnerId, storeId);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<VoidResponse> addManager(int userId, int newManagerId, int storeId) {
+        try {
+            market.addManager(userId, newManagerId, storeId);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<VoidResponse> removeManager(int userId, int removeManagerId, int storeId) {
+        try {
+            market.removeManager(userId, removeManagerId, storeId);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public List<WorkerCard> getStoreWorkersInfo(int userId, int storeId) {
+        try {
+            return market.getStoreWorkersInfo(userId, storeId);
+        } catch (Exception e) {
+            //TODO: handle exception
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<Integer> getStoreOwners(int userId, int storeId) {
+        try {
+            return market.getStoreOwners(userId, storeId);
+        } catch (Exception e) {
+            //TODO: handle exception
+            throw new RuntimeException(e);
         }
     }
 

@@ -7,6 +7,7 @@ import BGU.Group13B.backend.User.PurchaseFailedException;
 import BGU.Group13B.backend.User.PurchaseHistory;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
+import BGU.Group13B.backend.storePackage.WorkerCard;
 import BGU.Group13B.service.entity.ReviewService;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
 import BGU.Group13B.service.entity.ServiceProduct;
@@ -1041,4 +1042,58 @@ public interface ISession {
      * @return          the store purchase history
      */
     Response<List<PurchaseHistory>> getStorePurchaseHistory(int userId, int storeId);
+
+    /**
+     * #XX
+     * require XXX?
+     *
+     * @param userId the user id
+     * @param newOwnerId the id of the new owner
+     * @param storeId the id of the store the new owner will own
+     *               as an owner/founder you can add other users as store owners in your store
+     */
+    Response<VoidResponse> addOwner(int userId, int newOwnerId, int storeId);
+
+    /**
+     * #XX
+     * require XXX?
+     *
+     * @param userId the user id
+     * @param removeOwnerId the id of the owner to be removed
+     * @param storeId the id of the store the owner will be removed from
+     *               as an owner/founder you can remove owners you assigned yourself
+     */
+    Response<VoidResponse> removeOwner(int userId, int removeOwnerId, int storeId);
+
+    /**
+     * #XX
+     * require XXX?
+     *
+     * @param userId the user id
+     * @param newManagerId the id of the new manager
+     * @param storeId the id of the store the new manager will manage
+     *               as an owner/founder you can add other users as store managers in your store
+     */
+    Response<VoidResponse> addManager(int userId, int newManagerId, int storeId);
+
+    /**
+     * #XX
+     * require XXX?
+     *
+     * @param userId the user id
+     * @param removeManagerId the id of the manager to be removed
+     * @param storeId the id of the store the manager will be removed from
+     *               as an owner/founder you can remove managers you assigned yourself
+     */
+    Response<VoidResponse> removeManager(int userId, int removeManagerId, int storeId);
+
+    /**
+     * #XX
+     * require XXX?
+     *
+     * @param userId the user id
+     * @param storeId the id of the store to get info from
+     *               as an owner/founder you can get info about the users working in the store
+     */
+    List<WorkerCard> getStoreWorkersInfo(int userId, int storeId);
 }
