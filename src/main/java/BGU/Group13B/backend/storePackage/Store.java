@@ -157,11 +157,11 @@ public class Store {
         return storePermission.getWorkersInfo();
     }
 
-    @DefaultFounderFunctionality
-    @DefaultOwnerFunctionality
+    //@DefaultFounderFunctionality
+    //@DefaultOwnerFunctionality
     public List<Integer> getStoreOwners(int userId) throws NoPermissionException {
-        if (!this.storePermission.checkPermission(userId, hidden))
-            throw new NoPermissionException("User " + userId + " has no permission to get info about the store workers " + this.storeId);
+        /*if (!this.storePermission.checkPermission(userId, hidden))
+            throw new NoPermissionException("User " + userId + " has no permission to get info about the store workers " + this.storeId);*/
         return storePermission.getStoreOwners();
     }
 
