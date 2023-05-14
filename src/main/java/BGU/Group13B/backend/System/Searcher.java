@@ -3,6 +3,7 @@ package BGU.Group13B.backend.System;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
 import BGU.Group13B.backend.storePackage.Product;
+import BGU.Group13B.service.Response;
 import BGU.Group13B.service.info.ProductInfo;
 
 import java.util.Collection;
@@ -26,35 +27,31 @@ public class Searcher {
     public List<ProductInfo> searchByName(String name) {
         products = productRepository.getProductByName(name);
         filterHiddenProducts();
-        List<ProductInfo> productsInfo = new LinkedList<>();
-        for(Product product: products) {
-            productsInfo.add(new ProductInfo(product));
-        }
-        return productsInfo;
+        return wrapAsProductInfo(products);
 
     }
     public List<ProductInfo> searchByCategory(String category) {
         products = productRepository.getProductByCategory(category);
         filterHiddenProducts();
-        List<ProductInfo> productsInfo = new LinkedList<>();
-        for(Product product: products) {
-            productsInfo.add(new ProductInfo(product));
-        }
-        return productsInfo;
+        return wrapAsProductInfo(products);
     }
 
     public List<ProductInfo> searchByKeywords(String Keywords) {
         String[] keywords = Keywords.split(" ");
         products = productRepository.getProductByKeywords(Arrays.asList(keywords));
         filterHiddenProducts();
-        List<ProductInfo> productsInfo = new LinkedList<>();
-        for (Product product : products) {
-             productsInfo.add(new ProductInfo(product));
-            }
-         return productsInfo;
+        return wrapAsProductInfo(products);
     }
 
-    public List<Product> filterByPriceRange(int minPrice, int maxPrice) {
+    private List<ProductInfo> wrapAsProductInfo(List<Product> products) {
+        List<ProductInfo> productsInfo = new LinkedList<>();
+        for (Product product : products) {
+            productsInfo.add(new ProductInfo(product));
+        }
+        return productsInfo;
+    }
+
+    public List<ProductInfo> filterByPriceRange(int minPrice, int maxPrice) {
         filterHiddenProducts();
         List<Product> newProducts = new LinkedList<>();
         for (Product product : products) {
@@ -63,9 +60,9 @@ public class Searcher {
             }
         }
         products = newProducts;
-        return products;
+        return wrapAsProductInfo(products);
     }
-    public List<Product> filterByProductRank(int minRating, int maxRating) {
+    public List<ProductInfo> filterByProductRank(int minRating, int maxRating) {
         filterHiddenProducts();
         List<Product> newProducts = new LinkedList<>();
         for (Product product : products) {
@@ -74,9 +71,9 @@ public class Searcher {
             }
         }
         products = newProducts;
-        return products;
+        return wrapAsProductInfo(products);
     }
-    public List<Product> filterByCategory(String category) {
+    public List<ProductInfo> filterByCategory(String category) {
         filterHiddenProducts();
         List<Product> newProducts = new LinkedList<>();
         for (Product product : products) {
@@ -85,10 +82,10 @@ public class Searcher {
             }
         }
         products = newProducts;
-        return products;
+        return wrapAsProductInfo(products);
     }
-    //filter by store rating
-    public List<Product> filterByStoreRank(int minRating, int maxRating) {
+
+    public List<ProductInfo> filterByStoreRank(int minRating, int maxRating) {
         filterHiddenProducts();
         List<Product> newProducts = new LinkedList<>();
         for (Product product : products) {
@@ -99,7 +96,7 @@ public class Searcher {
         }
 
         products = newProducts;
-        return products;
+        return wrapAsProductInfo(products);
     }
 
 

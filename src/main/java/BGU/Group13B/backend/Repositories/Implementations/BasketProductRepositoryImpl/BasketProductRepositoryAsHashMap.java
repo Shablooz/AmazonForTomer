@@ -22,7 +22,8 @@ public class BasketProductRepositoryAsHashMap implements IBasketProductRepositor
     }
 
     @Override
-    public Optional<List<BasketProduct>> getBasketProducts(int storeId, int userId) {
+    public Optional<List<BasketProduct>>
+    getBasketProducts(int storeId, int userId) {
         return basketProducts.getOrDefault(Pair.of(storeId, userId), Optional.empty());
     }
 
@@ -79,7 +80,12 @@ public class BasketProductRepositoryAsHashMap implements IBasketProductRepositor
     }
     @Override
     public void removeBasketProduct(int productId, int userId, int storeId) {
-        throw new RuntimeException("not implemented exception");
+        BasketProduct basketProduct = getBasketProduct(productId, storeId, userId);
+        if(basketProduct!=null)
+            getBasketProducts(storeId, userId).get().remove(basketProduct);
+
+
+
     }
 
 }

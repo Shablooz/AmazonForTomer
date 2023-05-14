@@ -3,9 +3,11 @@ package BGU.Group13B.service;
 import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.User.PurchaseFailedException;
+import BGU.Group13B.backend.User.PurchaseHistory;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.storePackage.Review;
+import BGU.Group13B.backend.storePackage.WorkerCard;
 import BGU.Group13B.service.entity.ReviewService;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
 import BGU.Group13B.service.entity.ServiceProduct;
@@ -58,6 +60,48 @@ public class ProxySession implements ISession {
     public Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, HashMap<Integer, String> productsCoupons, String storeCoupon) throws PurchaseFailedException {
         if (realSession != null)
             return realSession.startPurchaseBasketTransaction(userId, productsCoupons, storeCoupon);
+        return null;
+    }
+
+    @Override
+    public Response<List<PurchaseHistory>> getStorePurchaseHistory(int userId, int storeId) {
+        if(realSession != null)
+            return realSession.getStorePurchaseHistory(userId, storeId);
+        return null;
+    }
+
+    @Override
+    public Response<VoidResponse> addOwner(int userId, int newOwnerId, int storeId) {
+        if(realSession != null)
+            return realSession.addOwner(userId, newOwnerId, storeId);
+        return null;
+    }
+
+    @Override
+    public Response<VoidResponse> removeOwner(int userId, int removeOwnerId, int storeId) {
+        if(realSession != null)
+            return realSession.removeOwner(userId, removeOwnerId, storeId);
+        return null;
+    }
+
+    @Override
+    public Response<VoidResponse> addManager(int userId, int newManagerId, int storeId) {
+        if(realSession != null)
+            return realSession.addManager(userId, newManagerId, storeId);
+        return null;
+    }
+
+    @Override
+    public Response<VoidResponse> removeManager(int userId, int removeManagerId, int storeId) {
+        if(realSession != null)
+            return realSession.removeManager(userId, removeManagerId, storeId);
+        return null;
+    }
+
+    @Override
+    public List<WorkerCard> getStoreWorkersInfo(int userId, int storeId) {
+        if(realSession != null)
+            return realSession.getStoreWorkersInfo(userId, storeId);
         return null;
     }
 
@@ -126,27 +170,31 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void filterByPriceRange(int minPrice, int maxPrice) {
+    public Response<List<ProductInfo>> filterByPriceRange(int minPrice, int maxPrice) {
         if (realSession != null)
             realSession.filterByPriceRange(minPrice, maxPrice);
+        return null;
     }
 
     @Override
-    public void filterByProductRank(int minRating, int maxRating) {
+    public Response<List<ProductInfo>> filterByProductRank(int minRating, int maxRating) {
         if (realSession != null)
             realSession.filterByProductRank(minRating, maxRating);
+        return null;
     }
 
     @Override
-    public void filterByCategory(String category) {
+    public Response<List<ProductInfo>> filterByCategory(String category) {
         if (realSession != null)
             realSession.filterByCategory(category);
+        return null;
     }
 
     @Override
-    public void filterByStoreRank(int minRating, int maxRating) {
+    public Response<List<ProductInfo>> filterByStoreRank(int minRating, int maxRating) {
         if (realSession != null)
             realSession.filterByStoreRank(minRating, maxRating);
+        return null;
     }
 
     @Override
@@ -170,10 +218,12 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void addProductToCart(int userId, int productId, int storeId) {
+    public Response<VoidResponse> addProductToCart(int userId, int productId, int storeId) {
         if (realSession != null)
-            realSession.addProductToCart(userId, productId, storeId);
+            return realSession.addProductToCart(userId, productId, storeId);
+        return Response.success(new VoidResponse());
     }
+
 
     @Override
     public Response<VoidResponse> openComplaint(int userId, String header, String complaint) {
@@ -357,9 +407,10 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void getCartDescription(int userId) {
+    public Response<String> getCartDescription(int userId) {
         if (realSession != null)
             realSession.getCartDescription(userId);
+        return null;
     }
 
     @Override
@@ -572,6 +623,20 @@ public class ProxySession implements ISession {
     }
 
     @Override
+    public Response<String> getUserPurchaseHistoryAsAdmin(int userId, int adminId) {
+        if (realSession != null)
+            return realSession.getUserPurchaseHistoryAsAdmin(userId, adminId);
+        return null;
+    }
+
+    @Override
+    public Response<List<PurchaseHistory>> getStorePurchaseHistoryAsAdmin(int storeId, int adminId) {
+        if (realSession != null)
+            return realSession.getStorePurchaseHistoryAsAdmin(storeId, adminId);
+        return null;
+    }
+
+    @Override
     public int getStoreFounder(int storeId) {
         if (realSession != null)
             return realSession.getStoreFounder(storeId);
@@ -579,10 +644,10 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public List<Pair<StoreInfo, String>> getAllUserAssociatedStores(int userId) {
+    public Response<List<Pair<StoreInfo, String>>> getAllUserAssociatedStores(int userId) {
         if(realSession != null)
             return realSession.getAllUserAssociatedStores(userId);
-        return new ArrayList<>();
+        return null;
     }
 
 

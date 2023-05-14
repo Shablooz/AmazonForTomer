@@ -215,11 +215,7 @@ public class Basket {
 
     public void removeProduct(int productId) throws Exception {
         try {
-            BasketProduct basketProduct = basketProductRepository.getBasketProduct(productId, storeId, userId);
-            if (basketProduct != null) {
                 basketProductRepository.removeBasketProduct(productId, userId, storeId);
-            } else
-                throw new Exception("Product not in basket");
         } catch (Exception e) {
             throw e;
         }

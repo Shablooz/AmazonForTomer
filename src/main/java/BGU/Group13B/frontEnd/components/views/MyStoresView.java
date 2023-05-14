@@ -58,7 +58,7 @@ public class MyStoresView extends VerticalLayout implements BeforeEnterObserver 
         this.session = session;
         enterStoreButton.setEnabled(false);
 
-        List<Pair<StoreInfo, String>> userStoresAndRoles = session.getAllUserAssociatedStores(userId);
+        List<Pair<StoreInfo, String>> userStoresAndRoles = handleResponse(session.getAllUserAssociatedStores(userId));
         //List<Pair<StoreInfo, String>> userStoresAndRoles = getDemoStoresAndRoles();
 
         for (Pair<StoreInfo, String> pair : userStoresAndRoles) {
@@ -189,7 +189,7 @@ public class MyStoresView extends VerticalLayout implements BeforeEnterObserver 
         for(var entry : rolesToGrids.entrySet()){
             String role = entry.getKey();
             var storeInfoList =
-                    new ArrayList<>(session.getAllUserAssociatedStores(userId).
+                    new ArrayList<>(handleResponse(session.getAllUserAssociatedStores(userId)).
                             stream().
                             filter(pair -> pair.getSecond().equals(role))
                             .map(Pair::getFirst).toList());
@@ -281,5 +281,18 @@ public class MyStoresView extends VerticalLayout implements BeforeEnterObserver 
         closeBtn.addThemeVariants(LUMO_TERTIARY_INLINE);
 
         return closeBtn;
+    }
+
+    private <T> T handleResponse(Response<T> response) {
+        if (response.didntSucceed()) {
+            Notification errorNotification = Notification.show("Error: " + response.getMessage());
+            errorNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+            navigate("");
+        }
+        return response.getData();
+    }
+
+    private void navigate(String nav) {
+        UI.getCurrent().navigate(nav);
     }
 }

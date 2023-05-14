@@ -90,7 +90,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
                         "", "", "");
                 Notification.show("Login successful");
                 SessionToIdMapper.getInstance().updateCurrentSession(newId);
-                SessionToIdMapper.getInstance().setRefreshRequired(true);
+               // SessionToIdMapper.getInstance().setRefreshRequired(true);
                 UI.getCurrent().navigate(HomeView.class);
 
                 var ui = UI.getCurrent();
@@ -142,7 +142,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
                         answer1.getValue(), answer2.getValue(), answer3.getValue());
                 Notification.show("Login successful");
                 SessionToIdMapper.getInstance().updateCurrentSession(newId);
-                SessionToIdMapper.getInstance().setRefreshRequired(true);
+               // SessionToIdMapper.getInstance().setRefreshRequired(true);
                 UI.getCurrent().navigate(HomeView.class);
 
                 var ui = UI.getCurrent();

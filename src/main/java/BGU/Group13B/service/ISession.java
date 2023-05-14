@@ -4,8 +4,10 @@ import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.User.PurchaseFailedException;
+import BGU.Group13B.backend.User.PurchaseHistory;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
+import BGU.Group13B.backend.storePackage.WorkerCard;
 import BGU.Group13B.service.entity.ReviewService;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
 import BGU.Group13B.service.entity.ServiceProduct;
@@ -183,7 +185,7 @@ public interface ISession {
      * @param minPrice - the minimum price of the product
      * @param maxPrice - the maximum price of the product
      */
-    void filterByPriceRange(int minPrice, int maxPrice);
+    Response<List<ProductInfo>> filterByPriceRange(int minPrice, int maxPrice);
 
     /**
      * #18
@@ -192,7 +194,7 @@ public interface ISession {
      * @param minRating - the minimum rating of the product
      * @param maxRating - the maximum rating of the product
      */
-    void filterByProductRank(int minRating, int maxRating);
+    Response<List<ProductInfo>> filterByProductRank(int minRating, int maxRating);
 
     /**
      * #18
@@ -200,7 +202,7 @@ public interface ISession {
      *
      * @param category - the category of the product
      */
-    void filterByCategory(String category);
+    Response<List<ProductInfo>> filterByCategory(String category);
 
     /**
      * #18
@@ -209,7 +211,7 @@ public interface ISession {
      * @param minRating - the minimum rating of the store
      * @param maxRating - the maximum rating of the store
      */
-    void filterByStoreRank(int minRating, int maxRating);
+    Response<List<ProductInfo>> filterByStoreRank(int minRating, int maxRating);
 
     /**
      * #16
@@ -256,7 +258,7 @@ public interface ISession {
      * @param storeId   the store id
      * @param productId the product id
      */
-    void addProductToCart(int userId, int productId, int storeId);
+    Response<VoidResponse> addProductToCart(int userId, int productId, int storeId);
 
     Response<VoidResponse> clearMessageToReply(int userId);
 
@@ -485,7 +487,7 @@ public interface ISession {
      *
      * @param userId the user id
      */
-    void getCartDescription(int userId);
+    Response<String> getCartDescription(int userId);
 
     Response<List<ServiceBasketProduct>> getCartContent(int userId);
 
@@ -986,7 +988,7 @@ public interface ISession {
      * @param userId the user id
      * @return all the user's associated stores (all stores that the user has a role in)
      */
-    List<Pair<StoreInfo, String>> getAllUserAssociatedStores(int userId);
+    Response<List<Pair<StoreInfo, String>>> getAllUserAssociatedStores(int userId);
 
 
     /**
@@ -1024,6 +1026,9 @@ public interface ISession {
      * @throws Exception
      */
     Response<String> getUserPurchaseHistory(int userId);
+    Response<String> getUserPurchaseHistoryAsAdmin(int userId, int adminId);
+    Response<List<PurchaseHistory>> getStorePurchaseHistoryAsAdmin(int storeId, int adminId);
+
 
     Response<VoidResponse> fetchMessages(int userId);
 
@@ -1031,4 +1036,67 @@ public interface ISession {
     Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
                                                                             String/*store coupons*/ storeCoupon) throws PurchaseFailedException;
 
+    /**
+     * #43
+     * require 4.13
+     *
+     * @param userId    the user id
+     * @param storeId   the store id
+     * @return          the store purchase history
+     */
+    Response<List<PurchaseHistory>> getStorePurchaseHistory(int userId, int storeId);
+
+    /**
+     * #XX
+     * require XXX?
+     *
+     * @param userId the user id
+     * @param newOwnerId the id of the new owner
+     * @param storeId the id of the store the new owner will own
+     *               as an owner/founder you can add other users as store owners in your store
+     */
+    Response<VoidResponse> addOwner(int userId, int newOwnerId, int storeId);
+
+    /**
+     * #XX
+     * require XXX?
+     *
+     * @param userId the user id
+     * @param removeOwnerId the id of the owner to be removed
+     * @param storeId the id of the store the owner will be removed from
+     *               as an owner/founder you can remove owners you assigned yourself
+     */
+    Response<VoidResponse> removeOwner(int userId, int removeOwnerId, int storeId);
+
+    /**
+     * #XX
+     * require XXX?
+     *
+     * @param userId the user id
+     * @param newManagerId the id of the new manager
+     * @param storeId the id of the store the new manager will manage
+     *               as an owner/founder you can add other users as store managers in your store
+     */
+    Response<VoidResponse> addManager(int userId, int newManagerId, int storeId);
+
+    /**
+     * #XX
+     * require XXX?
+     *
+     * @param userId the user id
+     * @param removeManagerId the id of the manager to be removed
+     * @param storeId the id of the store the manager will be removed from
+     *               as an owner/founder you can remove managers you assigned yourself
+     */
+    Response<VoidResponse> removeManager(int userId, int removeManagerId, int storeId);
+
+    /**
+     * #XX
+     * require XXX?
+     *
+     * @param userId the user id
+     * @param storeId the id of the store to get info from
+     *               as an owner/founder you can get info about the users working in the store
+     */
+    List<WorkerCard> getStoreWorkersInfo(int userId, int storeId);
 }
