@@ -349,7 +349,7 @@ public class Market {
         return storeRepository.getStore(storeId).getStoreWorkersInfo(userId);
     }
 
-    public List<Integer> getStoreOwners(int userId, int storeId) throws NoPermissionException{
-        return storeRepository.getStore(storeId).getStoreOwners(userId);
+    public List<Integer> getStoreOwners(int storeId) throws NoPermissionException{
+        return storeRepository.getStore(storeId).getStoreOwners();
     }
 }

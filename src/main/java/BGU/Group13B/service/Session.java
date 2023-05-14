@@ -1128,9 +1128,9 @@ public class Session implements ISession {
         }
     }
 
-    public List<Integer> getStoreOwners(int userId, int storeId) {
+    public List<Integer> getStoreOwners(int storeId) {
         try {
-            return market.getStoreOwners(userId, storeId);
+            return market.getStoreOwners(storeId);
         } catch (Exception e) {
             //TODO: handle exception
             throw new RuntimeException(e);
