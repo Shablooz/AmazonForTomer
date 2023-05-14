@@ -73,4 +73,8 @@ public class PurchaseHistoryRepositoryAsList implements IPurchaseHistoryReposito
         }
         return purchases;
     }
+    @Override
+    public void removePurchase(PurchaseHistory purchaseHistory) {
+        purchaseHistories.remove(purchaseHistory);
+    }
 }
