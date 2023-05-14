@@ -2,7 +2,6 @@ package BGU.Group13B.backend.storePackage;
 
 
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
-import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
 import BGU.Group13B.backend.System.Searcher;
 import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.Message;
@@ -16,7 +15,6 @@ import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -330,10 +328,7 @@ public class Market {
         return storeRepository.getStore(storeId).getStorePurchaseHistory(userId);
     }
 
-    public List<UserCard> getUsersInfo(){
-        List<UserCard> userCardList = new ArrayList<>();
-        IUserRepository userRepository = SingletonCollection.getUserRepository();
-        //userRepository.getUser()
-        return userCardList;
+    public UserCard getUserInfo(int userId){
+        return SingletonCollection.getUserRepository().getUser(userId).getUserCard();
     }
 }

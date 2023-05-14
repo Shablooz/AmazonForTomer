@@ -1,19 +1,17 @@
 package BGU.Group13B.backend.User;
 
 import BGU.Group13B.backend.Pair;
-import BGU.Group13B.backend.storePackage.Product;
-import BGU.Group13B.service.BroadCaster;
-import BGU.Group13B.service.PushNotification;
-import BGU.Group13B.service.entity.ServiceBasketProduct;
-import org.mindrot.jbcrypt.BCrypt;
 import BGU.Group13B.backend.Repositories.Interfaces.IMessageRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IUserPermissionRepository;
 import BGU.Group13B.backend.storePackage.Market;
+import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
+import BGU.Group13B.service.BroadCaster;
 import BGU.Group13B.service.SingletonCollection;
-//eyal import
+import org.mindrot.jbcrypt.BCrypt;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -541,5 +539,9 @@ public class User {
 
     public String getPurchaseHistory() {
        return purchaseHistoryRepository.getAllPurchases(userId);
+    }
+
+    public UserCard getUserCard(){
+        return new UserCard(userId, userName, email, userPermissions);
     }
 }
