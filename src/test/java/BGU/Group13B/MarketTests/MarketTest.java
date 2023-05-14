@@ -142,9 +142,9 @@ public class MarketTest {
     void filterByPriceRange() {
         try {
             market.searchProductByName(productName2);
-            List<Product> products = market.filterByPriceRange(0, 2000);
+            List<ProductInfo> products = market.filterByPriceRange(0, 2000);
             assertEquals(2, products.size());
-            assertEquals(2, products.stream().filter(p -> checkRange(minPrice, maxPrice, p.getPrice())).count());
+            assertEquals(2, products.stream().filter(p -> checkRange(minPrice, maxPrice, p.price())).count());
 
         } catch (IllegalArgumentException e) {
             fail("Exception was thrown");
@@ -155,9 +155,9 @@ public class MarketTest {
     void filterByProductRank_nonEmptyList() {
         try {
             market.searchProductByName(productName2);
-            List<Product> products = market.filterByProductRank(0, 5);
+            List<ProductInfo> products = market.filterByProductRank(0, 5);
             assertEquals(3, products.size());
-            assertEquals(3, products.stream().filter(p -> checkRange(0, 5, p.getProductScore())).count());
+            assertEquals(3, products.stream().filter(p -> checkRange(0, 5, p.score())).count());
         } catch (Exception e) {
             fail("Exception was thrown");
         }
@@ -167,9 +167,9 @@ public class MarketTest {
     void filterByProductRank_EmptyList() {
         try {
             market.searchProductByName(productName2);
-            List<Product> products = market.filterByProductRank(5, 5);
+            List<ProductInfo> products = market.filterByProductRank(5, 5);
             assertEquals(0, products.size());
-            assertEquals(0, products.stream().filter(p -> checkRange(5, 5, p.getProductScore())).count());
+            assertEquals(0, products.stream().filter(p -> checkRange(5, 5, p.score())).count());
         } catch (Exception e) {
             fail("Exception was thrown");
         }
@@ -179,9 +179,9 @@ public class MarketTest {
     void filterByCategory_fail() {
         try {
             market.searchProductByName(productName4);
-            List<Product> products = market.filterByCategory(productCategory2);
+            List<ProductInfo> products = market.filterByCategory(productCategory2);
             assertEquals(0, products.size());
-            assertEquals(0, products.stream().filter(p -> p.getCategory().contains(productCategory2)).count());
+            assertEquals(0, products.stream().filter(p -> p.category().contains(productCategory2)).count());
         } catch (Exception e) {
             fail();
         }
@@ -191,9 +191,9 @@ public class MarketTest {
     void filterByCategory_success() {
         try {
             market.searchProductByName(productName3);
-            List<Product> products = market.filterByCategory(productCategory2);
+            List<ProductInfo> products = market.filterByCategory(productCategory2);
             assertEquals(1, products.size());
-            assertEquals(1, products.stream().filter(p -> p.getCategory().contains(productCategory2)).count());
+            assertEquals(1, products.stream().filter(p -> p.category().contains(productCategory2)).count());
         } catch (Exception e) {
             fail();
         }
@@ -203,9 +203,9 @@ public class MarketTest {
     void filterByStoreRank_nonEmptyList() {
         try {
             market.searchProductByName(productName2);
-            List<Product> products = market.filterByStoreRank(0, 5);
+            List<ProductInfo> products = market.filterByStoreRank(0, 5);
             assertEquals(3, products.size());
-            assertEquals(3, products.stream().filter(p -> checkRange(0, 5, p.getProductScore())).count());
+            assertEquals(3, products.stream().filter(p -> checkRange(0, 5, p.score())).count());
         } catch (Exception e) {
             fail("Exception was thrown");
         }
@@ -215,9 +215,9 @@ public class MarketTest {
     void filterByStoreRank_EmptyList() {
         try {
             market.searchProductByName(productName2);
-            List<Product> products = market.filterByStoreRank(5, 5);
+            List<ProductInfo> products = market.filterByStoreRank(5, 5);
             assertEquals(0, products.size());
-            assertEquals(0, products.stream().filter(p -> checkRange(5, 5, p.getProductScore())).count());
+            assertEquals(0, products.stream().filter(p -> checkRange(5, 5, p.score())).count());
         } catch (Exception e) {
             fail("Exception was thrown");
         }

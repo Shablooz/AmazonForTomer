@@ -8,6 +8,7 @@ import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.User.PurchaseHistory;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
+import BGU.Group13B.service.Response;
 import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.AddToUserCart;
 import BGU.Group13B.service.info.ProductInfo;
@@ -157,19 +158,19 @@ public class Market {
         return searcher.searchByKeywords(keywords);
     }
 
-    public List<Product> filterByPriceRange(int minPrice, int maxPrice) {
+    public List<ProductInfo> filterByPriceRange(int minPrice, int maxPrice) {
         return searcher.filterByPriceRange(minPrice, maxPrice);
     }
 
-    public List<Product> filterByProductRank(int minRating, int maxRating) {
+    public List<ProductInfo> filterByProductRank(int minRating, int maxRating) {
         return searcher.filterByProductRank(minRating, maxRating);
     }
 
-    public List<Product> filterByCategory(String category) {
+    public List<ProductInfo> filterByCategory(String category) {
         return searcher.filterByCategory(category);
     }
 
-    public List<Product> filterByStoreRank(int minRating, int maxRating) {
+    public List<ProductInfo> filterByStoreRank(int minRating, int maxRating) {
         return searcher.filterByStoreRank(minRating, maxRating);
     }
 
@@ -326,5 +327,9 @@ public class Market {
 
     public List<PurchaseHistory> getStorePurchaseHistory(int userId, int storeId) throws NoPermissionException {
         return storeRepository.getStore(storeId).getStorePurchaseHistory(userId);
+    }
+
+    public List<PurchaseHistory> getStorePurchaseHistoryAsAdmin(int storeId, int adminId) throws NoPermissionException {
+        return getStorePurchaseHistory(adminId,storeId);
     }
 }
