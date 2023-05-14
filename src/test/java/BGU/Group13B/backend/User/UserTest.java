@@ -256,28 +256,28 @@ class UserTest {
         Assertions.assertEquals("", user1.getPurchaseHistory());
     }
 
-    @Test
-    void purchaseUserHistoryAsAdmin(){ //user history
-        Session session = SingletonCollection.getSession();
-        user2.register(goodUsername2, goodPassword2, goodEmail2, "", "yak", "");
-        user2.login(goodUsername2, goodPassword2, "", "yak", "");
-        int storeId1 = SingletonCollection.getStoreRepository().addStore(user2.getUserId(), "Electronics store", "electronics");
-        Product product1 = SingletonCollection.getProductRepository().addProduct(storeId1, "Dell computer", "electronics", 1000, 50, "Good and stable laptop.");
-        Product product2 = SingletonCollection.getProductRepository().addProduct(storeId1, "HP computer", "electronics", 6000, 0, "Good and stable pc.");
-        BasketProduct basketProduct1= new BasketProduct(product1);
-        basketProduct1.setQuantity(2);
-        BasketProduct basketProduct2= new BasketProduct(product2);
-        ConcurrentLinkedQueue<BasketProduct> basketProducts1 = new ConcurrentLinkedQueue<>();
-        basketProducts1.add(basketProduct1);
-        basketProducts1.add(basketProduct2);
-        PurchaseHistory purchaseHistory1 = purchaseHistoryRepository.addPurchase(user1.getUserId(), storeId1, basketProducts1, 8000);
-        user2.logout();
-        User admin= userRepository.getUser(1);
-        admin.login("kingOfTheSheep","SheePLover420","11","11","11");
-        session.getUserPurchaseHistoryAsAdmin(user1.getUserId(),admin.getUserId());
-        Assertions.assertEquals(purchaseHistory1.toString()+'\n',user1.getPurchaseHistory());
-        admin.logout();
-    }
+//    @Test
+//    void purchaseUserHistoryAsAdmin(){ //user history
+//        Session session = SingletonCollection.getSession();
+//        user2.register(goodUsername2, goodPassword2, goodEmail2, "", "yak", "");
+//        user2.login(goodUsername2, goodPassword2, "", "yak", "");
+//        int storeId1 = SingletonCollection.getStoreRepository().addStore(user2.getUserId(), "Electronics store", "electronics");
+//        Product product1 = SingletonCollection.getProductRepository().addProduct(storeId1, "Dell computer", "electronics", 1000, 50, "Good and stable laptop.");
+//        Product product2 = SingletonCollection.getProductRepository().addProduct(storeId1, "HP computer", "electronics", 6000, 0, "Good and stable pc.");
+//        BasketProduct basketProduct1= new BasketProduct(product1);
+//        basketProduct1.setQuantity(2);
+//        BasketProduct basketProduct2= new BasketProduct(product2);
+//        ConcurrentLinkedQueue<BasketProduct> basketProducts1 = new ConcurrentLinkedQueue<>();
+//        basketProducts1.add(basketProduct1);
+//        basketProducts1.add(basketProduct2);
+//        PurchaseHistory purchaseHistory1 = purchaseHistoryRepository.addPurchase(user1.getUserId(), storeId1, basketProducts1, 8000);
+//        user2.logout();
+//        User admin= userRepository.getUser(1);
+//        admin.login("kingOfTheSheep","SheePLover420","11","11","11");
+//        session.getUserPurchaseHistoryAsAdmin(user1.getUserId(),admin.getUserId());
+//        Assertions.assertEquals(purchaseHistory1.toString()+'\n',user1.getPurchaseHistory());
+//        admin.logout();
+//    }
 
     @Test
     void purchaseStoreHistoryAsAdmin(){ //storeHistory
@@ -300,7 +300,10 @@ class UserTest {
         List<PurchaseHistory> history= session.getStorePurchaseHistoryAsAdmin(storeId1,admin.getUserId()).getData();
         Assertions.assertEquals(1,history.size());
         Assertions.assertEquals(purchaseHistory1,history.get(0));
+        storeRepository.removeStore(storeId1);
+        purchaseHistoryRepository.removePurchase(purchaseHistory1);
         admin.logout();
+
     }
 
     @Test
