@@ -257,7 +257,7 @@ class UserTest {
     }
 
     @Test
-    void purchaseUserHistoryAsAdmin(){
+    void purchaseUserHistoryAsAdmin(){ //user history
         Session session = SingletonCollection.getSession();
         user2.register(goodUsername2, goodPassword2, goodEmail2, "", "yak", "");
         user2.login(goodUsername2, goodPassword2, "", "yak", "");
@@ -280,7 +280,7 @@ class UserTest {
     }
 
     @Test
-    void purchaseStoreHistoryAsAdmin(){
+    void purchaseStoreHistoryAsAdmin(){ //storeHistory
         Session session = SingletonCollection.getSession();
         user2.register(goodUsername2, goodPassword2, goodEmail2, "", "yak", "");
         user2.login(goodUsername2, goodPassword2, "", "yak", "");
