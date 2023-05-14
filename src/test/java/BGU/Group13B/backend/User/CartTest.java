@@ -238,5 +238,15 @@ public class CartTest {
             }
         }
     }
+    @Test
+    void removeProductFromCart_existedProduct(){
+        session.addProductToCart(user1.getUserId(), productId1, storeId1);
+        session.removeProductFromCart(user1.getUserId(), productId1, storeId1);
+        assertEquals(0, user1.getCart().getCartContent().size());
+        assertEquals(0, basketRepository.getUserBaskets(user1.getUserId()).stream()
+                .filter(b -> b.getStoreId() == storeId1).findFirst().get().getBasketContent().size());
+        assertEquals(true, basketProductRepository.getBasketProduct(productId1, storeId1, user1.getUserId()) == null);
+        userRepository.removeUser(user1.getUserId());
+    }
 
 }
