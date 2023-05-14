@@ -180,10 +180,11 @@ public class MyStoresView extends VerticalLayout implements BeforeEnterObserver 
         //convert to Map<String, List<StoreInfo>>
         var storesAndRolesMap =
                 storesAndRoles.
-                        stream().
-                        collect(Collectors.
-                                groupingBy(Pair::getSecond,
-                                        Collectors.mapping(Pair::getFirst, Collectors.toList())));*/
+                      stream().
+                       collect(
+                       Collectors.
+                                 groupingBy(Pair::getSecond,
+                                 Collectors.mapping(Pair::getFirst, Collectors.toList())));*/
 
         for(var entry : rolesToGrids.entrySet()){
             String role = entry.getKey();

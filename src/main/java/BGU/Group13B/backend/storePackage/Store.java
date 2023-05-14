@@ -949,6 +949,6 @@ public class Store {
 
 
     public int getStoreFounder() {
-        return storePermission.getStoreFounder(storeId);
+        return storePermission.getStoreFounder();
     }
 }
