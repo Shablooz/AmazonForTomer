@@ -284,7 +284,7 @@ public class User {
     //42
 
     public Message readReadMassageStore(int storeId) throws NoPermissionException {
-        return market.getUnreadMessages(this.userId, storeId);
+        return market.getReadMessages(this.userId, storeId);
     }
 
     //42
@@ -294,6 +294,9 @@ public class User {
         assert regularMessageToReply.getReceiverId().matches("-?\\d+");
         market.markAsCompleted(regularMessageToReply.getSenderId(), regularMessageToReply.getMessageId(), this.userId, Integer.parseInt(regularMessageToReply.getReceiverId()));
         messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), "RE: " + regularMessageToReply.getHeader(), answer, regularMessageToReply.getSenderId()));
+        User receiverNext=SingletonCollection.getUserRepository().getUserByUsername(regularMessageToReply.getSenderId());
+        if(!BroadCaster.broadcast(receiverNext.userId,"New Message"))
+            receiverNext.setMessageNotification(true);
         regularMessageToReply = null;
     }
 

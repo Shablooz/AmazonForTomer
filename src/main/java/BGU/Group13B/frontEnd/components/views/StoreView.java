@@ -452,6 +452,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
         currentDialog.getHeader().add(closeButton);
 
         VerticalLayout buttonsLayout = new VerticalLayout();
+        currentDialog.add(buttonsLayout);
         Button sendMessageToStore = new Button("Send message to Store");
         sendMessageToStore.addClickListener(event -> {
             sendMessageToStoreDialog(currentDialog);
@@ -543,7 +544,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
         Button replyButton = new Button("Reply");
         TextArea inputBody = new TextArea();
         Button sendMessageButton = new Button("Send Answer");
-        Response<Message> messageResponse = session.readReadMassageStore(userId, storeId);
+        Response<Message> messageResponse = session.readUnreadMassageStore(userId, storeId);
         String message;
         if(messageResponse.getStatus()== Response.Status.SUCCESS) {
             message = messageResponse.getData().toString();
@@ -624,7 +625,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
 
         jmpMainDialog.addClickListener(event -> mainStoreDialog(currentDialog));
         sendMessageButton.addClickListener(event -> {
-            Response<VoidResponse> messageResponse= session.sendMassageStore(userId,inputHeader.getValue(),inputBody.getValue(),userId);
+            Response<VoidResponse> messageResponse= session.sendMassageStore(userId,inputHeader.getValue(),inputBody.getValue(),storeId);
             sendMessageToStoreDialog(currentDialog);
             Notification notification=new Notification("Message sent", 3000);
             notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
