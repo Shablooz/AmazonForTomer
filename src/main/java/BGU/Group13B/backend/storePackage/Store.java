@@ -1,26 +1,17 @@
 package BGU.Group13B.backend.storePackage;
 
 
-import BGU.Group13B.backend.Repositories.Interfaces.*;
 import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyImpl.StoreMessageRepositoryNonPersist;
-import BGU.Group13B.backend.User.Message;
-import BGU.Group13B.backend.User.BasketProduct;
-import BGU.Group13B.backend.User.PurchaseHistory;
-import BGU.Group13B.backend.User.User;
-import BGU.Group13B.backend.User.UserPermissions;
+import BGU.Group13B.backend.Repositories.Interfaces.*;
+import BGU.Group13B.backend.User.*;
 import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
 import BGU.Group13B.backend.storePackage.discountPolicies.StoreDiscountPolicy;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
-import BGU.Group13B.backend.storePackage.permissions.DefaultManagerFunctionality;
-import BGU.Group13B.backend.storePackage.permissions.DefaultOwnerFunctionality;
-import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
-import BGU.Group13B.backend.storePackage.permissions.StorePermission;
-import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 import BGU.Group13B.backend.storePackage.permissions.*;
+import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.AddToUserCart;
 import BGU.Group13B.service.info.StoreInfo;
-import org.apache.commons.lang3.NotImplementedException;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -122,9 +113,6 @@ public class Store {
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
     public void addOwner(int userId, int newOwnerId) throws NoPermissionException, ChangePermissionException {
-        /*
-         * check if the user has permission to add owner
-         * */
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add an owner to store " + this.storeId);
         storePermission.addOwnerPermission(newOwnerId, userId);
@@ -134,11 +122,8 @@ public class Store {
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
     public void removeOwner(int userId, int removeOwnerId) throws NoPermissionException, ChangePermissionException {
-        /*
-         * check if the user has permission to add owner
-         * */
         if (!this.storePermission.checkPermission(userId, hidden))
-            throw new NoPermissionException("User " + userId + " has no permission to add an owner to store " + this.storeId);
+            throw new NoPermissionException("User " + userId + " has no permission to remove an owner to store " + this.storeId);
         List<Integer> removeUsersList = storePermission.removeOwnerPermission(removeOwnerId, userId, false);
         for(Integer removeUserId: removeUsersList){
             userRepository.getUser(removeUserId).deletePermission(storeId);
@@ -149,11 +134,8 @@ public class Store {
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
     public void addManager(int userId, int newManagerId) throws NoPermissionException, ChangePermissionException {
-        /*
-         * check if the user has permission to add manager
-         * */
         if (!this.storePermission.checkPermission(userId, hidden))
-            throw new NoPermissionException("User " + userId + " has no permission to add an manager to store " + this.storeId);
+            throw new NoPermissionException("User " + userId + " has no permission to add a manager to store " + this.storeId);
         storePermission.addManagerPermission(newManagerId, userId);
         userRepository.getUser(newManagerId).addPermission(storeId, UserPermissions.StoreRole.MANAGER);
     }
@@ -161,24 +143,26 @@ public class Store {
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
     public void removeManager(int userId, int removeManagerId) throws NoPermissionException, ChangePermissionException {
-        /*
-         * check if the user has permission to add manager
-         * */
         if (!this.storePermission.checkPermission(userId, hidden))
-            throw new NoPermissionException("User " + userId + " has no permission to add a manager to store " + this.storeId);
+            throw new NoPermissionException("User " + userId + " has no permission to remove a manager to store " + this.storeId);
         storePermission.removeManagerPermission(removeManagerId, userId);
         userRepository.getUser(removeManagerId).deletePermission(storeId);
     }
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
-    public void getStoreWorkersInfo(int userId) throws NoPermissionException {
-        /*
-         * check if the user has permission to add manager
-         * */
+    public List<WorkerCard> getStoreWorkersInfo(int userId) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
-            throw new NoPermissionException("User " + userId + " has no permission to add an manager to store " + this.storeId);
-        List<WorkerCard> workerCards = storePermission.getWorkersInfo(); //TODO: pass it on
+            throw new NoPermissionException("User " + userId + " has no permission to get info about the store workers " + this.storeId);
+        return storePermission.getWorkersInfo();
+    }
+
+    //@DefaultFounderFunctionality
+    //@DefaultOwnerFunctionality
+    public List<Integer> getStoreOwners() throws NoPermissionException {
+        /*if (!this.storePermission.checkPermission(userId, hidden))
+            throw new NoPermissionException("User " + userId + " has no permission to get info about the store workers " + this.storeId);*/
+        return storePermission.getStoreOwners();
     }
 
     public StorePermission getStorePermission(){
