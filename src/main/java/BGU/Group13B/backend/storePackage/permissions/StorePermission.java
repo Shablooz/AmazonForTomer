@@ -210,9 +210,12 @@ public class StorePermission {
         appointedOwnersMap.clear();
     }
 
-    public int getStoreFounder(int storeId) {
-       /*throw new UnsupportedOperationException();*/
-        return 1;//for testing
+    public int getStoreFounder() {
+       return userToStoreRole.entrySet().stream()
+                .filter(entry -> entry.getValue() == StoreRole.FOUNDER)
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(-1);
     }
 
     public List<Integer> getStoreOwners(){

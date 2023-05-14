@@ -534,7 +534,7 @@ public class PaymentView extends Div implements BeforeLeaveObserver {
                         map(session::getStoreFounder).collect(Collectors.toSet());
 
         for (int storeFounder : storesFounder) {
-            BroadCaster.broadcast(1/*fixme change to store Founder*/,
+            BroadCaster.broadcast(storeFounder,
 
                     String.format("""
                                     <div>
@@ -548,7 +548,6 @@ public class PaymentView extends Div implements BeforeLeaveObserver {
                             personBinder.getBean().getLastName(),
                             totalPriceAfterDiscount,
                             boughtItems()));
-            BroadCaster.broadcast(1, "test no html in body");
 
         }
     }
