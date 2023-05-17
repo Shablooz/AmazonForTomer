@@ -6,17 +6,16 @@ import BGU.Group13B.backend.System.Searcher;
 import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.User.PurchaseHistory;
+import BGU.Group13B.backend.User.UserPermissions;
 import BGU.Group13B.backend.storePackage.permissions.ChangePermissionException;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
-import BGU.Group13B.service.Response;
 import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.AddToUserCart;
 import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
 
 import java.time.LocalDateTime;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -359,5 +358,13 @@ public class Market {
 
     public List<Integer> getStoreOwners(int storeId) throws NoPermissionException{
         return storeRepository.getStore(storeId).getStoreOwners();
+    }
+
+    public void addIndividualPermission(int userId, int managerId, int storeId, UserPermissions.IndividualPermission individualPermission) throws NoPermissionException, ChangePermissionException {
+        storeRepository.getStore(storeId).addPermissionToManager(userId, managerId, individualPermission);
+    }
+
+    public void removeIndividualPermission(int userId, int managerId, int storeId, UserPermissions.IndividualPermission individualPermission) throws NoPermissionException, ChangePermissionException {
+        storeRepository.getStore(storeId).removePermissionFromManager(userId, managerId, individualPermission);
     }
 }

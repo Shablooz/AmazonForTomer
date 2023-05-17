@@ -177,6 +177,24 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    public void addPermissionToManager(int userId, int managerId, UserPermissions.IndividualPermission individualPermission) throws NoPermissionException, ChangePermissionException {
+        if (!this.storePermission.checkPermission(userId, hidden))
+            throw new NoPermissionException("User " + userId + " has no permission to add permissions to managers in store " + this.storeId);
+        storePermission.addIndividualPermission(managerId, individualPermission);
+        userRepository.getUser(managerId).addIndividualPermission(storeId, individualPermission);
+    }
+
+    @DefaultFounderFunctionality
+    @DefaultOwnerFunctionality
+    public void removePermissionFromManager(int userId, int managerId, UserPermissions.IndividualPermission individualPermission) throws NoPermissionException, ChangePermissionException {
+        if (!this.storePermission.checkPermission(userId, hidden))
+            throw new NoPermissionException("User " + userId + " has no permission to remove permissions from managers in store " + this.storeId);
+        storePermission.removeIndividualPermission(managerId, individualPermission);
+        userRepository.getUser(managerId).deleteIndividualPermission(storeId, individualPermission);
+    }
+
+    @DefaultFounderFunctionality
+    @DefaultOwnerFunctionality
     public Message getUnreadMessages( int userId) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to read message of store " + this.storeId);
