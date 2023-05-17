@@ -17,6 +17,7 @@ public class StorePermission {
     private final HashMap<StoreRole, Set<String>> defaultStoreRoleFunctionalities;
     private final HashMap<Integer/*userId*/, StoreRole> userToStoreRole;
     private final HashMap<Integer/*got appointed by*/, Set<Integer>/*appointee*/> appointedOwnersMap;
+    private final HashMap<Integer/*userId*/, Set<UserPermissions.IndividualPermission>> userToIndividualPermissions;
 
     private final IUserPermissionRepository userPermissionRepository = SingletonCollection.getUserPermissionRepository();
 
@@ -28,6 +29,7 @@ public class StorePermission {
         appointedOwnersMap = new HashMap<>();
         userToStoreRole.put(founderId, StoreRole.FOUNDER);
         userStoreFunctionPermissions.put(founderId, defaultStoreRoleFunctionalities.get(StoreRole.FOUNDER));
+        userToIndividualPermissions = new HashMap<>();
     }
 
     private void initDefaultStoreRoleFunctionalities() {
@@ -63,7 +65,7 @@ public class StorePermission {
         return methodName.substring(index + 1);
     }
 
-    public boolean checkPermission(int userId, boolean isStoreHidden) throws NoPermissionException {
+    public boolean checkPermission(int userId, boolean isStoreHidden) throws NoPermissionException {//TODO: update me?
         //check if the user is admin
         if(hasAdminPermission(userId)){
             return true;
@@ -187,6 +189,14 @@ public class StorePermission {
         } else {
             throw new ChangePermissionException("Cannot remove manager title from an owner you didn't appoint");
         }
+    }
+
+    public void addIndividualPermission(int userId, UserPermissions.IndividualPermission individualPermission){
+        userToIndividualPermissions.get(userId).add(individualPermission);
+    }
+
+    public void removeIndividualPermission(int userId, UserPermissions.IndividualPermission individualPermission){
+        userToIndividualPermissions.get(userId).remove(individualPermission);
     }
 
     public List<WorkerCard> getWorkersInfo() {
