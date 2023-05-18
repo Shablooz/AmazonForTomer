@@ -1,6 +1,7 @@
 package BGU.Group13B.frontEnd.components.views.Searcher;
 
 import BGU.Group13B.frontEnd.components.views.MainLayout;
+import BGU.Group13B.frontEnd.components.views.ProductView;
 import BGU.Group13B.service.Response;
 import BGU.Group13B.service.Session;
 import BGU.Group13B.service.info.ProductInfo;
@@ -48,7 +49,8 @@ public class SearcherView extends VerticalLayout implements HasUrlParameter<Stri
         productGrid.addItemClickListener(event -> {
             ProductInfo clickedProduct = event.getItem();
             //navigate to product page
-            getUI().ifPresent(ui -> ui.navigate("product/" + clickedProduct.productId() + "/" + clickedProduct.storeId()));
+            //getUI().ifPresent(ui -> ui.navigate("product/" + clickedProduct.productId() + "/" + clickedProduct.storeId()));
+            getUI().ifPresent(ui ->  ui.navigate(ProductView.class, clickedProduct.productId() + "/" + clickedProduct.storeId()));
         });
         add(productGrid);
     }
