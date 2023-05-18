@@ -1207,4 +1207,13 @@ public class Session implements ISession {
         }
     }
 
+    public Response<VoidResponse> removeIndividualPermission(int userId, int managerId, int storeId, UserPermissions.IndividualPermission individualPermission) {
+        try {
+            market.removeIndividualPermission(userId, managerId, storeId, individualPermission);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
 }

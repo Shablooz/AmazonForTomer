@@ -13,11 +13,11 @@ import java.util.stream.Collectors;
 
 public class StorePermission {
 
-    private final HashMap<Integer/*userID*/, Set<String>> userStoreFunctionPermissions;
-    private final HashMap<StoreRole, Set<String>> defaultStoreRoleFunctionalities;
+    private final HashMap<Integer/*userID*/, Set<String>> userStoreFunctionPermissions;//THIS ONE INCLUDE WHAT EACH ADDITIONAL ROLE INCLUDES
+    private final HashMap<StoreRole, Set<String>> defaultStoreRoleFunctionalities; //TODO: also sort functions for individuals? or maybe in the above^
     private final HashMap<Integer/*userId*/, StoreRole> userToStoreRole;
     private final HashMap<Integer/*got appointed by*/, Set<Integer>/*appointee*/> appointedOwnersMap;
-    private final HashMap<Integer/*userId*/, Set<UserPermissions.IndividualPermission>> userToIndividualPermissions;
+    private final HashMap<Integer/*userId*/, Set<UserPermissions.IndividualPermission>> userToIndividualPermissions;//THIS ONE EXPLAINS THE "ADDITIONAL ROLES"
 
     private final IUserPermissionRepository userPermissionRepository = SingletonCollection.getUserPermissionRepository();
 
@@ -28,7 +28,7 @@ public class StorePermission {
         userToStoreRole = new HashMap<>();
         appointedOwnersMap = new HashMap<>();
         userToStoreRole.put(founderId, StoreRole.FOUNDER);
-        userStoreFunctionPermissions.put(founderId, defaultStoreRoleFunctionalities.get(StoreRole.FOUNDER));
+        userStoreFunctionPermissions.put(founderId, defaultStoreRoleFunctionalities.get(StoreRole.FOUNDER));//TODO: stupid line
         userToIndividualPermissions = new HashMap<>();
     }
 
@@ -55,6 +55,29 @@ public class StorePermission {
         defaultStoreRoleFunctionalities.put(StoreRole.FOUNDER, storeFounderFunctions);
     }
 
+    private void initIndividualPermissionsFunctionalities() {
+        /*
+         * TODO: complete the permissions
+         * */
+        HashSet<String> type1Functions = new HashSet<>();
+        HashSet<String> type2Functions = new HashSet<>();
+        HashSet<String> type3Functions = new HashSet<>();
+        var storeClass = Store.class;
+        for (Method method : storeClass.getMethods()) {
+            if (method.isAnnotationPresent(type1Functionality.class))
+                type1Functions.add(getFunctionName(method));
+
+            if (method.isAnnotationPresent(type2Functionality.class))
+                type2Functions.add(method.getName());
+
+            if (method.isAnnotationPresent(type3Functionality.class))
+                type3Functions.add(method.getName());
+        }
+        userStoreFunctionPermissions.put(1, type1Functions);
+        userStoreFunctionPermissions.put(2, type2Functions);//TODO: polish this method when deciding about permission types
+        userStoreFunctionPermissions.put(3, type3Functions);
+    }
+
     private static String getFunctionName(Method method) {
         var name = method.getName();
         return getFunctionName(name);
@@ -65,7 +88,7 @@ public class StorePermission {
         return methodName.substring(index + 1);
     }
 
-    public boolean checkPermission(int userId, boolean isStoreHidden) throws NoPermissionException {//TODO: update me?
+    public boolean checkPermission(int userId, boolean isStoreHidden) throws NoPermissionException {
         //check if the user is admin
         if(hasAdminPermission(userId)){
             return true;
@@ -79,8 +102,14 @@ public class StorePermission {
         validateStoreVisibility(userId, isStoreHidden);
 
         //check for the user's permissions
-        if (userStoreFunctionPermissions.containsKey(userId)) {
-            return userStoreFunctionPermissions.get(userId).contains(storeFunctionName);
+        if (userToIndividualPermissions.containsKey(userId)) {
+            boolean found = false;
+            Set<UserPermissions.IndividualPermission> individualPermissions = userToIndividualPermissions.get(userId);
+            for (UserPermissions.IndividualPermission ip: individualPermissions) {
+                if(userStoreFunctionPermissions.get(ip.ordinal()).contains(storeFunctionName))
+                    found = true;
+            }
+            return found;
         } else if (userToStoreRole.containsKey(userId)) {
             return defaultStoreRoleFunctionalities.get(userToStoreRole.get(userId)).contains(storeFunctionName);
         }
