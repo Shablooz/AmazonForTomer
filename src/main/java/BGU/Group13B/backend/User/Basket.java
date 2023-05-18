@@ -83,7 +83,8 @@ public class Basket {
         //calculate the total price of the products by the store discount policy
         finalPrice = calculateStoreDiscount(totalAmount, storeCoupon);
         return finalPrice;
-    }
+    }//[Discount1, Discount2, Discount3]
+    //Discount1 /
 
     public Pair<Double, List<BasketProduct>> startPurchaseBasketTransactionWithSuccessful(HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
                                                                                           String/*store coupons*/ storeCoupon) throws PurchaseFailedException {
