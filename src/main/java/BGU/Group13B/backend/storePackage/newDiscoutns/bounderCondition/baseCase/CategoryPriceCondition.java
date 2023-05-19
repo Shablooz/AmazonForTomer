@@ -9,21 +9,23 @@ import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 public class CategoryPriceCondition extends Condition {
 
     private final String category;
-    private final Bounder<Double> quantityBounder;
+    private final Bounder<Double> priceBounder;
 
 
-    public CategoryPriceCondition(String category, double lowerBound, double upperBound){
+    public CategoryPriceCondition(int conditionId, String category, double lowerBound, double upperBound){
+        super(conditionId);
         this.category = category;
-        this.quantityBounder = new Bounder<>(lowerBound, upperBound);
+        this.priceBounder = new Bounder<>(lowerBound, upperBound);
     }
 
     /**
      * @param category      product id
      * @param lowerBound    dirbalek call this with upperbound
      */
-    public CategoryPriceCondition(String category, double lowerBound){
+    public CategoryPriceCondition(int conditionId, String category, double lowerBound){
+        super(conditionId);
         this.category = category;
-        this.quantityBounder = new Bounder<>(lowerBound);
+        this.priceBounder = new Bounder<>(lowerBound);
     }
 
     @Override
@@ -33,6 +35,9 @@ public class CategoryPriceCondition extends Condition {
                 filter(p -> p.getCategory().equals(category)).
                 map(BasketProduct::getPrice).reduce(0.0, Double::sum);
 
-        return quantityBounder.inBounds(price);
+        return priceBounder.inBounds(price);
+    }
+    public String toString(){
+        return "category: " + category + ", price: " + priceBounder.toString();
     }
 }

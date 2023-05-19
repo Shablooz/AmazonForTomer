@@ -25,4 +25,7 @@ public class Date implements Comparable<Date>{
                 date.getDayOfMonth() - o.getDate().getDayOfMonth() :
                 date.getMonth().getValue() - o.getDate().getMonth().getValue();
     }
+    public String toString(){
+        return date.getDayOfMonth() + "/" + date.getMonth().getValue();
+    }
 }

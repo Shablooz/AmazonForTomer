@@ -10,7 +10,7 @@ public class Time implements Comparable<Time> {
         this.time = time;
     }
 
-    public static Time of(LocalDateTime time){
+    public static Time of(LocalDateTime time) {
         return new Time(time);
     }
 
@@ -22,5 +22,10 @@ public class Time implements Comparable<Time> {
     @Override
     public int compareTo(Time o) {
         return time.getHour() * 60 + time.getMinute() - o.getTime().getHour() * 60 - o.getTime().getMinute();
+    }
+
+    @Override
+    public String toString() {
+        return time.getHour() + ":" + time.getMinute();
     }
 }

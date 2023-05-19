@@ -10,14 +10,16 @@ public class StorePriceCondition extends Condition {
     private final Bounder<Double> priceBounder;
 
 
-    public StorePriceCondition(double lowerBound, double upperBound) {
+    public StorePriceCondition(int conditionId, double lowerBound, double upperBound) {
+        super(conditionId);
         this.priceBounder = new Bounder<>(lowerBound, upperBound);
     }
 
     /**
      * @param lowerBound dirbalek call this with upperbound
      */
-    public StorePriceCondition(double lowerBound) {
+    public StorePriceCondition(int conditionId, double lowerBound) {
+        super(conditionId);
         this.priceBounder = new Bounder<>(lowerBound);
     }
 
@@ -28,5 +30,10 @@ public class StorePriceCondition extends Condition {
                 map(BasketProduct::getPrice).reduce(0.0, Double::sum);
 
         return priceBounder.inBounds(price);
+    }
+
+    @Override
+    public String toString() {
+        return "total price: " + priceBounder;
     }
 }

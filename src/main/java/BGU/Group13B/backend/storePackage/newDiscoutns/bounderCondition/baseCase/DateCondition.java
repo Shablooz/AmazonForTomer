@@ -13,17 +13,23 @@ public class DateCondition extends Condition {
 
     private final Bounder<Date> bounder;
 
-    public DateCondition(LocalDateTime lowerBound, LocalDateTime upperBound) {
+    public DateCondition(int conditionId, LocalDateTime lowerBound, LocalDateTime upperBound) {
+        super(conditionId);
         this.bounder = new Bounder<>(Date.of(lowerBound), Date.of(upperBound));
     }
 
-    public DateCondition(LocalDateTime lowerBound) {
+    public DateCondition(int conditionId, LocalDateTime lowerBound) {
+        super(conditionId);
         this.bounder = new Bounder<>(Date.of(lowerBound));
     }
 
     @Override
     public boolean satisfied(BasketInfo basketInfo, UserInfo user) {
         return bounder.inBounds(Date.of(LocalDateTime.now()));
+    }
+
+    public String toString(){
+        return "date: " + bounder.toString();
     }
 
 

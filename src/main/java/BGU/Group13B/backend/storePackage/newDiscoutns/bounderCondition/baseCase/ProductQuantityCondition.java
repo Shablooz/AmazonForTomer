@@ -5,13 +5,15 @@ import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.Bounder;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
+import BGU.Group13B.service.SingletonCollection;
 
 public class ProductQuantityCondition extends Condition {
     private final int productId;
     private final Bounder<Integer> quantityBounder;
 
 
-    public ProductQuantityCondition(int productId, int lowerBound, int upperBound){
+    public ProductQuantityCondition(int conditionId, int productId, int lowerBound, int upperBound){
+        super(conditionId);
         this.productId = productId;
         this.quantityBounder = new Bounder<>(lowerBound, upperBound);
     }
@@ -20,7 +22,8 @@ public class ProductQuantityCondition extends Condition {
      * @param productId     product id
      * @param lowerBound    dirbalek call this with upperbound
      */
-    public ProductQuantityCondition(int productId, int lowerBound){
+    public ProductQuantityCondition(int conditionId, int productId, int lowerBound){
+        super(conditionId);
         this.productId = productId;
         this.quantityBounder = new Bounder<>(lowerBound);
     }
@@ -35,5 +38,10 @@ public class ProductQuantityCondition extends Condition {
             return quantityBounder.getLowerBound() <= 0;
 
         return quantityBounder.inBounds(product.getQuantity());
+    }
+
+    public String toString(){
+        //mafhhhhhheeeeid
+        return "product: " + SingletonCollection.getProductRepository().getProductById(productId).getName() + ", quantity: " + quantityBounder.toString();
     }
 }

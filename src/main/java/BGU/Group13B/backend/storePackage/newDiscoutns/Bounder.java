@@ -35,11 +35,10 @@ public class Bounder<T extends Comparable<T>> {
         return lowerBound;
     }
 
-
     public String toString() {
         if (upperBound == null)
-            return "[" + lowerBound + ", +inf)";
-        return "[" + lowerBound + ", " + upperBound + "]";
+            return lowerBound + "+";
+        return lowerBound + "-" + upperBound;
     }
 
 

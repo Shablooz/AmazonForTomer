@@ -13,16 +13,23 @@ public class TimeCondition extends Condition {
 
     private final Bounder<Time> timeBounder;
 
-    public TimeCondition(LocalDateTime lowerBound, LocalDateTime upperBound) {
+    public TimeCondition(int conditionId, LocalDateTime lowerBound, LocalDateTime upperBound) {
+        super(conditionId);
         this.timeBounder = new Bounder<>(Time.of(lowerBound), Time.of(upperBound));
     }
 
-    public TimeCondition(LocalDateTime lowerBound) {
+    public TimeCondition(int conditionId, LocalDateTime lowerBound) {
+        super(conditionId);
         this.timeBounder = new Bounder<>(Time.of(lowerBound));
     }
 
     @Override
     public boolean satisfied(BasketInfo basketInfo, UserInfo user) {
         return timeBounder.inBounds(Time.of(LocalDateTime.now()));
+    }
+
+    @Override
+    public String toString() {
+        return "time: " + timeBounder;
     }
 }

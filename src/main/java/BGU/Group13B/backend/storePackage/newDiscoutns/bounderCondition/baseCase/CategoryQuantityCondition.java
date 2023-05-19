@@ -11,7 +11,8 @@ public class CategoryQuantityCondition extends Condition {
     private final Bounder<Integer> quantityBounder;
 
 
-    public CategoryQuantityCondition(String category, int lowerBound, int upperBound){
+    public CategoryQuantityCondition(int conditionId, String category, int lowerBound, int upperBound){
+        super(conditionId);
         this.category = category;
         this.quantityBounder = new Bounder<>(lowerBound, upperBound);
     }
@@ -20,7 +21,8 @@ public class CategoryQuantityCondition extends Condition {
      * @param category      product id
      * @param lowerBound    dirbalek call this with upperbound
      */
-    public CategoryQuantityCondition(String category, int lowerBound){
+    public CategoryQuantityCondition(int conditionId, String category, int lowerBound){
+        super(conditionId);
         this.category = category;
         this.quantityBounder = new Bounder<>(lowerBound);
     }
@@ -33,5 +35,8 @@ public class CategoryQuantityCondition extends Condition {
                 map(BasketProduct::getQuantity).reduce(0, Integer::sum);
 
         return quantityBounder.inBounds(quantity);
+    }
+    public String toString(){
+        return "category: " + category + ", quantity: " + quantityBounder.toString();
     }
 }

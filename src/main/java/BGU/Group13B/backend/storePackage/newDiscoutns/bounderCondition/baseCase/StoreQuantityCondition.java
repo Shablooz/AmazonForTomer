@@ -11,14 +11,16 @@ public class StoreQuantityCondition extends Condition {
     private final Bounder<Integer> quantityBounder;
 
 
-    public StoreQuantityCondition(int lowerBound, int upperBound) {
+    public StoreQuantityCondition(int conditionId, int lowerBound, int upperBound) {
+        super(conditionId);
         this.quantityBounder = new Bounder<>(lowerBound, upperBound);
     }
 
     /**
      * @param lowerBound dirbalek call this with upperbound
      */
-    public StoreQuantityCondition(int lowerBound) {
+    public StoreQuantityCondition(int conditionId, int lowerBound) {
+        super(conditionId);
         this.quantityBounder = new Bounder<>(lowerBound);
     }
 
@@ -29,5 +31,10 @@ public class StoreQuantityCondition extends Condition {
                 map(BasketProduct::getQuantity).reduce(0, Integer::sum);
 
         return quantityBounder.inBounds(quantity);
+    }
+
+    @Override
+    public String toString() {
+        return "total quantity: " + quantityBounder;
     }
 }
