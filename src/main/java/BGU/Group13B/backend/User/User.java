@@ -335,6 +335,9 @@ public class User {
     public float getProductScore(int storeId, int productId) throws NoPermissionException {
         return market.getProductScore(storeId, productId, userId);
     }
+    public float getProductScoreUser(int userIdTarget,int storeId, int productId) throws NoPermissionException {
+        return market.getProductScoreUser(storeId, productId, userIdTarget);
+    }
 
     public void addAndSetProductScore(int storeId, int productId, int score) throws NoPermissionException {
         if (!isRegistered())

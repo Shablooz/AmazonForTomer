@@ -13,6 +13,8 @@ public interface IRepositoryReview {
 
     float getProductScore(int storeId, int productId);
 
+    float getProductScoreUser(int storeId, int productId, int userId);
+
     void addAndSetProductScore(int storeId, int productId, int userId, int score);
     void removeProductScore(int storeId, int productId, int userId);
 

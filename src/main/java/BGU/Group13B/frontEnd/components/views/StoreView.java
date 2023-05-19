@@ -496,6 +496,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
         VerticalLayout verticalDialogMessage = new VerticalLayout();
         TextArea messageBody = new TextArea();
         Button refreshMessagesButton = new Button("Refresh Messages");
+
         Response<Message> messageResponse = session.readReadMassageStore(userId,storeId);
         String message;
         if(messageResponse.getStatus()== Response.Status.SUCCESS) {

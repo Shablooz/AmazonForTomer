@@ -5,13 +5,15 @@ public class ReviewService  {
 
     private String review;
 
+    private String score;
 
 
 
 
-    public ReviewService(String userName,String review) {
+    public ReviewService(String userName,String review,String score) {
         this.review = review;
         this.userName = userName;
+        this.score=score;
 
     }
 
@@ -29,5 +31,14 @@ public class ReviewService  {
     }
     public void setUserName(String userName) {
         this.userName= userName;
+    }
+
+
+    public String getScore() {
+        return score;
+    }
+
+    public void setScore(String score) {
+        this.score = score;
     }
 }

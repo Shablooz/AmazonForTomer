@@ -210,7 +210,7 @@ public class Store {
 
     public void addReview(String review, int userId, int productId) throws NoPermissionException {
         this.storePermission.validateStoreVisibility(userId, hidden);
-        if (purchaseHistoryRepository.isPurchase(userId, this.storeId, productId))
+        if (!purchaseHistoryRepository.isPurchase(userId, this.storeId, productId))
             throw new IllegalArgumentException("User with id: " + userId + " did not purchase product with id: " + productId + " from store: " + this.storeId);
         Product product = productRepository.getStoreProductById(productId, this.storeId);
         if (product == null)
@@ -247,14 +247,22 @@ public class Store {
             throw new IllegalArgumentException("Product with id: " + productId + " does not exist in store: " + this.storeId);
         return product.getProductScore();
     }
-
-    public void addAndSetProductScore(int productId, int userId, int score) throws NoPermissionException {
+    public float getProductScoreUser(int productId,int userId) throws NoPermissionException {
         this.storePermission.validateStoreVisibility(userId, hidden);
-        if (purchaseHistoryRepository.isPurchase(userId, this.storeId, productId))
-            throw new IllegalArgumentException("User with id: " + userId + " did not purchase product with id: " + productId + " from store: " + this.storeId);
         Product product = productRepository.getStoreProductById(productId, this.storeId);
         if (product == null)
             throw new IllegalArgumentException("Product with id: " + productId + " does not exist in store: " + this.storeId);
+        return product.getProductScoreUser(userId);
+    }
+
+    public void addAndSetProductScore(int productId, int userId, int score) throws NoPermissionException {
+        this.storePermission.validateStoreVisibility(userId, hidden);
+        Product product = productRepository.getStoreProductById(productId, this.storeId);
+        if (product == null)
+            throw new IllegalArgumentException("Product with id: " + productId + " does not exist in store: " + this.storeName);
+        if (!purchaseHistoryRepository.isPurchase(userId, this.storeId, productId))
+            throw new IllegalArgumentException("User" + " did not purchase product with name: " + product.getName() + " from store: " + this.storeName);
+
         product.addAndSetScore(userId, score);
     }
 
