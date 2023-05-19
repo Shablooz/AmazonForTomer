@@ -1,4 +1,4 @@
-package BGU.Group13B.frontEnd.components.Searcher;
+package BGU.Group13B.frontEnd.components.views.Searcher;
 
 import BGU.Group13B.service.Session;
 import com.vaadin.flow.component.Component;
