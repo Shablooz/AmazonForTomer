@@ -363,6 +363,12 @@ public class ProxySession implements ISession {
             return realSession.getProductScore(userId, storeId, productId);
         return Response.success((float) -1);
     }
+    @Override
+    public Response<Float> getProductScoreUser(int userId, int storeId, int productId,int userIdTarget) {
+        if (realSession != null)
+            return realSession.getProductScoreUser(userId, storeId, productId,userIdTarget);
+        return Response.success((float) -1);
+    }
 
     @Override
     public Response<VoidResponse> addAndSetProductScore(int userId, int storeId, int productId, int score) {

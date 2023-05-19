@@ -65,22 +65,25 @@ public class Market {
     }
 
     public void addReview(String review, int storeId, int productId, int userId) throws NoPermissionException { //TODO:check get store impl
-        storeRepository.getStore(storeId).addReview(review, productId, userId);
+        storeRepository.getStore(storeId).addReview(review, userId,productId);
     }
 
     public void removeReview(int storeId, int productId, int userId) throws NoPermissionException {
-        storeRepository.getStore(storeId).removeReview(productId, userId);
+        storeRepository.getStore(storeId).removeReview(userId,productId);
     }
 
     public Review getReview(int storeId, int productId, int userId) throws NoPermissionException {
-        return storeRepository.getStore(storeId).getReview(productId, userId);
+        return storeRepository.getStore(storeId).getReview(userId,productId);
     }
     public List<Review> getAllReviews(int productId,int storeId) throws NoPermissionException {
         return storeRepository.getStore(storeId).getAllReviews(productId);
     }
 
     public float getProductScore(int storeId, int productId, int userId) throws NoPermissionException {
-        return storeRepository.getStore(storeId).getProductScore(userId, productId);
+        return storeRepository.getStore(storeId).getProductScore(productId,userId );
+    }
+    public float getProductScoreUser(int storeId, int productId, int userId) throws NoPermissionException {
+        return storeRepository.getStore(storeId).getProductScoreUser(productId,userId );
     }
 
     public void addAndSetProductScore(int storeId, int productId, int userId, int score) throws NoPermissionException {
