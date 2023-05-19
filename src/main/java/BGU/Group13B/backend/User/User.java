@@ -48,6 +48,7 @@ public class User {
 
     private final String adminIdentifier = "Admin";
     private boolean messageNotification;
+    private boolean reviewedStoreNotification;
 
     public User(int userId) {
         this.purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
@@ -72,6 +73,7 @@ public class User {
         this.messageId = 1;
         this.isLoggedIn = false;
         this.messageNotification= false;
+        this.reviewedStoreNotification= false;
     }
 
 
@@ -154,6 +156,10 @@ public class User {
         if(getAndSetMessageNotification())
         {
             BroadCaster.broadcast(this.userId,"New Message");
+        }
+        if(getAndSetReviewedStoreNotification())
+        {
+            BroadCaster.broadcast(this.userId,"New Review");
         }
     }
 
@@ -528,10 +534,22 @@ public class User {
         this.messageNotification= false;
         return messageNotification;
     }
-
     public synchronized void setMessageNotification(boolean notifications) {
         this.messageNotification = notifications;
     }
+
+    public synchronized boolean getReviewedStoreNotification() {
+        return reviewedStoreNotification;
+    }
+    public synchronized boolean getAndSetReviewedStoreNotification() {
+        boolean reviewedStoreNotification = this.reviewedStoreNotification;
+        this.reviewedStoreNotification= false;
+        return reviewedStoreNotification;
+    }
+    public synchronized void setReviewedStoreNotification(boolean notifications) {
+        this.reviewedStoreNotification = notifications;
+    }
+
 
     public List<Product> getAllFailedProductsAfterPayment() {
         return cart.getAllFailedProductsAfterPayment();

@@ -9,6 +9,7 @@ import BGU.Group13B.backend.storePackage.discountPolicies.StoreDiscountPolicy;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
 import BGU.Group13B.backend.storePackage.permissions.*;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
+import BGU.Group13B.service.BroadCaster;
 import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.AddToUserCart;
 import BGU.Group13B.service.info.StoreInfo;
@@ -216,6 +217,17 @@ public class Store {
         if (product == null)
             throw new IllegalArgumentException("Product with id: " + productId + " does not exist in store: " + this.storeId);
         product.addReview(review, userId);
+
+        var storeOwnerIds = storePermission.getStoreOwners();
+        for(int id: storeOwnerIds){
+            User receiver=SingletonCollection.getUserRepository().getUser(id);
+            if(!BroadCaster.broadcast(receiver.getUserId(),"New Review"))
+                receiver.setReviewedStoreNotification(true);
+        }
+        var storeFounderId = storePermission.getStoreFounder();
+        User receiver=SingletonCollection.getUserRepository().getUser(storeFounderId);
+        if(!BroadCaster.broadcast(receiver.getUserId(),"New Review"))
+            receiver.setReviewedStoreNotification(true);
     }
 
     public void removeReview(int userId, int productId) throws NoPermissionException {
