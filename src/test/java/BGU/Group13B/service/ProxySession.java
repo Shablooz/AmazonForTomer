@@ -14,6 +14,7 @@ import BGU.Group13B.service.entity.ServiceProduct;
 import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import java.util.*;
@@ -157,9 +158,9 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void register(int userId, String username, String password, String email, String answer1, String answer2, String answer3) {
+    public void register(int userId, String username, String password, String email, String answer1, String answer2, String answer3, LocalDate dateOfBirth) {
         if (realSession != null)
-            realSession.register(userId, username, password, email, answer1, answer2, answer3);
+            realSession.register(userId, username, password, email, answer1, answer2, answer3, dateOfBirth);
     }
 
     @Override

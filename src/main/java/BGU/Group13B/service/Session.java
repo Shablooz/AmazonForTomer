@@ -16,6 +16,7 @@ import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import java.util.*;
@@ -61,7 +62,7 @@ public class Session implements ISession {
         int id = 1;
         userRepositoryAsHashmap.addUser(id, new User(id));
         register(id, "kingOfTheSheep", "SheePLover420",
-                "mrsheep@gmail.com", "11", "11", "11");
+                "mrsheep@gmail.com", "11", "11", "11",LocalDate.MIN);
 
     }
 
@@ -186,7 +187,7 @@ public class Session implements ISession {
 
     @Override
     public synchronized void register(int userId, String username, String password,
-                                      String email, String answer1, String answer2, String answer3) {
+                                      String email, String answer1, String answer2, String answer3,LocalDate birthDate){
         User user = userRepositoryAsHashmap.getUser(userId);
 
         //the first "if" might not be necessary when we will connect to web
@@ -195,7 +196,7 @@ public class Session implements ISession {
         }
         if (!user.isRegistered()) {
             if (userRepositoryAsHashmap.checkIfUserExists(username) == null) {
-                user.register(username, password, email, answer1, answer2, answer3);
+                user.register(username, password, email, answer1, answer2, answer3,birthDate);
             } else {
                 throw new IllegalArgumentException("user with this username already exists!");
             }

@@ -14,6 +14,7 @@ import BGU.Group13B.service.entity.ServiceProduct;
 import BGU.Group13B.service.info.StoreInfo;
 import BGU.Group13B.service.info.ProductInfo;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import java.util.HashMap;
@@ -167,7 +168,7 @@ public interface ISession {
      * @param answer2  - optional for security question number 2 can put empty String
      * @param answer1  - optional for security question number 3 can put empty String
      */
-    void register(int userId, String username, String password, String email, String answer1, String answer2, String answer3);
+    void register(int userId, String username, String password, String email, String answer1, String answer2, String answer3, LocalDate birthDate);
 
     /**
      * #18
