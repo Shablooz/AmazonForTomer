@@ -40,11 +40,13 @@ public interface ISession {
      * #19
      * require 2.3
      * good for development delete this function, does not check if the item exists in a store
+     *
      * @param userId    the user id
      * @param storeId   the store id
      * @param productId the product id
+     * @return
      */
-    void addToCart(int userId, int storeId, int productId);
+    Response<VoidResponse> addToCart(int userId, int storeId, int productId);
 
     /**
      * #22

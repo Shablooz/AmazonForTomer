@@ -49,7 +49,6 @@ public class SearcherView extends VerticalLayout implements HasUrlParameter<Stri
         productGrid.addItemClickListener(event -> {
             ProductInfo clickedProduct = event.getItem();
             //navigate to product page
-            //getUI().ifPresent(ui -> ui.navigate("product/" + clickedProduct.productId() + "/" + clickedProduct.storeId()));
             getUI().ifPresent(ui ->  ui.navigate(ProductView.class, clickedProduct.productId() + "/" + clickedProduct.storeId()));
         });
         add(productGrid);

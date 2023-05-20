@@ -8,6 +8,7 @@ import BGU.Group13B.service.Session;
 import BGU.Group13B.service.VoidResponse;
 import BGU.Group13B.service.entity.ReviewService;
 import BGU.Group13B.service.info.ProductInfo;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.crud.BinderCrudEditor;
 import com.vaadin.flow.component.crud.Crud;
 import com.vaadin.flow.component.crud.CrudEditor;
@@ -57,9 +58,6 @@ public class ProductView extends VerticalLayout implements HasUrlParameter<Strin
     @Autowired
     public ProductView(Session session) {
         this.session=session;
-//        price = new NumberField();
-//        stockQuantity = new NumberField();
-//        score = new NumberField();
     }
 
     @Override
@@ -70,7 +68,7 @@ public class ProductView extends VerticalLayout implements HasUrlParameter<Strin
         start();
     }
     private void start(){
-        ProductInfo info = session.getStoreProductInfo(userId,storeId,productId).getData(); //TODO: CHECK ON ERRORS
+        ProductInfo info = session.getStoreProductInfo(userId,storeId,productId).getData();
         seller = getIconLabel("Seller :  "+info.seller(),VaadinIcon.MALE);
         category = getIconLabel("Category :  "+info.category(), VaadinIcon.TAGS);
         price = getIconLabel("Price :  " + info.price(), VaadinIcon.CASH);
@@ -83,12 +81,9 @@ public class ProductView extends VerticalLayout implements HasUrlParameter<Strin
         verticalLayout.getStyle().set("background-color", "#171C41");
         verticalLayout.setWidth("50%");
         add(verticalLayout);
-        buyNow = new com.vaadin.flow.component.button.Button("Buy Now");
-        buyNow.setIcon(VaadinIcon.CREDIT_CARD.create());
-        addToCart = new Button("Add To Cart");
-        addToCart.setIcon(VaadinIcon.CART_O.create());
-        offerBid = new Button("Offer Bid");
-        offerBid.setIcon(VaadinIcon.CASH.create());
+        buyNow = buyNow();
+        addToCart = addToCart();
+        offerBid = offerBid();
         HorizontalLayout Buttons = new HorizontalLayout();
         Buttons.add(buyNow, addToCart, offerBid);
         add(Buttons);
@@ -96,7 +91,69 @@ public class ProductView extends VerticalLayout implements HasUrlParameter<Strin
         Buttons.add(reviewButton);
         grid = reviewGridCreator();
         add(grid);
+    }
 
+    private Button offerBid() {
+        Button button = new Button("Offer Bid");
+        button.setIcon(VaadinIcon.CASH.create());
+        Dialog dialog = new Dialog();
+        offerBidDialog(dialog);
+
+        button.addClickListener(event -> dialog.open());
+        return button;
+    }
+
+    private void offerBidDialog(Dialog dialog)
+    {
+        Button exit = new Button();
+        exit.setIcon(new Icon(VaadinIcon.CLOSE));
+        exit.addClickListener(event -> dialog.close());
+        dialog.getHeader().add(exit);
+        FormLayout form = new FormLayout();
+        TextField price = new TextField("Price");
+        TextField quantity = new TextField("Quantity");
+        TextField dueDate = new TextField("Due Date");
+        form.add(price, quantity, dueDate);
+        dialog.add(form);
+        Button submit = new Button("Submit");
+        submit.addClickListener(event -> {
+            //Response<VoidResponse> response = session.offerBid(userId, storeId, productId, price.getValue(), quantity.getValue(), dueDate.getValue());
+//            if (response.didntSucceed()) {
+//                Notification.show(response.getMessage());
+//            } else {
+//                Notification.show("Bid offered successfully");
+//            }
+        });
+        dialog.add(submit);
+    }
+
+    private Button buyNow() {
+        Button button = new com.vaadin.flow.component.button.Button("Buy Now");
+        button.setIcon(VaadinIcon.CREDIT_CARD.create());
+        button.addClickListener(event -> {
+            Response<VoidResponse> response = session.addToCart(userId, storeId, productId);
+            button.addClickListener(buttonClickEvent -> UI.getCurrent().navigate("payment"));
+            if (response.didntSucceed()) {
+                Notification.show(response.getMessage());
+            } else {
+                Notification.show("Added to cart successfully");
+            }
+        });
+        return button;
+    }
+
+    private Button addToCart() {
+        Button button = new Button("Add To Cart");
+        button.setIcon(VaadinIcon.CART_O.create());
+        button.addClickListener(event -> {
+            Response<VoidResponse> response = session.addToCart(userId, storeId, productId);
+            if (response.didntSucceed()) {
+                Notification.show(response.getMessage());
+            } else {
+                Notification.show("Added to cart successfully");
+            }
+        });
+        return button;
     }
 
     private HorizontalLayout getIconLabel(String text, VaadinIcon icon){

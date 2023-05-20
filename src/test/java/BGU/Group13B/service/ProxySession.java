@@ -35,9 +35,10 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void addToCart(int userId, int storeId, int productId) {
+    public Response<VoidResponse> addToCart(int userId, int storeId, int productId) {
         if (realSession != null)
             realSession.addToCart(userId, storeId, productId);
+        return null;
     }
 
     @Override
