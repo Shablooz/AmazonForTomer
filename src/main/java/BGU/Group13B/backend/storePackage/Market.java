@@ -16,9 +16,7 @@ import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 public class Market {
@@ -159,6 +157,16 @@ public class Market {
 
     public List<ProductInfo> searchProductByKeywords(String keywords) {
         return searcher.searchByKeywords(keywords);
+    }
+
+    public List<ProductInfo> search(String searchWords) {
+            List<ProductInfo> products = new LinkedList<>();
+            products.addAll(searchProductByKeywords(searchWords));
+            products.addAll(searchProductByCategory(searchWords));
+            products.addAll(searchProductByName(searchWords));
+            Set<ProductInfo> set = new HashSet<>(products.size());
+            products.removeIf(p -> !set.add(p));
+            return products;
     }
 
     public List<ProductInfo> filterByPriceRange(int minPrice, int maxPrice) {

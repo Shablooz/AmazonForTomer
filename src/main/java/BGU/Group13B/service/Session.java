@@ -207,11 +207,7 @@ public class Session implements ISession {
     @Override
     public Response<List<ProductInfo>> search(String searchWords) {
         try {
-            List<ProductInfo> products = new LinkedList<>();
-            products.addAll(market.searchProductByKeywords(searchWords));
-            products.addAll(market.searchProductByCategory(searchWords));
-            products.addAll(market.searchProductByName(searchWords));
-            return Response.success(products);
+            return Response.success(market.search(searchWords));
         }
         catch (Exception e){
             return Response.exception(e);
