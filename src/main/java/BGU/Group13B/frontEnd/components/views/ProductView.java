@@ -132,7 +132,7 @@ public class ProductView extends VerticalLayout implements HasUrlParameter<Strin
         button.setIcon(VaadinIcon.CREDIT_CARD.create());
         button.addClickListener(event -> {
             Response<VoidResponse> response = session.addToCart(userId, storeId, productId);
-            button.addClickListener(buttonClickEvent -> UI.getCurrent().navigate("payment"));
+            UI.getCurrent().navigate("payment");
             if (response.didntSucceed()) {
                 Notification.show(response.getMessage());
             } else {
