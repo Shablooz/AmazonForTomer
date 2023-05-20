@@ -13,11 +13,11 @@ import java.util.stream.Collectors;
 
 public class StorePermission {
 
-    private final HashMap<Integer/*userID*/, Set<String>> userStoreFunctionPermissions;//THIS ONE INCLUDE WHAT EACH ADDITIONAL ROLE INCLUDES
-    private final HashMap<StoreRole, Set<String>> defaultStoreRoleFunctionalities; //TODO: also sort functions for individuals? or maybe in the above^
+    private final HashMap<Integer/*permissionNumber*/, Set<String>> userStoreFunctionPermissions;//THIS ONE INCLUDE WHAT EACH ADDITIONAL ROLE INCLUDES
+    private final HashMap<StoreRole, Set<String>> defaultStoreRoleFunctionalities;
     private final HashMap<Integer/*userId*/, StoreRole> userToStoreRole;
     private final HashMap<Integer/*got appointed by*/, Set<Integer>/*appointee*/> appointedOwnersMap;
-    private final HashMap<Integer/*userId*/, Set<UserPermissions.IndividualPermission>> userToIndividualPermissions;//THIS ONE EXPLAINS THE "ADDITIONAL ROLES"
+    private final HashMap<Integer/*userId*/, Set<UserPermissions.IndividualPermission>> userToIndividualPermissions;//THIS ONE EXPLAINS THE "ADDITIONAL ROLES" OF EACH MANAGER
 
     private final IUserPermissionRepository userPermissionRepository = SingletonCollection.getUserPermissionRepository();
 
@@ -28,7 +28,7 @@ public class StorePermission {
         userToStoreRole = new HashMap<>();
         appointedOwnersMap = new HashMap<>();
         userToStoreRole.put(founderId, StoreRole.FOUNDER);
-        userStoreFunctionPermissions.put(founderId, defaultStoreRoleFunctionalities.get(StoreRole.FOUNDER));//TODO: stupid line
+        userStoreFunctionPermissions.put(founderId, defaultStoreRoleFunctionalities.get(StoreRole.FOUNDER));
         userToIndividualPermissions = new HashMap<>();
     }
 
@@ -56,26 +56,38 @@ public class StorePermission {
     }
 
     private void initIndividualPermissionsFunctionalities() {
-        /*
-         * TODO: complete the permissions
-         * */
-        HashSet<String> type1Functions = new HashSet<>();
-        HashSet<String> type2Functions = new HashSet<>();
-        HashSet<String> type3Functions = new HashSet<>();
+        HashSet<String> stockFunctions = new HashSet<>();
+        HashSet<String> messagesFunctions = new HashSet<>();
+        HashSet<String> policiesFunctions = new HashSet<>();
+        HashSet<String> auctionFunctions = new HashSet<>();
+        HashSet<String> infoFunctions = new HashSet<>();
+        HashSet<String> historyFunctions = new HashSet<>();
         var storeClass = Store.class;
         for (Method method : storeClass.getMethods()) {
-            if (method.isAnnotationPresent(type1Functionality.class))
-                type1Functions.add(getFunctionName(method));
+            if (method.isAnnotationPresent(StockPermission.class))
+                stockFunctions.add(getFunctionName(method));
 
-            if (method.isAnnotationPresent(type2Functionality.class))
-                type2Functions.add(method.getName());
+            if (method.isAnnotationPresent(MessagesPermission.class))
+                messagesFunctions.add(method.getName());
 
-            if (method.isAnnotationPresent(type3Functionality.class))
-                type3Functions.add(method.getName());
+            if (method.isAnnotationPresent(PoliciesPermission.class))
+                policiesFunctions.add(method.getName());
+
+            if (method.isAnnotationPresent(AuctionPermission.class))
+                auctionFunctions.add(getFunctionName(method));
+
+            if (method.isAnnotationPresent(InfoPermission.class))
+                infoFunctions.add(getFunctionName(method));
+
+            if (method.isAnnotationPresent(HistoryPermission.class))
+                historyFunctions.add(getFunctionName(method));
         }
-        userStoreFunctionPermissions.put(1, type1Functions);
-        userStoreFunctionPermissions.put(2, type2Functions);//TODO: polish this method when deciding about permission types
-        userStoreFunctionPermissions.put(3, type3Functions);
+        userStoreFunctionPermissions.put(1, stockFunctions);
+        userStoreFunctionPermissions.put(2, messagesFunctions);
+        userStoreFunctionPermissions.put(3, policiesFunctions);
+        userStoreFunctionPermissions.put(4, auctionFunctions);
+        userStoreFunctionPermissions.put(5, infoFunctions);
+        userStoreFunctionPermissions.put(6, historyFunctions);
     }
 
     private static String getFunctionName(Method method) {
@@ -133,9 +145,29 @@ public class StorePermission {
 
     public Set<Integer/*userId*/> getAllUsersWithPermission(String storeFunctionName) {
         Set<Integer> usersWithPermission = new HashSet<>();
+        //all users with roles that have that permission
+        for(var key : defaultStoreRoleFunctionalities.keySet()){
+            if(defaultStoreRoleFunctionalities.get(key).contains(storeFunctionName)){
+                for (Map.Entry<Integer, StoreRole> entry : userToStoreRole.entrySet()) {
+                    if (entry.getValue() == key) {
+                        usersWithPermission.add(entry.getKey());
+                    }
+                }
+            }
+        }
+        //all users who got this permission individually
+        Set<Integer> permissionNumber = new HashSet<>();
         for (var entry : userStoreFunctionPermissions.entrySet()) {
             if (entry.getValue().contains(storeFunctionName)) {
-                usersWithPermission.add(entry.getKey());
+                permissionNumber.add(entry.getKey());
+            }
+        }
+        for (var entry : userToIndividualPermissions.entrySet()) {
+            for(int pn : permissionNumber){
+                UserPermissions.IndividualPermission permission = UserPermissions.IndividualPermission.values()[pn];
+                if (entry.getValue().contains(permission)) {
+                    usersWithPermission.add(entry.getKey());
+                }
             }
         }
         return usersWithPermission;
@@ -176,7 +208,7 @@ public class StorePermission {
                     List<Integer> recursiveFiringList = removeOwnerPermission(underlingId, removeOwnerId, true);
                     removeUsersId.addAll(recursiveFiringList);
                 }
-            }
+            }//TODO: update the appointee map?
             appointedOwnersMap.get(removerId).remove(removeOwnerId);
             userToStoreRole.remove(removeOwnerId);
             removeUsersId.add(removeOwnerId);
@@ -220,12 +252,25 @@ public class StorePermission {
         }
     }
 
-    public void addIndividualPermission(int userId, UserPermissions.IndividualPermission individualPermission){
-        userToIndividualPermissions.get(userId).add(individualPermission);
+    public void addIndividualPermission(int userId, UserPermissions.IndividualPermission individualPermission) throws ChangePermissionException {
+        StoreRole userRole = userToStoreRole.get(userId);
+        if (userRole != StoreRole.MANAGER)
+            throw new ChangePermissionException("Cannot grant an individual permission to a user who is no a manager");
+        if(userToIndividualPermissions.containsKey(userId))
+            userToIndividualPermissions.get(userId).add(individualPermission);
+        else{
+            Set<UserPermissions.IndividualPermission> newSet = new HashSet<>();
+            newSet.add(individualPermission);
+            userToIndividualPermissions.put(userId, newSet);
+        }
     }
 
-    public void removeIndividualPermission(int userId, UserPermissions.IndividualPermission individualPermission){
-        userToIndividualPermissions.get(userId).remove(individualPermission);
+    public void removeIndividualPermission(int userId, UserPermissions.IndividualPermission individualPermission) throws ChangePermissionException {
+        StoreRole userRole = userToStoreRole.get(userId);
+        if (userRole != StoreRole.MANAGER)
+            throw new ChangePermissionException("Cannot grant an individual permission to a user who is no a manager");
+        if(userToIndividualPermissions.containsKey(userId))
+            userToIndividualPermissions.get(userId).remove(individualPermission);
     }
 
     public List<WorkerCard> getWorkersInfo() {
@@ -233,14 +278,14 @@ public class StorePermission {
         for (Map.Entry<Integer, StoreRole> entry : userToStoreRole.entrySet()) {
             Integer userId = entry.getKey();
             StoreRole role = entry.getValue();
-            List<String> userPermissions = new ArrayList<>(userStoreFunctionPermissions.get(userId));
+            List<UserPermissions.IndividualPermission> userPermissions = new ArrayList<>(userToIndividualPermissions.get(userId));
             WorkerCard workerCard = new WorkerCard(userId, role, userPermissions);
             workerCards.add(workerCard);
         }
         return workerCards;
     }
 
-    public StoreRole getUserPermission(int userId) {
+    public StoreRole getUserRole(int userId) {
         return userToStoreRole.get(userId);
     }
 

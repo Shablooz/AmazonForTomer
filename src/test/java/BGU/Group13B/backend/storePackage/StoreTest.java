@@ -261,7 +261,7 @@ class StoreTest {
         customSetUp();
         try {
             omTestStore.addOwner(tUserOwnerId, tUserId);
-            Assertions.assertEquals(omTestStore.getStorePermission().getUserPermission(tUserId), UserPermissions.StoreRole.OWNER);
+            Assertions.assertEquals(omTestStore.getStorePermission().getUserRole(tUserId), UserPermissions.StoreRole.OWNER);
             Assertions.assertEquals(tUser.getUserPermissions().getStoreRole(omTestStore.getStoreId()), UserPermissions.StoreRole.OWNER);
         } catch (NoPermissionException | ChangePermissionException e) {
             fail(e);
@@ -289,7 +289,7 @@ class StoreTest {
         try {
             omTestStore.addOwner(tUserOwnerId, tUserId);
             omTestStore.removeOwner(tUserOwnerId, tUserId);
-            assertNull(omTestStore.getStorePermission().getUserPermission(tUserId));
+            assertNull(omTestStore.getStorePermission().getUserRole(tUserId));
             assertNull(tUser.getUserPermissions().getStoreRole(tUserOwnerId));
         } catch (NoPermissionException | ChangePermissionException e) {
             fail(e);
@@ -317,7 +317,7 @@ class StoreTest {
         customSetUp();
         try {
             omTestStore.addManager(tUserOwnerId, tUserId);
-            Assertions.assertEquals(omTestStore.getStorePermission().getUserPermission(tUserId), UserPermissions.StoreRole.MANAGER);
+            Assertions.assertEquals(omTestStore.getStorePermission().getUserRole(tUserId), UserPermissions.StoreRole.MANAGER);
             Assertions.assertEquals(tUser.getUserPermissions().getStoreRole(omTestStore.getStoreId()), UserPermissions.StoreRole.MANAGER);
         } catch (NoPermissionException | ChangePermissionException e) {
             fail(e);
@@ -345,7 +345,7 @@ class StoreTest {
         try {
             omTestStore.addManager(tUserOwnerId, tUserId);
             omTestStore.removeManager(tUserOwnerId, tUserId);
-            assertNull(omTestStore.getStorePermission().getUserPermission(tUserId));
+            assertNull(omTestStore.getStorePermission().getUserRole(tUserId));
             assertNull(tUser.getUserPermissions().getStoreRole(tUserOwnerId));
         } catch (NoPermissionException | ChangePermissionException e) {
             fail(e);
