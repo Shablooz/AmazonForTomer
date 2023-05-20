@@ -31,9 +31,12 @@ public class UserPermissions {
     }
 
     public enum IndividualPermission{
-        FUNCTION1,
-        FUNCTION2,
-        FUNCTION3,
+        STOCK,
+        MESSAGES,
+        POLICIES,
+        AUCTION,
+        INFO,
+        HISTORY
     }
 
     private UserPermissionStatus userPermissionStatus;
