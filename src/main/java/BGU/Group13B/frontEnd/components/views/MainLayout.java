@@ -536,6 +536,10 @@ public class MainLayout extends AppLayout {
             nav.addItem(new AppNavItem("My Stores", MyStoresView.class, LineAwesomeIcon.STORE_SOLID.create()));
         }
 
+        //userPurchaseHistory
+        if (session.isUserLogged(SessionToIdMapper.getInstance().getCurrentSessionId())) {
+            nav.addItem(new AppNavItem("My purchase history", PurchaseHistoryView.class, LineAwesomeIcon.STORE_SOLID.create()));
+        }
 
         return nav;
     }

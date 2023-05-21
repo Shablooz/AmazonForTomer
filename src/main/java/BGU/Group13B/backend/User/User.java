@@ -563,7 +563,7 @@ public class User {
         cart.cancelPurchase();
     }
 
-    public String getPurchaseHistory() {
+    public List<PurchaseHistory> getPurchaseHistory() {
        return purchaseHistoryRepository.getAllPurchases(userId);
     }
 }

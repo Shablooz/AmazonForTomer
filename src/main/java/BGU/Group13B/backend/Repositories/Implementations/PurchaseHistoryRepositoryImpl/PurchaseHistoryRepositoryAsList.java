@@ -28,13 +28,9 @@ public class PurchaseHistoryRepositoryAsList implements IPurchaseHistoryReposito
         return purchaseHistories.stream().anyMatch(purchaseHistory -> purchaseHistory.getUserId() == userId && purchaseHistory.getStoreId() == storeId);
     }
     @Override
-    public String getAllPurchases(int userId) {
+    public List<PurchaseHistory> getAllPurchases(int userId) {
         List<PurchaseHistory> purchases = getAllPurchasesAsList(userId);
-        StringBuilder sb = new StringBuilder();
-        for (PurchaseHistory purchaseHistory : purchases) {
-            sb.append(purchaseHistory.toString()).append("\n");
-        }
-        return sb.toString();
+        return purchases;
     }
     @Override
     public PurchaseHistory addPurchase(int userId, int storeId, ConcurrentLinkedQueue<BasketProduct> products, double price) {

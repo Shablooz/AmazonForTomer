@@ -1027,7 +1027,7 @@ public class Session implements ISession {
     }
 
     @Override
-    public Response<String> getUserPurchaseHistory(int userId) {
+    public Response<List<PurchaseHistory>> getUserPurchaseHistory(int userId) {
         try {
             isUserLogged(userId);
             return Response.success(userRepositoryAsHashmap.getUser(userId).getPurchaseHistory());
@@ -1115,7 +1115,7 @@ public class Session implements ISession {
         }
     }
     @Override
-    public Response<String> getUserPurchaseHistoryAsAdmin(int userId, int adminId){
+    public Response<List<PurchaseHistory>> getUserPurchaseHistoryAsAdmin(int userId, int adminId){
         //change to return purchaseHistory
         try {
             if (!getUserStatus(adminId).equals("Admin") || !isUserLogged(adminId)) {
