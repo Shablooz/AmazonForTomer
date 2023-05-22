@@ -90,13 +90,19 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
                         "", "", "");
                 Notification.show("Login successful");
                 SessionToIdMapper.getInstance().updateCurrentSession(newId);
-               // SessionToIdMapper.getInstance().setRefreshRequired(true);
+                // SessionToIdMapper.getInstance().setRefreshRequired(true);
                 UI.getCurrent().navigate(HomeView.class);
 
                 var ui = UI.getCurrent();
                 //Tomer section
                 BroadCaster.register(newId, newMessage -> {
-                    ui.access(() -> createSubmitSuccess(newMessage).open());
+                    ui.access(() -> {
+                        if (newMessage.startsWith("BID"))
+                            createPurchaseProposalSubmitRequest(newMessage).open();
+                        else
+                            createSubmitSuccess(newMessage).open();
+
+                    });
                 });
 
 
@@ -142,7 +148,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
                         answer1.getValue(), answer2.getValue(), answer3.getValue());
                 Notification.show("Login successful");
                 SessionToIdMapper.getInstance().updateCurrentSession(newId);
-               // SessionToIdMapper.getInstance().setRefreshRequired(true);
+                // SessionToIdMapper.getInstance().setRefreshRequired(true);
                 UI.getCurrent().navigate(HomeView.class);
 
                 var ui = UI.getCurrent();
@@ -160,6 +166,34 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
 
 
         });
+    }
+
+    private Notification createPurchaseProposalSubmitRequest(String message) {
+        Notification notification = new Notification();
+        //notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+
+        int managerId = SessionToIdMapper.getInstance().getCurrentSessionId();
+        String[] storeProduct = message.substring(4, message.indexOf("]")).split(",");
+        int storeId = Integer.parseInt(storeProduct[0]);
+        int productId = Integer.parseInt(storeProduct[1]);
+        //accept button
+        Button accept = new Button(VaadinIcon.CHECK_CIRCLE.create(), event -> {
+            session.purchaseProposalApprove(managerId, storeId, productId);
+            notification.close();
+        });
+        accept.addThemeVariants(LUMO_TERTIARY_INLINE);
+        //reject button
+        Button reject = new Button(VaadinIcon.CLOSE_SMALL.create(), event -> {
+            session.purchaseProposalReject(managerId, storeId, productId);
+            notification.close();
+        });
+        reject.addThemeVariants(LUMO_TERTIARY_INLINE);
+
+        Div info = new Div(new Text(message));
+        HorizontalLayout layout = new HorizontalLayout(info, accept, reject);
+        layout.setAlignItems(FlexComponent.Alignment.CENTER);
+        notification.add(layout);
+        return notification;
     }
 
     private Notification createSubmitSuccess(String message) {
@@ -191,7 +225,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
         int userId = SessionToIdMapper.getInstance().getCurrentSessionId();
-        if(session.isUserLogged(userId))
+        if (session.isUserLogged(userId))
             event.rerouteTo(HomeView.class);
 
     }
