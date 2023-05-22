@@ -169,7 +169,6 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
         Icon icon = VaadinIcon.CHECK_CIRCLE.create();
         Div info = new Div(new Text(message));
 
-
         HorizontalLayout layout = new HorizontalLayout(icon, info,
                 createCloseBtn(notification));
         layout.setAlignItems(FlexComponent.Alignment.CENTER);

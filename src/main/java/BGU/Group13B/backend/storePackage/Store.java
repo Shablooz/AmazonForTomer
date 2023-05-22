@@ -6,7 +6,6 @@ import BGU.Group13B.backend.Repositories.Interfaces.*;
 import BGU.Group13B.backend.User.*;
 import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
 import BGU.Group13B.backend.storePackage.discountPolicies.StoreDiscountPolicy;
-import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.DiscountPolicy;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.StoreDiscount;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
@@ -44,10 +43,10 @@ public class Store {
 
 
     private final IPurchaseHistoryRepository purchaseHistoryRepository;
-    private String storeName;
-    private String category;
+    private final String storeName;
+    private final String category;
     private final IAuctionRepository auctionRepository;
-    private IStoreScore storeScore;
+    private final IStoreScore storeScore;
 
     private boolean hidden = false;
 
@@ -372,13 +371,14 @@ public class Store {
         BID currentBid = bidRepository.getBID(bidId).
                 orElseThrow(() -> new IllegalArgumentException("There is no such bid for store " + this.storeId));
 
-        if (currentBid.isRejected())
+        if (currentBid.isRejected())//fixme, use BroadCaster.broadcast
             alertManager.sendAlert(managerId, "The bid for product " + currentBid.getProductId() + " in store " + this.storeId + " has been rejected already");
         currentBid.approve(managerId);
         Set<Integer> managers = storePermission.getAllUsersWithPermission("purchaseProposalSubmit");
 
         if (currentBid.approvedByAll(managers)) {
             addToUserCart.apply(currentBid.getUserId(), storeId, currentBid.getProductId());
+            //todo send alert to the user that his bid has been approved
         }
     }
 
@@ -394,6 +394,7 @@ public class Store {
         BID currentBid = bidRepository.getBID(bidId).orElseThrow(() -> new IllegalArgumentException("There is no such bid for store " + this.storeId));
         currentBid.reject();//good for concurrency edge cases
         bidRepository.removeBID(bidId);
+        //todo send alert to the user that his bid has been rejected
     }
 
     //only members of the store can create an auction purchase
