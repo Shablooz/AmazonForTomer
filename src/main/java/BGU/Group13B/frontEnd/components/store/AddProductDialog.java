@@ -46,7 +46,7 @@ public class AddProductDialog extends Dialog{
 
 
         VerticalLayout dialogLayout = new VerticalLayout();
-        dialogLayout.add(dialogTitle, productName, productPrice, productStock, productDescription, confirmButton);
+        dialogLayout.add(dialogTitle, productName, productCategory, productPrice, productStock, productDescription, confirmButton);
         dialogLayout.setSpacing(false);
         dialogLayout.setAlignItems(FlexComponent.Alignment.STRETCH);
 

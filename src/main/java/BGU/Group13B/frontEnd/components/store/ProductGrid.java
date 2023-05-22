@@ -17,7 +17,7 @@ public class ProductGrid extends Grid<ProductInfo> implements ResponseHandler {
     public ProductGrid(Collection<ProductInfo> products){
         setItems(products);
         this.products = new LinkedList<>(products);
-        addColumn(ProductInfo::name).setHeader("Name");
+        addColumn(ProductInfo::name).setHeader("Name").setWidth("200px").setFlexGrow(0);
         addColumn(ProductInfo::price).setHeader("Price");
         addColumn(ProductInfo::stockQuantity).setHeader("Stock");
         addColumn(ProductInfo::getRoundedScore).setHeader("Rating");
@@ -25,9 +25,10 @@ public class ProductGrid extends Grid<ProductInfo> implements ResponseHandler {
         //styling
         getStyle().set("margin", "10px");
         setAllRowsVisible(true);
-        setMaxWidth("960px");
+        setMaxWidth("1000px");
         addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
         addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS);
+        addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT);
 
         //actions
         addItemDoubleClickListener(e -> {
