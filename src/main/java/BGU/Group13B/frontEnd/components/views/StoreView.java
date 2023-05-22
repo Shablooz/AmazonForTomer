@@ -4,6 +4,7 @@ import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.User.UserPermissions;
 import BGU.Group13B.backend.storePackage.WorkerCard;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
+import BGU.Group13B.frontEnd.components.store.StoreProductsLayout;
 import BGU.Group13B.service.Response;
 import BGU.Group13B.service.Session;
 import BGU.Group13B.service.VoidResponse;
@@ -61,7 +62,6 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
     private HashMap<UserPermissions.StoreRole, List<WorkerCard>> rolesToWorkers;
     private HashMap<Integer, String> userIdToUsername;
     private List<ProductInfo> products;
-    private HashMap<String, List<ProductInfo>> categoriesToProducts;
     private String[] rolesToAdd = {"Owner", "Manager"};
     private List<String> allPermissions;
     private List<String> founderPermissions;
@@ -76,13 +76,8 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
     private ProgressBar scoreBar;
     private Div scoreLabel;
     private HorizontalLayout bodyLayout;
-    private Accordion categoriesAccordion;
-    private HashMap<String, Grid<ProductInfo>> categoriesToGrids;
-    private Button addProductButton;
     private VerticalLayout workersLayout;
     private HorizontalLayout workersHeaderLayout;
-    private VerticalLayout productsLayout;
-    private HorizontalLayout productsHeaderLayout;
     private Accordion rolesAccordion;
     private HashMap<String, MenuBar> rolesToAvatarGroupMenuBars;
     private Button addWorkerButton;
@@ -90,6 +85,8 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
     private Button deleteStoreButton;
     private HorizontalLayout bottomButtonsLayout;
     private Button storeMessagesButton;
+    private StoreProductsLayout storeProductsLayout;
+
 
 
 
@@ -120,17 +117,12 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
         scoreBar = new ProgressBar();
         scoreLabel = new Div();
         bodyLayout = new HorizontalLayout();
-        categoriesAccordion = new Accordion();
-        categoriesToGrids = new HashMap<>();
         workersLayout = new VerticalLayout();
         workersHeaderLayout = new HorizontalLayout();
-        productsLayout = new VerticalLayout();
-        productsHeaderLayout = new HorizontalLayout();
         rolesAccordion = new Accordion();
         rolesToAvatarGroupMenuBars = new HashMap<>();
         bottomButtonsLayout = new HorizontalLayout();
 
-        addProductButton = new Button(new Icon(VaadinIcon.PLUS));
         addWorkerButton = new Button(new Icon(VaadinIcon.PLUS));
         hideStoreButton = new Button("Hide Store");
         deleteStoreButton = new Button("Delete Store");
@@ -189,9 +181,9 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
 
 
     private void init_body(){
-        init_products_section();
+        storeProductsLayout = new StoreProductsLayout(userId, storeId, session, products);
         init_workers_section();
-        bodyLayout.add(productsLayout, workersLayout);
+        bodyLayout.add(storeProductsLayout, workersLayout);
         bodyLayout.setSizeFull();
         add(bodyLayout);
     }
@@ -208,44 +200,6 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
         bottomButtonsLayout.add(hideStoreButton, deleteStoreButton);
         bottomButtonsLayout.getStyle().set("margin-top", "auto");
         add(bottomButtonsLayout);
-    }
-
-    private void init_products_section(){
-        for(String category : categoriesToProducts.keySet()){
-            Grid<ProductInfo> grid = new Grid<>();
-            grid.setItems(categoriesToProducts.get(category));
-            grid.addColumn(ProductInfo::name).setHeader("Name");
-            grid.addColumn(ProductInfo::price).setHeader("Price");
-            grid.addColumn(ProductInfo::stockQuantity).setHeader("Stock");
-            grid.addColumn(p -> getRoundedScore(p.score())).setHeader("Rating");
-            categoriesToGrids.put(category, grid);
-
-            //styling
-            grid.getStyle().set("margin", "10px");
-            grid.setAllRowsVisible(true);
-            grid.setMaxWidth("960px");
-            grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
-            grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS);
-
-            //actions
-            grid.addItemDoubleClickListener(e -> {
-                ProductInfo productInfo = e.getItem();
-                navigate("product/" + productInfo.productId() + "/" + productInfo.storeId());
-            });
-        }
-
-        for(String category : categoriesToGrids.keySet()){
-            categoriesAccordion.add(category, categoriesToGrids.get(category));
-        }
-
-        addProductButton.addThemeVariants(ButtonVariant.LUMO_ICON);
-        addProductButton.addThemeVariants(ButtonVariant.LUMO_SMALL);
-        productsHeaderLayout.add(new H2("Products"), addProductButton);
-        productsHeaderLayout.setAlignItems(Alignment.CENTER);
-        productsLayout.add(productsHeaderLayout, categoriesAccordion);
-
-        //button action
-        addProductButton.addClickListener(e -> addProductDialog());
     }
 
     private void init_workers_section(){
@@ -321,51 +275,6 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
 
         dialog.add(dialogLayout);
         dialog.open();
-
-
-
-
-
-    }
-
-    private void addProductDialog(){
-        Dialog dialog = new Dialog();
-        dialog.setWidth("350px");
-        dialog.setHeight("550px");
-        dialog.setCloseOnEsc(true);
-        dialog.setCloseOnOutsideClick(true);
-
-        H2 dialogTitle = new H2("Add Product");
-        TextField productName = new TextField("Name");
-        TextField productCategory = new TextField("Category");
-        NumberField productPrice = new NumberField("Price");
-        IntegerField productStock = new IntegerField("Stock");
-        TextArea productDescription = new TextArea("Description");
-        productDescription.getStyle().set("max-height", "150px");
-        productDescription.getStyle().set("min-height", "150px");
-
-        productPrice.setValue(0.0);
-        productStock.setValue(0);
-        productPrice.setStepButtonsVisible(true);
-        productStock.setStepButtonsVisible(true);
-
-
-        Button confirmButton = new Button("Confirm");
-        confirmButton.addClickListener(e2 -> {
-            handleResponseAndRefresh(session.addProduct(userId, storeId, productName.getValue(), productCategory.getValue(),
-                    productPrice.getValue(), productStock.getValue(), productDescription.getValue()), "store/" + storeId);
-            dialog.close();
-        });
-
-
-        VerticalLayout dialogLayout = new VerticalLayout();
-        dialogLayout.add(dialogTitle, productName, productPrice, productStock, productDescription, confirmButton);
-        dialogLayout.setSpacing(false);
-        dialogLayout.setAlignItems(Alignment.STRETCH);
-
-        dialog.add(dialogLayout);
-        dialog.open();
-
     }
 
     private void addWorkerDialog(){
@@ -397,16 +306,6 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
 
     private void getData(){
 
-    }
-
-    private void init_categoriesToProducts(){
-        categoriesToProducts = new HashMap<>();
-        for(ProductInfo product : products){
-            if(!categoriesToProducts.containsKey(product.category())){
-                categoriesToProducts.put(product.category(), new LinkedList<>());
-            }
-            categoriesToProducts.get(product.category()).add(product);
-        }
     }
 
     private void init_rolesToWorkers(){
@@ -660,7 +559,6 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
     private void init_dataFields(){
         rolesToWorkers = new HashMap<>();
         userIdToUsername = new HashMap<>();
-        categoriesToProducts = new HashMap<>();
 
         //all permissions: [removeStoreDiscount, setStorePurchasePriceLowerBound, removeManager, removeProduct, setProductPurchasePriceLowerBound, addProduct, hideStore, setProductStockQuantity, setProductName, createAuctionForProduct, setStorePurchaseQuantityLowerBound, addManager, unhideStore, addStoreVisibleDiscount, getAuctionInfo, disallowPurchasePolicyConflicts, setProductPurchaseQuantityLowerBound, addStoreConditionalDiscount, setStorePurchasePriceBounds, setProductDescription, addProductVisibleDiscount, purchaseProposalSubmit, allowPurchasePolicyConflicts, setProductPurchasePriceUpperBound, purchaseProposalReject, removeProductDiscount, markAsCompleted, refreshMessages, auctionPurchase, getReadMessages, setProductPurchaseQuantityUpperBound, addOwner, setProductPurchaseQuantityBounds, getUnreadMessages, endAuctionForProduct, setProductPurchasePriceBounds, setStorePurchaseQuantityBounds, addStoreHiddenDiscount, addProductConditionalDiscount, removeOwner, setProductCategory, setStorePurchasePriceUpperBound, setStorePurchaseQuantityUpperBound, purchaseProposalApprove, addProductHiddenDiscount, getStoreWorkersInfo, setProductPrice, deleteStore]
         allPermissions = List.of("removeStoreDiscount", "setStorePurchasePriceLowerBound", "removeManager", "removeProduct",
@@ -761,7 +659,6 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
         products.add(new ProductInfo(-13, 0, storeInfo.storeName(),"beer", "drinks", 5.0, 140, "beer description", 3.8F));
         products.add(new ProductInfo(-14, 0, storeInfo.storeName(),"wine", "drinks", 6.0, 150, "wine description", 2.1F));
 
-        init_categoriesToProducts();
         init_rolesToWorkers();
     }
 

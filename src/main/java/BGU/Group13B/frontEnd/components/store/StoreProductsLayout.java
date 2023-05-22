@@ -46,8 +46,14 @@ public class StoreProductsLayout extends VerticalLayout implements ResponseHandl
     }
 
     public StoreProductsLayout(int userId, int storeId, Session session, Collection<ProductInfo> products){
-        this(userId, storeId, session);
+        super();
+        this.userId = userId;;
+        this.storeId = storeId;;
+        this.session = session;
+
+        setHeader();
         setProducts(products);
+        add(productsHeaderLayout, categoriesAccordion);
     }
 
     private void setHeader(){
@@ -92,11 +98,20 @@ public class StoreProductsLayout extends VerticalLayout implements ResponseHandl
         if(productId == null){
             return;
         }
-        notifySuccess("Product '" + name + "' added successfully");
         ProductInfo productInfo = handleResponse(session.getStoreProductInfo(userId, storeId, productId));
         if(productInfo == null){
             notifyInfo("Product '" + name + "' added successfully, but failed to retrieve product info\n" +
                     "Please refresh the page to see the new product");
+            return;
         }
+        if(!categoriesToProducts.containsKey(category)){
+            categoriesToProducts.put(category, new LinkedList<>());
+            ProductGrid productGrid = new ProductGrid(categoriesToProducts.get(category));
+            categoriesToGrids.put(category, productGrid);
+            categoriesAccordion.add(category, productGrid);
+        }
+        categoriesToProducts.get(category).add(productInfo);
+        categoriesToGrids.get(category).addProduct(productInfo);
+        notifySuccess("Product '" + name + "' added successfully");
     }
 }
