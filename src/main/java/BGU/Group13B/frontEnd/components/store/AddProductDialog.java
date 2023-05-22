@@ -4,6 +4,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.NumberField;
@@ -11,14 +12,12 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 
 public class AddProductDialog extends Dialog{
-    private final StoreProductsLayout storeProductsLayout;
 
     public AddProductDialog(StoreProductsLayout storeProductsLayout) {
         super();
-        this.storeProductsLayout = storeProductsLayout;
 
         setWidth("350px");
-        setHeight("550px");
+        setHeight("630px");
         setCloseOnEsc(true);
         setCloseOnOutsideClick(true);
 
@@ -39,9 +38,12 @@ public class AddProductDialog extends Dialog{
 
         Button confirmButton = new Button("Confirm");
         confirmButton.addClickListener(e2 -> {
-             storeProductsLayout.addProduct(productName.getValue(), productCategory.getValue(),
-                    productPrice.getValue(), productStock.getValue(), productDescription.getValue());
-            close();
+            if(validInputs(productName, productCategory, productPrice, productStock, productDescription)){
+                storeProductsLayout.addProduct(productName.getValue(), productCategory.getValue(),
+                        productPrice.getValue(), productStock.getValue(), productDescription.getValue());
+                close();
+            }
+
         });
 
 
@@ -50,7 +52,37 @@ public class AddProductDialog extends Dialog{
         dialogLayout.setSpacing(false);
         dialogLayout.setAlignItems(FlexComponent.Alignment.STRETCH);
 
+        dialogLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
         add(dialogLayout);
+    }
+
+    private boolean validInputs(TextField productName, TextField productCategory, NumberField productPrice, IntegerField productStock, TextArea productDescription) {
+        boolean flag = true;
+        if(productName.getValue().isEmpty()){
+            productName.setInvalid(true);
+            flag =  false;
+        }
+
+        if(productCategory.getValue().isEmpty()){
+            productCategory.setInvalid(true);
+            flag =  false;
+        }
+
+        if(productPrice.getValue() <= 0){
+            productPrice.setInvalid(true);
+            flag =  false;
+        }
+
+        if(productStock.getValue() < 0){
+            productStock.setInvalid(true);
+            flag =  false;
+        }
+
+        if(productDescription.getValue().isEmpty()){
+            productDescription.setInvalid(true);
+            flag =  false;
+        }
+        return flag;
     }
 
     public void openDialog(){
