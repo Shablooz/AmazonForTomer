@@ -1,4 +1,4 @@
-package BGU.Group13B.frontEnd.components.store;
+package BGU.Group13B.frontEnd.components.store.products;
 
 import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.frontEnd.ResponseHandler;

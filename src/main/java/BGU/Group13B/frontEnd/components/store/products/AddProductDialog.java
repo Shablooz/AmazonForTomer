@@ -1,10 +1,9 @@
-package BGU.Group13B.frontEnd.components.store;
+package BGU.Group13B.frontEnd.components.store.products;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.NumberField;
@@ -84,10 +83,5 @@ public class AddProductDialog extends Dialog{
         }
         return flag;
     }
-
-    public void openDialog(){
-        open();
-    }
-
 
 }

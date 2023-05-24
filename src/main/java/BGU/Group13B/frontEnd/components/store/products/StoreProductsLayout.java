@@ -1,20 +1,14 @@
-package BGU.Group13B.frontEnd.components.store;
+package BGU.Group13B.frontEnd.components.store.products;
 
 import BGU.Group13B.frontEnd.ResponseHandler;
-import BGU.Group13B.service.Response;
 import BGU.Group13B.service.Session;
 import BGU.Group13B.service.info.ProductInfo;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -58,7 +52,7 @@ public class StoreProductsLayout extends VerticalLayout implements ResponseHandl
 
     private void setHeader(){
         productsHeaderLayout = new HorizontalLayout();
-        addProductButton = new Button(new Icon(VaadinIcon.PLUS));;
+        addProductButton = new Button(new Icon(VaadinIcon.PLUS));
 
         addProductButton.addThemeVariants(ButtonVariant.LUMO_ICON);
         addProductButton.addThemeVariants(ButtonVariant.LUMO_SMALL);
