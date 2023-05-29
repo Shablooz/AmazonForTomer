@@ -1,5 +1,6 @@
 package BGU.Group13B.frontEnd;
 
+import BGU.Group13B.backend.User.security.TomerOfek;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.component.page.Push;
@@ -27,6 +28,10 @@ public class Application implements AppShellConfigurator {
     public static void main(String[] args) {
         //timer for deleting idle sessions
         //running the ui
+        TomerOfek tomerOfek = new TomerOfek();
+        TomerOfek tomerOfek_tomer_strikes_again = new TomerOfek(12,"ofakim");
+        TomerOfek gabi = new TomerOfek(50,"not_ofek");
+
         SpringApplication.run(Application.class, args);
         Timer timer = new Timer();
         timer.schedule(SessionToIdMapper.getInstance().kickExpired(), 5 * 60 * 1000, 5 * 60 * 1000);
