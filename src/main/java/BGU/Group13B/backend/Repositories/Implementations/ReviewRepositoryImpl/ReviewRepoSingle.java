@@ -50,6 +50,12 @@ public class ReviewRepoSingle implements IRepositoryReview {
     }
 
     @Override
+    public float getProductScoreUser(int storeId, int productId, int userId) {
+        implementations.putIfAbsent(Pair.of(storeId, productId),new ReviewRepositoryAsList());
+        return implementations.get(Pair.of(storeId, productId)).getProductScoreUser(storeId,productId,userId);
+    }
+
+    @Override
     public void addAndSetProductScore(int storeId, int productId, int userId, int score) {
         implementations.putIfAbsent(Pair.of(storeId, productId),new ReviewRepositoryAsList());
         implementations.get(Pair.of(storeId, productId)).addAndSetProductScore(storeId,productId,userId,score);

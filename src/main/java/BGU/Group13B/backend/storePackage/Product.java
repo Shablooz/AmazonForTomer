@@ -88,11 +88,15 @@ public class Product {
     public Review getReview(int userId){
         return repositoryReview.getReview(storeId,productId,userId);
     }
+
     public List<Review> getAllReviews(){
         return repositoryReview.getAllReviews(storeId,productId);
     }
     public float getProductScore(){
         return repositoryReview.getProductScore(storeId,productId);
+    }
+    public float getProductScoreUser(int userId){
+        return repositoryReview.getProductScoreUser(storeId,productId,userId);
     }
     public void addAndSetScore(int userId,int score){
         repositoryReview.addAndSetProductScore(storeId,productId,userId,score);

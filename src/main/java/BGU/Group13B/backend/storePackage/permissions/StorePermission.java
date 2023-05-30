@@ -219,6 +219,7 @@ public class StorePermission {
     }
 
     public List<Integer> getStoreOwners(){
+        System.out.println("HERE");
         return userToStoreRole.entrySet().stream()
                 .filter(entry -> entry.getValue() == StoreRole.OWNER)
                 .map(Map.Entry::getKey)

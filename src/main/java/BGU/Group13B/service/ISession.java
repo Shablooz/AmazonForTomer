@@ -428,6 +428,8 @@ public interface ISession {
 
     public Response<Float> getProductScore(int userId, int storeId, int productId);
 
+    Response<Float> getProductScoreUser(int userId, int storeId, int productId, int userIdTarget);
+
     /**
      * [#26]
      *

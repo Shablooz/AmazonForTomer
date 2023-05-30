@@ -19,9 +19,7 @@ import BGU.Group13B.service.info.StoreInfo;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 
@@ -69,15 +67,15 @@ public class Market {
     }
 
     public void addReview(String review, int storeId, int productId, int userId) throws NoPermissionException { //TODO:check get store impl
-        storeRepository.getStore(storeId).addReview(review, productId, userId);
+        storeRepository.getStore(storeId).addReview(review, userId,productId);
     }
 
     public void removeReview(int storeId, int productId, int userId) throws NoPermissionException {
-        storeRepository.getStore(storeId).removeReview(productId, userId);
+        storeRepository.getStore(storeId).removeReview(userId,productId);
     }
 
     public Review getReview(int storeId, int productId, int userId) throws NoPermissionException {
-        return storeRepository.getStore(storeId).getReview(productId, userId);
+        return storeRepository.getStore(storeId).getReview(userId,productId);
     }
 
     public List<Review> getAllReviews(int productId, int storeId) throws NoPermissionException {
@@ -85,7 +83,10 @@ public class Market {
     }
 
     public float getProductScore(int storeId, int productId, int userId) throws NoPermissionException {
-        return storeRepository.getStore(storeId).getProductScore(userId, productId);
+        return storeRepository.getStore(storeId).getProductScore(productId,userId );
+    }
+    public float getProductScoreUser(int storeId, int productId, int userId) throws NoPermissionException {
+        return storeRepository.getStore(storeId).getProductScoreUser(productId,userId );
     }
 
     public void addAndSetProductScore(int storeId, int productId, int userId, int score) throws NoPermissionException {
@@ -162,6 +163,16 @@ public class Market {
 
     public List<ProductInfo> searchProductByKeywords(String keywords) {
         return searcher.searchByKeywords(keywords);
+    }
+
+    public List<ProductInfo> search(String searchWords) {
+            List<ProductInfo> products = new LinkedList<>();
+            products.addAll(searchProductByKeywords(searchWords));
+            products.addAll(searchProductByCategory(searchWords));
+            products.addAll(searchProductByName(searchWords));
+            Set<ProductInfo> set = new HashSet<>(products.size());
+            products.removeIf(p -> !set.add(p));
+            return products;
     }
 
     public List<ProductInfo> filterByPriceRange(int minPrice, int maxPrice) {

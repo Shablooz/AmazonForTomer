@@ -208,12 +208,9 @@ public class Session implements ISession {
     @Override
     public Response<List<ProductInfo>> search(String searchWords) {
         try {
-            List<ProductInfo> products = new LinkedList<>();
-            products.addAll(market.searchProductByKeywords(searchWords));
-            products.addAll(market.searchProductByCategory(searchWords));
-            products.addAll(market.searchProductByName(searchWords));
-            return Response.success(products);
-        } catch (Exception e) {
+            return Response.success(market.search(searchWords));
+        }
+        catch (Exception e){
             return Response.exception(e);
         }
     }
@@ -486,11 +483,18 @@ public class Session implements ISession {
     @Override
     public Response<List<ReviewService>> getAllReviews(int userId, int storeId, int productId) {
         try {
-            List<Review> reviews = userRepositoryAsHashmap.getUser(userId).getAllReviews(storeId, productId, userId);
-            List<ReviewService> reviewServices = new ArrayList<>();
-            int i = 0;
-            for (Review review : reviews) {
-                reviewServices.add(new ReviewService(userRepositoryAsHashmap.getUser(userId).getUserName(), review.getReview()));
+            List<Review> reviews=userRepositoryAsHashmap.getUser(userId).getAllReviews(storeId, productId,userId);
+            List<ReviewService> reviewServices=new ArrayList<>();
+            int i=0;
+            for (Review review:reviews) {
+                Response<Float> scoreResponse = getProductScoreUser(userId, review.getStoreId(), review.getProductId(), review.getUserId());
+                String scoreString;
+                if(scoreResponse.didntSucceed()){
+                    scoreString="non";
+                }else{
+                    scoreString=scoreResponse.getData().toString();
+                }
+                reviewServices.add(new ReviewService(userRepositoryAsHashmap.getUser(review.getUserId()).getUserName(),review.getReview(),scoreString));
             }
             return Response.success(reviewServices);
         } catch (Exception e) {
@@ -502,6 +506,14 @@ public class Session implements ISession {
     public Response<Float> getProductScore(int userId, int storeId, int productId) {
         try {
             return Response.success(userRepositoryAsHashmap.getUser(userId).getProductScore(storeId, productId));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+    @Override
+    public Response<Float> getProductScoreUser(int userId, int storeId, int productId,int userIdTarget) {
+        try {
+            return Response.success(userRepositoryAsHashmap.getUser(userId).getProductScoreUser(userIdTarget,storeId, productId));
         } catch (Exception e) {
             return Response.exception(e);
         }

@@ -1,27 +1,36 @@
 package BGU.Group13B.frontEnd.components.views;
 
-import BGU.Group13B.frontEnd.components.DataProvider.ReviewDataProvider;
+import BGU.Group13B.backend.User.Message;
+import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.service.Response;
 import BGU.Group13B.service.Session;
+import BGU.Group13B.service.VoidResponse;
 import BGU.Group13B.service.entity.ReviewService;
 import BGU.Group13B.service.info.ProductInfo;
 import com.vaadin.flow.component.crud.BinderCrudEditor;
 import com.vaadin.flow.component.crud.Crud;
 import com.vaadin.flow.component.crud.CrudEditor;
+import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.router.BeforeEvent;
-import com.vaadin.flow.router.HasUrlParameter;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import com.vaadin.flow.component.button.Button;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -32,28 +41,29 @@ public class ProductView extends VerticalLayout implements HasUrlParameter<Strin
     private int productId;
     private int storeId;
     private Session session;
-    private TextField seller;
-    private TextField name;
-    private TextField category;
-    private NumberField price;
-    private NumberField stockQuantity;
-    private TextField description;
-    private NumberField score;
+    private HorizontalLayout seller;
+    private HorizontalLayout category;
+    private HorizontalLayout price;
+    private HorizontalLayout description;
+    private HorizontalLayout score;
+    private Button buyNow;
+    private Button addToCart;
+    private Button offerBid;
 
     private String USER_NAME_COL = "User Name";
     private String REVIEW_COL = "Review";
 
-
+    Grid<ReviewService> grid ;
     @Autowired
     public ProductView(Session session) {
         this.session=session;
-        price = new NumberField();
-        stockQuantity = new NumberField();
-        score = new NumberField();
+//        price = new NumberField();
+//        stockQuantity = new NumberField();
+//        score = new NumberField();
     }
 
     @Override
-    public void setParameter(BeforeEvent event, String parameters) {
+    public void setParameter(BeforeEvent event, @WildcardParameter String parameters) {
         String[] params = parameters.split("/");
         productId = Integer.parseInt(params[0]);
         storeId = Integer.parseInt(params[1]);
@@ -61,58 +71,158 @@ public class ProductView extends VerticalLayout implements HasUrlParameter<Strin
     }
     private void start(){
         ProductInfo info = session.getStoreProductInfo(userId,storeId,productId).getData(); //TODO: CHECK ON ERRORS
-        seller = new TextField(info.seller());
-        name = new TextField(info.name());
-        category = new TextField(info.category());
-        price.setValue(info.price());
-        stockQuantity.setValue((double) info.stockQuantity());
-        description = new TextField(info.description());
-        score.setValue((double) info.score());
+        seller = getIconLabel("Seller :  "+info.seller(),VaadinIcon.MALE);
+        category = getIconLabel("Category :  "+info.category(), VaadinIcon.TAGS);
+        price = getIconLabel("Price :  " + info.price(), VaadinIcon.CASH);
+        description = getIconLabel("Description :  " + info.description(), VaadinIcon.INFO_CIRCLE);
+        score = getIconLabel("Score :  "+ info.score(), VaadinIcon.STAR);
+        add(new H1(info.name()));
+        setAlignItems(Alignment.CENTER);
+        VerticalLayout verticalLayout = new VerticalLayout();
+        verticalLayout.add(seller, category, price, description, score);
+        verticalLayout.getStyle().set("background-color", "#171C41");
+        verticalLayout.setWidth("50%");
+        add(verticalLayout);
+        buyNow = new com.vaadin.flow.component.button.Button("Buy Now");
+        buyNow.setIcon(VaadinIcon.CREDIT_CARD.create());
+        addToCart = new Button("Add To Cart");
+        addToCart.setIcon(VaadinIcon.CART_O.create());
+        offerBid = new Button("Offer Bid");
+        offerBid.setIcon(VaadinIcon.CASH.create());
+        HorizontalLayout Buttons = new HorizontalLayout();
+        Buttons.add(buyNow, addToCart, offerBid);
+        add(Buttons);
+        Button reviewButton = reviewButton();
+        Buttons.add(reviewButton);
+        grid = reviewGridCreator();
+        add(grid);
+
     }
 
-    private Crud<ReviewService> createCrudeReview(){
-        Crud<ReviewService> crud = new Crud<>(ReviewService.class, createEditor());
-
-        setupGrid(crud);
-        setupDataProvider(crud);
-
-        return crud;
-    }
-    private CrudEditor<ReviewService> createEditor() {
-        TextField userName = new TextField("User Name");
-        TextField review = new TextField("Review");
-        FormLayout form = new FormLayout(userName, review);
-
-        Binder<ReviewService> binder = new Binder<>(ReviewService.class);
-        binder.forField(userName).asRequired().bind(ReviewService::getUserName, ReviewService::setUserName);
-        binder.forField(review).asRequired().bind(ReviewService::getReview, ReviewService::setReview);
-
-        return new BinderCrudEditor<>(binder, form);
+    private HorizontalLayout getIconLabel(String text, VaadinIcon icon){
+        HorizontalLayout horizontalLayout = new HorizontalLayout();
+        Label label = new Label(text);
+        label.getStyle().set("font-size", "20px");
+        horizontalLayout.add(icon.create(), label);
+        return horizontalLayout;
     }
 
-    private void setupGrid(Crud<ReviewService> crud) {
-        Grid<ReviewService> grid = crud.getGrid();
+    private Button reviewButton() {
+        Button messageButton = new Button("Review Manager");
+        messageButton.setIcon(VaadinIcon.COMMENTS_O.create());
+        Dialog myDialog = new Dialog();
+        reviewDialogContent(myDialog);
 
-        // Only show these columns (all columns shown by default):
-        List<String> visibleColumns = Arrays.asList(USER_NAME_COL,REVIEW_COL);
-        grid.getColumns().forEach(column -> {
-            String key = column.getKey();
-            if (!visibleColumns.contains(key)) {
-                grid.removeColumn(column);
+        messageButton.addClickListener(event -> myDialog.open());
+        return messageButton;
+    }
+    private void reviewDialogContent(Dialog currentDialog)
+    {
+        currentDialog.removeAll();
+        currentDialog.getFooter().removeAll();
+        currentDialog.getHeader().removeAll();
+
+        currentDialog.setHeaderTitle("Review Manager");
+
+        Button closeButton = new Button(new Icon("lumo", "cross"),
+                (e) -> currentDialog.close());
+        currentDialog.getHeader().add(closeButton);
+
+        Button addReview = new Button("Add Review");
+        Button deleteReview = new Button("Delete Review");
+        TextArea review = new TextArea("Review");
+        Select<String> scoreSelect = new Select<>();
+
+
+        currentDialog.add(review,scoreSelect);
+        currentDialog.getFooter().add(addReview,deleteReview);
+
+
+
+        Response<Review> reviewResponse = session.getReview(userId,storeId,productId);
+        String message;
+
+        Response<Float> scoreResponse = session.getProductScoreUser(userId,storeId,productId,userId);
+        String scoreMessage;
+
+        scoreSelect.setLabel("Score");
+        if(scoreResponse.didntSucceed()){
+            currentDialog.add(scoreSelect);
+        }else {
+            scoreMessage = scoreResponse.getData().toString();
+            scoreSelect.setReadOnly(true);
+            scoreSelect.setValue(scoreMessage);
+            currentDialog.add(scoreSelect);
+        }
+
+        if(reviewResponse.didntSucceed()){
+            message = reviewResponse.getMessage();
+            review.setReadOnly(false);
+        }else {
+            message = reviewResponse.getData().getReview();
+            review.setReadOnly(true);
+        }
+
+        review.setLabel("The message:");
+        review.setWidthFull();
+        review.setMinWidth("300px");
+        review.setValue(message);
+        scoreSelect.setLabel("Score");
+        scoreSelect.setItems("0", "1", "2", "3", "4","5");
+
+        addReview.addClickListener(event -> {
+            Response<VoidResponse> response = session.addReview(userId,review.getValue(),storeId,productId);
+            if(response.didntSucceed()){
+                Notification.show(response.getMessage());
+            }else {
+                Notification.show("Review added successfully");
+                session.addAndSetProductScore(userId,storeId,productId,Integer.parseInt(scoreSelect.getValue()));
+                refreshGrid();
             }
+
+            reviewDialogContent(currentDialog);
+        });
+        deleteReview.addClickListener(event -> {
+            Response<VoidResponse> response = session.removeReview(userId,storeId,productId);
+
+            if(response.didntSucceed()){
+                Notification.show(response.getMessage());
+            }else {
+                Notification.show("Review deleted successfully");
+                session.removeProductScore(userId,storeId,productId);
+                refreshGrid();
+            }
+
+            reviewDialogContent(currentDialog);
         });
 
-        // Reorder the columns (alphabetical by default)
-        grid.setColumnOrder(grid.getColumnByKey(USER_NAME_COL),
-                grid.getColumnByKey(REVIEW_COL));
+
     }
 
-    private void setupDataProvider(Crud<ReviewService> crud) {
-        ReviewDataProvider dataProvider = new ReviewDataProvider(session,storeId,productId);
-        crud.setDataProvider(dataProvider);
-        crud.addSaveListener(
-                saveEvent -> session.addReview(userId,saveEvent.getItem().getReview(),storeId,productId));
+
+
+    public Grid<ReviewService> reviewGridCreator()
+    {
+        Grid<ReviewService> grid = new Grid<>();
+        grid.addColumn(ReviewService::getUserName).setHeader("User Name");
+        grid.addColumn(ReviewService::getReview).setHeader("Review");
+        grid.addColumn(ReviewService::getScore).setHeader("Score");
+        List<ReviewService> reviews = session.getAllReviews(userId,storeId,productId).getData();
+        grid.setItems(reviews);
+
+
+        return grid;
     }
+
+
+    public void refreshGrid()
+    {
+        List<ReviewService> reviews = session.getAllReviews(userId,storeId,productId).getData();
+        grid.setItems(reviews);
+        //maybe grid.getDataProvider().refreshAll();
+    }
+
+
 
 
 }

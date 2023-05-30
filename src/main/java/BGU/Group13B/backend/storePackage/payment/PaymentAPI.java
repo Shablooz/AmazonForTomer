@@ -12,6 +12,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
 public class PaymentAPI implements PaymentAdapter, DeliveryAdapter {
@@ -82,7 +84,20 @@ public class PaymentAPI implements PaymentAdapter, DeliveryAdapter {
         out.writeBytes(postBody);
         out.flush();
         out.close();
+        AtomicBoolean timeout = new AtomicBoolean(false);
+        Timer timer = new Timer();
+        timer.schedule(new java.util.TimerTask() {
+            @Override
+            public void run() {
+                con.disconnect();
+                timeout.set(true);
+            }
+        }, 5000);
         int responseCode = con.getResponseCode();
+        if (timeout.get()) {
+            LOGGER_ERROR.severe("Connection timed out");
+            return "Connection timed out";
+        }
         LOGGER_INFO.info("Response code: " + responseCode);
         BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
         String inputLine;
