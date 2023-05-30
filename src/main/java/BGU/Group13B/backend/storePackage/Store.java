@@ -15,6 +15,7 @@ import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.AddToUserCart;
 import BGU.Group13B.service.info.StoreInfo;
 
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -81,7 +82,7 @@ public class Store {
                  DeliveryAdapter deliveryAdapter, PaymentAdapter paymentAdapter, AlertManager alertManager, StorePermission storePermission,
                  AddToUserCart addToUserCart, IBIDRepository bidRepository,
                  StoreMessageRepositoryNonPersist storeMessagesRepository, IAuctionRepository auctionRepository, IPurchaseHistoryRepository purchaseHistoryRepository,
-                 IStoreScore storeScore, IStorePurchasePolicyRepository storePurchasePolicyRepository, IProductPurchasePolicyRepository productPurchasePolicyRepository) {
+                 IStoreScore storeScore) {
         this.productRepository = productRepository;
         this.deliveryAdapter = deliveryAdapter;
         this.paymentAdapter = paymentAdapter;
@@ -300,12 +301,16 @@ public class Store {
         return this.productRepository.addProduct(storeId, productName, category, price, stockQuantity, description).getProductId();
     }
 
-    public double calculatePriceOfBasket(double totalAmountBeforeStoreDiscountPolicy,
-                                         ConcurrentLinkedQueue<BasketProduct> successfulProducts,
-                                         String storeCoupon) throws PurchaseExceedsPolicyException {
+    public double calculatePriceOfBasket(BasketInfo basketInfo, UserInfo userInfo, List<String> coupons) throws PurchaseExceedsPolicyException {
         if (hidden)
             throw new PurchaseExceedsPolicyException("This Store is hidden");
-        int quantity = successfulProducts.stream().mapToInt(BasketProduct::getQuantity).sum();
+
+        purchasePolicy.satisfied(basketInfo, userInfo);
+
+        return discountPolicy.calculatePriceOfBasket(basketInfo, userInfo, coupons); //to return
+        //throw new NotImplementedException("add purchase policy checker");
+
+        /*int quantity = successfulProducts.stream().mapToInt(BasketProduct::getQuantity).sum();
         double finalPrice = oldDiscountPolicy.applyAllDiscounts(totalAmountBeforeStoreDiscountPolicy, successfulProducts, storeCoupon);
         getPurchasePolicy().checkPolicy(quantity, finalPrice);
         return finalPrice;*/
@@ -502,6 +507,7 @@ public class Store {
         synchronized (product) {
             this.productRepository.removeStoreProduct(productId, storeId);
             product.delete();
+            discountPolicy.removeProductDiscount(productId);
         }
     }
 
@@ -620,6 +626,16 @@ public class Store {
     /**
      * <H1>Conditions</H1>
      */
+
+    @DefaultFounderFunctionality
+    @DefaultOwnerFunctionality
+    public void setPurchasePolicyCondition(int userId, int conditionId) throws NoPermissionException{
+        if (!this.storePermission.checkPermission(userId, hidden))
+            throw new NoPermissionException("User " + userId + " has no permission to set the purchase policy in the store : " + this.storeId);
+
+        purchasePolicy.setCondition(conditionId);
+    }
+
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
     public int addORCondition(int userId, int condition1, int condition2) throws NoPermissionException {
@@ -862,7 +878,7 @@ public class Store {
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add category discount in the store: " + this.storeId);
 
-        return addCategoryDiscount(conditionId, discountPercentage, expirationDate, category, coupon);
+        return discountPolicy.addCategoryDiscount(conditionId, discountPercentage, expirationDate, category, coupon);
     }
 
     @DefaultFounderFunctionality
@@ -958,6 +974,39 @@ public class Store {
 
     /**
      * <H1>Discount Accumulation Tree</H1>
-     * */
+     */
+    @DefaultFounderFunctionality
+    @DefaultOwnerFunctionality
+    public void addDiscountAsRoot(int userId, int discountId) throws NoPermissionException {
+        if (!this.storePermission.checkPermission(userId, hidden))
+            throw new NoPermissionException("User " + userId + " has no permission to add discount as root in the store: " + this.storeId);
+        discountPolicy.addDiscountAsRoot(discountId);
+    }
+
+    @DefaultFounderFunctionality
+    @DefaultOwnerFunctionality
+    public void addDiscountToXORRoot(int userId, int discountId) throws NoPermissionException {
+        if (!this.storePermission.checkPermission(userId, hidden))
+            throw new NoPermissionException("User " + userId + " has no permission to add discount to XOR root in the store: " + this.storeId);
+        discountPolicy.addDiscountToXORRoot(discountId);
+    }
+
+    @DefaultFounderFunctionality
+    @DefaultOwnerFunctionality
+    public void addDiscountToMAXRoot(int userId, int discountId) throws NoPermissionException {
+        if (!this.storePermission.checkPermission(userId, hidden))
+            throw new NoPermissionException("User " + userId + " has no permission to add discount to MAX root in the store: " + this.storeId);
+        discountPolicy.addDiscountToMAXRoot(discountId);
+
+    }
+
+    @DefaultFounderFunctionality
+    @DefaultOwnerFunctionality
+    public void addDiscountToADDRoot(int userId, int discountId) throws NoPermissionException {
+        if (!this.storePermission.checkPermission(userId, hidden))
+            throw new NoPermissionException("User " + userId + " has no permission to add discount to ADD root in the store: " + this.storeId);
+        discountPolicy.addDiscountToADDRoot(discountId);
+
+    }
 
 }

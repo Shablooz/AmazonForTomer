@@ -11,9 +11,14 @@ public class OR extends LogicalCondition{
         super(conditionId, operand1, operand2);
     }
 
-    public boolean satisfied(BasketInfo basketInfo, UserInfo user){
-        return operand1.satisfied(basketInfo, user) ||
-                operand2.satisfied(basketInfo, user);
+    public void satisfied(BasketInfo basketInfo, UserInfo userinfo) throws PurchaseExceedsPolicyException {
+        try{
+            operand1.satisfied(basketInfo, userinfo);
+        }
+        catch (PurchaseExceedsPolicyException e){
+            operand2.satisfied(basketInfo, userinfo);
+        }
+
     }
 
     @Override

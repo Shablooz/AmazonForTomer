@@ -1,9 +1,22 @@
 package BGU.Group13B.backend.storePackage.newDiscoutns;
 
+import BGU.Group13B.backend.Repositories.Interfaces.IConditionRepository;
+import BGU.Group13B.backend.Repositories.Interfaces.IPurchasePolicyRootsRepository;
+import BGU.Group13B.backend.User.Basket;
+import BGU.Group13B.backend.User.BasketInfo;
+import BGU.Group13B.backend.User.PurchaseFailedException;
+import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
+import BGU.Group13B.backend.storePackage.permissions.DefaultFounderFunctionality;
+import BGU.Group13B.backend.storePackage.permissions.DefaultOwnerFunctionality;
+import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
+import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
+import BGU.Group13B.service.SingletonCollection;
+
 
 public class PurchasePolicy {
-    private final Condition condition;
+    private Condition condition;
+    private final int storeId;
 
     private final IConditionRepository conditionRepository;
     private final IPurchasePolicyRootsRepository purchasePolicyRootsRepository;

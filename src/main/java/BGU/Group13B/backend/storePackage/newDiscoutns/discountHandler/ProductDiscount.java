@@ -41,7 +41,7 @@ public class ProductDiscount extends StoreDiscount {
     public ProductDiscountMap computeProductDiscountMap(BasketInfo basketInfo, UserInfo userInfo, List<String> coupons) {
         ProductDiscountMap productDiscountMap = new ProductDiscountMap(basketInfo);
         for (BasketProduct product : basketInfo.basketProducts()) {
-            productDiscountMap.setProductDiscount(product.getProductId(), getProductDiscountPercentage(basketInfo, userInfo, productId, coupons));
+            productDiscountMap.setProductDiscount(product.getProductId(), getProductDiscountPercentage(basketInfo, userInfo, product.getProductId(), coupons));
         }
 
         return productDiscountMap;

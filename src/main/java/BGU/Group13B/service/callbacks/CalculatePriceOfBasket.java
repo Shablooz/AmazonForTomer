@@ -1,5 +1,6 @@
 package BGU.Group13B.service.callbacks;
 
+import BGU.Group13B.backend.User.BasketInfo;
 import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;

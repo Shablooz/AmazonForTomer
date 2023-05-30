@@ -61,10 +61,6 @@ public class Product {
         this.price = price;
     }
 
-    public PurchasePolicy getPurchasePolicy() {
-        return productPurchasePolicy.getPurchasePolicy(storeId, productId);
-    }
-
     public boolean tryDecreaseQuantity(int quantity) {
         if (this.stockQuantity < quantity)
             return false;
@@ -74,13 +70,6 @@ public class Product {
 
     public void increaseQuantity(int quantity) {
         this.stockQuantity += quantity;
-    }
-
-    public synchronized double calculatePrice(int productQuantity, String couponCodes) throws PurchaseExceedsPolicyException {
-        double finalPrice = discountPolicy.applyAllDiscounts(price, productQuantity, couponCodes);
-        finalPrice *= productQuantity; //added by shaun in the night of 20/04/2023 and changed by Lior in 21/04/20223
-        getPurchasePolicy().checkPolicy(productQuantity, finalPrice);
-        return finalPrice ;
     }
 
     public double getPrice() {
@@ -135,8 +124,6 @@ public class Product {
 
     public synchronized void delete() {
         repositoryReview.removeProductData(storeId,productId);
-        productPurchasePolicy.removeAllProductPurchasePolicies(storeId,productId);
-        discountPolicy.removeAllDiscounts();
         this.deleted = true;
     }
 

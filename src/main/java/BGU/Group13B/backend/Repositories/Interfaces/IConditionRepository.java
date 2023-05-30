@@ -11,6 +11,12 @@ public interface IConditionRepository {
     int addXORCondition(int condition1, int condition2);
     int addIMPLYCondition(int condition1, int condition2);
 
+    int addStorePriceCondition(double lowerBound, double upperBound);
+    int addStorePriceCondition(double lowerBound);
+
+    int addStoreQuantityCondition(int lowerBound, int upperBound);
+    int addStoreQuantityCondition(int lowerBound);
+
     int addCategoryPriceCondition(String category, double lowerBound, double upperBound);
     int addCategoryPriceCondition(String category, double lowerBound);
 

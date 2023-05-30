@@ -405,7 +405,7 @@ public class User {
     public Pair<Double, List<BasketProduct>> startPurchaseBasketTransaction(List<String> coupons) throws PurchaseFailedException, NoPermissionException {
         if (isRegistered() && !isLoggedIn)
             throw new NoPermissionException("Only logged in users can purchase cart");
-        return cart.startPurchaseBasketTransaction(productsCoupons, storeCoupon);
+        return cart.startPurchaseBasketTransaction(new UserInfo(LocalDate.now().minusYears(25)/*this.dateOfBirth*/), coupons);//fixme
     }
 
 

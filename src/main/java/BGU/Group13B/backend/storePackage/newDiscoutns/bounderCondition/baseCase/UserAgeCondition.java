@@ -4,6 +4,7 @@ import BGU.Group13B.backend.User.BasketInfo;
 import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.Bounder;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
+import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 
 import java.time.LocalDate;
 
@@ -24,9 +25,10 @@ public class UserAgeCondition extends Condition {
     }
 
     @Override
-    public boolean satisfied(BasketInfo basketInfo, UserInfo user) {
+    public void satisfied(BasketInfo basketInfo, UserInfo user) throws PurchaseExceedsPolicyException {
         int userAge = user.dateOfBirth().until(LocalDate.now()).getYears();
-        return ageBounder.inBounds(userAge);
+        if(!ageBounder.inBounds(userAge))
+            throw new PurchaseExceedsPolicyException("user age must be " + ageBounder);
     }
 
     @Override

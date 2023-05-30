@@ -122,7 +122,7 @@ public class Session implements ISession {
     @Override
     public Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, List<String> coupons) {
         try {
-            var priceSuccessfulItems =  userRepository.getUser(userId).startPurchaseBasketTransaction(productsCoupons, storeCoupon);
+            var priceSuccessfulItems = userRepository.getUser(userId).startPurchaseBasketTransaction(coupons);
             return new Pair<>(priceSuccessfulItems.getFirst(),
                     priceSuccessfulItems.getSecond().stream().map(ServiceBasketProduct::new).collect(Collectors.toList()));
         } catch (PurchaseFailedException | NoPermissionException e) {

@@ -22,9 +22,7 @@ class IStoreRepositoryTest {
 
     @AfterEach
     void tearDown() {
-        storeRepository.reset();
-        SingletonCollection.getStorePurchasePolicyRepository().reset();
-        SingletonCollection.getStorePermissionRepository().reset();
+        SingletonCollection.reset_system();
     }
 
     @Test

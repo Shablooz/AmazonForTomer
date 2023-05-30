@@ -28,7 +28,7 @@ public class ProductDiscountMap {
     public void computeAddDiscount(ProductDiscountMap other){
         //assumes the other has the same key set
         for(int productId : productDiscountMap.keySet()){
-            productDiscountMap.put(productId, Math.max(productDiscountMap.get(productId) + other.productDiscountMap.get(productId), 1.0));
+            productDiscountMap.put(productId, Math.min(productDiscountMap.get(productId) + other.productDiscountMap.get(productId), 1.0));
         }
     }
 

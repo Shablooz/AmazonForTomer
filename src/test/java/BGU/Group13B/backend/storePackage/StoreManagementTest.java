@@ -88,7 +88,6 @@ public class StoreManagementTest {
         Thread[] threads = new Thread[numOfThreads];
         int[] productIds = new int[numOfThreads];
         Product[] products = new Product[numOfThreads];
-        PurchasePolicy[] purchasePolicies = new PurchasePolicy[numOfThreads];
 
         for (int i = 0; i < numOfThreads; i++) {
             int finalI = i;
@@ -98,9 +97,7 @@ public class StoreManagementTest {
                     productIds[finalI] = productId;
 
                     Product result = productRepository.getStoreProductById(productId, storeId);
-                    PurchasePolicy purchasePolicy = productPurchasePolicyRepository.getPurchasePolicy(storeId, productId);
                     products[finalI] = result;
-                    purchasePolicies[finalI] = purchasePolicy;
                 }
                 catch (Exception e){
                     System.out.println("Exception in thread " + finalI + ": " + e.getMessage());
@@ -136,15 +133,6 @@ public class StoreManagementTest {
             assertEquals(price, products[i].getPrice());
             assertEquals(stockQuantity, products[i].getStockQuantity());
             assertEquals(description, products[i].getDescription());
-        }
-
-        // check that all the purchase policies are correct
-        for (int i = 0; i < numOfThreads; i++) {
-            assertEquals(productIds[i], purchasePolicies[i].getParentId());
-            assertEquals(0, purchasePolicies[i].getPriceLowerBound());
-            assertEquals(-1, purchasePolicies[i].getPriceUpperBound());
-            assertEquals(0, purchasePolicies[i].getQuantityLowerBound());
-            assertEquals(-1, purchasePolicies[i].getQuantityUpperBound());
         }
     }
 

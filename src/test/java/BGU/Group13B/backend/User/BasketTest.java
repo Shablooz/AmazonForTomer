@@ -4,6 +4,7 @@ import BGU.Group13B.backend.Repositories.Interfaces.IBasketProductRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductHistoryRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
 import BGU.Group13B.backend.storePackage.Market;
+import BGU.Group13B.backend.storePackage.Store;
 import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
@@ -44,9 +45,11 @@ class BasketTest {
     private int productId3;
     private int productId4;
 
+    private Store store;
+
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws NoPermissionException {
 
         /*Mockito.when(SingletonCollection.getProductRepository()).
                 thenReturn(Mockito.mock(IProductRepository.class));*/ //remember
@@ -59,8 +62,13 @@ class BasketTest {
         userId = SingletonCollection.getUserRepository().getNewUserId();
         SingletonCollection.getUserRepository().addUser(userId, new User(userId));
         storeId = SingletonCollection.getStoreRepository().addStore(userId, "store1", "category1");
-        SingletonCollection.getStorePurchasePolicyRepository().getPurchasePolicy(storeId).setPriceBounds(priceLowerBound, priceUpperBound);
-        SingletonCollection.getStorePurchasePolicyRepository().getPurchasePolicy(storeId).setQuantityBounds(quantityLowerBound, quantityUpperBound);
+        store = SingletonCollection.getStoreRepository().getStore(storeId);
+        int c1 = this.store.addStorePriceCondition(userId, priceLowerBound, priceUpperBound);
+        int c2 = this.store.addStoreQuantityCondition(userId, quantityLowerBound, quantityUpperBound);
+        int c3 = this.store.addANDCondition(userId, c1, c2);
+        this.store.setPurchasePolicyCondition(userId, c3);
+        //SingletonCollection.getStorePurchasePolicyRepository().getPurchasePolicy(storeId).setPriceBounds(priceLowerBound, priceUpperBound);
+        //SingletonCollection.getStorePurchasePolicyRepository().getPurchasePolicy(storeId).setQuantityBounds(quantityLowerBound, quantityUpperBound);
 
         initProducts();
         //total price before 25.0
@@ -135,8 +143,8 @@ class BasketTest {
         SingletonCollection.getBasketRepository().addUserBasket(basket2);
         SingletonCollection.getBasketRepository().addUserBasket(basket3);
         int productId3 = productRepository.addProduct(storeId, "product3", "category3", 15.0, 1, "eyal was still here").getProductId();
-        basketProductRepository.addNewProductToBasket(productId3, storeId, userId3);//adding product 1 to basket
-        basketProductRepository.addNewProductToBasket(productId3, storeId, userId2);//adding product 1 to basket2
+        basketProductRepository.addNewProductToBasket(productId3, storeId, userId3);//adding product3 to basket
+        basketProductRepository.addNewProductToBasket(productId3, storeId, userId2);//adding product3 to basket2
         Thread thread1 = new Thread(() -> {
             try {
                 if (Math.random() > 0.5)
@@ -160,7 +168,7 @@ class BasketTest {
 
                 pricePayed2.set(basket2.purchaseBasket("", "", "", "", "", "", new HashMap<>(), ""));
             } catch (PurchaseFailedException e) {
-                Assertions.assertEquals("purchase quantity exceeds policy. must be in [1, 10]", e.getMessage());
+                Assertions.assertEquals("total price must be 2.0-100.0", e.getMessage());
 
             } catch (InterruptedException e) {
                 Assertions.fail(e);
@@ -274,7 +282,7 @@ class BasketTest {
             deliveryBehaviour(true);
             basketProductRepository.changeProductQuantity(productId1, storeId, userId, 3);
             double price = basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), "");
-            Assertions.assertEquals(15 * 0.9 * 0.8, price);
+            Assertions.assertEquals(10.5, price);
             BasketProduct failedProduct = basket.getFailedProducts().peek();
             BasketProduct successfulProduct = basket.getSuccessfulProductsList().peek();
             if (failedProduct == null)
@@ -338,6 +346,8 @@ class BasketTest {
     @Test
     void purchaseBasketSimpleTest_StorePolicyMinQuantityFail() {
         try {
+            int c = store.addStoreQuantityCondition(userId, quantityLowerBound, quantityUpperBound);
+            store.setPurchasePolicyCondition(userId, c);
             payBehaviour(true);
             deliveryBehaviour(true);
             basketProductRepository.removeBasketProducts(storeId, userId);
@@ -345,7 +355,7 @@ class BasketTest {
             basketProductRepository.changeProductQuantity(productId3, storeId, userId, 0);
             basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), "");
         } catch (PurchaseFailedException e) {
-            Assertions.assertEquals("purchase quantity exceeds policy. must be in [1, 10]", e.getMessage());
+            Assertions.assertEquals("total quantity must be 1-10", e.getMessage());
         } catch (Exception e) {
             Assertions.fail(e.getMessage());
         }

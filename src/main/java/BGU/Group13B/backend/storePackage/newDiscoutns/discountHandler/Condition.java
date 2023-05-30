@@ -12,6 +12,6 @@ public abstract class Condition {
         this.conditionId = conditionId;
     }
 
-    public abstract boolean satisfied(BasketInfo basketInfo, UserInfo user);
+    public abstract void satisfied(BasketInfo basketInfo, UserInfo user) throws PurchaseExceedsPolicyException;
 
 }

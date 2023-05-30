@@ -12,9 +12,18 @@ public class IMPLY extends LogicalCondition{
         super(conditionId, operand1, operand2);
     }
 
-    public boolean satisfied(BasketInfo basketInfo, UserInfo user){
-        return !operand1.satisfied(basketInfo, user) ||
-                operand2.satisfied(basketInfo, user);
+    public void satisfied(BasketInfo basketInfo, UserInfo user) throws PurchaseExceedsPolicyException {
+        boolean error = false;
+        try{
+            operand1.satisfied(basketInfo, user);
+            error = true;
+            operand2.satisfied(basketInfo, user);
+        }
+        catch (PurchaseExceedsPolicyException e){
+            if(error)
+                throw new PurchaseExceedsPolicyException("condition " + operand2 + " must be satisfied");
+        }
+
     }
 
     @Override

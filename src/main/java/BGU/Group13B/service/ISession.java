@@ -8,12 +8,16 @@ import BGU.Group13B.backend.User.PurchaseHistory;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.backend.storePackage.WorkerCard;
+import BGU.Group13B.backend.storePackage.newDiscoutns.DiscountInfo;
+import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.StoreDiscount;
+import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.service.entity.ReviewService;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
 import BGU.Group13B.service.entity.ServiceProduct;
 import BGU.Group13B.service.info.StoreInfo;
 import BGU.Group13B.service.info.ProductInfo;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import java.util.HashMap;
@@ -783,8 +787,7 @@ public interface ISession {
     Response<VoidResponse> fetchMessages(int userId);
 
     int getStoreFounder(int storeId);
-    Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                                                            String/*store coupons*/ storeCoupon) throws PurchaseFailedException;
+    Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, List<String> coupons) throws PurchaseFailedException;
 
     /**
      * #43
@@ -849,4 +852,122 @@ public interface ISession {
      *               as an owner/founder you can get info about the users working in the store
      */
     List<WorkerCard> getStoreWorkersInfo(int userId, int storeId);
+
+    /**
+     * <H1>Conditions</H1>
+     */
+    Response<VoidResponse> setPurchasePolicyCondition(int storeId, int userId, int conditionId);
+
+
+    Response<Integer> addORCondition(int storeId, int userId, int condition1, int condition2);
+
+
+    Response<Integer> addANDCondition(int storeId, int userId, int condition1, int condition2);
+
+
+    Response<Integer> addXORCondition(int storeId, int userId, int condition1, int condition2);
+
+
+    Response<Integer> addIMPLYCondition(int storeId, int userId, int condition1, int condition2);
+
+    Response<Integer> addStorePriceCondition(int storeId, int userId, double lowerBound, double upperBound);
+
+    Response<Integer> addStorePriceCondition(int storeId, int userId, double lowerBound);
+    Response<Integer> addStoreQuantityCondition(int storeId, int userId, int lowerBound, int upperBound);
+
+    Response<Integer> addStoreQuantityCondition(int storeId, int userId, int lowerBound);
+    Response<Integer> addCategoryPriceCondition(int storeId, int userId, String category, double lowerBound, double upperBound) ;
+
+
+    Response<Integer> addCategoryPriceCondition(int storeId, int userId, String category, double lowerBound) ;
+
+
+    Response<Integer> addCategoryQuantityCondition(int storeId, int userId, String category, int lowerBound, int upperBound) ;
+
+
+    Response<Integer> addCategoryQuantityCondition(int storeId, int userId, String category, int lowerBound)  ;
+
+
+    Response<Integer> addDateCondition(int storeId, int userId, LocalDateTime lowerBound, LocalDateTime upperBound) ;
+
+    Response<Integer> addDateCondition(int storeId, int userId, LocalDateTime lowerBound) ;
+
+
+    Response<Integer> addProductPriceCondition(int storeId, int userId, int productId, double lowerBound, double upperBound) ;
+
+
+    Response<Integer> addProductPriceCondition(int storeId, int userId, int productId, double lowerBound) ;
+
+
+    Response<Integer> addProductQuantityCondition(int storeId, int userId, int productId, int lowerBound, int upperBound) ;
+
+    Response<Integer> addProductQuantityCondition(int storeId, int userId, int productId, int lowerBound) ;
+
+    Response<Integer> addTimeCondition(int storeId, int userId, LocalDateTime lowerBound, LocalDateTime upperBound)  ;
+
+
+    Response<Integer> addTimeCondition(int storeId, int userId, LocalDateTime lowerBound)  ;
+
+
+    Response<Integer> addUserAgeCondition(int storeId, int userId, int lowerBound, int upperBound)  ;
+
+    Response<Integer> addUserAgeCondition(int storeId, int userId, int lowerBound)  ;
+    /**
+     * <H1>Discounts</H1>
+     */
+
+    Response<Integer> addStoreDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, String coupon) ;
+
+
+    Response<Integer> addStoreDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, String coupon)  ;
+
+    Response<Integer> addStoreDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate) ;
+
+
+    Response<Integer> addStoreDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate)  ;
+
+    Response<Integer> addCategoryDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, String category, String coupon) ;
+
+    Response<Integer> addCategoryDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, String category, String coupon) ;
+
+
+    Response<Integer> addCategoryDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, String category)  ;
+
+    Response<Integer> addCategoryDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, String category) ;
+
+
+    Response<Integer> addProductDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, int productId, String coupon) ;
+
+
+    Response<Integer> addProductDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, int productId, String coupon) ;
+
+
+    Response<Integer> addProductDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, int productId) ;
+
+
+    Response<Integer> addProductDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, int productId)  ;
+
+
+    Response<List<DiscountInfo>> getStoreDiscounts(int storeId, int userId) ;
+
+
+    Response<DiscountInfo> getDiscount(int storeId, int userId, int discountId) ;
+
+
+    Response<VoidResponse> removeDiscount(int storeId, int userId, int discountId) ;
+
+    /**
+     * <H1>Discount Accumulation Tree</H1>
+     */
+
+    Response<VoidResponse> addDiscountAsRoot(int storeId, int userId, int discountId) ;
+
+
+    Response<VoidResponse> addDiscountToXORRoot(int storeId, int userId, int discountId) ;
+
+
+    Response<VoidResponse> addDiscountToMAXRoot(int storeId, int userId, int discountId)  ;
+
+
+    Response<VoidResponse> addDiscountToADDRoot(int storeId, int userId, int discountId)  ;
 }

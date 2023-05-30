@@ -2,7 +2,9 @@ package BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler;
 
 import BGU.Group13B.backend.User.BasketInfo;
 import BGU.Group13B.backend.User.BasketProduct;
+import BGU.Group13B.backend.User.PurchaseFailedException;
 import BGU.Group13B.backend.User.UserInfo;
+import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 
 import java.time.LocalDate;
 import java.util.List;

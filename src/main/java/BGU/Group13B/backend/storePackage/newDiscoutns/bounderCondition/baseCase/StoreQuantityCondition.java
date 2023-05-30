@@ -5,6 +5,7 @@ import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.Bounder;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
+import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 
 public class StoreQuantityCondition extends Condition {
 
@@ -25,12 +26,13 @@ public class StoreQuantityCondition extends Condition {
     }
 
     @Override
-    public boolean satisfied(BasketInfo basketInfo, UserInfo user) {
+    public void satisfied(BasketInfo basketInfo, UserInfo user) throws PurchaseExceedsPolicyException {
         //sum all products quantities
         int quantity = basketInfo.basketProducts().stream().
                 map(BasketProduct::getQuantity).reduce(0, Integer::sum);
 
-        return quantityBounder.inBounds(quantity);
+        if(!quantityBounder.inBounds(quantity))
+            throw new PurchaseExceedsPolicyException("total quantity must be " + quantityBounder);
     }
 
     @Override

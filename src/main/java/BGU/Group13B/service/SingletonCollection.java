@@ -12,6 +12,7 @@ import BGU.Group13B.backend.Repositories.Implementations.MessageRepositoryImpl.M
 import BGU.Group13B.backend.Repositories.Implementations.ProductHistoryRepositoryImpl.ProductHistoryRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl.ProductRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.PurchaseHistoryRepositoryImpl.PurchaseHistoryRepositoryAsList;
+import BGU.Group13B.backend.Repositories.Implementations.PurchasePolicyRootsRepositoryImpl.PurchasePolicyRootsRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepoSingle;
 import BGU.Group13B.backend.Repositories.Implementations.StoreDiscountRootsRepositoryImpl.StoreDiscountRootsRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyImpl.StoreMessageSingle;
@@ -59,6 +60,7 @@ public class SingletonCollection {
     private static IDiscountAccumulationRepository discountAccumulationRepository;
     private static IConditionRepository conditionRepository;
     private static IStoreDiscountRootsRepository storeDiscountRootsRepository;
+    private static IPurchasePolicyRootsRepository purchasePolicyRootsRepository;
 
 
     /**
@@ -109,6 +111,9 @@ public class SingletonCollection {
         discountAccumulationRepository = new DiscountAccumulationRepositoryAsHashMap();
         conditionRepository = new ConditionRepositoryAsHashMap();
         storeDiscountRootsRepository = new StoreDiscountRootsRepositoryAsHashMap();
+        purchasePolicyRootsRepository = new PurchasePolicyRootsRepositoryAsHashMap();
+
+
         //adapters
         deliveryAdapter = new PaymentAPI();
         paymentAdapter = new PaymentAPI();
@@ -143,6 +148,7 @@ public class SingletonCollection {
         discountAccumulationRepository = new DiscountAccumulationRepositoryAsHashMap();
         conditionRepository = new ConditionRepositoryAsHashMap();
         storeDiscountRootsRepository = new StoreDiscountRootsRepositoryAsHashMap();
+        purchasePolicyRootsRepository = new PurchasePolicyRootsRepositoryAsHashMap();
         //adapters
 
 
@@ -273,6 +279,10 @@ public class SingletonCollection {
         if (session == null)
             session = new Session(market == null ? new Market() : market);
         return session;
+    }
+
+    public static IPurchasePolicyRootsRepository getPurchasePolicyRootsRepository() {
+        return purchasePolicyRootsRepository;
     }
 
     /**

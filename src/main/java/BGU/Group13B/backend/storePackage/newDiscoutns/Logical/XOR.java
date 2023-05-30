@@ -5,15 +5,36 @@ import BGU.Group13B.backend.User.BasketInfo;
 import BGU.Group13B.backend.User.PurchaseFailedException;
 import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
+import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 
 public class XOR extends LogicalCondition {
     public XOR(int conditionId, Condition operand1, Condition operand2) {
         super(conditionId, operand1, operand2);
     }
 
-    public boolean satisfied(BasketInfo basketInfo, UserInfo user){
-        return operand1.satisfied(basketInfo, user) ^
-                operand2.satisfied(basketInfo, user);
+    public void satisfied(BasketInfo basketInfo, UserInfo userInfo) throws PurchaseExceedsPolicyException {
+        String error1 = "";
+        String error2 = "";
+        int count = 0;
+        try{
+            operand1.satisfied(basketInfo, userInfo);
+            count++;
+        }catch (PurchaseExceedsPolicyException e){
+            error1 = e.getMessage();
+        }
+
+        try{
+            operand2.satisfied(basketInfo, userInfo);
+            count++;
+        }catch (PurchaseExceedsPolicyException e){
+            error2 = e.getMessage();
+        }
+
+        if(count != 1){
+            throw new PurchaseExceedsPolicyException("exactly one of '" + operand1 + "' , '" + operand2 + "' must be met");
+        }
+
+
     }
 
     @Override

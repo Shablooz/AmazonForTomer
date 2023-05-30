@@ -248,10 +248,14 @@ class StoreTest {
     private static User tUser2;
 
     public void customTearDown() {
+        SingletonCollection.reset_system();
+        /*
         omTestStore.getStorePermission().clearForTest();
         tUser.getUserPermissions().clearForTest();
         tUser2.getUserPermissions().clearForTest();
         SingletonCollection.getStorePurchasePolicyRepository().reset();
+
+         */
         //SingletonCollection.reset_system();
     }
 
