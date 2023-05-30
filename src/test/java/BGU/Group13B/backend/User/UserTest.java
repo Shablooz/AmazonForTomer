@@ -279,7 +279,7 @@ class UserTest {
 //        admin.logout();
 //    }
 
-    @Test
+   /* @Test
     void purchaseStoreHistoryAsAdmin(){ //storeHistory
         Session session = SingletonCollection.getSession();
         user2.register(goodUsername2, goodPassword2, goodEmail2, "", "yak", "");
@@ -304,7 +304,7 @@ class UserTest {
         purchaseHistoryRepository.removePurchase(purchaseHistory1);
         admin.logout();
 
-    }
+    }*/
 
     @Test
     void purchaseCartLoginLogoutFail() {

@@ -44,8 +44,7 @@ public class Cart {
     }
 
     /*returns price after discounts*/
-    public Pair<Double, List<BasketProduct>> startPurchaseBasketTransaction(HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                                                            String/*store coupons*/ storeCoupon) throws PurchaseFailedException {
+    public Pair<Double, List<BasketProduct>> startPurchaseBasketTransaction(UserInfo userInfo, List<String> coupons) throws PurchaseFailedException {
         var userBaskets = basketRepository.getUserBaskets(userId);
         List<BasketProduct> successfulProducts = new LinkedList<>();
         if (userBaskets.isEmpty()) {
@@ -53,7 +52,7 @@ public class Cart {
         }
         double totalPrice = 0;
         for (var basket : userBaskets) {
-            var transaction = basket.startPurchaseBasketTransactionWithSuccessful(productsCoupons, storeCoupon);
+            var transaction = basket.startPurchaseBasketTransactionWithSuccessful(userInfo, coupons);
             totalPrice += transaction.getFirst();
             successfulProducts.addAll(transaction.getSecond());
         }

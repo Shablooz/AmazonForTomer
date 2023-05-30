@@ -14,6 +14,7 @@ import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.service.SingletonCollection;
 //eyal import
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -410,11 +411,10 @@ public class User {
                 country, zip);
     }
 
-    public Pair<Double, List<BasketProduct>> startPurchaseBasketTransaction(HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                                                                   String/*store coupons*/ storeCoupon) throws PurchaseFailedException, NoPermissionException {
+    public Pair<Double, List<BasketProduct>> startPurchaseBasketTransaction(List<String> coupons) throws PurchaseFailedException, NoPermissionException {
         if (isRegistered() && !isLoggedIn)
             throw new NoPermissionException("Only logged in users can purchase cart");
-        return cart.startPurchaseBasketTransaction(productsCoupons, storeCoupon);
+        return cart.startPurchaseBasketTransaction(new UserInfo(LocalDate.now().minusYears(25)/*this.dateOfBirth*/), coupons);//fixme
     }
 
 

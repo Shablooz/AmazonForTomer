@@ -7,6 +7,7 @@ import BGU.Group13B.backend.User.*;
 import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.WorkerCard;
+import BGU.Group13B.backend.storePackage.newDiscoutns.DiscountInfo;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.service.entity.ReviewService;
@@ -16,6 +17,7 @@ import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import java.util.*;
@@ -86,15 +88,15 @@ public class Session implements ISession {
                                       String creditCardHolderFirstName,
                                       String creditCardCcv, String id,
                                       HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                      String/*store coupons*/ storeCoupon){
-            try {
-                return userRepository.getUser(userId).
-                        purchaseCart(creditCardNumber, creditCardMonth,
-                                creditCardYear, creditCardHolderFirstName,
-                                creditCardCcv, id, productsCoupons, storeCoupon);
-            }catch (PurchaseFailedException | NoPermissionException e) {
-                throw new RuntimeException(e);
-            }
+                                      String/*store coupons*/ storeCoupon) {
+        try {
+            return userRepository.getUser(userId).
+                    purchaseCart(creditCardNumber, creditCardMonth,
+                            creditCardYear, creditCardHolderFirstName,
+                            creditCardCcv, id, productsCoupons, storeCoupon);
+        } catch (PurchaseFailedException | NoPermissionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -118,10 +120,9 @@ public class Session implements ISession {
     }
 
     @Override
-    public Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                                                                   String/*store coupons*/ storeCoupon) {
+    public Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, List<String> coupons) {
         try {
-            var priceSuccessfulItems =  userRepository.getUser(userId).startPurchaseBasketTransaction(productsCoupons, storeCoupon);
+            var priceSuccessfulItems = userRepository.getUser(userId).startPurchaseBasketTransaction(coupons);
             return new Pair<>(priceSuccessfulItems.getFirst(),
                     priceSuccessfulItems.getSecond().stream().map(ServiceBasketProduct::new).collect(Collectors.toList()));
         } catch (PurchaseFailedException | NoPermissionException e) {
@@ -218,7 +219,7 @@ public class Session implements ISession {
     public Response<List<ProductInfo>> filterByPriceRange(int minPrice, int maxPrice) {
         try {
             return Response.success(market.filterByPriceRange(minPrice, maxPrice));
-        }catch (Exception e){
+        } catch (Exception e) {
             return Response.exception(e);
         }
     }
@@ -227,7 +228,7 @@ public class Session implements ISession {
     public Response<List<ProductInfo>> filterByProductRank(int minRating, int maxRating) {
         try {
             return Response.success(market.filterByProductRank(minRating, maxRating));
-        }catch (Exception e){
+        } catch (Exception e) {
             return Response.exception(e);
         }
     }
@@ -236,7 +237,7 @@ public class Session implements ISession {
     public Response<List<ProductInfo>> filterByCategory(String category) {
         try {
             return Response.success(market.filterByCategory(category));
-        }catch (Exception e){
+        } catch (Exception e) {
             return Response.exception(e);
         }
     }
@@ -245,7 +246,7 @@ public class Session implements ISession {
     public Response<List<ProductInfo>> filterByStoreRank(int minRating, int maxRating) {
         try {
             return Response.success(market.filterByStoreRank(minRating, maxRating));
-        }catch (Exception e){
+        } catch (Exception e) {
             return Response.exception(e);
         }
     }
@@ -327,7 +328,7 @@ public class Session implements ISession {
     public Response<Message> getComplaint(int userId) {
         try {
             return Response.success(userRepositoryAsHashmap.getUser(userId).getComplaint());
-        }catch (Exception e){
+        } catch (Exception e) {
             return Response.exception(e);
         }
     }
@@ -424,7 +425,7 @@ public class Session implements ISession {
     @Override
     public Response<Message> readReadMassageStore(int userId, int storeId) {
         try {
-            return Response.success( userRepositoryAsHashmap.getUser(userId).readReadMassageStore(storeId));
+            return Response.success(userRepositoryAsHashmap.getUser(userId).readReadMassageStore(storeId));
         } catch (Exception e) {
             return Response.exception(e);
         }
@@ -473,11 +474,12 @@ public class Session implements ISession {
     @Override
     public Response<Review> getReview(int userId, int storeId, int productId) {
         try {
-            return Response.success( userRepositoryAsHashmap.getUser(userId).getReview(storeId, productId));
+            return Response.success(userRepositoryAsHashmap.getUser(userId).getReview(storeId, productId));
         } catch (Exception e) {
             return Response.exception(e);
         }
     }
+
     @Override
     public Response<List<ReviewService>> getAllReviews(int userId, int storeId, int productId) {
         try {
@@ -494,11 +496,12 @@ public class Session implements ISession {
                 }
                 reviewServices.add(new ReviewService(userRepositoryAsHashmap.getUser(review.getUserId()).getUserName(),review.getReview(),scoreString));
             }
-            return Response.success( reviewServices);
+            return Response.success(reviewServices);
         } catch (Exception e) {
             return Response.exception(e);
         }
     }
+
     @Override
     public Response<Float> getProductScore(int userId, int storeId, int productId) {
         try {
@@ -569,7 +572,7 @@ public class Session implements ISession {
     @Override
     public Response<Float> getStoreScore(int userId, int storeId) {
         try {
-            return Response.success( userRepositoryAsHashmap.getUser(userId).getStoreScore(storeId));
+            return Response.success(userRepositoryAsHashmap.getUser(userId).getStoreScore(storeId));
         } catch (Exception e) {
             return Response.exception(e);
         }
@@ -578,7 +581,7 @@ public class Session implements ISession {
     @Override
     public Response<String> getCartDescription(int userId) {
         try {
-            return Response.success( userRepositoryAsHashmap.getUser(userId).getCartDescription());
+            return Response.success(userRepositoryAsHashmap.getUser(userId).getCartDescription());
         } catch (NoPermissionException e) {
             throw new RuntimeException(e);
         }
@@ -802,219 +805,6 @@ public class Session implements ISession {
                 stream().map(ServiceProduct::new).collect(Collectors.toList());
     }
 
-    @Override
-    public Response<VoidResponse> allowPurchasePolicyConflicts(int userId, int storeId) {
-        try {
-            market.allowPurchasePolicyConflicts(userId, storeId);
-            return Response.success(new VoidResponse());
-        } catch (Exception e) {
-            return Response.exception(e);
-        }
-    }
-
-    @Override
-    public Response<VoidResponse> disallowPurchasePolicyConflicts(int userId, int storeId) {
-        try {
-            market.disallowPurchasePolicyConflicts(userId, storeId);
-            return Response.success(new VoidResponse());
-        } catch (Exception e) {
-            return Response.exception(e);
-        }
-    }
-
-    @Override
-    public Response<VoidResponse> setStorePurchaseQuantityUpperBound(int userId, int storeId, int upperBound) {
-        try {
-            market.setStorePurchaseQuantityUpperBound(userId, storeId, upperBound);
-            return Response.success(new VoidResponse());
-        } catch (Exception e) {
-            return Response.exception(e);
-        }
-    }
-
-    @Override
-    public Response<VoidResponse> setStorePurchaseQuantityLowerBound(int userId, int storeId, int lowerBound) {
-        try {
-            market.setStorePurchaseQuantityLowerBound(userId, storeId, lowerBound);
-            return Response.success(new VoidResponse());
-        } catch (Exception e) {
-            return Response.exception(e);
-        }
-    }
-
-    @Override
-    public Response<VoidResponse> setStorePurchaseQuantityBounds(int userId, int storeId, int lowerBound, int upperBound) {
-        try {
-            market.setStorePurchaseQuantityBounds(userId, storeId, lowerBound, upperBound);
-            return Response.success(new VoidResponse());
-        } catch (Exception e) {
-            return Response.exception(e);
-        }
-    }
-
-    @Override
-    public Response<VoidResponse> setStorePurchasePriceUpperBound(int userId, int storeId, int upperBound) {
-        try {
-            market.setStorePurchasePriceUpperBound(userId, storeId, upperBound);
-            return Response.success(new VoidResponse());
-        } catch (Exception e) {
-            return Response.exception(e);
-        }
-    }
-
-    @Override
-    public Response<VoidResponse> setStorePurchasePriceLowerBound(int userId, int storeId, int lowerBound) {
-        try {
-            market.setStorePurchasePriceLowerBound(userId, storeId, lowerBound);
-            return Response.success(new VoidResponse());
-        } catch (Exception e) {
-            return Response.exception(e);
-        }
-    }
-
-    @Override
-    public Response<VoidResponse> setStorePurchasePriceBounds(int userId, int storeId, int lowerBound, int upperBound) {
-        try {
-            market.setStorePurchasePriceBounds(userId, storeId, lowerBound, upperBound);
-            return Response.success(new VoidResponse());
-        } catch (Exception e) {
-            return Response.exception(e);
-        }
-    }
-
-    @Override
-    public Response<VoidResponse> setProductPurchaseQuantityUpperBound(int userId, int storeId, int productId, int upperBound) {
-        try {
-            market.setProductPurchaseQuantityUpperBound(userId, storeId, productId, upperBound);
-            return Response.success(new VoidResponse());
-        } catch (Exception e) {
-            return Response.exception(e);
-        }
-    }
-
-    @Override
-    public Response<VoidResponse> setProductPurchaseQuantityLowerBound(int userId, int storeId, int productId, int lowerBound) {
-        try {
-            market.setProductPurchaseQuantityLowerBound(userId, storeId, productId, lowerBound);
-            return Response.success(new VoidResponse());
-        } catch (Exception e) {
-            return Response.exception(e);
-        }
-    }
-
-    @Override
-    public Response<VoidResponse> setProductPurchaseQuantityBounds(int userId, int storeId, int productId, int lowerBound, int upperBound) {
-        try {
-            market.setProductPurchaseQuantityBounds(userId, storeId, productId, lowerBound, upperBound);
-            return Response.success(new VoidResponse());
-        } catch (Exception e) {
-            return Response.exception(e);
-        }
-    }
-
-    @Override
-    public Response<VoidResponse> setProductPurchasePriceUpperBound(int userId, int storeId, int productId, int upperBound) {
-        try {
-            market.setProductPurchasePriceUpperBound(userId, storeId, productId, upperBound);
-            return Response.success(new VoidResponse());
-        } catch (Exception e) {
-            return Response.exception(e);
-        }
-    }
-
-    @Override
-    public Response<VoidResponse> setProductPurchasePriceLowerBound(int userId, int storeId, int productId, int lowerBound) {
-        try {
-            market.setProductPurchasePriceLowerBound(userId, storeId, productId, lowerBound);
-            return Response.success(new VoidResponse());
-        } catch (Exception e) {
-            return Response.exception(e);
-        }
-    }
-
-    @Override
-    public Response<VoidResponse> setProductPurchasePriceBounds(int userId, int storeId, int productId, int lowerBound, int upperBound) {
-        try {
-            market.setProductPurchasePriceBounds(userId, storeId, productId, lowerBound, upperBound);
-            return Response.success(new VoidResponse());
-        } catch (Exception e) {
-            return Response.exception(e);
-        }
-    }
-
-    @Override
-    public Response<Integer> addStoreVisibleDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate) {
-        try {
-            return Response.success(market.addStoreVisibleDiscount(userId, storeId, discountPercentage, discountLastDate));
-        } catch (Exception e) {
-            return Response.exception(e);
-        }
-    }
-
-    @Override
-    public Response<Integer> addStoreConditionalDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount) {
-        try {
-            return Response.success(market.addStoreConditionalDiscount(userId, storeId, discountPercentage, discountLastDate, minPriceForDiscount, quantityForDiscount));
-        } catch (Exception e) {
-            return Response.exception(e);
-        }
-    }
-
-    @Override
-    public Response<Integer> addStoreHiddenDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate, String code) {
-        try {
-            return Response.success(market.addStoreHiddenDiscount(userId, storeId, discountPercentage, discountLastDate, code));
-        } catch (Exception e) {
-            return Response.exception(e);
-        }
-    }
-
-    @Override
-    public Response<VoidResponse> removeStoreDiscount(int userId, int storeId, int discountId) {
-        try {
-            market.removeStoreDiscount(userId, storeId, discountId);
-            return Response.success(new VoidResponse());
-        } catch (Exception e) {
-            return Response.exception(e);
-        }
-    }
-
-    @Override
-    public Response<Integer> addProductVisibleDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate) {
-        try {
-            return Response.success(market.addProductVisibleDiscount(userId, storeId, productId, discountPercentage, discountLastDate));
-        } catch (Exception e) {
-            return Response.exception(e);
-        }
-    }
-
-    @Override
-    public Response<Integer> addProductConditionalDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount) {
-        try {
-            return Response.success(market.addProductConditionalDiscount(userId, storeId, productId, discountPercentage, discountLastDate, minPriceForDiscount, quantityForDiscount));
-        } catch (Exception e) {
-            return Response.exception(e);
-        }
-    }
-
-    @Override
-    public Response<Integer> addProductHiddenDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate, String code) {
-        try {
-            return Response.success(market.addProductHiddenDiscount(userId, storeId, productId, discountPercentage, discountLastDate, code));
-        } catch (Exception e) {
-            return Response.exception(e);
-        }
-    }
-
-    @Override
-    public Response<VoidResponse> removeProductDiscount(int userId, int storeId, int productId, int discountId) {
-        try {
-            market.removeProductDiscount(userId, storeId, productId, discountId);
-            return Response.success(new VoidResponse());
-        } catch (Exception e) {
-            return Response.exception(e);
-        }
-    }
 
     @Override
     public boolean isUserLogged(int userId) {
@@ -1035,20 +825,18 @@ public class Session implements ISession {
     @Override
     public Response<List<Pair<StoreInfo, String>>> getAllUserAssociatedStores(int userId) {
         List<Pair<Integer, String>> storeIdsAndRoles;
-        try{
+        try {
             storeIdsAndRoles = getStoresOfUser(userId);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             return Response.exception(e);
         }
 
         List<Pair<StoreInfo, String>> storeInfosAndRoles = new LinkedList<>();
-        for(Pair<Integer, String> storeIdAndRole : storeIdsAndRoles){
-            try{
+        for (Pair<Integer, String> storeIdAndRole : storeIdsAndRoles) {
+            try {
                 StoreInfo storeInfo = market.getStoreInfo(userId, storeIdAndRole.getFirst());
                 storeInfosAndRoles.add(Pair.of(storeInfo, storeIdAndRole.getSecond()));
-            }
-            catch(Exception ignored){
+            } catch (Exception ignored) {
             }
         }
         return Response.success(storeInfosAndRoles);
@@ -1075,9 +863,8 @@ public class Session implements ISession {
     }
 
     @Override
-    public void pushTest()
-    {
-        PushNotification.pushNotification("MY TEST!",2);
+    public void pushTest() {
+        PushNotification.pushNotification("MY TEST!", 2);
     }
 
     @Override
@@ -1109,8 +896,9 @@ public class Session implements ISession {
             return Response.exception(e);
         }
     }
+
     @Override
-    public Response<String> getUserPurchaseHistoryAsAdmin(int userId, int adminId){
+    public Response<String> getUserPurchaseHistoryAsAdmin(int userId, int adminId) {
         //change to return purchaseHistory
         try {
             if (!getUserStatus(adminId).equals("Admin") || !isUserLogged(adminId)) {
@@ -1124,7 +912,7 @@ public class Session implements ISession {
     }
 
     @Override
-    public Response<List<PurchaseHistory>> getStorePurchaseHistoryAsAdmin(int storeId, int adminId){
+    public Response<List<PurchaseHistory>> getStorePurchaseHistoryAsAdmin(int storeId, int adminId) {
         try {
             if (!getUserStatus(adminId).equals("Admin") || !isUserLogged(adminId)) {
                 throw new NoPermissionException("The user is not an admin or is not logged in");
@@ -1185,6 +973,394 @@ public class Session implements ISession {
         }
     }
 
+    @Override
+    public Response<VoidResponse> setPurchasePolicyCondition(int storeId, int userId, int conditionId) {
+        try {
+            market.setPurchasePolicyCondition(storeId, userId, conditionId);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addORCondition(int storeId, int userId, int condition1, int condition2) {
+        try {
+            return Response.success(market.addORCondition(storeId, userId, condition1, condition2));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addANDCondition(int storeId, int userId, int condition1, int condition2) {
+        try {
+            return Response.success(market.addANDCondition(storeId, userId, condition1, condition2));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addXORCondition(int storeId, int userId, int condition1, int condition2) {
+        try {
+            return Response.success(market.addXORCondition(storeId, userId, condition1, condition2));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addIMPLYCondition(int storeId, int userId, int condition1, int condition2) {
+        try {
+            return Response.success(market.addIMPLYCondition(storeId, userId, condition1, condition2));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addStorePriceCondition(int storeId, int userId, double lowerBound, double upperBound) {
+        try {
+            return Response.success(market.addStorePriceCondition(storeId, userId, lowerBound, upperBound));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addStorePriceCondition(int storeId, int userId, double lowerBound) {
+        try {
+            return Response.success(market.addStorePriceCondition(storeId, userId, lowerBound));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addStoreQuantityCondition(int storeId, int userId, int lowerBound, int upperBound) {
+        try{
+            return Response.success(market.addStoreQuantityCondition(storeId, userId, lowerBound, upperBound));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addStoreQuantityCondition(int storeId, int userId, int lowerBound) {
+        try {
+            return Response.success(market.addStoreQuantityCondition(storeId, userId, lowerBound));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addCategoryPriceCondition(int storeId, int userId, String category, double lowerBound, double upperBound) {
+        try {
+            return Response.success(market.addCategoryPriceCondition(storeId, userId, category, lowerBound, upperBound));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addCategoryPriceCondition(int storeId, int userId, String category, double lowerBound) {
+        try {
+            return Response.success(market.addCategoryPriceCondition(storeId, userId, category, lowerBound));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addCategoryQuantityCondition(int storeId, int userId, String category, int lowerBound, int upperBound) {
+        try {
+            return Response.success(market.addCategoryQuantityCondition(storeId, userId, category, lowerBound, upperBound));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addCategoryQuantityCondition(int storeId, int userId, String category, int lowerBound) {
+        try {
+            return Response.success(market.addCategoryQuantityCondition(storeId, userId, category, lowerBound));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addDateCondition(int storeId, int userId, LocalDateTime lowerBound, LocalDateTime upperBound) {
+        try {
+            return Response.success(market.addDateCondition(storeId, userId, lowerBound, upperBound));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addDateCondition(int storeId, int userId, LocalDateTime lowerBound) {
+        try {
+            return Response.success(market.addDateCondition(storeId, userId, lowerBound));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addProductPriceCondition(int storeId, int userId, int productId, double lowerBound, double upperBound) {
+        try {
+            return Response.success(market.addProductPriceCondition(storeId, userId, productId, lowerBound, upperBound));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addProductPriceCondition(int storeId, int userId, int productId, double lowerBound) {
+        try {
+            return Response.success(market.addProductPriceCondition(storeId, userId, productId, lowerBound));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addProductQuantityCondition(int storeId, int userId, int productId, int lowerBound, int upperBound) {
+        try {
+            return Response.success(market.addProductQuantityCondition(storeId, userId, productId, lowerBound, upperBound));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addProductQuantityCondition(int storeId, int userId, int productId, int lowerBound) {
+        try {
+            return Response.success(market.addProductQuantityCondition(storeId, userId, productId, lowerBound));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addTimeCondition(int storeId, int userId, LocalDateTime lowerBound, LocalDateTime upperBound) {
+        try {
+            return Response.success(market.addTimeCondition(storeId, userId, lowerBound, upperBound));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addTimeCondition(int storeId, int userId, LocalDateTime lowerBound) {
+        try {
+            return Response.success(market.addTimeCondition(storeId, userId, lowerBound));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addUserAgeCondition(int storeId, int userId, int lowerBound, int upperBound) {
+        try {
+            return Response.success(market.addUserAgeCondition(storeId, userId, lowerBound, upperBound));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addUserAgeCondition(int storeId, int userId, int lowerBound) {
+        try {
+            return Response.success(market.addUserAgeCondition(storeId, userId, lowerBound));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addStoreDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, String coupon) {
+        try {
+            return Response.success(market.addStoreDiscount(storeId, userId, conditionId, discountPercentage, expirationDate, coupon));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addStoreDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, String coupon) {
+        try {
+            return Response.success(market.addStoreDiscount(storeId, userId, discountPercentage, expirationDate, coupon));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addStoreDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate) {
+        try {
+            return Response.success(market.addStoreDiscount(storeId, userId, conditionId, discountPercentage, expirationDate));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addStoreDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate) {
+        try {
+            return Response.success(market.addStoreDiscount(storeId, userId, discountPercentage, expirationDate));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addCategoryDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, String category, String coupon) {
+        try {
+            return Response.success(market.addCategoryDiscount(storeId, userId, conditionId, discountPercentage, expirationDate, category, coupon));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addCategoryDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, String category, String coupon) {
+        try {
+            return Response.success(market.addCategoryDiscount(storeId, userId, discountPercentage, expirationDate, category, coupon));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addCategoryDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, String category) {
+        try {
+            return Response.success(market.addCategoryDiscount(storeId, userId, conditionId, discountPercentage, expirationDate, category));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addCategoryDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, String category) {
+        try {
+            return Response.success(market.addCategoryDiscount(storeId, userId, discountPercentage, expirationDate, category));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addProductDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, int productId, String coupon) {
+        try {
+            return Response.success(market.addProductDiscount(storeId, userId, conditionId, discountPercentage, expirationDate, productId, coupon));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addProductDiscount(int storeId, int userId, double discountPercentage, LocalDate
+            expirationDate, int productId, String coupon) {
+        try {
+            return Response.success(market.addProductDiscount(storeId, userId, discountPercentage, expirationDate, productId, coupon));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addProductDiscount(int storeId, int userId, int conditionId,
+                                                double discountPercentage, LocalDate expirationDate, int productId) {
+        try {
+            return Response.success(market.addProductDiscount(storeId, userId, conditionId, discountPercentage, expirationDate, productId));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> addProductDiscount(int storeId, int userId, double discountPercentage, LocalDate
+            expirationDate, int productId) {
+        try {
+            return Response.success(market.addProductDiscount(storeId, userId, discountPercentage, expirationDate, productId));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<List<DiscountInfo>> getStoreDiscounts(int storeId, int userId) {
+        try {
+            return Response.success(market.getStoreDiscounts(storeId, userId).stream().map(d -> new DiscountInfo(d.toString())).collect(Collectors.toList()));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<DiscountInfo> getDiscount(int storeId, int userId, int discountId) {
+        try {
+            var discount = market.getDiscount(storeId, userId, discountId);
+            return Response.success(new DiscountInfo(discount.toString()));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<VoidResponse> removeDiscount(int storeId, int userId, int discountId) {
+        try {
+            market.removeDiscount(storeId, userId, discountId);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<VoidResponse> addDiscountAsRoot(int storeId, int userId, int discountId) {
+        try {
+            market.addDiscountAsRoot(storeId, userId, discountId);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<VoidResponse> addDiscountToXORRoot(int storeId, int userId, int discountId) {
+        try {
+            market.addDiscountToXORRoot(storeId, userId, discountId);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<VoidResponse> addDiscountToMAXRoot(int storeId, int userId, int discountId) {
+        try {
+            market.addDiscountToMAXRoot(storeId, userId, discountId);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<VoidResponse> addDiscountToADDRoot(int storeId, int userId, int discountId) {
+        try {
+            market.addDiscountToADDRoot(storeId, userId, discountId);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
     public List<Integer> getStoreOwners(int storeId) {
         try {
             return market.getStoreOwners(storeId);
@@ -1193,5 +1369,6 @@ public class Session implements ISession {
             throw new RuntimeException(e);
         }
     }
+
 
 }

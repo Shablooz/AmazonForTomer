@@ -11,6 +11,7 @@ import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyE
 import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
 import BGU.Group13B.service.SingletonCollection;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -74,27 +75,29 @@ public class Basket {
     /*
      * returns total price after discounts, and updates the products stock
      * */
-    public double startPurchaseBasketTransaction(HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                                 String/*store coupons*/ storeCoupon) throws PurchaseFailedException {
+    public double startPurchaseBasketTransaction(UserInfo userInfo, List<String> coupons) throws PurchaseFailedException {
         scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduledFuture = scheduler.schedule(this::restoreProductsStock, idealTime, unitsToRestore);
         getSuccessfulProducts();
-        double totalAmount = getTotalAmount(productsCoupons);
+        //double totalAmount = getTotalAmount(productsCoupons);
         //calculate the total price of the products by the store discount policy
-        finalPrice = calculateStoreDiscount(totalAmount, storeCoupon);
+        finalPrice = calculateStoreDiscount(userInfo, coupons);
         return finalPrice;
-    }
+    }//[Discount1, Discount2, Discount3]
+    //Discount1 /
 
-    public Pair<Double, List<BasketProduct>> startPurchaseBasketTransactionWithSuccessful(HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                                                                          String/*store coupons*/ storeCoupon) throws PurchaseFailedException {
+
+    //For GUI
+    public Pair<Double, List<BasketProduct>> startPurchaseBasketTransactionWithSuccessful(UserInfo userInfo, List<String> coupons) throws PurchaseFailedException {
         successfulProducts.clear();
         failedProducts.clear();
         scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduledFuture = scheduler.schedule(this::restoreProductsStock, idealTime, unitsToRestore);
         getSuccessfulProducts();
-        double totalAmount = getTotalAmount(productsCoupons);
+        //double totalAmount = getTotalAmount(productsCoupons);//fixme
         //calculate the total price of the products by the store discount policy
-        finalPrice = calculateStoreDiscount(totalAmount, storeCoupon);
+        var basketProducts= basketProductRepository.getBasketProducts(storeId, userId).orElseGet(LinkedList::new);
+        finalPrice = calculateStoreDiscount(userInfo, coupons);
         return Pair.of(finalPrice, new LinkedList<>(successfulProducts));
     }
 
@@ -134,7 +137,10 @@ public class Basket {
                                  String/*store coupons*/ storeCoupon
     ) throws PurchaseFailedException {
 
-        double price = startPurchaseBasketTransaction(productsCoupons, storeCoupon);
+        LinkedList<String> coupons = new LinkedList<>(productsCoupons.values());
+        coupons.add(storeCoupon);
+
+        double price = startPurchaseBasketTransaction(new UserInfo(LocalDate.now().minusYears(25)), coupons);
         purchaseBasket(creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardCVV, id,
                 "address", "city", "country", "1234134");
         return price;
@@ -159,8 +165,8 @@ public class Basket {
         }
     }
 
-    private double calculateStoreDiscount(double totalAmountAfterProductDiscounts, String storeCoupon) throws PurchaseExceedsPolicyException {
-        return calculatePriceOfBasket.apply(totalAmountAfterProductDiscounts, successfulProducts, storeId, storeCoupon);
+    private double calculateStoreDiscount(UserInfo userInfo, List<String> coupons) throws PurchaseExceedsPolicyException {
+        return calculatePriceOfBasket.apply(storeId, new BasketInfo(getSuccessfulProductsList().stream().toList()), userInfo, coupons);
     }
 
 
@@ -185,17 +191,6 @@ public class Basket {
         }
     }
 
-    private double getTotalAmount(HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons) throws PurchaseExceedsPolicyException {
-        double totalAmount = 0.0;//store.calculatePrice(successfulProducts);
-        for (BasketProduct basketProduct : successfulProducts) {//Hidden assumption we are first calculating the discount of the products
-            //calculate price remembering the discount policies
-            String productDiscountCode = productsCoupons.getOrDefault(basketProduct.getProductId(), null);
-            Product currentProduct = basketProduct.getProduct();
-            totalAmount += currentProduct.calculatePrice(basketProduct.getQuantity(), productDiscountCode);
-        }
-        return totalAmount;
-    }
-
     public void addProduct(int productId) throws IllegalArgumentException {
         BasketProduct basketProduct = basketProductRepository.getBasketProduct(productId, storeId, userId);
         if (basketProduct != null) {
@@ -205,17 +200,17 @@ public class Basket {
     }
 
     public String getBasketDescription() {
-        String basketContent = "";
+        StringBuilder basketContent = new StringBuilder();
         basketProductRepository.getBasketProducts(storeId, userId);
         for (BasketProduct basketProduct : basketProductRepository.getBasketProducts(storeId, userId).get()) {
-            basketContent += basketProduct.toString();
+            basketContent.append(basketProduct.toString());
         }
-        return basketContent;
+        return basketContent.toString();
     }
 
     public void removeProduct(int productId) throws Exception {
         try {
-                basketProductRepository.removeBasketProduct(productId, userId, storeId);
+            basketProductRepository.removeBasketProduct(productId, userId, storeId);
         } catch (Exception e) {
             throw e;
         }

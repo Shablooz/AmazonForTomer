@@ -8,12 +8,15 @@ import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.WorkerCard;
+import BGU.Group13B.backend.storePackage.newDiscoutns.DiscountInfo;
+import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.StoreDiscount;
 import BGU.Group13B.service.entity.ReviewService;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
 import BGU.Group13B.service.entity.ServiceProduct;
 import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import java.util.*;
@@ -55,54 +58,357 @@ public class ProxySession implements ISession {
     }
 
 
-
     @Override
-    public Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, HashMap<Integer, String> productsCoupons, String storeCoupon) throws PurchaseFailedException {
+    public Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, List<String> coupons) throws PurchaseFailedException {
         if (realSession != null)
-            return realSession.startPurchaseBasketTransaction(userId, productsCoupons, storeCoupon);
+            return realSession.startPurchaseBasketTransaction(userId, coupons);
         return null;
     }
 
     @Override
     public Response<List<PurchaseHistory>> getStorePurchaseHistory(int userId, int storeId) {
-        if(realSession != null)
+        if (realSession != null)
             return realSession.getStorePurchaseHistory(userId, storeId);
         return null;
     }
 
     @Override
     public Response<VoidResponse> addOwner(int userId, int newOwnerId, int storeId) {
-        if(realSession != null)
+        if (realSession != null)
             return realSession.addOwner(userId, newOwnerId, storeId);
         return null;
     }
 
     @Override
     public Response<VoidResponse> removeOwner(int userId, int removeOwnerId, int storeId) {
-        if(realSession != null)
+        if (realSession != null)
             return realSession.removeOwner(userId, removeOwnerId, storeId);
         return null;
     }
 
     @Override
     public Response<VoidResponse> addManager(int userId, int newManagerId, int storeId) {
-        if(realSession != null)
+        if (realSession != null)
             return realSession.addManager(userId, newManagerId, storeId);
         return null;
     }
 
     @Override
     public Response<VoidResponse> removeManager(int userId, int removeManagerId, int storeId) {
-        if(realSession != null)
+        if (realSession != null)
             return realSession.removeManager(userId, removeManagerId, storeId);
         return null;
     }
 
     @Override
     public List<WorkerCard> getStoreWorkersInfo(int userId, int storeId) {
-        if(realSession != null)
+        if (realSession != null)
             return realSession.getStoreWorkersInfo(userId, storeId);
         return null;
+    }
+
+    @Override
+    public Response<VoidResponse> setPurchasePolicyCondition(int storeId, int userId, int conditionId) {
+        if (realSession != null)
+            return realSession.setPurchasePolicyCondition(storeId, userId, conditionId);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addORCondition(int storeId, int userId, int condition1, int condition2) {
+        if (realSession != null)
+            return realSession.addORCondition(storeId, userId, condition1, condition2);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addANDCondition(int storeId, int userId, int condition1, int condition2) {
+        if (realSession != null)
+            return realSession.addANDCondition(storeId, userId, condition1, condition2);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addXORCondition(int storeId, int userId, int condition1, int condition2) {
+        if (realSession != null)
+            return realSession.addXORCondition(storeId, userId, condition1, condition2);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addIMPLYCondition(int storeId, int userId, int condition1, int condition2) {
+        if (realSession != null)
+            return realSession.addIMPLYCondition(storeId, userId, condition1, condition2);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addStorePriceCondition(int storeId, int userId, double lowerBound, double upperBound) {
+        if(realSession != null)
+            return realSession.addStorePriceCondition(storeId, userId, lowerBound, upperBound);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addStorePriceCondition(int storeId, int userId, double lowerBound) {
+        if (realSession != null)
+            return realSession.addStorePriceCondition(storeId, userId, lowerBound);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addStoreQuantityCondition(int storeId, int userId, int lowerBound, int upperBound) {
+        if (realSession != null)
+            return realSession.addStoreQuantityCondition(storeId, userId, lowerBound, upperBound);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addStoreQuantityCondition(int storeId, int userId, int lowerBound) {
+        if (realSession != null)
+            return realSession.addStoreQuantityCondition(storeId, userId, lowerBound);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addCategoryPriceCondition(int storeId, int userId, String category, double lowerBound, double upperBound) {
+        if (realSession != null)
+            return realSession.addCategoryPriceCondition(storeId, userId, category, lowerBound, upperBound);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addCategoryPriceCondition(int storeId, int userId, String category, double lowerBound) {
+        if (realSession != null)
+            return realSession.addCategoryPriceCondition(storeId, userId, category, lowerBound);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addCategoryQuantityCondition(int storeId, int userId, String category, int lowerBound, int upperBound) {
+        if (realSession != null)
+            return realSession.addCategoryQuantityCondition(storeId, userId, category, lowerBound, upperBound);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addCategoryQuantityCondition(int storeId, int userId, String category, int lowerBound) {
+        if (realSession != null)
+            return realSession.addCategoryQuantityCondition(storeId, userId, category, lowerBound);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addDateCondition(int storeId, int userId, LocalDateTime lowerBound, LocalDateTime upperBound) {
+        if (realSession != null)
+            return realSession.addDateCondition(storeId, userId, lowerBound, upperBound);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addDateCondition(int storeId, int userId, LocalDateTime lowerBound) {
+        if (realSession != null)
+            return realSession.addDateCondition(storeId, userId, lowerBound);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addProductPriceCondition(int storeId, int userId, int productId, double lowerBound, double upperBound) {
+        if (realSession != null)
+            return realSession.addProductPriceCondition(storeId, userId, productId, lowerBound, upperBound);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addProductPriceCondition(int storeId, int userId, int productId, double lowerBound) {
+        if (realSession != null)
+            return realSession.addProductPriceCondition(storeId, userId, productId, lowerBound);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addProductQuantityCondition(int storeId, int userId, int productId, int lowerBound, int upperBound) {
+        if (realSession != null)
+            return realSession.addProductQuantityCondition(storeId, userId, productId, lowerBound, upperBound);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addProductQuantityCondition(int storeId, int userId, int productId, int lowerBound) {
+        if (realSession != null)
+            return realSession.addProductQuantityCondition(storeId, userId, productId, lowerBound);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addTimeCondition(int storeId, int userId, LocalDateTime lowerBound, LocalDateTime upperBound) {
+        if (realSession != null)
+            return realSession.addTimeCondition(storeId, userId, lowerBound, upperBound);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addTimeCondition(int storeId, int userId, LocalDateTime lowerBound) {
+        if (realSession != null)
+            return realSession.addTimeCondition(storeId, userId, lowerBound);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addUserAgeCondition(int storeId, int userId, int lowerBound, int upperBound) {
+        if (realSession != null)
+            return realSession.addUserAgeCondition(storeId, userId, lowerBound, upperBound);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addUserAgeCondition(int storeId, int userId, int lowerBound) {
+        if (realSession != null)
+            return realSession.addUserAgeCondition(storeId, userId, lowerBound);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addStoreDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, String coupon) {
+        if (realSession != null)
+            return realSession.addStoreDiscount(storeId, userId, conditionId, discountPercentage, expirationDate, coupon);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addStoreDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, String coupon) {
+        if (realSession != null)
+            return realSession.addStoreDiscount(storeId, userId, discountPercentage, expirationDate, coupon);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addStoreDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate) {
+        if (realSession != null)
+            return realSession.addStoreDiscount(storeId, userId, conditionId, discountPercentage, expirationDate);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addStoreDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate) {
+        if (realSession != null)
+            return realSession.addStoreDiscount(storeId, userId, discountPercentage, expirationDate);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addCategoryDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, String category, String coupon) {
+        if (realSession != null)
+            return realSession.addCategoryDiscount(storeId, userId, conditionId, discountPercentage, expirationDate, category, coupon);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addCategoryDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, String category, String coupon) {
+        if (realSession != null)
+            return realSession.addCategoryDiscount(storeId, userId, discountPercentage, expirationDate, category, coupon);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addCategoryDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, String category) {
+        if (realSession != null)
+            return realSession.addCategoryDiscount(storeId, userId, conditionId, discountPercentage, expirationDate, category);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addCategoryDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, String category) {
+        if (realSession != null)
+            return realSession.addCategoryDiscount(storeId, userId, discountPercentage, expirationDate, category);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addProductDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, int productId, String coupon) {
+        if (realSession != null)
+            return realSession.addProductDiscount(storeId, userId, conditionId, discountPercentage, expirationDate, productId, coupon);
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addProductDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, int productId, String coupon) {
+        if (realSession != null)
+            return realSession.addProductDiscount(storeId, userId, discountPercentage, expirationDate, productId, coupon);
+
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addProductDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, int productId) {
+        if (realSession != null)
+            return realSession.addProductDiscount(storeId, userId, conditionId, discountPercentage, expirationDate, productId);
+
+        return null;
+    }
+
+    @Override
+    public Response<Integer> addProductDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, int productId) {
+        if (realSession != null)
+            return realSession.addProductDiscount(storeId, userId, discountPercentage, expirationDate, productId);
+
+        return null;
+    }
+
+    @Override
+    public Response<List<DiscountInfo>> getStoreDiscounts(int storeId, int userId) {
+        if (realSession != null)
+            return realSession.getStoreDiscounts(storeId, userId);
+
+        return null;
+    }
+
+    @Override
+    public Response<DiscountInfo> getDiscount(int storeId, int userId, int discountId) {
+        if (realSession != null)
+            return realSession.getDiscount(storeId, userId, discountId);
+
+        return null;
+    }
+
+    @Override
+    public Response<VoidResponse> removeDiscount(int storeId, int userId, int discountId) {
+        if (realSession != null)
+            return realSession.removeDiscount(storeId, userId, discountId);
+
+        return Response.success(new VoidResponse());
+    }
+
+    @Override
+    public Response<VoidResponse> addDiscountAsRoot(int storeId, int userId, int discountId) {
+        if (realSession != null)
+            return realSession.addDiscountAsRoot(storeId, userId, discountId);
+
+        return Response.success(new VoidResponse());
+    }
+
+    @Override
+    public Response<VoidResponse> addDiscountToXORRoot(int storeId, int userId, int discountId) {
+        if (realSession != null)
+            return realSession.addDiscountToXORRoot(storeId, userId, discountId);
+
+        return Response.success(new VoidResponse());
+    }
+
+    @Override
+    public Response<VoidResponse> addDiscountToMAXRoot(int storeId, int userId, int discountId) {
+        if (realSession != null)
+            return realSession.addDiscountToMAXRoot(storeId, userId, discountId);
+
+        return Response.success(new VoidResponse());
+    }
+
+    @Override
+    public Response<VoidResponse> addDiscountToADDRoot(int storeId, int userId, int discountId) {
+        if (realSession != null)
+            return realSession.addDiscountToADDRoot(storeId, userId, discountId);
+
+        return Response.success(new VoidResponse());
     }
 
 
@@ -242,21 +548,21 @@ public class ProxySession implements ISession {
     @Override
     public Response<VoidResponse> markMessageAsReadAdmin(int userId, String receiverId, String senderId, int messageId) {
         if (realSession != null)
-           return  realSession.markMessageAsReadAdmin(userId, receiverId, senderId, messageId);
+            return realSession.markMessageAsReadAdmin(userId, receiverId, senderId, messageId);
         return Response.success(new VoidResponse());
     }
 
     @Override
     public Response<VoidResponse> sendMassageAdmin(int userId, String receiverId, String header, String massage) {
         if (realSession != null)
-            return   realSession.sendMassageAdmin(userId, receiverId, header, massage);
+            return realSession.sendMassageAdmin(userId, receiverId, header, massage);
         return Response.success(new VoidResponse());
     }
 
     @Override
     public Response<VoidResponse> answerComplaint(int userId, String answer) {
         if (realSession != null)
-           return realSession.answerComplaint(userId, answer);
+            return realSession.answerComplaint(userId, answer);
         return Response.success(new VoidResponse());
     }
 
@@ -266,6 +572,7 @@ public class ProxySession implements ISession {
             return realSession.readMessage(userId);
         return Response.success(Message.constractMessage("", -1, "", "", ""));
     }
+
     @Override
     public Response<VoidResponse> clearMessageToReply(int userId) {
         if (realSession != null)
@@ -276,7 +583,7 @@ public class ProxySession implements ISession {
     @Override
     public Response<VoidResponse> replayMessage(int userId, String massage) {
         if (realSession != null)
-            return  realSession.replayMessage(userId,massage);
+            return realSession.replayMessage(userId, massage);
         return Response.success(new VoidResponse());
     }
 
@@ -286,12 +593,12 @@ public class ProxySession implements ISession {
             return realSession.readOldMessage(userId);
         return Response.success(Message.constractMessage("", -1, "", "", ""));
     }
+
     @Override
-    public Response<VoidResponse> refreshOldMessages(int userId)
-    {
+    public Response<VoidResponse> refreshOldMessages(int userId) {
         if (realSession != null)
-           return  realSession.refreshOldMessages(userId);
-        return  Response.success(new VoidResponse());
+            return realSession.refreshOldMessages(userId);
+        return Response.success(new VoidResponse());
     }
 
     @Override
@@ -332,7 +639,7 @@ public class ProxySession implements ISession {
     @Override
     public Response<VoidResponse> addReview(int userId, String review, int storeId, int productId) {
         if (realSession != null)
-             return realSession.addReview(userId, review, storeId, productId);
+            return realSession.addReview(userId, review, storeId, productId);
         return Response.success(new VoidResponse());
     }
 
@@ -347,14 +654,14 @@ public class ProxySession implements ISession {
     public Response<Review> getReview(int userId, int storeId, int productId) {
         if (realSession != null)
             return realSession.getReview(userId, storeId, productId);
-        return Response.success( new Review("", -1, -1, -1));
+        return Response.success(new Review("", -1, -1, -1));
     }
 
     @Override
     public Response<List<ReviewService>> getAllReviews(int userId, int storeId, int productId) {
         if (realSession != null)
             return realSession.getAllReviews(userId, storeId, productId);
-        return Response.success( null);
+        return Response.success(null);
     }
 
     @Override
@@ -409,7 +716,7 @@ public class ProxySession implements ISession {
     public Response<Float> getStoreScore(int userId, int storeId) {
         if (realSession != null)
             return realSession.getStoreScore(userId, storeId);
-        return Response.success( (float)-1);
+        return Response.success((float) -1);
     }
 
     @Override
@@ -421,7 +728,7 @@ public class ProxySession implements ISession {
 
     @Override
     public Response<List<ServiceBasketProduct>> getCartContent(int userId) {
-        if(realSession != null)
+        if (realSession != null)
             return realSession.getCartContent(userId);
         return null;
     }
@@ -596,7 +903,7 @@ public class ProxySession implements ISession {
 
     @Override
     public List<Integer> getFailedProducts(int userId, int storeId) {
-        if(realSession != null)
+        if (realSession != null)
             return realSession.getFailedProducts(userId, storeId);
         return new ArrayList<>();
     }
@@ -610,7 +917,7 @@ public class ProxySession implements ISession {
 
     @Override
     public void cancelPurchase(int userId) {
-        if(realSession != null)
+        if (realSession != null)
             realSession.cancelPurchase(userId);
     }
 
@@ -651,187 +958,33 @@ public class ProxySession implements ISession {
 
     @Override
     public Response<List<Pair<StoreInfo, String>>> getAllUserAssociatedStores(int userId) {
-        if(realSession != null)
+        if (realSession != null)
             return realSession.getAllUserAssociatedStores(userId);
         return null;
     }
 
 
-
     @Override
     public Response<VoidResponse> hideStore(int userId, int storeId) {
-        if(realSession != null)
+        if (realSession != null)
             return realSession.hideStore(userId, storeId);
         return null;
     }
 
     @Override
     public Response<VoidResponse> unhideStore(int userId, int storeId) {
-        if(realSession != null)
+        if (realSession != null)
             return realSession.unhideStore(userId, storeId);
         return null;
     }
 
     @Override
     public Response<VoidResponse> deleteStore(int userId, int storeId) {
-        if(realSession != null)
+        if (realSession != null)
             return realSession.deleteStore(userId, storeId);
         return null;
     }
 
-    @Override
-    public Response<VoidResponse> allowPurchasePolicyConflicts(int userId, int storeId) {
-        if (realSession != null)
-            return realSession.allowPurchasePolicyConflicts(userId, storeId);
-        return null;
-    }
-
-    @Override
-    public Response<VoidResponse> disallowPurchasePolicyConflicts(int userId, int storeId) {
-        if (realSession != null)
-            return realSession.disallowPurchasePolicyConflicts(userId, storeId);
-        return null;
-    }
-
-    @Override
-    public Response<VoidResponse> setStorePurchaseQuantityUpperBound(int userId, int storeId, int upperBound) {
-        if (realSession != null)
-            return realSession.setStorePurchaseQuantityUpperBound(userId, storeId, upperBound);
-        return null;
-    }
-
-    @Override
-    public Response<VoidResponse> setStorePurchaseQuantityLowerBound(int userId, int storeId, int lowerBound) {
-        if (realSession != null)
-            return realSession.setStorePurchaseQuantityLowerBound(userId, storeId, lowerBound);
-        return null;
-    }
-
-    @Override
-    public Response<VoidResponse> setStorePurchaseQuantityBounds(int userId, int storeId, int lowerBound, int upperBound) {
-        if (realSession != null)
-            return realSession.setStorePurchaseQuantityBounds(userId, storeId, lowerBound, upperBound);
-        return null;
-    }
-
-    @Override
-    public Response<VoidResponse> setStorePurchasePriceUpperBound(int userId, int storeId, int upperBound) {
-        if (realSession != null)
-            return realSession.setStorePurchasePriceUpperBound(userId, storeId, upperBound);
-        return null;
-    }
-
-    @Override
-    public Response<VoidResponse> setStorePurchasePriceLowerBound(int userId, int storeId, int lowerBound) {
-        if (realSession != null)
-            return realSession.setStorePurchasePriceLowerBound(userId, storeId, lowerBound);
-        return null;
-    }
-
-    @Override
-    public Response<VoidResponse> setStorePurchasePriceBounds(int userId, int storeId, int lowerBound, int upperBound) {
-        if (realSession != null)
-            return realSession.setStorePurchasePriceBounds(userId, storeId, lowerBound, upperBound);
-        return null;
-    }
-
-    @Override
-    public Response<VoidResponse> setProductPurchaseQuantityUpperBound(int userId, int storeId, int productId, int upperBound) {
-        if (realSession != null)
-            return realSession.setProductPurchaseQuantityUpperBound(userId, storeId, productId, upperBound);
-        return null;
-    }
-
-    @Override
-    public Response<VoidResponse> setProductPurchaseQuantityLowerBound(int userId, int storeId, int productId, int lowerBound) {
-        if (realSession != null)
-            return realSession.setProductPurchaseQuantityLowerBound(userId, storeId, productId, lowerBound);
-        return null;
-    }
-
-    @Override
-    public Response<VoidResponse> setProductPurchaseQuantityBounds(int userId, int storeId, int productId, int lowerBound, int upperBound) {
-        if (realSession != null)
-            return realSession.setProductPurchaseQuantityBounds(userId, storeId, productId, lowerBound, upperBound);
-        return null;
-    }
-
-    @Override
-    public Response<VoidResponse> setProductPurchasePriceUpperBound(int userId, int storeId, int productId, int upperBound) {
-        if (realSession != null)
-            return realSession.setProductPurchasePriceUpperBound(userId, storeId, productId, upperBound);
-        return null;
-    }
-
-    @Override
-    public Response<VoidResponse> setProductPurchasePriceLowerBound(int userId, int storeId, int productId, int lowerBound) {
-        if (realSession != null)
-            return realSession.setProductPurchasePriceLowerBound(userId, storeId, productId, lowerBound);
-        return null;
-    }
-
-    @Override
-    public Response<VoidResponse> setProductPurchasePriceBounds(int userId, int storeId, int productId, int lowerBound, int upperBound) {
-        if (realSession != null)
-            return realSession.setProductPurchasePriceBounds(userId, storeId, productId, lowerBound, upperBound);
-        return null;
-    }
-
-    @Override
-    public Response<Integer> addStoreVisibleDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate) {
-        if (realSession != null)
-            return realSession.addStoreVisibleDiscount(userId, storeId, discountPercentage, discountLastDate);
-        return null;
-    }
-
-    @Override
-    public Response<Integer> addStoreConditionalDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount) {
-        if (realSession != null)
-            return realSession.addStoreConditionalDiscount(userId, storeId, discountPercentage, discountLastDate, minPriceForDiscount, quantityForDiscount);
-        return null;
-    }
-
-    @Override
-    public Response<Integer> addStoreHiddenDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate, String code) {
-        if (realSession != null)
-            return realSession.addStoreHiddenDiscount(userId, storeId, discountPercentage, discountLastDate, code);
-        return null;
-    }
-
-    @Override
-    public Response<VoidResponse> removeStoreDiscount(int userId, int storeId, int discountId) {
-        if (realSession != null)
-            return realSession.removeStoreDiscount(userId, storeId, discountId);
-        return null;
-    }
-
-    @Override
-    public Response<Integer> addProductVisibleDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate) {
-        if (realSession != null)
-            return realSession.addProductVisibleDiscount(userId, storeId, productId, discountPercentage, discountLastDate);
-        return null;
-    }
-
-    @Override
-    public Response<Integer> addProductConditionalDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount) {
-        if (realSession != null)
-            return realSession.addProductConditionalDiscount(userId, storeId, productId, discountPercentage, discountLastDate, minPriceForDiscount, quantityForDiscount);
-        return null;
-    }
-
-    @Override
-    public Response<Integer> addProductHiddenDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate, String code) {
-        if (realSession != null)
-            return realSession.addProductHiddenDiscount(userId, storeId, productId, discountPercentage, discountLastDate, code);
-        return null;
-    }
-
-    @Override
-    public Response<VoidResponse> removeProductDiscount(int userId, int storeId, int productId, int discountId) {
-        if (realSession != null)
-            return realSession.removeProductDiscount(userId, storeId, productId, discountId);
-        return null;
-    }
     @Override
     public void pushTest() {
         realSession.pushTest();
