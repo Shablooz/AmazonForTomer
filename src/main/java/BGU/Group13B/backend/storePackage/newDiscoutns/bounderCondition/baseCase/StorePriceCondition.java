@@ -27,7 +27,7 @@ public class StorePriceCondition extends Condition {
     public boolean satisfied(BasketInfo basketInfo, UserInfo user) {
         //sum all products quantities
         double price = basketInfo.basketProducts().stream().
-                map(BasketProduct::getPrice).reduce(0.0, Double::sum);
+                map(b -> b.getPrice() * b.getQuantity()).reduce(0.0, Double::sum);
 
         return priceBounder.inBounds(price);
     }

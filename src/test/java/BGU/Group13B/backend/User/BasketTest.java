@@ -6,13 +6,16 @@ import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
 import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
+import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
+import com.vaadin.flow.data.selection.SelectionModel;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
@@ -42,7 +45,6 @@ class BasketTest {
     private int productId4;
 
 
-
     @BeforeEach
     void setUp() {
 
@@ -62,12 +64,13 @@ class BasketTest {
 
         initProducts();
         //total price before 25.0
-        SingletonCollection.getProductDiscountsRepository().addProductVisibleDiscount(productId1, 0.2, LocalDateTime.now().plus(5, ChronoUnit.MINUTES));
-        SingletonCollection.getProductDiscountsRepository().addProductVisibleDiscount(productId2, 0.2, LocalDateTime.now().plus(5, ChronoUnit.MINUTES));
+        int discountId1 = this.store.addProductDiscount(userId, 0.2, LocalDate.now().plusDays(1), productId1);
+        int discountId2 = this.store.addProductDiscount(userId, 0.2, LocalDate.now().plusDays(1), productId2);
+        int discountId3 = this.store.addStoreDiscount(userId, 0.1, LocalDate.now().plusDays(1));
 
-        //total price after product discount 20.0
-        SingletonCollection.getStoreDiscountsRepository().addStoreVisibleDiscount(storeId, 0.1, LocalDateTime.now().plus(5, ChronoUnit.MINUTES));
-        //total price after store discount 18.0
+        this.store.addDiscountAsRoot(userId, discountId1);
+        this.store.addDiscountToADDRoot(userId, discountId2);
+        this.store.addDiscountToADDRoot(userId, discountId3);
 
         paymentAdapter = Mockito.mock(PaymentAdapter.class);
         deliveryAdapter = Mockito.mock(DeliveryAdapter.class);
@@ -112,24 +115,6 @@ class BasketTest {
         basketProductRepository.addNewProductToBasket(productId2, storeId, userId);//adding product 1 to basket
     }
 
-    private void initCalculatePriceOfBasket(Market market) {
-        final Method method;//effective final
-        try {
-            method = Market.class.getDeclaredMethod("calculatePriceOfBasket", double.class, ConcurrentLinkedQueue.class, int.class, String.class);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
-        method.setAccessible(true);
-
-        calculatePriceOfBasket = ((totalAmount, successfulProducts, storeId, storeCoupons) -> {
-            try {
-                return (double) method.invoke(market, totalAmount, successfulProducts, storeId, storeCoupons);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new RuntimeException(e);
-            }
-        });
-    }
-
     @AfterEach
     void tearDown() {
 
@@ -137,7 +122,6 @@ class BasketTest {
 
     @RepeatedTest(10)
     void twoThreadsTryToPurchaseTheLastProduct() {
-        AtomicInteger firstThread = new AtomicInteger(0);
         AtomicReference<Double> pricePayed2 = new AtomicReference<>(0.0);
         AtomicReference<Double> pricePayed3 = new AtomicReference<>(0.0);
         int userId2 = SingletonCollection.getUserRepository().getNewUserId();
@@ -159,12 +143,11 @@ class BasketTest {
                     Thread.sleep(100);
                 payBehaviour(true);
                 deliveryBehaviour(true);
-                firstThread.compareAndSet(0, 1);
                 pricePayed3.set(basket3.purchaseBasket("", "", "",
                         "", "", "", new HashMap<>(), ""));
             } catch (PurchaseFailedException e) {
-                Assertions.assertEquals("purchase quantity exceeds policy. must be in [1, 10]", e.getMessage());
-            }catch (InterruptedException e) {
+                Assertions.assertEquals("total price must be 2.0-100.0", e.getMessage());
+            } catch (InterruptedException e) {
                 Assertions.fail(e);
             }
         });
@@ -175,12 +158,11 @@ class BasketTest {
                 payBehaviour(true);
                 deliveryBehaviour(true);
 
-                firstThread.compareAndSet(0, 2);
                 pricePayed2.set(basket2.purchaseBasket("", "", "", "", "", "", new HashMap<>(), ""));
             } catch (PurchaseFailedException e) {
                 Assertions.assertEquals("purchase quantity exceeds policy. must be in [1, 10]", e.getMessage());
 
-            }catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 Assertions.fail(e);
             }
         });
@@ -216,7 +198,7 @@ class BasketTest {
             payBehaviour(true);
             deliveryBehaviour(true);
 
-            Assertions.assertEquals(18, basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), ""));
+            Assertions.assertEquals(17.5, basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), ""));
         } catch (PurchaseFailedException e) {
             throw new RuntimeException(e);
         }
@@ -246,7 +228,7 @@ class BasketTest {
             payBehaviour(true);
             deliveryBehaviour(true);
 
-            Assertions.assertEquals(18, basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), ""));
+            Assertions.assertEquals(17.5, basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), ""));
         } catch (PurchaseFailedException e) {
             throw new RuntimeException(e);
         }
@@ -369,6 +351,7 @@ class BasketTest {
         }
 
     }
+
     @Test
     void purchaseBasketSimpleTest_StorePolicyMinQuantitySuccess() {
         try {
@@ -385,6 +368,7 @@ class BasketTest {
         }
 
     }
+
     @Test
     void purchaseBasketSimpleTest_StorePolicyMaxQuantityFail() {
         try {
@@ -395,12 +379,13 @@ class BasketTest {
             basketProductRepository.changeProductQuantity(productId3, storeId, userId, 13);
             basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), "");
         } catch (PurchaseFailedException e) {
-            Assertions.assertEquals("purchase quantity exceeds policy. must be in [1, 10]", e.getMessage());
+            Assertions.assertEquals("total quantity must be 1-10", e.getMessage());
         } catch (Exception e) {
             Assertions.fail(e.getMessage());
         }
 
     }
+
     @Test
     void purchaseBasketSimpleTest_StorePolicyMaxQuantitySuccess() {
         try {
@@ -415,6 +400,7 @@ class BasketTest {
         }
 
     }
+
     @Test
     void purchaseBasketSimpleTest_StorePolicyMinBagPriceFail() {
         try {
@@ -424,12 +410,13 @@ class BasketTest {
             basketProductRepository.addNewProductToBasket(productId3, storeId, userId);
             basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), "");
         } catch (PurchaseFailedException e) {
-            Assertions.assertEquals("purchase price exceeds policy. must be in [2, 100]", e.getMessage());
+            Assertions.assertEquals("total price must be 2.0-100.0", e.getMessage());
         } catch (Exception e) {
             Assertions.fail(e.getMessage());
         }
 
     }
+
     @Test
     void purchaseBasketSimpleTest_StorePolicyMinBagPriceSuccess() {
         try {
@@ -444,6 +431,7 @@ class BasketTest {
         }
 
     }
+
     @Test
     void purchaseBasketSimpleTest_StorePolicyMaxBagPriceFail() {
         try {
@@ -454,12 +442,11 @@ class BasketTest {
             basketProductRepository.changeProductQuantity(productId4, storeId, userId, 10);
             basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), "");
         } catch (PurchaseFailedException e) {
-            Assertions.assertEquals("purchase price exceeds policy. must be in [2, 100]", e.getMessage());
+            Assertions.assertEquals("total price must be 2.0-100.0", e.getMessage());
         } catch (Exception e) {
             Assertions.fail(e.getMessage());
         }
     }
-
 
 
 }

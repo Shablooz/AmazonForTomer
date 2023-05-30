@@ -17,7 +17,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class StoreManagementTest {
     private static IStoreRepository storeRepository;
     private static IProductRepository productRepository;
-    private static IProductPurchasePolicyRepository productPurchasePolicyRepository;
     private static IUserRepository userRepository;
 
     private final int adminId = 1;
@@ -45,7 +44,6 @@ public class StoreManagementTest {
         SingletonCollection.reset_system();
         storeRepository = SingletonCollection.getStoreRepository();
         productRepository = SingletonCollection.getProductRepository();
-        productPurchasePolicyRepository = SingletonCollection.getProductPurchasePolicyRepository();
         userRepository = SingletonCollection.getUserRepository();
 
         founderId = addUser();
@@ -76,13 +74,6 @@ public class StoreManagementTest {
             assertEquals(price, result.getPrice());
             assertEquals(stockQuantity, result.getStockQuantity());
             assertEquals(description, result.getDescription());
-
-            PurchasePolicy purchasePolicy = productPurchasePolicyRepository.getPurchasePolicy(storeId, productId);
-            assertEquals(productId, purchasePolicy.getParentId());
-            assertEquals(0, purchasePolicy.getPriceLowerBound());
-            assertEquals(-1, purchasePolicy.getPriceUpperBound());
-            assertEquals(0, purchasePolicy.getQuantityLowerBound());
-            assertEquals(-1, purchasePolicy.getQuantityUpperBound());
         }
         catch (Exception e){
             fail();

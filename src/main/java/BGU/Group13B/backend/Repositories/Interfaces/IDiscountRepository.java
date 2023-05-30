@@ -26,4 +26,7 @@ public interface IDiscountRepository {
     StoreDiscount getDiscount(int discountId, int storeId);
     void removeDiscount(int discountId, int storeId);
     void reset();
+
+    void removeStoreProductDiscounts(int storeId, int productId);
+    void removeAllStoreDiscounts(int storeId);
 }

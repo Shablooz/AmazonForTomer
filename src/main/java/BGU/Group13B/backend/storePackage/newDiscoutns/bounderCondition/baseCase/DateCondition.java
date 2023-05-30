@@ -5,6 +5,7 @@ import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.Bounder;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.newDiscoutns.bounderCondition.time.Date;
+import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 
 import java.time.LocalDateTime;
 
@@ -24,8 +25,9 @@ public class DateCondition extends Condition {
     }
 
     @Override
-    public boolean satisfied(BasketInfo basketInfo, UserInfo user) {
-        return bounder.inBounds(Date.of(LocalDateTime.now()));
+    public void satisfied(BasketInfo basketInfo, UserInfo user) throws PurchaseExceedsPolicyException {
+        if(!bounder.inBounds(Date.of(LocalDateTime.now())))
+            throw new PurchaseExceedsPolicyException("date must be " + bounder);
     }
 
     public String toString(){

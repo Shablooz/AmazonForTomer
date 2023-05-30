@@ -5,6 +5,7 @@ import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.Bounder;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
+import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 
 public class CategoryPriceCondition extends Condition {
 
@@ -29,13 +30,15 @@ public class CategoryPriceCondition extends Condition {
     }
 
     @Override
-    public boolean satisfied(BasketInfo basketInfo, UserInfo user) {
+    public void satisfied(BasketInfo basketInfo, UserInfo user) throws PurchaseExceedsPolicyException {
         //sum products quantity in category
         double price = basketInfo.basketProducts().stream().
                 filter(p -> p.getCategory().equals(category)).
                 map(BasketProduct::getPrice).reduce(0.0, Double::sum);
 
-        return priceBounder.inBounds(price);
+        if(!priceBounder.inBounds(price)){
+            throw new PurchaseExceedsPolicyException("category price must be " + priceBounder);
+        }
     }
     public String toString(){
         return "category: " + category + ", price: " + priceBounder.toString();

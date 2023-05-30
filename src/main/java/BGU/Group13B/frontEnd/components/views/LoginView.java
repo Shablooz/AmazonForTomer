@@ -4,6 +4,7 @@ import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.service.BroadCaster;
 import BGU.Group13B.service.Session;
 import BGU.Group13B.service.SingletonCollection;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.Tag;
 
 import com.vaadin.flow.component.Text;
@@ -90,7 +91,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
                         "", "", "");
                 Notification.show("Login successful");
                 SessionToIdMapper.getInstance().updateCurrentSession(newId);
-               // SessionToIdMapper.getInstance().setRefreshRequired(true);
+                // SessionToIdMapper.getInstance().setRefreshRequired(true);
                 UI.getCurrent().navigate(HomeView.class);
 
                 var ui = UI.getCurrent();
@@ -142,7 +143,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
                         answer1.getValue(), answer2.getValue(), answer3.getValue());
                 Notification.show("Login successful");
                 SessionToIdMapper.getInstance().updateCurrentSession(newId);
-               // SessionToIdMapper.getInstance().setRefreshRequired(true);
+                // SessionToIdMapper.getInstance().setRefreshRequired(true);
                 UI.getCurrent().navigate(HomeView.class);
 
                 var ui = UI.getCurrent();
@@ -167,7 +168,12 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
         notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
 
         Icon icon = VaadinIcon.CHECK_CIRCLE.create();
-        Div info = new Div(new Text(message));
+        Div info;
+        try {
+            info = new Div(new Html(message));
+        } catch (Exception e) {
+            info = new Div(new Text(message));
+        }
 
         HorizontalLayout layout = new HorizontalLayout(icon, info,
                 createCloseBtn(notification));
@@ -190,7 +196,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
         int userId = SessionToIdMapper.getInstance().getCurrentSessionId();
-        if(session.isUserLogged(userId))
+        if (session.isUserLogged(userId))
             event.rerouteTo(HomeView.class);
 
     }

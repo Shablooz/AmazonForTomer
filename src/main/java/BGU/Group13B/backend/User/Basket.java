@@ -86,16 +86,18 @@ public class Basket {
     }//[Discount1, Discount2, Discount3]
     //Discount1 /
 
-    public Pair<Double, List<BasketProduct>> startPurchaseBasketTransactionWithSuccessful(HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                                                                          String/*store coupons*/ storeCoupon) throws PurchaseFailedException {
+
+    //For GUI
+    public Pair<Double, List<BasketProduct>> startPurchaseBasketTransactionWithSuccessful(UserInfo userInfo, List<String> coupons) throws PurchaseFailedException {
         successfulProducts.clear();
         failedProducts.clear();
         scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduledFuture = scheduler.schedule(this::restoreProductsStock, idealTime, unitsToRestore);
         getSuccessfulProducts();
-        double totalAmount = getTotalAmount(productsCoupons);
+        //double totalAmount = getTotalAmount(productsCoupons);//fixme
         //calculate the total price of the products by the store discount policy
-        finalPrice = calculateStoreDiscount(totalAmount, storeCoupon);
+        var basketProducts= basketProductRepository.getBasketProducts(storeId, userId).orElseGet(LinkedList::new);
+        finalPrice = calculateStoreDiscount(userInfo, coupons);
         return Pair.of(finalPrice, new LinkedList<>(successfulProducts));
     }
 
@@ -160,8 +162,8 @@ public class Basket {
         }
     }
 
-    private double calculateStoreDiscount(double totalAmountAfterProductDiscounts, String storeCoupon) throws PurchaseExceedsPolicyException {
-        return calculatePriceOfBasket.apply(totalAmountAfterProductDiscounts, successfulProducts, storeId, storeCoupon);
+    private double calculateStoreDiscount(UserInfo userInfo, List<String> coupons) throws PurchaseExceedsPolicyException {
+        return calculatePriceOfBasket.apply(storeId, new BasketInfo(getSuccessfulProductsList().stream().toList()), userInfo, coupons);
     }
 
 
@@ -206,17 +208,17 @@ public class Basket {
     }
 
     public String getBasketDescription() {
-        String basketContent = "";
+        StringBuilder basketContent = new StringBuilder();
         basketProductRepository.getBasketProducts(storeId, userId);
         for (BasketProduct basketProduct : basketProductRepository.getBasketProducts(storeId, userId).get()) {
-            basketContent += basketProduct.toString();
+            basketContent.append(basketProduct.toString());
         }
-        return basketContent;
+        return basketContent.toString();
     }
 
     public void removeProduct(int productId) throws Exception {
         try {
-                basketProductRepository.removeBasketProduct(productId, userId, storeId);
+            basketProductRepository.removeBasketProduct(productId, userId, storeId);
         } catch (Exception e) {
             throw e;
         }

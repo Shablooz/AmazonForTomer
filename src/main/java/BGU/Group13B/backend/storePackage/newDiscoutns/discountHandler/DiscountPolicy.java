@@ -31,9 +31,12 @@ public class DiscountPolicy {
         discountAccumulationRepository = SingletonCollection.getDiscountAccumulationRepository();
         conditionRepository = SingletonCollection.getConditionRepository();
         discountRootsRepository = SingletonCollection.getStoreDiscountRootsRepository();
+        int discountRoot = discountRootsRepository.getStoreDiscountRoot(storeId);
+        if(discountRoot != -1){
+            discountAccumulationTree = discountAccumulationRepository.getDiscountAccumulationNode(discountRoot);
+        }
 
-        discountAccumulationTree = discountAccumulationRepository.getDiscountAccumulationNode(
-                discountRootsRepository.getStoreDiscountRoot(storeId));
+
     }
 
 
@@ -166,6 +169,12 @@ public class DiscountPolicy {
      */
 
     public double calculatePriceOfBasket(BasketInfo basketInfo, UserInfo userInfo, List<String> coupons) {
+        if (discountAccumulationTree == null) {
+            return basketInfo.basketProducts().
+                    stream().mapToDouble(
+                            product -> product.getQuantity() * product.getPrice()).
+                    sum();
+        }
         ProductDiscountMap finalProductDiscountMap = discountAccumulationTree.computeProductDiscountMap(basketInfo, userInfo, coupons);
         return basketInfo.basketProducts().
                 stream().mapToDouble(
@@ -178,5 +187,13 @@ public class DiscountPolicy {
 
 
     public static void main(String[] args) {
+    }
+
+    public void removeAllDiscounts() {
+        discountRepository.removeAllStoreDiscounts(storeId);
+    }
+
+    public void removeProductDiscount(int productId){
+        discountRepository.removeStoreProductDiscounts(storeId, productId);
     }
 }

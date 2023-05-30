@@ -1,8 +1,11 @@
 package BGU.Group13B.backend.storePackage.newDiscoutns.Logical;
 
 import BGU.Group13B.backend.User.BasketInfo;
+import BGU.Group13B.backend.User.PurchaseFailedException;
 import BGU.Group13B.backend.User.UserInfo;
+import BGU.Group13B.backend.storePackage.newDiscoutns.PurchasePolicy;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
+import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 
 public class IMPLY extends LogicalCondition{
     public IMPLY(int conditionId, Condition operand1, Condition operand2) {

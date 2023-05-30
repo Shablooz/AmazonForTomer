@@ -5,6 +5,7 @@ import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.Bounder;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
+import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 import BGU.Group13B.service.SingletonCollection;
 
 public class ProductPriceCondition extends Condition {
@@ -29,15 +30,15 @@ public class ProductPriceCondition extends Condition {
     }
 
     @Override
-    public boolean satisfied(BasketInfo basketInfo, UserInfo user) {
+    public void satisfied(BasketInfo basketInfo, UserInfo user) throws PurchaseExceedsPolicyException {
         BasketProduct product = basketInfo.basketProducts().
                 stream().filter(p -> p.getProductId() == productId).
                 findFirst().orElse(null);
 
-        if(product == null)
-            return priceBounder.getLowerBound() <= 0;
-
-        return priceBounder.inBounds(product.getPrice());
+        String productName = SingletonCollection.getProductRepository().getProductById(productId).getName();
+        if((product == null && priceBounder.getLowerBound() > 0)
+                || !priceBounder.inBounds(product.getPrice()))
+            throw new PurchaseExceedsPolicyException(productName + " price must be " + priceBounder);
     }
     public String toString(){
         //mafhhhhhheeeeid

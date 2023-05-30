@@ -67,7 +67,17 @@ public class StoreDiscount{
     }
 
     private boolean satisfiesCondition(BasketInfo basketInfo, UserInfo userInfo) {
-        return condition == null || condition.satisfied(basketInfo, userInfo);
+        if( condition != null){
+            try{
+                condition.satisfied(basketInfo, userInfo);
+            }
+            catch (PurchaseExceedsPolicyException e){
+                return false;
+            } catch (PurchaseFailedException e) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public int getDiscountId() {

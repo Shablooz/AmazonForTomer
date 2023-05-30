@@ -5,7 +5,7 @@ import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyIm
 import BGU.Group13B.backend.Repositories.Interfaces.*;
 import BGU.Group13B.backend.User.*;
 import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
-import BGU.Group13B.backend.storePackage.discountPolicies.StoreDiscountPolicy;
+import BGU.Group13B.backend.storePackage.newDiscoutns.PurchasePolicy;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.DiscountPolicy;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.StoreDiscount;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
@@ -20,16 +20,12 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 public class Store {
     private final IConditionRepository conditionRepository;
     private final DiscountPolicy discountPolicy;
     private final IProductRepository productRepository;
-    private final IStorePurchasePolicyRepository storePurchasePolicyRepository;
-    private final IProductPurchasePolicyRepository productPurchasePolicyRepository;
-    private final StoreDiscountPolicy oldDiscountPolicy;
     private final DeliveryAdapter deliveryAdapter;
     private final PaymentAdapter paymentAdapter;
     private final AlertManager alertManager;
@@ -49,13 +45,7 @@ public class Store {
     private final IStoreScore storeScore;
 
     private boolean hidden = false;
-
-    /*
-     * when purchase policy conflicts are allowed, a product can have a purchase policy
-     * that conflicts with the store purchase policy in a way that makes it so no user can buy the product
-     */
-    private boolean purchasePolicyConflictsAllowed = true; //conflicts are allowed by default
-
+    private final PurchasePolicy purchasePolicy;
 
     public Store(int storeId, int founderId, String storeName, String category) {
         this.auctionRepository = SingletonCollection.getAuctionRepository();
@@ -66,9 +56,6 @@ public class Store {
         this.alertManager = SingletonCollection.getAlertManager();
         this.addToUserCart = SingletonCollection.getAddToUserCart();
         this.storeMessagesRepository = SingletonCollection.getStoreMessagesRepository();
-        this.storePurchasePolicyRepository = SingletonCollection.getStorePurchasePolicyRepository();
-        this.productPurchasePolicyRepository = SingletonCollection.getProductPurchasePolicyRepository();
-        this.oldDiscountPolicy = new StoreDiscountPolicy(storeId);
         this.userRepository = SingletonCollection.getUserRepository();
         this.storePermissionsRepository = SingletonCollection.getStorePermissionRepository();
         this.storeId = storeId;
@@ -84,9 +71,9 @@ public class Store {
         this.purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
         this.storeScore = SingletonCollection.getStoreScoreRepository();
 
-        this.storePurchasePolicyRepository.insertPurchasePolicy(new PurchasePolicy(this.storeId));
         this.conditionRepository = SingletonCollection.getConditionRepository();
         this.discountPolicy = new DiscountPolicy(storeId);
+        this.purchasePolicy = new PurchasePolicy(storeId);
     }
 
     //used only for testing
@@ -96,9 +83,6 @@ public class Store {
                  StoreMessageRepositoryNonPersist storeMessagesRepository, IAuctionRepository auctionRepository, IPurchaseHistoryRepository purchaseHistoryRepository,
                  IStoreScore storeScore, IStorePurchasePolicyRepository storePurchasePolicyRepository, IProductPurchasePolicyRepository productPurchasePolicyRepository) {
         this.productRepository = productRepository;
-        this.storePurchasePolicyRepository = storePurchasePolicyRepository;
-        this.productPurchasePolicyRepository = productPurchasePolicyRepository;
-        this.oldDiscountPolicy = new StoreDiscountPolicy(storeId);
         this.deliveryAdapter = deliveryAdapter;
         this.paymentAdapter = paymentAdapter;
         this.alertManager = alertManager;
@@ -116,6 +100,7 @@ public class Store {
         this.storePermissionsRepository = null;
         this.conditionRepository = null;
         this.discountPolicy = new DiscountPolicy(storeId);
+        this.purchasePolicy = new PurchasePolicy(storeId);
     }
 
     @DefaultFounderFunctionality
@@ -323,7 +308,7 @@ public class Store {
         int quantity = successfulProducts.stream().mapToInt(BasketProduct::getQuantity).sum();
         double finalPrice = oldDiscountPolicy.applyAllDiscounts(totalAmountBeforeStoreDiscountPolicy, successfulProducts, storeCoupon);
         getPurchasePolicy().checkPolicy(quantity, finalPrice);
-        return finalPrice;
+        return finalPrice;*/
     }
 
 
@@ -543,327 +528,6 @@ public class Store {
         return productRepository.getStoreProducts(storeId).orElse(new ConcurrentSkipListSet<>(Comparator.comparingInt(Product::getProductId)));
     }
 
-    private PurchasePolicy getPurchasePolicy() {
-        return storePurchasePolicyRepository.getPurchasePolicy(storeId);
-    }
-
-
-    @DefaultFounderFunctionality
-    public void allowPurchasePolicyConflicts(int userId) throws NoPermissionException {
-        //check user permission
-        if (!this.storePermission.checkPermission(userId, hidden))
-            throw new NoPermissionException("User " + userId + " has no permission to allow purchase policy conflicts in the store: " + this.storeId);
-
-        this.purchasePolicyConflictsAllowed = true;
-    }
-
-    @DefaultFounderFunctionality
-    public void disallowPurchasePolicyConflicts(int userId) throws NoPermissionException {
-        //check user permission
-        if (!this.storePermission.checkPermission(userId, hidden))
-            throw new NoPermissionException("User " + userId + " has no permission to disallow purchase policy conflicts in the store: " + this.storeId);
-
-        this.purchasePolicyConflictsAllowed = false;
-    }
-
-    @DefaultFounderFunctionality
-    public void setStorePurchaseQuantityUpperBound(int userId, int upperBound) throws NoPermissionException {
-        if (!this.storePermission.checkPermission(userId, hidden))
-            throw new NoPermissionException("User " + userId + " has no permission to set purchase quantity upper bound in the store: " + this.storeId);
-
-        PurchasePolicy storePurchasePolicy = getPurchasePolicy();
-        synchronized (storePurchasePolicy) {
-            if (purchasePolicyConflictsAllowed) {
-                storePurchasePolicy.setQuantityUpperBound(upperBound);
-                return;
-            }
-
-            //the store can't have an upper bound lower than a product's lower bound
-            storePurchasePolicy.checkConflictsAndSetQuantityUpperBound(
-                    upperBound, this.productPurchasePolicyRepository.getStoreProductsMergedPurchaseQuantityBounders(storeId)
-            );
-        }
-    }
-
-    @DefaultFounderFunctionality
-    public void setStorePurchaseQuantityLowerBound(int userId, int lowerBound) throws NoPermissionException {
-        if (!this.storePermission.checkPermission(userId, hidden))
-            throw new NoPermissionException("User " + userId + " has no permission to set purchase quantity lower bound in the store: " + this.storeId);
-
-        PurchasePolicy storePurchasePolicy = getPurchasePolicy();
-        synchronized (storePurchasePolicy) {
-            if (purchasePolicyConflictsAllowed) {
-                storePurchasePolicy.setQuantityLowerBound(lowerBound);
-                return;
-            }
-
-            //the store can't have a lower bound higher than a product's upper bound
-            storePurchasePolicy.checkConflictsAndSetQuantityLowerBound(
-                    lowerBound, this.productPurchasePolicyRepository.getStoreProductsMergedPurchaseQuantityBounders(storeId)
-            );
-        }
-    }
-
-    @DefaultFounderFunctionality
-    public void setStorePurchaseQuantityBounds(int userId, int lowerBound, int upperBound) throws NoPermissionException {
-        if (!this.storePermission.checkPermission(userId, hidden))
-            throw new NoPermissionException("User " + userId + " has no permission to set purchase quantity bounds in the store: " + this.storeId);
-
-        PurchasePolicy storePurchasePolicy = getPurchasePolicy();
-        synchronized (storePurchasePolicy) {
-            if (purchasePolicyConflictsAllowed) {
-                storePurchasePolicy.setQuantityBounds(lowerBound, upperBound);
-                return;
-            }
-
-            //the store can't have a lower bound higher than a product's upper bound
-            //the store can't have an upper bound lower than a product's lower bound
-            storePurchasePolicy.checkConflictsAndSetQuantityBounds(
-                    lowerBound, upperBound, this.productPurchasePolicyRepository.getStoreProductsMergedPurchaseQuantityBounders(storeId)
-            );
-
-
-        }
-    }
-
-    @DefaultFounderFunctionality
-    public void setStorePurchasePriceUpperBound(int userId, int upperBound) throws NoPermissionException {
-        if (!this.storePermission.checkPermission(userId, hidden))
-            throw new NoPermissionException("User " + userId + " has no permission to set purchase price upper bound in the store: " + this.storeId);
-
-        PurchasePolicy storePurchasePolicy = getPurchasePolicy();
-        synchronized (storePurchasePolicy) {
-            if (purchasePolicyConflictsAllowed) {
-                storePurchasePolicy.setPriceUpperBound(upperBound);
-                return;
-            }
-
-            //the store can't have an upper bound lower than a product's lower bound
-            storePurchasePolicy.checkConflictsAndSetPriceUpperBound(
-                    upperBound, this.productPurchasePolicyRepository.getStoreProductsMergedPurchasePriceBounders(storeId)
-            );
-        }
-    }
-
-    @DefaultFounderFunctionality
-    public void setStorePurchasePriceLowerBound(int userId, int lowerBound) throws NoPermissionException {
-        if (!this.storePermission.checkPermission(userId, hidden))
-            throw new NoPermissionException("User " + userId + " has no permission to set purchase price lower bound in the store: " + this.storeId);
-
-        PurchasePolicy storePurchasePolicy = getPurchasePolicy();
-        synchronized (storePurchasePolicy) {
-            if (purchasePolicyConflictsAllowed) {
-                storePurchasePolicy.setPriceLowerBound(lowerBound);
-                return;
-            }
-
-            //the store can't have a lower bound higher than a product's upper bound
-            storePurchasePolicy.checkConflictsAndSetPriceLowerBound(
-                    lowerBound, this.productPurchasePolicyRepository.getStoreProductsMergedPurchasePriceBounders(storeId)
-            );
-        }
-    }
-
-    @DefaultFounderFunctionality
-    public void setStorePurchasePriceBounds(int userId, int lowerBound, int upperBound) throws NoPermissionException {
-        if (!this.storePermission.checkPermission(userId, hidden))
-            throw new NoPermissionException("User " + userId + " has no permission to set purchase price bounds in the store: " + this.storeId);
-
-        PurchasePolicy storePurchasePolicy = getPurchasePolicy();
-        synchronized (storePurchasePolicy) {
-            if (purchasePolicyConflictsAllowed) {
-                storePurchasePolicy.setPriceBounds(lowerBound, upperBound);
-                return;
-            }
-
-            //the store can't have a lower bound higher than a product's upper bound
-            //the store can't have an upper bound lower than a product's lower bound
-            storePurchasePolicy.checkConflictsAndSetPriceBounds(
-                    lowerBound, upperBound, this.productPurchasePolicyRepository.getStoreProductsMergedPurchasePriceBounders(storeId)
-            );
-        }
-    }
-
-    @DefaultFounderFunctionality
-    public void setProductPurchaseQuantityUpperBound(int userId, int productId, int upperBound) throws NoPermissionException {
-        if (!this.storePermission.checkPermission(userId, hidden))
-            throw new NoPermissionException("User " + userId + " has no permission to set purchase quantity upper bound in the store: " + this.storeId);
-
-        PurchasePolicy productPurchasePolicy = productPurchasePolicyRepository.getPurchasePolicy(this.storeId, productId);
-        synchronized (productPurchasePolicy) {
-            if (purchasePolicyConflictsAllowed) {
-                productPurchasePolicy.setQuantityUpperBound(upperBound);
-                return;
-            }
-
-            //the store can't have a lower bound higher than a product's upper bound
-            productPurchasePolicy.checkConflictsAndSetQuantityUpperBound(
-                    upperBound, this.getPurchasePolicy().getQuantityBounder()
-            );
-        }
-    }
-
-    @DefaultFounderFunctionality
-    public void setProductPurchaseQuantityLowerBound(int userId, int productId, int lowerBound) throws NoPermissionException {
-        if (!this.storePermission.checkPermission(userId, hidden))
-            throw new NoPermissionException("User " + userId + " has no permission to set purchase quantity lower bound in the store: " + this.storeId);
-
-        PurchasePolicy productPurchasePolicy = productPurchasePolicyRepository.getPurchasePolicy(this.storeId, productId);
-        synchronized (productPurchasePolicy) {
-            if (purchasePolicyConflictsAllowed) {
-                productPurchasePolicy.setQuantityLowerBound(lowerBound);
-                return;
-            }
-
-            //the store can't have an upper bound lower than a product's lower bound
-            productPurchasePolicy.checkConflictsAndSetQuantityLowerBound(
-                    lowerBound, this.getPurchasePolicy().getQuantityBounder()
-            );
-        }
-    }
-
-    @DefaultFounderFunctionality
-    public void setProductPurchaseQuantityBounds(int userId, int productId, int lowerBound, int upperBound) throws NoPermissionException {
-        if (!this.storePermission.checkPermission(userId, hidden))
-            throw new NoPermissionException("User " + userId + " has no permission to set purchase quantity bounds in the store: " + this.storeId);
-
-        PurchasePolicy productPurchasePolicy = productPurchasePolicyRepository.getPurchasePolicy(this.storeId, productId);
-        synchronized (productPurchasePolicy) {
-            if (purchasePolicyConflictsAllowed) {
-                productPurchasePolicy.setQuantityBounds(lowerBound, upperBound);
-                return;
-            }
-
-            //the store can't have a lower bound higher than a product's upper bound
-            //the store can't have an upper bound lower than a product's lower bound
-            productPurchasePolicy.checkConflictsAndSetQuantityBounds(
-                    lowerBound, upperBound, this.getPurchasePolicy().getQuantityBounder()
-            );
-        }
-    }
-
-    @DefaultFounderFunctionality
-    public void setProductPurchasePriceUpperBound(int userId, int productId, int upperBound) throws NoPermissionException {
-        if (!this.storePermission.checkPermission(userId, hidden))
-            throw new NoPermissionException("User " + userId + " has no permission to set purchase price upper bound in the store: " + this.storeId);
-
-        PurchasePolicy productPurchasePolicy = productPurchasePolicyRepository.getPurchasePolicy(this.storeId, productId);
-        synchronized (productPurchasePolicy) {
-            if (purchasePolicyConflictsAllowed) {
-                productPurchasePolicy.setPriceUpperBound(upperBound);
-                return;
-            }
-
-            //the store can't have a lower bound higher than a product's upper bound
-            productPurchasePolicy.checkConflictsAndSetPriceUpperBound(
-                    upperBound, this.getPurchasePolicy().getPriceBounder()
-            );
-        }
-    }
-
-    @DefaultFounderFunctionality
-    public void setProductPurchasePriceLowerBound(int userId, int productId, int lowerBound) throws NoPermissionException {
-        if (!this.storePermission.checkPermission(userId, hidden))
-            throw new NoPermissionException("User " + userId + " has no permission to set purchase price lower bound in the store: " + this.storeId);
-
-        PurchasePolicy productPurchasePolicy = productPurchasePolicyRepository.getPurchasePolicy(this.storeId, productId);
-        synchronized (productPurchasePolicy) {
-            if (purchasePolicyConflictsAllowed) {
-                productPurchasePolicy.setPriceLowerBound(lowerBound);
-                return;
-            }
-
-            //the store can't have an upper bound lower than a product's lower bound
-            productPurchasePolicy.checkConflictsAndSetPriceLowerBound(
-                    lowerBound, this.getPurchasePolicy().getPriceBounder()
-            );
-        }
-    }
-
-    @DefaultFounderFunctionality
-    public void setProductPurchasePriceBounds(int userId, int productId, int lowerBound, int upperBound) throws NoPermissionException {
-        if (!this.storePermission.checkPermission(userId, hidden))
-            throw new NoPermissionException("User " + userId + " has no permission to set purchase price bounds in the store: " + this.storeId);
-
-        PurchasePolicy productPurchasePolicy = productPurchasePolicyRepository.getPurchasePolicy(this.storeId, productId);
-        synchronized (productPurchasePolicy) {
-            if (purchasePolicyConflictsAllowed) {
-                productPurchasePolicy.setPriceBounds(lowerBound, upperBound);
-                return;
-            }
-
-            //the store can't have a lower bound higher than a product's upper bound
-            //the store can't have an upper bound lower than a product's lower bound
-            productPurchasePolicy.checkConflictsAndSetPriceBounds(
-                    lowerBound, upperBound, this.getPurchasePolicy().getPriceBounder()
-            );
-        }
-    }
-
-    @DefaultFounderFunctionality
-    public int addStoreVisibleDiscount(int userId, double discountPercentage, LocalDateTime discountLastDate) throws NoPermissionException {
-        if (!this.storePermission.checkPermission(userId, hidden))
-            throw new NoPermissionException("User " + userId + " has no permission to add store visible discount in the store: " + this.storeId);
-
-        return this.oldDiscountPolicy.addVisibleDiscount(discountPercentage, discountLastDate);
-    }
-
-    @DefaultFounderFunctionality
-    public int addStoreConditionalDiscount(int userId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount) throws NoPermissionException {
-        if (!this.storePermission.checkPermission(userId, hidden))
-            throw new NoPermissionException("User " + userId + " has no permission to add store conditional discount in the store: " + this.storeId);
-
-        return this.oldDiscountPolicy.addConditionalDiscount(discountPercentage, discountLastDate, minPriceForDiscount, quantityForDiscount);
-    }
-
-    @DefaultFounderFunctionality
-    public int addStoreHiddenDiscount(int userId, double discountPercentage, LocalDateTime discountLastDate, String code) throws NoPermissionException {
-        if (!this.storePermission.checkPermission(userId, hidden))
-            throw new NoPermissionException("User " + userId + " has no permission to add store hidden discount in the store: " + this.storeId);
-
-        return this.oldDiscountPolicy.addHiddenDiscount(discountPercentage, discountLastDate, code);
-    }
-
-    @DefaultFounderFunctionality
-    public void removeStoreDiscount(int userId, int discountId) throws NoPermissionException {
-        if (!this.storePermission.checkPermission(userId, hidden))
-            throw new NoPermissionException("User " + userId + " has no permission to remove store discount in the store: " + this.storeId);
-
-        this.oldDiscountPolicy.removeDiscount(discountId);
-    }
-
-    @DefaultFounderFunctionality
-    public int addProductVisibleDiscount(int userId, int productId, double discountPercentage, LocalDateTime discountLastDate) throws NoPermissionException {
-        if (!this.storePermission.checkPermission(userId, hidden))
-            throw new NoPermissionException("User " + userId + " has no permission to add product visible discount in the store: " + this.storeId);
-
-        return getStoreProduct(userId, productId).addVisibleDiscount(discountPercentage, discountLastDate);
-    }
-
-    @DefaultFounderFunctionality
-    public int addProductConditionalDiscount(int userId, int productId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount) throws NoPermissionException {
-        if (!this.storePermission.checkPermission(userId, hidden))
-            throw new NoPermissionException("User " + userId + " has no permission to add product conditional discount in the store: " + this.storeId);
-
-        return getStoreProduct(userId, productId).addConditionalDiscount(discountPercentage, discountLastDate, minPriceForDiscount, quantityForDiscount);
-    }
-
-    @DefaultFounderFunctionality
-    public int addProductHiddenDiscount(int userId, int productId, double discountPercentage, LocalDateTime discountLastDate, String code) throws NoPermissionException {
-        if (!this.storePermission.checkPermission(userId, hidden))
-            throw new NoPermissionException("User " + userId + " has no permission to add product hidden discount in the store: " + this.storeId);
-
-        return getStoreProduct(userId, productId).addHiddenDiscount(discountPercentage, discountLastDate, code);
-    }
-
-    @DefaultFounderFunctionality
-    public void removeProductDiscount(int userId, int productId, int discountId) throws NoPermissionException {
-        if (!this.storePermission.checkPermission(userId, hidden))
-            throw new NoPermissionException("User " + userId + " has no permission to remove product discount in the store: " + this.storeId);
-
-        getStoreProduct(userId, productId).removeDiscount(discountId);
-    }
-
     @DefaultFounderFunctionality
     public synchronized void hideStore(int userId) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
@@ -913,8 +577,8 @@ public class Store {
         //delete data
         deleteAllStoreProducts(userId);
         deleteAllStorePermissions();
-        deleteAllStoreDiscounts();
-        deleteAllStorePurchasePolicies();
+        discountPolicy.removeAllDiscounts();
+        purchasePolicy.removeRoot();
         deleteAllStoreScores();
 
         //notify workers
@@ -932,14 +596,6 @@ public class Store {
 
     private void deleteAllStoreScores() {
         storeScore.clearStoreScore(storeId);
-    }
-
-    private void deleteAllStorePurchasePolicies() {
-        storePurchasePolicyRepository.deletePurchasePolicy(storeId);
-    }
-
-    private void deleteAllStoreDiscounts() {
-        oldDiscountPolicy.removeAllDiscounts();
     }
 
     private void deleteAllStoreProducts(int userId) throws NoPermissionException {
@@ -1000,6 +656,41 @@ public class Store {
         return conditionRepository.addIMPLYCondition(condition1, condition2);
     }
 
+    @DefaultFounderFunctionality
+    @DefaultOwnerFunctionality
+    public int addStorePriceCondition(int userId, double lowerBound, double upperBound) throws NoPermissionException{
+        if (!this.storePermission.checkPermission(userId, hidden))
+            throw new NoPermissionException("User " + userId + " has no permission to add store price condition in the store: " + this.storeId);
+
+        return conditionRepository.addStorePriceCondition(lowerBound, upperBound);
+    }
+
+    @DefaultFounderFunctionality
+    @DefaultOwnerFunctionality
+    public int addStorePriceCondition(int userId, double lowerBound) throws NoPermissionException{
+        if (!this.storePermission.checkPermission(userId, hidden))
+            throw new NoPermissionException("User " + userId + " has no permission to add store price condition in the store: " + this.storeId);
+
+        return conditionRepository.addStorePriceCondition(lowerBound);
+    }
+
+    @DefaultFounderFunctionality
+    @DefaultOwnerFunctionality
+    public int addStoreQuantityCondition(int userId, int lowerBound, int upperBound) throws NoPermissionException{
+        if (!this.storePermission.checkPermission(userId, hidden))
+            throw new NoPermissionException("User " + userId + " has no permission to add store quantity condition in the store: " + this.storeId);
+
+        return conditionRepository.addStoreQuantityCondition(lowerBound, upperBound);
+    }
+
+    @DefaultFounderFunctionality
+    @DefaultOwnerFunctionality
+    public int addStoreQuantityCondition(int userId, int lowerBound) throws NoPermissionException{
+        if (!this.storePermission.checkPermission(userId, hidden))
+            throw new NoPermissionException("User " + userId + " has no permission to add store quantity condition in the store: " + this.storeId);
+
+        return conditionRepository.addStoreQuantityCondition(lowerBound);
+    }
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
     public int addCategoryPriceCondition(int userId, String category, double lowerBound, double upperBound) throws NoPermissionException {

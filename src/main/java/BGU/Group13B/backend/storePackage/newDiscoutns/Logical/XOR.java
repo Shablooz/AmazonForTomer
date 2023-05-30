@@ -2,10 +2,11 @@ package BGU.Group13B.backend.storePackage.newDiscoutns.Logical;
 
 
 import BGU.Group13B.backend.User.BasketInfo;
+import BGU.Group13B.backend.User.PurchaseFailedException;
 import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 
-public class XOR extends LogicalCondition{
+public class XOR extends LogicalCondition {
     public XOR(int conditionId, Condition operand1, Condition operand2) {
         super(conditionId, operand1, operand2);
     }

@@ -1,12 +1,8 @@
 package BGU.Group13B.backend.storePackage;
 
-import BGU.Group13B.backend.Repositories.Interfaces.IProductPurchasePolicyRepository;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IRepositoryReview;
-import BGU.Group13B.backend.storePackage.discountPolicies.ProductDiscountPolicy;
-import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.info.ProductInfo;
 
@@ -19,8 +15,6 @@ public class Product {
     private String category;
     private String description;
     private int stockQuantity;
-    private final IProductPurchasePolicyRepository productPurchasePolicy;
-    private final ProductDiscountPolicy discountPolicy;
     private final IRepositoryReview repositoryReview;
 
     private boolean deleted = false;
@@ -35,11 +29,8 @@ public class Product {
         this.setPrice(price);
         this.setStockQuantity(stockQuantity);
         this.description = description;
-        this.productPurchasePolicy = SingletonCollection.getProductPurchasePolicyRepository();
-        this.discountPolicy = new ProductDiscountPolicy(productId);
         this.repositoryReview = SingletonCollection.getReviewRepository();
 
-        this.productPurchasePolicy.insertPurchasePolicy(storeId, new PurchasePolicy(productId));
     }
 
     public Product(int productId, int storeId, String name, String category, double price, int stockQuantity, String description, boolean hidden){
@@ -140,22 +131,6 @@ public class Product {
 
     public ProductInfo getProductInfo() {
         return new ProductInfo(this);
-    }
-
-    public int addVisibleDiscount(double discountPercentage, LocalDateTime discountLastDate){
-        return this.discountPolicy.addVisibleDiscount(discountPercentage,discountLastDate);
-    }
-
-    public int addConditionalDiscount(double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount){
-        return this.discountPolicy.addConditionalDiscount(discountPercentage,discountLastDate,minPriceForDiscount,quantityForDiscount);
-    }
-
-    public int addHiddenDiscount(double discountPercentage, LocalDateTime discountLastDate, String code) {
-        return this.discountPolicy.addHiddenDiscount(discountPercentage,discountLastDate,code);
-    }
-
-    public void removeDiscount(int discountId){
-        this.discountPolicy.removeDiscount(discountId);
     }
 
     public synchronized void delete() {

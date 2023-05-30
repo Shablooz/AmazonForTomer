@@ -137,4 +137,37 @@ public class DiscountRepositoryAsHashMap implements IDiscountRepository {
         discounts.clear();
         nextId.set(0);
     }
+
+    @Override
+    public void removeStoreProductDiscounts(int storeId, int productId) {
+        List<Pair<Integer, Integer>> keysToRemove = new ArrayList<>();
+
+        for (var keyValue : discounts.entrySet()) {
+            if (keyValue.getKey().getSecond() == storeId && keyValue.getValue() instanceof ProductDiscount) {
+                if (((ProductDiscount) keyValue.getValue()).getProductId() == productId) {
+                    keysToRemove.add(keyValue.getKey());
+                }
+            }
+        }
+
+        for (var key : keysToRemove) {
+            discounts.remove(key);
+        }
+    }
+
+
+    @Override
+    public void removeAllStoreDiscounts(int storeId) {
+        List<Pair<Integer, Integer>> keysToRemove = new ArrayList<>();
+
+        for (var keyValue : discounts.entrySet()) {
+            if (keyValue.getKey().getSecond() == storeId) {
+                keysToRemove.add(keyValue.getKey());
+            }
+        }
+
+        for (var key : keysToRemove) {
+            discounts.remove(key);
+        }
+    }
 }

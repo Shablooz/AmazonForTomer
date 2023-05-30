@@ -51,6 +51,34 @@ public class ConditionRepositoryAsHashMap implements IConditionRepository {
     }
 
     @Override
+    public int addStorePriceCondition(double lowerBound, double upperBound) {
+        int id = nextId.getAndIncrement();
+        conditions.put(id, new StorePriceCondition(id, lowerBound, upperBound));
+        return id;
+    }
+
+    @Override
+    public int addStorePriceCondition(double lowerBound) {
+        int id = nextId.getAndIncrement();
+        conditions.put(id, new StorePriceCondition(id, lowerBound));
+        return id;
+    }
+
+    @Override
+    public int addStoreQuantityCondition(int lowerBound, int upperBound) {
+        int id = nextId.getAndIncrement();
+        conditions.put(id, new StoreQuantityCondition(id, lowerBound, upperBound));
+        return id;
+    }
+
+    @Override
+    public int addStoreQuantityCondition(int lowerBound) {
+        int id = nextId.getAndIncrement();
+        conditions.put(id, new StoreQuantityCondition(id, lowerBound));
+        return id;
+    }
+
+    @Override
     public int addCategoryPriceCondition(String category, double lowerBound, double upperBound) {
         int id = nextId.getAndIncrement();
         conditions.put(id, new CategoryPriceCondition(id, category, lowerBound, upperBound));

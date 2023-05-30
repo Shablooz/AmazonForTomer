@@ -18,7 +18,7 @@ public class StoreDiscountRootsRepositoryAsHashMap implements IStoreDiscountRoot
 
     @Override
     public int getStoreDiscountRoot(int storeId) {
-        return roots.get(storeId);
+        return roots.getOrDefault(storeId, -1);
     }
 
     @Override

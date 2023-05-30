@@ -17,9 +17,7 @@ class IStoreRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        storeRepository.reset();
-        SingletonCollection.getStorePurchasePolicyRepository().reset();
-        SingletonCollection.getStorePermissionRepository().reset();
+        SingletonCollection.reset_system();
     }
 
     @AfterEach
