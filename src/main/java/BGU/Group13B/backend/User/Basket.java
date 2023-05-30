@@ -140,7 +140,7 @@ public class Basket {
         LinkedList<String> coupons = new LinkedList<>(productsCoupons.values());
         coupons.add(storeCoupon);
 
-        double price = startPurchaseBasketTransaction(new UserInfo(LocalDate.now().minusYears(25)), coupons);
+        double price = startPurchaseBasketTransaction(new UserInfo(SingletonCollection.getUserRepository().getUser(userId).getDateOfBirth()), coupons);
         purchaseBasket(creditCardNumber, creditCardMonth, creditCardYear, creditCardHolderFirstName, creditCardCVV, id,
                 "address", "city", "country", "1234134");
         return price;

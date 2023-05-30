@@ -568,4 +568,8 @@ public class User {
     public String getPurchaseHistory() {
        return purchaseHistoryRepository.getAllPurchases(userId);
     }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
 }
