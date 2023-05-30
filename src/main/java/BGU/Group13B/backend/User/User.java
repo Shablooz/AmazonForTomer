@@ -33,7 +33,7 @@ public class User {
     private String userName;
     private Message regularMessageToReply;
     private String password;
-
+    private LocalDate dateOfBirth;
     private String email;
 
     private String answer1;
@@ -94,10 +94,10 @@ public class User {
 
     //#15
     //returns User on success (for future functionalities)
-    public User register(String userName, String password, String email, String answer1, String answer2, String answer3) {
+    public User register(String userName, String password, String email, String answer1, String answer2, String answer3, LocalDate birthdate) {
         checkRegisterInfo(userName, password, email);
         //updates the user info upon registration - no longer a guest
-        updateUserDetail(userName, password, email, answer1, answer2, answer3);
+        updateUserDetail(userName, password, email, answer1, answer2, answer3,birthdate);
         this.userPermissions.register(this.userId);
         return this;
     }
@@ -119,11 +119,13 @@ public class User {
 
     //function that currently only used in register, but is cna function as a setter
     //TODO change following fields in the database
-    private void updateUserDetail(String userName, String password, String email, String answer1, String answer2, String answer3) {
+    private void updateUserDetail(String userName, String password, String email, String answer1, String answer2, String answer3,
+                                  LocalDate birthdate) {
         this.answer1 = answer1;
         this.answer2 = answer2;
         this.answer3 = answer3;
         this.userName = userName;
+        this.dateOfBirth = birthdate;
         this.email = email;
         this.password = BCrypt.hashpw(password, BCrypt.gensalt());
     }
