@@ -113,6 +113,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    @StaffPermission
     public void addOwner(int userId, int newOwnerId) throws NoPermissionException, ChangePermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add an owner to store " + this.storeId);
@@ -122,6 +123,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    @StaffPermission
     public void removeOwner(int userId, int removeOwnerId) throws NoPermissionException, ChangePermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to remove an owner to store " + this.storeId);
@@ -134,6 +136,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    @StaffPermission
     public void addManager(int userId, int newManagerId) throws NoPermissionException, ChangePermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add a manager to store " + this.storeId);
@@ -143,6 +146,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    @StaffPermission
     public void removeManager(int userId, int removeManagerId) throws NoPermissionException, ChangePermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to remove a manager to store " + this.storeId);
@@ -178,6 +182,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    @StaffPermission
     public void addPermissionToManager(int userId, int managerId, UserPermissions.IndividualPermission individualPermission) throws NoPermissionException, ChangePermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add permissions to managers in store " + this.storeId);
@@ -187,6 +192,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    @StaffPermission
     public void removePermissionFromManager(int userId, int managerId, UserPermissions.IndividualPermission individualPermission) throws NoPermissionException, ChangePermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to remove permissions from managers in store " + this.storeId);
@@ -586,6 +592,7 @@ public class Store {
 
 
     @DefaultFounderFunctionality
+    @FounderOnlyPermission
     public void allowPurchasePolicyConflicts(int userId) throws NoPermissionException {
         //check user permission
         if(!this.storePermission.checkPermission(userId, hidden))
@@ -595,6 +602,7 @@ public class Store {
     }
 
     @DefaultFounderFunctionality
+    @FounderOnlyPermission
     public void disallowPurchasePolicyConflicts(int userId) throws NoPermissionException {
         //check user permission
         if(!this.storePermission.checkPermission(userId, hidden))
@@ -942,6 +950,7 @@ public class Store {
     }
 
     @DefaultFounderFunctionality
+    @FounderOnlyPermission
     public synchronized void hideStore(int userId) throws NoPermissionException {
         if(!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to hide the store: " + this.storeId);
@@ -969,6 +978,7 @@ public class Store {
     }
 
     @DefaultFounderFunctionality
+    @FounderOnlyPermission
     public synchronized void unhideStore(int userId) throws NoPermissionException {
         if(!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to unhide the store: " + this.storeId);

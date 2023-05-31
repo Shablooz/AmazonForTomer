@@ -34,9 +34,8 @@ public class UserPermissions {
         AUCTION,
         INFO,
         HISTORY,
-        DEFMEN,
-        DEFOWN,
-        DEFFOU
+        STAFF,
+        FONLY
     }
 
     private UserPermissionStatus userPermissionStatus;
