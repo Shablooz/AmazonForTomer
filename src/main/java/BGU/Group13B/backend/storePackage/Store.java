@@ -125,7 +125,7 @@ public class Store {
     public void removeOwner(int userId, int removeOwnerId) throws NoPermissionException, ChangePermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to remove an owner to store " + this.storeId);
-        List<Integer> removeUsersList = storePermission.removeOwnerPermission(removeOwnerId, userId, false);
+        Set<Integer> removeUsersList = storePermission.removeOwnerPermission(removeOwnerId, userId, false);
         for(Integer removeUserId: removeUsersList){
             userRepository.getUser(removeUserId).deletePermission(storeId);
         }

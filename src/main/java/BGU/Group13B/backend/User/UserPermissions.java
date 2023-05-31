@@ -3,10 +3,7 @@ package BGU.Group13B.backend.User;
 
 import BGU.Group13B.backend.Pair;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class UserPermissions {
 
@@ -36,7 +33,10 @@ public class UserPermissions {
         POLICIES,
         AUCTION,
         INFO,
-        HISTORY
+        HISTORY,
+        DEFMEN,
+        DEFOWN,
+        DEFFOU
     }
 
     private UserPermissionStatus userPermissionStatus;
@@ -78,7 +78,14 @@ public class UserPermissions {
     }
 
     public void addIndividualPermission(int storeId, IndividualPermission individualPermission){
-        userIndividualPermission.get(storeId).add(individualPermission);
+        if (userIndividualPermission.containsKey(storeId)){
+            userIndividualPermission.get(storeId).add(individualPermission);
+        }
+        else{
+            Set<IndividualPermission> ns = new HashSet<>();
+            ns.add(individualPermission);
+            userIndividualPermission.put(storeId, ns);
+        }
     }
 
     public void deleteIndividualPermission(int storeId, IndividualPermission individualPermission){

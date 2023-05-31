@@ -367,6 +367,20 @@ class StoreTest {
         }
     }
 
+    @Test
+    void addIndividualPermissionSuccess() {
+        customSetUp();
+        try {
+            omTestStore.addManager(tUserOwnerId, tUserId);
+            omTestStore.addPermissionToManager(tUserOwnerId, tUserId, UserPermissions.IndividualPermission.STOCK);
+            Assertions.assertTrue(omTestStore.getStorePermission().getUserToIndividualPermissions().get(tUserId).contains(UserPermissions.IndividualPermission.STOCK));
+        } catch (NoPermissionException | ChangePermissionException e) {
+            fail(e);
+        } finally {
+            customTearDown();
+        }
+    }
+
 
     @RepeatedTest(25)
     void addOwnerMultiThreadTest() {
