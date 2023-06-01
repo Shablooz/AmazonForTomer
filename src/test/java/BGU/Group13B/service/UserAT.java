@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
+
 public class UserAT extends ProjectTest {
 
 
@@ -29,7 +31,7 @@ public class UserAT extends ProjectTest {
     @Test
     void loginTest(){
         int id = this.session.enterAsGuest();
-        session.register(id,"TetTesting","verySecurePass123","goodmall@gmail.com","ans1","","");
+        session.register(id,"TetTesting","verySecurePass123","goodmall@gmail.com","ans1","","", LocalDate.MIN);
         session.login(id,"TetTesting","verySecurePass123","ans1","","");
         Assertions.assertTrue(session.isUserLogged(id));
     }
@@ -37,7 +39,7 @@ public class UserAT extends ProjectTest {
     @Test
     void logoutTest(){
         int id = this.session.enterAsGuest();
-        session.register(id,"testingname","verySecurePass123","goodmall@gmail.com","ans1","","");
+        session.register(id,"testingname","verySecurePass123","goodmall@gmail.com","ans1","","", LocalDate.MIN);
         session.login(id,"testingname","verySecurePass123","ans1","","");
         session.logout(id);
         Assertions.assertFalse(session.isUserLogged(id));
@@ -47,14 +49,14 @@ public class UserAT extends ProjectTest {
     void registerTest() {
         int id = this.session.enterAsGuest();
         try {
-            session.register(id, "testingname", "verySecurePass123", "goodmall@gmail.com", "ans1", "", "");
+            session.register(id, "testingname", "verySecurePass123", "goodmall@gmail.com", "ans1", "", "", LocalDate.MIN);
         } catch (Exception e) {
             Assertions.fail();
         }
 
         int id2 = this.session.enterAsGuest();
         try {
-            session.register(id2, "seconduser", "verySecurePass123", "goo1dma2ll@gmail.com", "ans31", "", "");
+            session.register(id2, "seconduser", "verySecurePass123", "goo1dma2ll@gmail.com", "ans31", "", "", LocalDate.MIN);
         } catch (Exception e) {
             Assertions.fail();
         }
