@@ -8,6 +8,7 @@ public class Preson {
 
     @Id
     private int id;
+
     private String name;
 
     public Preson(int id, String name) {
@@ -16,6 +17,8 @@ public class Preson {
     }
 
     public Preson() {
+        this.id = 1;
+        this.name = "person";
     }
 
     public int getId() {

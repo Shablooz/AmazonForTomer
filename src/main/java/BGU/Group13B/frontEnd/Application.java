@@ -34,9 +34,10 @@ public class Application implements AppShellConfigurator {
         timer.schedule(SessionToIdMapper.getInstance().kickExpired(), 5 * 60 * 1000, 5 * 60 * 1000);
     }
     @Bean
-    CommandLineRunner commandLineRunner(PersonJPA personJPA) {
+    CommandLineRunner commandLineRunner(PersonJPA personJPA, EdenRepo edenRepo) {
         return args -> {
             personJPA.save(new Preson(1, "david"));
+            edenRepo.save(new Eden());
         };
     }
 
