@@ -40,4 +40,18 @@ public class ProductPriceConditionEntity extends ConditionEntity {
         else
             return "Product price is at least " + lowerBound;
     }
+    public int getProductId() {
+        return productId;
+    }
+    public String getProductName() {
+        return productName;
+    }
+
+    @Override
+    public Response<Integer> addToBackend(Session session, int storeId, int userId) {
+        if (upperBound == -1)
+            return session.addProductPriceCondition(storeId, userId, productId, lowerBound);
+
+        return session.addProductPriceCondition(storeId, userId, productId, lowerBound, upperBound);
+    }
 }

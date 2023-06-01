@@ -2,6 +2,8 @@ package BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.leave
 
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.LogicalConditions.LogicalConditionEntity;
+import BGU.Group13B.service.Response;
+import BGU.Group13B.service.Session;
 
 public class UserAgeConditionEntity extends ConditionEntity {
     private final int lowerBound;

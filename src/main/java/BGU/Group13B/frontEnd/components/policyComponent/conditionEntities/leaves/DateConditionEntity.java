@@ -2,6 +2,8 @@ package BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.leave
 
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.LogicalConditions.LogicalConditionEntity;
+import BGU.Group13B.service.Response;
+import BGU.Group13B.service.Session;
 
 import java.time.LocalDate;
 
@@ -40,5 +42,13 @@ public class DateConditionEntity extends ConditionEntity {
             return "Date is between " + lowerBound + " and " + upperBound;
         else
             return "Date is at least " + lowerBound;
+    }
+
+    @Override
+    public Response<Integer> addToBackend(Session session, int storeId, int userId) {
+        if (upperBound == null)
+            return session.addDateCondition(storeId, userId, lowerBound.atStartOfDay());
+
+        return session.addDateCondition(storeId, userId, lowerBound.atStartOfDay(), upperBound.atStartOfDay());
     }
 }

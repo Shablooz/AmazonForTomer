@@ -2,6 +2,8 @@ package BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.leave
 
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.LogicalConditions.LogicalConditionEntity;
+import BGU.Group13B.service.Response;
+import BGU.Group13B.service.Session;
 
 public class StoreQuantityConditionEntity extends ConditionEntity {
     private final int lowerBound;
@@ -37,5 +39,13 @@ public class StoreQuantityConditionEntity extends ConditionEntity {
             return "Store quantity is between " + lowerBound + " and " + upperBound;
         else
             return "Store quantity is at least " + lowerBound;
+    }
+
+    @Override
+    public Response<Integer> addToBackend(Session session, int storeId, int userId) {
+        if (upperBound == -1)
+            return session.addStoreQuantityCondition(storeId, userId, lowerBound);
+
+        return session.addStoreQuantityCondition(storeId, userId, lowerBound, upperBound);
     }
 }

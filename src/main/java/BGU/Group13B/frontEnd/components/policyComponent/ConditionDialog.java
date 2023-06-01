@@ -1,5 +1,6 @@
 package BGU.Group13B.frontEnd.components.policyComponent;
 
+import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.leaves.*;
 import com.vaadin.flow.component.button.Button;
@@ -18,6 +19,10 @@ import com.vaadin.flow.component.timepicker.TimePicker;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
+import java.util.Set;
+
+import static java.util.List.of;
 
 
 public class ConditionDialog extends Dialog {
@@ -40,7 +45,15 @@ public class ConditionDialog extends Dialog {
     private final Button hideUpperBoundBtn = new Button(new Icon(VaadinIcon.MINUS));
     private final Button confirm = new Button("Confirm");
 
-    public ConditionDialog(ConditionTreeGrid conditionTreeGrid, ConditionEntity conditionEntity) {
+    /*
+    *  ComboBox<String> comboBox = new ComboBox<>("category");
+        comboBox.setAutoOpen(false);
+        add(comboBox);
+        comboBox.setItems(session.getProducts().getCategories());
+        comboBox.setItemLabelGenerator(Country::getName);??
+    * */
+
+    public ConditionDialog(ConditionTreeGrid conditionTreeGrid, ConditionEntity conditionEntity, Session session, int storeId, ConditionEntity plusToDelete) {
         this.conditionTreeGrid = conditionTreeGrid;
 
         //can't close dialog
@@ -315,7 +328,7 @@ public class ConditionDialog extends Dialog {
             dateUpperBound.setInvalid(true);
             invalid = true;
         }
-        if (dateLowerBound.getValue().isAfter(dateUpperBound.getValue())) {
+        if (hasUpperBound && dateLowerBound.getValue().isAfter(dateUpperBound.getValue())) {
             dateLowerBound.setInvalid(true);
             dateUpperBound.setInvalid(true);
             invalid = true;

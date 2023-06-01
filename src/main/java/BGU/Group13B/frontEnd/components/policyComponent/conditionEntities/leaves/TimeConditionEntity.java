@@ -2,6 +2,8 @@ package BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.leave
 
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.LogicalConditions.LogicalConditionEntity;
+import BGU.Group13B.service.Response;
+import BGU.Group13B.service.Session;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -9,6 +11,7 @@ import java.time.LocalTime;
 public class TimeConditionEntity extends ConditionEntity {
     private final LocalTime lowerBound;
     private final LocalTime upperBound;
+
     public TimeConditionEntity(LogicalConditionEntity parent) {
         super(parent);
         this.lowerBound = null;
@@ -34,11 +37,20 @@ public class TimeConditionEntity extends ConditionEntity {
     public LocalTime getUpperBound() {
         return upperBound;
     }
-    public String toString(){
+
+    public String toString() {
         boolean hasUpperBound = upperBound != null;
-        if(hasUpperBound)
+        if (hasUpperBound)
             return "Time is between " + lowerBound + " and " + upperBound;
         else
             return "Time is at least " + lowerBound;
+    }
+
+    @Override
+    public Response<Integer> addToBackend(Session session, int storeId, int userId) {
+        if (upperBound == null)
+            return session.addTimeCondition(storeId, userId, lowerBound.atDate(LocalDate.now()));
+
+        return session.addTimeCondition(storeId, userId, lowerBound.atDate(LocalDate.now()), upperBound.atDate(LocalDate.now()));
     }
 }

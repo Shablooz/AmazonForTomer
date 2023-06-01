@@ -184,11 +184,6 @@ public class DiscountPolicy {
                         }).
                 sum();
     }
-
-
-    public static void main(String[] args) {
-    }
-
     public void removeAllDiscounts() {
         discountRepository.removeAllStoreDiscounts(storeId);
     }

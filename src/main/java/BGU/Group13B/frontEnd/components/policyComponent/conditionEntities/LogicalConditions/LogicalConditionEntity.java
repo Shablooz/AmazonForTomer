@@ -24,8 +24,11 @@ public class LogicalConditionEntity extends ConditionEntity {
         return operator.toString();
     }
 
-    public static List<LogicalOperator> getAllLogicalOperators(){
+    public List<LogicalOperator> getAllLogicalOperators(){
         return List.of(LogicalOperator.values());
+    }
+    public LogicalOperator getOperator() {
+        return operator;
     }
 
 }
