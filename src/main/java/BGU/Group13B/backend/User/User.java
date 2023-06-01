@@ -95,17 +95,20 @@ public class User {
     //#15
     //returns User on success (for future functionalities)
     public User register(String userName, String password, String email, String answer1, String answer2, String answer3, LocalDate birthdate) {
-        checkRegisterInfo(userName, password, email);
+        checkRegisterInfo(userName, password, email,birthdate);
         //updates the user info upon registration - no longer a guest
         updateUserDetail(userName, password, email, answer1, answer2, answer3,birthdate);
         this.userPermissions.register(this.userId);
         return this;
     }
 
-    private void checkRegisterInfo(String userName, String password, String email) {
+    private void checkRegisterInfo(String userName, String password, String email,LocalDate birthdate){
         String usernameRegex = "^[a-zA-Z0-9_-]{4,16}$"; // 4-16 characters, letters/numbers/underscore/hyphen
         String passwordRegex = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)[A-Za-z\\d]{8,}$"; // need at least 8 characters, 1 uppercase, 1 lowercase, 1 number)
         String emailRegex = "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$"; // checks email validation
+        if (birthdate == null) {
+            throw new IllegalArgumentException("enter birthdate bro");
+        }
         if (!Pattern.matches(usernameRegex, userName)) {
             throw new IllegalArgumentException("Invalid username. Username must be 4-16 characters long and can only contain letters, numbers, underscores, or hyphens.");
         }
