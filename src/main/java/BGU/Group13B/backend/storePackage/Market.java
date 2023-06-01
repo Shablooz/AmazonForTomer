@@ -5,6 +5,10 @@ import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
 import BGU.Group13B.backend.System.Searcher;
 import BGU.Group13B.backend.User.*;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.StoreDiscount;
+import BGU.Group13B.backend.User.BasketProduct;
+import BGU.Group13B.backend.User.Message;
+import BGU.Group13B.backend.User.PurchaseHistory;
+import BGU.Group13B.backend.User.UserPermissions;
 import BGU.Group13B.backend.storePackage.permissions.ChangePermissionException;
 import BGU.Group13B.backend.storePackage.permissions.DefaultFounderFunctionality;
 import BGU.Group13B.backend.storePackage.permissions.DefaultOwnerFunctionality;
@@ -18,7 +22,6 @@ import BGU.Group13B.service.info.StoreInfo;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
@@ -502,5 +505,13 @@ public class Market {
     public void addDiscountToADDRoot(int storeId, int userId, int discountId) throws NoPermissionException {
         storeRepository.getStore(storeId).addDiscountToADDRoot(userId, discountId);
 
+    }
+
+    public void addIndividualPermission(int userId, int managerId, int storeId, UserPermissions.IndividualPermission individualPermission) throws NoPermissionException, ChangePermissionException {
+        storeRepository.getStore(storeId).addPermissionToManager(userId, managerId, individualPermission);
+    }
+
+    public void removeIndividualPermission(int userId, int managerId, int storeId, UserPermissions.IndividualPermission individualPermission) throws NoPermissionException, ChangePermissionException {
+        storeRepository.getStore(storeId).removePermissionFromManager(userId, managerId, individualPermission);
     }
 }

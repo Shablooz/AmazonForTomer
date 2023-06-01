@@ -10,13 +10,18 @@ import BGU.Group13B.backend.Repositories.Interfaces.IMessageRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IUserPermissionRepository;
 import BGU.Group13B.backend.storePackage.Market;
+import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
+import BGU.Group13B.service.BroadCaster;
 import BGU.Group13B.service.SingletonCollection;
 //eyal import
 import java.time.LocalDate;
+import org.mindrot.jbcrypt.BCrypt;
+
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 public class User {
@@ -519,6 +524,22 @@ public class User {
 
     public UserPermissions getUserPermissions() {
         return userPermissions;
+    }
+
+    public void addIndividualPermission(int storeId, UserPermissions.IndividualPermission individualPermission){
+        userPermissions.addIndividualPermission(storeId, individualPermission);
+    }
+
+    public void deleteIndividualPermission(int storeId, UserPermissions.IndividualPermission individualPermission){
+        userPermissions.deleteIndividualPermission(storeId, individualPermission);
+    }
+
+    public Set<UserPermissions.IndividualPermission> getIndividualPermissions(int storeId){
+        return userPermissions.getIndividualPermissions(storeId);
+    }
+
+    public void removeAllIndividualPermissions(int storeId){
+        userPermissions.removeAllIndividualPermissions(storeId);
     }
 
 
