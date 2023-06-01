@@ -311,7 +311,6 @@ class StoreTest {
         s1.getStorePermission().clearForTest();
         u1.getUserPermissions().clearForTest();
         u2.getUserPermissions().clearForTest();
-        SingletonCollection.getStorePurchasePolicyRepository().reset();
         //SingletonCollection.reset_system();
     }
 
