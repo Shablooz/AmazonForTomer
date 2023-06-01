@@ -5,5 +5,5 @@ import BGU.Group13B.backend.User.UserPermissions;
 import java.util.List;
 import java.util.Set;
 
-public record WorkerCard (int userId, UserPermissions.StoreRole storeRole, Set<String> userPermissions){
+public record WorkerCard (int userId, UserPermissions.StoreRole storeRole, Set<UserPermissions.IndividualPermission> userPermissions){
 }

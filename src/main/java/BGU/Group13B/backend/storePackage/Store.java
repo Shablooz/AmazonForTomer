@@ -687,6 +687,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    @PoliciesPermission
     public void setPurchasePolicyCondition(int userId, int conditionId) throws NoPermissionException{
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to set the purchase policy in the store : " + this.storeId);
@@ -696,6 +697,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    @PoliciesPermission
     public int addORCondition(int userId, int condition1, int condition2) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add OR condition in the store: " + this.storeId);
@@ -705,6 +707,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    @PoliciesPermission
     public int addANDCondition(int userId, int condition1, int condition2) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add AND condition in the store: " + this.storeId);
@@ -714,6 +717,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    @PoliciesPermission
     public int addXORCondition(int userId, int condition1, int condition2) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add XOR condition in the store: " + this.storeId);
@@ -723,6 +727,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    @PoliciesPermission
     public int addIMPLYCondition(int userId, int condition1, int condition2) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add IMPLY condition in the store: " + this.storeId);
@@ -732,6 +737,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    @PoliciesPermission
     public int addStorePriceCondition(int userId, double lowerBound, double upperBound) throws NoPermissionException{
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add store price condition in the store: " + this.storeId);
@@ -741,6 +747,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    @PoliciesPermission
     public int addStorePriceCondition(int userId, double lowerBound) throws NoPermissionException{
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add store price condition in the store: " + this.storeId);
@@ -750,6 +757,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    @PoliciesPermission
     public int addStoreQuantityCondition(int userId, int lowerBound, int upperBound) throws NoPermissionException{
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add store quantity condition in the store: " + this.storeId);
@@ -759,6 +767,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    @PoliciesPermission
     public int addStoreQuantityCondition(int userId, int lowerBound) throws NoPermissionException{
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add store quantity condition in the store: " + this.storeId);
@@ -767,6 +776,7 @@ public class Store {
     }
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    @PoliciesPermission
     public int addCategoryPriceCondition(int userId, String category, double lowerBound, double upperBound) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add category price condition in the store: " + this.storeId);
@@ -776,6 +786,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    @PoliciesPermission
     public int addCategoryPriceCondition(int userId, String category, double lowerBound) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add category price condition in the store: " + this.storeId);
@@ -785,6 +796,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    @PoliciesPermission
     public int addCategoryQuantityCondition(int userId, String category, int lowerBound, int upperBound) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add category quantity condition in the store: " + this.storeId);
@@ -794,6 +806,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    @PoliciesPermission
     public int addCategoryQuantityCondition(int userId, String category, int lowerBound) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add category quantity condition in the store: " + this.storeId);
@@ -803,6 +816,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    @PoliciesPermission
     public int addDateCondition(int userId, LocalDateTime lowerBound, LocalDateTime upperBound) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add date condition in the store: " + this.storeId);
@@ -812,6 +826,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    @PoliciesPermission
     public int addDateCondition(int userId, LocalDateTime lowerBound) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add date condition in the store: " + this.storeId);
@@ -821,6 +836,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    @PoliciesPermission
     public int addProductPriceCondition(int userId, int productId, double lowerBound, double upperBound) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add product price condition in the store: " + this.storeId);
@@ -830,6 +846,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    @PoliciesPermission
     public int addProductPriceCondition(int userId, int productId, double lowerBound) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add product price condition in the store: " + this.storeId);
@@ -839,6 +856,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    @PoliciesPermission
     public int addProductQuantityCondition(int userId, int productId, int lowerBound, int upperBound) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add product quantity condition in the store: " + this.storeId);
@@ -848,6 +866,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    @PoliciesPermission
     public int addProductQuantityCondition(int userId, int productId, int lowerBound) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add product quantity condition in the store: " + this.storeId);
@@ -857,6 +876,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    @PoliciesPermission
     public int addTimeCondition(int userId, LocalDateTime lowerBound, LocalDateTime upperBound) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to time condition in the store: " + this.storeId);
@@ -866,6 +886,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    @PoliciesPermission
     public int addTimeCondition(int userId, LocalDateTime lowerBound) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " time condition in the store: " + this.storeId);
@@ -875,6 +896,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    @PoliciesPermission
     public int addUserAgeCondition(int userId, int lowerBound, int upperBound) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " user age condition in the store: " + this.storeId);
@@ -884,6 +906,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
+    @PoliciesPermission
     public int addUserAgeCondition(int userId, int lowerBound) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " user age condition in the store: " + this.storeId);

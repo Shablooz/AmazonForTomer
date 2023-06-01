@@ -310,7 +310,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
         workerName.setText("Name: " + getUsername(workerCard));
         Div workerRole = new Div();
         workerRole.setText("Role: " + roleToStringTitle(workerCard.storeRole()));
-        Grid<String> workerPermissions = new Grid<>();
+        Grid<UserPermissions.IndividualPermission> workerPermissions = new Grid<>();
         workerPermissions.setItems(workerCard.userPermissions());
         workerPermissions.addColumn(p -> p).setHeader("Permissions");
         workerPermissions.setAllRowsVisible(true);
@@ -733,12 +733,12 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
         userIdToUsername.put(4, "tomer");
         userIdToUsername.put(5, "yoav");
 
-        WorkerCard worker0 = new WorkerCard(0, UserPermissions.StoreRole.FOUNDER, (Set<String>) founderPermissions);
-        WorkerCard worker1 = new WorkerCard(1, UserPermissions.StoreRole.OWNER, (Set<String>) ownerPermissions);
-        WorkerCard worker2 = new WorkerCard(2, UserPermissions.StoreRole.OWNER, (Set<String>) ownerPermissions);
-        WorkerCard worker3 = new WorkerCard(3, UserPermissions.StoreRole.MANAGER, (Set<String>) managerPermissions);
-        WorkerCard worker4 = new WorkerCard(4, UserPermissions.StoreRole.MANAGER, (Set<String>) managerPermissions);
-        WorkerCard worker5 = new WorkerCard(5, UserPermissions.StoreRole.MANAGER, (Set<String>) managerPermissions);
+        WorkerCard worker0 = new WorkerCard(0, UserPermissions.StoreRole.FOUNDER, Set.of(UserPermissions.IndividualPermission.values()));
+        WorkerCard worker1 = new WorkerCard(1, UserPermissions.StoreRole.OWNER, Set.of());
+        WorkerCard worker2 = new WorkerCard(2, UserPermissions.StoreRole.OWNER, Set.of());
+        WorkerCard worker3 = new WorkerCard(3, UserPermissions.StoreRole.MANAGER, Set.of());
+        WorkerCard worker4 = new WorkerCard(4, UserPermissions.StoreRole.MANAGER, Set.of());
+        WorkerCard worker5 = new WorkerCard(5, UserPermissions.StoreRole.MANAGER, Set.of());
 
         workers = new LinkedList<>();
         workers.add(worker0);

@@ -333,10 +333,7 @@ public class StorePermission {
             Integer userId = entry.getKey();
             StoreRole role = entry.getValue();
             Set<UserPermissions.IndividualPermission> userPermissions = userToIndividualPermissions.get(userId);
-            Set<String> userPermissionNames = userPermissions.stream()
-                    .map(UserPermissions.IndividualPermission::name)
-                    .collect(Collectors.toSet());
-            WorkerCard workerCard = new WorkerCard(userId, role, userPermissionNames);
+            WorkerCard workerCard = new WorkerCard(userId, role, userPermissions);
             workerCards.add(workerCard);
         }
         return workerCards;
