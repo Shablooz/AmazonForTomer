@@ -48,7 +48,7 @@ import org.vaadin.lineawesome.LineAwesomeIcon;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-
+import java.util.Set;
 
 
 @PageTitle("Store")
@@ -489,12 +489,12 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
         userIdToUsername.put(4, "tomer");
         userIdToUsername.put(5, "yoav");
 
-        WorkerCard worker0 = new WorkerCard(0, UserPermissions.StoreRole.FOUNDER, founderPermissions);
-        WorkerCard worker1 = new WorkerCard(1, UserPermissions.StoreRole.OWNER, ownerPermissions);
-        WorkerCard worker2 = new WorkerCard(2, UserPermissions.StoreRole.OWNER, ownerPermissions);
-        WorkerCard worker3 = new WorkerCard(3, UserPermissions.StoreRole.MANAGER, managerPermissions);
-        WorkerCard worker4 = new WorkerCard(4, UserPermissions.StoreRole.MANAGER, managerPermissions);
-        WorkerCard worker5 = new WorkerCard(5, UserPermissions.StoreRole.MANAGER, managerPermissions);
+        WorkerCard worker0 = new WorkerCard(0, UserPermissions.StoreRole.FOUNDER, Set.of(UserPermissions.IndividualPermission.values()));
+        WorkerCard worker1 = new WorkerCard(1, UserPermissions.StoreRole.OWNER, Set.of());
+        WorkerCard worker2 = new WorkerCard(2, UserPermissions.StoreRole.OWNER, Set.of());
+        WorkerCard worker3 = new WorkerCard(3, UserPermissions.StoreRole.MANAGER, Set.of());
+        WorkerCard worker4 = new WorkerCard(4, UserPermissions.StoreRole.MANAGER, Set.of());
+        WorkerCard worker5 = new WorkerCard(5, UserPermissions.StoreRole.MANAGER, Set.of());
 
         workers = new LinkedList<>();
         workers.add(worker0);
