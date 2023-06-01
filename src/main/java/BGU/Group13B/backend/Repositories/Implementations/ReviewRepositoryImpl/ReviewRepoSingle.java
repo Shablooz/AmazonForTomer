@@ -3,10 +3,10 @@ package BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl;
 import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.Repositories.Interfaces.IRepositoryReview;
 import BGU.Group13B.backend.storePackage.Review;
+import jakarta.persistence.Entity;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-
 public class ReviewRepoSingle implements IRepositoryReview {
 
 
