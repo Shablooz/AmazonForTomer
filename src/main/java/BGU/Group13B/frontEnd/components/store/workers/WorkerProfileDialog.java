@@ -25,7 +25,7 @@ public class WorkerProfileDialog extends Dialog implements ResponseHandler, role
         workerName.setText("Name: " + username);
         Div workerRole = new Div();
         workerRole.setText("Role: " + roleToStringTitle(worker.storeRole()));
-        Grid<String> workerPermissions = new Grid<>();
+        Grid<UserPermissions.IndividualPermission> workerPermissions = new Grid<>();
         workerPermissions.setItems(worker.userPermissions());
         workerPermissions.addColumn(p -> p).setHeader("Permissions");
         workerPermissions.setAllRowsVisible(true);
