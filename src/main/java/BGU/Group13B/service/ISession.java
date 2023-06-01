@@ -8,12 +8,16 @@ import BGU.Group13B.backend.User.PurchaseHistory;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.backend.storePackage.WorkerCard;
+import BGU.Group13B.backend.storePackage.newDiscoutns.DiscountInfo;
+import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.StoreDiscount;
+import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.service.entity.ReviewService;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
 import BGU.Group13B.service.entity.ServiceProduct;
 import BGU.Group13B.service.info.StoreInfo;
 import BGU.Group13B.service.info.ProductInfo;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import java.util.HashMap;
@@ -167,7 +171,7 @@ public interface ISession {
      * @param answer2  - optional for security question number 2 can put empty String
      * @param answer1  - optional for security question number 3 can put empty String
      */
-    void register(int userId, String username, String password, String email, String answer1, String answer2, String answer3);
+    void register(int userId, String username, String password, String email, String answer1, String answer2, String answer3, LocalDate birthDate);
 
     /**
      * #18
@@ -423,6 +427,8 @@ public interface ISession {
      */
 
     public Response<Float> getProductScore(int userId, int storeId, int productId);
+
+    Response<Float> getProductScoreUser(int userId, int storeId, int productId, int userIdTarget);
 
     /**
      * [#26]
@@ -701,256 +707,6 @@ public interface ISession {
     List<ServiceProduct> getAllFailedProductsAfterPayment(int userId);
 
     /**
-     * #33
-     * require 4.3
-     *
-     * @param userId  the user id
-     * @param storeId the store id
-     */
-    Response<VoidResponse> allowPurchasePolicyConflicts(int userId, int storeId);
-
-    /**
-     * #33
-     * require 4.3
-     *
-     * @param userId  the user id
-     * @param storeId the store id
-     */
-    Response<VoidResponse> disallowPurchasePolicyConflicts(int userId, int storeId);
-
-    /**
-     * #33
-     * require 4.3
-     *
-     * @param userId     the user id
-     * @param storeId    the store id
-     * @param upperBound the upper bound of the quantity
-     */
-    Response<VoidResponse> setStorePurchaseQuantityUpperBound(int userId, int storeId, int upperBound);
-
-    /**
-     * #33
-     * require 4.3
-     *
-     * @param userId     the user id
-     * @param storeId    the store id
-     * @param lowerBound the lower bound of the quantity
-     */
-    Response<VoidResponse> setStorePurchaseQuantityLowerBound(int userId, int storeId, int lowerBound);
-
-    /**
-     * #33
-     * require 4.3
-     *
-     * @param userId     the user id
-     * @param storeId    the store id
-     * @param lowerBound the lower bound of the quantity
-     * @param upperBound the upper bound of the quantity
-     */
-    Response<VoidResponse> setStorePurchaseQuantityBounds(int userId, int storeId, int lowerBound, int upperBound);
-
-    /**
-     * #33
-     * require 4.3
-     *
-     * @param userId     the user id
-     * @param storeId    the store id
-     * @param upperBound the upper bound of the price
-     */
-    Response<VoidResponse> setStorePurchasePriceUpperBound(int userId, int storeId, int upperBound);
-
-    /**
-     * #33
-     * require 4.3
-     *
-     * @param userId     the user id
-     * @param storeId    the store id
-     * @param lowerBound the lower bound of the price
-     */
-    Response<VoidResponse> setStorePurchasePriceLowerBound(int userId, int storeId, int lowerBound);
-
-    /**
-     * #33
-     * require 4.3
-     *
-     * @param userId     the user id
-     * @param storeId    the store id
-     * @param lowerBound the lower bound of the price
-     * @param upperBound the upper bound of the price
-     */
-    Response<VoidResponse> setStorePurchasePriceBounds(int userId, int storeId, int lowerBound, int upperBound);
-
-    /**
-     * #33
-     * require 4.3
-     *
-     * @param userId     the user id
-     * @param storeId    the store id
-     * @param productId  the product id
-     * @param upperBound the upper bound of the quantity
-     */
-    Response<VoidResponse> setProductPurchaseQuantityUpperBound(int userId, int storeId, int productId, int upperBound);
-
-    /**
-     * #33
-     * require 4.3
-     *
-     * @param userId     the user id
-     * @param storeId    the store id
-     * @param productId  the product id
-     * @param lowerBound the lower bound of the quantity
-     */
-    Response<VoidResponse> setProductPurchaseQuantityLowerBound(int userId, int storeId, int productId, int lowerBound);
-
-    /**
-     * #33
-     * require 4.3
-     *
-     * @param userId     the user id
-     * @param storeId    the store id
-     * @param productId  the product id
-     * @param lowerBound the lower bound of the quantity
-     * @param upperBound the upper bound of the quantity
-     */
-    Response<VoidResponse> setProductPurchaseQuantityBounds(int userId, int storeId, int productId, int lowerBound, int upperBound);
-
-    /**
-     * #33
-     * require 4.3
-     *
-     * @param userId     the user id
-     * @param storeId    the store id
-     * @param productId  the product id
-     * @param upperBound the upper bound of the price
-     */
-    Response<VoidResponse> setProductPurchasePriceUpperBound(int userId, int storeId, int productId, int upperBound);
-
-    /**
-     * #33
-     * require 4.3
-     *
-     * @param userId     the user id
-     * @param storeId    the store id
-     * @param productId  the product id
-     * @param lowerBound the lower bound of the price
-     */
-    Response<VoidResponse> setProductPurchasePriceLowerBound(int userId, int storeId, int productId, int lowerBound);
-
-    /**
-     * #33
-     * require 4.3
-     *
-     * @param userId     the user id
-     * @param storeId    the store id
-     * @param productId  the product id
-     * @param lowerBound the lower bound of the price
-     * @param upperBound the upper bound of the price
-     */
-    Response<VoidResponse> setProductPurchasePriceBounds(int userId, int storeId, int productId, int lowerBound, int upperBound);
-
-    /**
-     * #33
-     * require 4.3
-     *
-     * @param userId             the user id
-     * @param storeId            the store id
-     * @param discountPercentage the discount percentage
-     * @param discountLastDate   the discount last date. when expired, the discount will be removed
-     * @return the discount id
-     */
-    Response<Integer> addStoreVisibleDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate);
-
-    /**
-     * #33
-     * require 4.3
-     *
-     * @param userId              the user id
-     * @param storeId             the store id
-     * @param discountPercentage  the discount percentage
-     * @param discountLastDate    the discount last date. when expired, the discount will be removed
-     * @param minPriceForDiscount the minimum price for the discount to be applied
-     * @param quantityForDiscount the quantity for the discount to be applied
-     * @return the discount id
-     */
-    Response<Integer> addStoreConditionalDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount);
-
-    /**
-     * #33
-     * require 4.3
-     *
-     * @param userId             the user id
-     * @param storeId            the store id
-     * @param discountPercentage the discount percentage
-     * @param discountLastDate   the discount last date. when expired, the discount will be removed
-     * @param code               the code for the discount
-     * @return the discount id
-     */
-    Response<Integer> addStoreHiddenDiscount(int userId, int storeId, double discountPercentage, LocalDateTime discountLastDate, String code);
-
-    /**
-     * #33
-     * require 4.3
-     *
-     * @param userId     the user id
-     * @param storeId    the store id
-     * @param discountId the discount id to be removed
-     */
-    Response<VoidResponse> removeStoreDiscount(int userId, int storeId, int discountId);
-
-    /**
-     * #33
-     * require 4.3
-     *
-     * @param userId             the user id
-     * @param storeId            the store id
-     * @param productId          the product id
-     * @param discountPercentage the discount percentage
-     * @param discountLastDate   the discount last date. when expired, the discount will be removed
-     * @return the discount id
-     */
-    Response<Integer> addProductVisibleDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate);
-
-    /**
-     * #33
-     * require 4.3
-     *
-     * @param userId              the user id
-     * @param storeId             the store id
-     * @param productId           the product id
-     * @param discountPercentage  the discount percentage
-     * @param discountLastDate    the discount last date. when expired, the discount will be removed
-     * @param minPriceForDiscount the minimum price for the discount to be applied
-     * @param quantityForDiscount the quantity for the discount to be applied
-     * @return the discount id
-     */
-    Response<Integer> addProductConditionalDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate, double minPriceForDiscount, int quantityForDiscount);
-
-    /**
-     * #33
-     * require 4.3
-     *
-     * @param userId             the user id
-     * @param storeId            the store id
-     * @param productId          the product id
-     * @param discountPercentage the discount percentage
-     * @param discountLastDate   the discount last date. when expired, the discount will be removed
-     * @param code               the code for the discount
-     * @return the discount id
-     */
-    Response<Integer> addProductHiddenDiscount(int userId, int storeId, int productId, double discountPercentage, LocalDateTime discountLastDate, String code);
-
-    /**
-     * #33
-     * require 4.3
-     *
-     * @param userId     the user id
-     * @param storeId    the store id
-     * @param productId  the product id
-     * @param discountId the discount id to be removed
-     */
-    Response<VoidResponse> removeProductDiscount(int userId, int storeId, int productId, int discountId);
-
-    /**
      * #13
      * require 1.1
      * returns the new user id
@@ -1033,8 +789,7 @@ public interface ISession {
     Response<VoidResponse> fetchMessages(int userId);
 
     int getStoreFounder(int storeId);
-    Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                                                            String/*store coupons*/ storeCoupon) throws PurchaseFailedException;
+    Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, List<String> coupons) throws PurchaseFailedException;
 
     /**
      * #43
@@ -1099,4 +854,122 @@ public interface ISession {
      *               as an owner/founder you can get info about the users working in the store
      */
     List<WorkerCard> getStoreWorkersInfo(int userId, int storeId);
+
+    /**
+     * <H1>Conditions</H1>
+     */
+    Response<VoidResponse> setPurchasePolicyCondition(int storeId, int userId, int conditionId);
+
+
+    Response<Integer> addORCondition(int storeId, int userId, int condition1, int condition2);
+
+
+    Response<Integer> addANDCondition(int storeId, int userId, int condition1, int condition2);
+
+
+    Response<Integer> addXORCondition(int storeId, int userId, int condition1, int condition2);
+
+
+    Response<Integer> addIMPLYCondition(int storeId, int userId, int condition1, int condition2);
+
+    Response<Integer> addStorePriceCondition(int storeId, int userId, double lowerBound, double upperBound);
+
+    Response<Integer> addStorePriceCondition(int storeId, int userId, double lowerBound);
+    Response<Integer> addStoreQuantityCondition(int storeId, int userId, int lowerBound, int upperBound);
+
+    Response<Integer> addStoreQuantityCondition(int storeId, int userId, int lowerBound);
+    Response<Integer> addCategoryPriceCondition(int storeId, int userId, String category, double lowerBound, double upperBound) ;
+
+
+    Response<Integer> addCategoryPriceCondition(int storeId, int userId, String category, double lowerBound) ;
+
+
+    Response<Integer> addCategoryQuantityCondition(int storeId, int userId, String category, int lowerBound, int upperBound) ;
+
+
+    Response<Integer> addCategoryQuantityCondition(int storeId, int userId, String category, int lowerBound)  ;
+
+
+    Response<Integer> addDateCondition(int storeId, int userId, LocalDateTime lowerBound, LocalDateTime upperBound) ;
+
+    Response<Integer> addDateCondition(int storeId, int userId, LocalDateTime lowerBound) ;
+
+
+    Response<Integer> addProductPriceCondition(int storeId, int userId, int productId, double lowerBound, double upperBound) ;
+
+
+    Response<Integer> addProductPriceCondition(int storeId, int userId, int productId, double lowerBound) ;
+
+
+    Response<Integer> addProductQuantityCondition(int storeId, int userId, int productId, int lowerBound, int upperBound) ;
+
+    Response<Integer> addProductQuantityCondition(int storeId, int userId, int productId, int lowerBound) ;
+
+    Response<Integer> addTimeCondition(int storeId, int userId, LocalDateTime lowerBound, LocalDateTime upperBound)  ;
+
+
+    Response<Integer> addTimeCondition(int storeId, int userId, LocalDateTime lowerBound)  ;
+
+
+    Response<Integer> addUserAgeCondition(int storeId, int userId, int lowerBound, int upperBound)  ;
+
+    Response<Integer> addUserAgeCondition(int storeId, int userId, int lowerBound)  ;
+    /**
+     * <H1>Discounts</H1>
+     */
+
+    Response<Integer> addStoreDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, String coupon) ;
+
+
+    Response<Integer> addStoreDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, String coupon)  ;
+
+    Response<Integer> addStoreDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate) ;
+
+
+    Response<Integer> addStoreDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate)  ;
+
+    Response<Integer> addCategoryDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, String category, String coupon) ;
+
+    Response<Integer> addCategoryDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, String category, String coupon) ;
+
+
+    Response<Integer> addCategoryDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, String category)  ;
+
+    Response<Integer> addCategoryDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, String category) ;
+
+
+    Response<Integer> addProductDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, int productId, String coupon) ;
+
+
+    Response<Integer> addProductDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, int productId, String coupon) ;
+
+
+    Response<Integer> addProductDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, int productId) ;
+
+
+    Response<Integer> addProductDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, int productId)  ;
+
+
+    Response<List<DiscountInfo>> getStoreDiscounts(int storeId, int userId) ;
+
+
+    Response<DiscountInfo> getDiscount(int storeId, int userId, int discountId) ;
+
+
+    Response<VoidResponse> removeDiscount(int storeId, int userId, int discountId) ;
+
+    /**
+     * <H1>Discount Accumulation Tree</H1>
+     */
+
+    Response<VoidResponse> addDiscountAsRoot(int storeId, int userId, int discountId) ;
+
+
+    Response<VoidResponse> addDiscountToXORRoot(int storeId, int userId, int discountId) ;
+
+
+    Response<VoidResponse> addDiscountToMAXRoot(int storeId, int userId, int discountId)  ;
+
+
+    Response<VoidResponse> addDiscountToADDRoot(int storeId, int userId, int discountId)  ;
 }

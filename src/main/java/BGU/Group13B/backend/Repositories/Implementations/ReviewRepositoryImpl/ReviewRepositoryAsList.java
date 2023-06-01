@@ -3,10 +3,8 @@ package BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl;
 import BGU.Group13B.backend.Repositories.Interfaces.IRepositoryReview;
 import BGU.Group13B.backend.storePackage.Review;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class ReviewRepositoryAsList implements IRepositoryReview {
 
@@ -54,6 +52,12 @@ public class ReviewRepositoryAsList implements IRepositoryReview {
             return (float) sum /scores.size();
         return 0;
     }
+    @Override
+    public float getProductScoreUser(int storeId, int productId, int userId) {
+        if (!scores.containsKey(userId))
+            throw new IllegalArgumentException("User didn't score this product");
+        return scores.get(userId);
+    }
 
     @Override
     public void addAndSetProductScore(int storeId, int productId, int userId, int score) {
@@ -71,6 +75,8 @@ public class ReviewRepositoryAsList implements IRepositoryReview {
             throw new IllegalArgumentException("User didn't score this product");
         scores.remove(userId);
     }
+
+
 
     @Override
     public void removeProductData(int storeId, int productId) {

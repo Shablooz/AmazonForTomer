@@ -3,6 +3,7 @@ package BGU.Group13B.frontEnd.components.views;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.service.Session;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -27,6 +28,7 @@ public class RegisterView extends VerticalLayout {
     private final TextField answer2;
     private final TextField answer3;
     private final Button registerButton;
+    private final DatePicker birthPicker;
 
     @Autowired
     public RegisterView(Session session) {
@@ -36,6 +38,7 @@ public class RegisterView extends VerticalLayout {
         answer1 = new TextField("your favorite color?");
         answer2 = new TextField("your favorite food?");
         answer3 = new TextField("your favorite book?");
+        birthPicker = new DatePicker("*Birth date");
         email = new EmailField("*Email");
         registerButton = new Button("Register");
         registerButton.addClickListener(e -> {
@@ -45,7 +48,7 @@ public class RegisterView extends VerticalLayout {
             }
             try {
                 session.register(SessionToIdMapper.getInstance().getCurrentSessionId()/*temp*/, username.getValue(), password.getValue(), email.getValue(),
-                        answer1.getValue(), answer2.getValue(), answer3.getValue());
+                        answer1.getValue(), answer2.getValue(), answer3.getValue(), birthPicker.getValue());
                 Notification.show("Registered successfully");
                 UI.getCurrent().navigate(LoginView.class);
             }catch (Exception exp){
@@ -53,7 +56,7 @@ public class RegisterView extends VerticalLayout {
             }
         });
         FormLayout formLayout = new FormLayout();
-        formLayout.add(username, password, email,answer1,answer2,answer3);
+        formLayout.add(username, password, email,answer1,answer2,answer3,birthPicker);
         add(formLayout, registerButton);
     }
 }
