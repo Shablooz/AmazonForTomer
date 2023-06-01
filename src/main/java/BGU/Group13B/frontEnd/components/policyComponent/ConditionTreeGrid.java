@@ -1,5 +1,7 @@
 package BGU.Group13B.frontEnd.components.policyComponent;
 
+import BGU.Group13B.frontEnd.ResponseHandler;
+import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.LogicalConditions.LogicalConditionEntity;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.PlusConditionEntity;
@@ -23,8 +25,11 @@ import org.jsoup.Connection;
 import java.util.List;
 
 
-public class ConditionTreeGrid extends TreeGrid<ConditionEntity> {
+public class ConditionTreeGrid extends TreeGrid<ConditionEntity> implements ResponseHandler {
     private final TreeData<ConditionEntity> conditionsData = new TreeData<>();
+    private final Session session;
+    private final int storeId;
+    private final int userId;
 
     public ConditionTreeGrid(Session session, int storeId) {
         this.userId = SessionToIdMapper.getInstance().getCurrentSessionId();
@@ -164,12 +169,10 @@ public class ConditionTreeGrid extends TreeGrid<ConditionEntity> {
         addLogicalCondition(parent, LogicalConditionEntity.LogicalOperator.IMPLIES);
     }
 
-    public void addLeafCondition(ConditionEntity conditionEntityLeaf) {
+    public void addLeafCondition(ConditionEntity conditionEntityLeaf, ConditionEntity plusToDelete) {
+        conditionsData.removeItem(plusToDelete);
         conditionsData.addItem(conditionEntityLeaf.getParent(), conditionEntityLeaf);
         this.getDataProvider().refreshAll();  // Refresh the UI
-    }
-
-    private void updateItemsGrid() {
     }
 
 

@@ -8,7 +8,7 @@ import BGU.Group13B.service.Session;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class TimeConditionEntity extends ConditionEntity {
+public class TimeConditionEntity extends ConditionEntity implements LeafConditionEntity {
     private final LocalTime lowerBound;
     private final LocalTime upperBound;
 

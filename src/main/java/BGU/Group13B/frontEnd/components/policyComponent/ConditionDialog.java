@@ -3,14 +3,19 @@ package BGU.Group13B.frontEnd.components.policyComponent;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.leaves.*;
+import BGU.Group13B.service.Response;
+import BGU.Group13B.service.Session;
+import BGU.Group13B.service.info.ProductInfo;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
@@ -45,6 +50,11 @@ public class ConditionDialog extends Dialog {
     private final Button hideUpperBoundBtn = new Button(new Icon(VaadinIcon.MINUS));
     private final Button confirm = new Button("Confirm");
 
+    private final ComboBox<ProductInfo> products = new ComboBox<>("product");
+    private final ComboBox<ProductInfo> categories = new ComboBox<>("category");
+
+    private Set<ProductInfo> productsInfos;
+
     /*
     *  ComboBox<String> comboBox = new ComboBox<>("category");
         comboBox.setAutoOpen(false);
@@ -75,12 +85,35 @@ public class ConditionDialog extends Dialog {
             hasUpperBound = false;
         });
 
-        confirm.addClickListener(e -> confirm(conditionEntity));
+        confirm.addClickListener(e -> confirm(conditionEntity, plusToDelete));
+
+        this.productsInfos = getProducts(session, storeId);
+        products.setAutoOpen(false);
+        products.setItems(productsInfos);
+        products.setItemLabelGenerator(ProductInfo::name);
+
+
+        categories.setAutoOpen(false);
+        categories.setItems(productsInfos);
+        categories.setItemLabelGenerator(ProductInfo::category);
+
+
+        categories.setVisible(false);
+        products.setVisible(false);
+        switch (conditionEntity) {
+            case CategoryPriceConditionEntity __ -> categories.setVisible(true);
+            case ProductPriceConditionEntity __ -> products.setVisible(true);
+
+            case CategoryQuantityConditionEntity __ -> categories.setVisible(true);
+            case ProductQuantityConditionEntity __ -> products.setVisible(true);
+
+            default -> products.setVisible(false);//do nothing;
+        }
 
 
         String className = conditionEntity.getClass().getSimpleName();
         H1 dialogTitle = new H1(className);
-        dialogLayout.add(dialogTitle, doubleLowerBound, intLowerBound, dateLowerBound, timeLowerBound,
+        dialogLayout.add(dialogTitle, products, categories, doubleLowerBound, intLowerBound, dateLowerBound, timeLowerBound,
                 revealUpperBoundBtn, hideUpperBoundBtn, doubleUpperBound, intUpperBound, dateUpperBound, timeUpperBound, confirm);
 
         add(dialogLayout);
@@ -133,7 +166,7 @@ public class ConditionDialog extends Dialog {
         hideUpperBoundBtn.setVisible(false);
     }
 
-    public void confirm(ConditionEntity conditionEntity) {
+    public void confirm(ConditionEntity conditionEntity, ConditionEntity plusToDelete) {
         // relevant fields not empty
         boolean invalid = false;
         switch (conditionEntity) {
@@ -145,9 +178,9 @@ public class ConditionDialog extends Dialog {
                 double lowerBound = doubleLowerBound.getValue();
                 if (hasUpperBound) {
                     double upperBound = doubleUpperBound.getValue();
-                    conditionTreeGrid.addLeafCondition(new CategoryPriceConditionEntity(conditionEntity.getParent(), lowerBound, upperBound));
+                    conditionTreeGrid.addLeafCondition(new CategoryPriceConditionEntity(categories.getValue().category(), conditionEntity.getParent(), lowerBound, upperBound), plusToDelete);
                 } else {
-                    conditionTreeGrid.addLeafCondition(new CategoryPriceConditionEntity(conditionEntity.getParent(), lowerBound));
+                    conditionTreeGrid.addLeafCondition(new CategoryPriceConditionEntity(categories.getValue().category(), conditionEntity.getParent(), lowerBound), plusToDelete);
                 }
                 close();
             }
@@ -159,9 +192,9 @@ public class ConditionDialog extends Dialog {
                 double lowerBound = doubleLowerBound.getValue();
                 if (hasUpperBound) {
                     double upperBound = doubleUpperBound.getValue();
-                    conditionTreeGrid.addLeafCondition(new ProductPriceConditionEntity(conditionEntity.getParent(), lowerBound, upperBound));
+                    conditionTreeGrid.addLeafCondition(new ProductPriceConditionEntity(products.getValue().productId(), products.getValue().name(), conditionEntity.getParent(), lowerBound, upperBound), plusToDelete);
                 } else {
-                    conditionTreeGrid.addLeafCondition(new ProductPriceConditionEntity(conditionEntity.getParent(), lowerBound));
+                    conditionTreeGrid.addLeafCondition(new ProductPriceConditionEntity(products.getValue().productId(), products.getValue().name(), conditionEntity.getParent(), lowerBound), plusToDelete);
                 }
                 close();
             }
@@ -173,9 +206,9 @@ public class ConditionDialog extends Dialog {
                 double lowerBound = doubleLowerBound.getValue();
                 if (hasUpperBound) {
                     double upperBound = doubleUpperBound.getValue();
-                    conditionTreeGrid.addLeafCondition(new StorePriceConditionEntity(conditionEntity.getParent(), lowerBound, upperBound));
+                    conditionTreeGrid.addLeafCondition(new StorePriceConditionEntity(conditionEntity.getParent(), lowerBound, upperBound), plusToDelete);
                 } else {
-                    conditionTreeGrid.addLeafCondition(new StorePriceConditionEntity(conditionEntity.getParent(), lowerBound));
+                    conditionTreeGrid.addLeafCondition(new StorePriceConditionEntity(conditionEntity.getParent(), lowerBound), plusToDelete);
                 }
                 close();
             }
@@ -187,9 +220,9 @@ public class ConditionDialog extends Dialog {
                 int lowerBound = intLowerBound.getValue();
                 if (hasUpperBound) {
                     int upperBound = intUpperBound.getValue();
-                    conditionTreeGrid.addLeafCondition(new CategoryQuantityConditionEntity(conditionEntity.getParent(), lowerBound, upperBound));
+                    conditionTreeGrid.addLeafCondition(new CategoryQuantityConditionEntity(categories.getValue().category(), conditionEntity.getParent(), lowerBound, upperBound), plusToDelete);
                 } else {
-                    conditionTreeGrid.addLeafCondition(new CategoryQuantityConditionEntity(conditionEntity.getParent(), lowerBound));
+                    conditionTreeGrid.addLeafCondition(new CategoryQuantityConditionEntity(categories.getValue().category(), conditionEntity.getParent(), lowerBound), plusToDelete);
                 }
                 close();
             }
@@ -201,9 +234,9 @@ public class ConditionDialog extends Dialog {
                 int lowerBound = intLowerBound.getValue();
                 if (hasUpperBound) {
                     int upperBound = intUpperBound.getValue();
-                    conditionTreeGrid.addLeafCondition(new ProductQuantityConditionEntity(conditionEntity.getParent(), lowerBound, upperBound));
+                    conditionTreeGrid.addLeafCondition(new ProductQuantityConditionEntity(products.getValue().productId(), products.getValue().name(), conditionEntity.getParent(), lowerBound, upperBound), plusToDelete);
                 } else {
-                    conditionTreeGrid.addLeafCondition(new ProductQuantityConditionEntity(conditionEntity.getParent(), lowerBound));
+                    conditionTreeGrid.addLeafCondition(new ProductQuantityConditionEntity(products.getValue().productId(), products.getValue().name(), conditionEntity.getParent(), lowerBound), plusToDelete);
                 }
                 close();
             }
@@ -215,9 +248,9 @@ public class ConditionDialog extends Dialog {
                 int lowerBound = intLowerBound.getValue();
                 if (hasUpperBound) {
                     int upperBound = intUpperBound.getValue();
-                    conditionTreeGrid.addLeafCondition(new StoreQuantityConditionEntity(conditionEntity.getParent(), lowerBound, upperBound));
+                    conditionTreeGrid.addLeafCondition(new StoreQuantityConditionEntity(conditionEntity.getParent(), lowerBound, upperBound), plusToDelete);
                 } else {
-                    conditionTreeGrid.addLeafCondition(new StoreQuantityConditionEntity(conditionEntity.getParent(), lowerBound));
+                    conditionTreeGrid.addLeafCondition(new StoreQuantityConditionEntity(conditionEntity.getParent(), lowerBound), plusToDelete);
                 }
                 close();
             }
@@ -229,9 +262,9 @@ public class ConditionDialog extends Dialog {
                 int lowerBound = intLowerBound.getValue();
                 if (hasUpperBound) {
                     int upperBound = intUpperBound.getValue();
-                    conditionTreeGrid.addLeafCondition(new UserAgeConditionEntity(conditionEntity.getParent(), lowerBound, upperBound));
+                    conditionTreeGrid.addLeafCondition(new UserAgeConditionEntity(conditionEntity.getParent(), lowerBound, upperBound), plusToDelete);
                 } else {
-                    conditionTreeGrid.addLeafCondition(new UserAgeConditionEntity(conditionEntity.getParent(), lowerBound));
+                    conditionTreeGrid.addLeafCondition(new UserAgeConditionEntity(conditionEntity.getParent(), lowerBound), plusToDelete);
                 }
                 close();
             }
@@ -243,9 +276,9 @@ public class ConditionDialog extends Dialog {
                 LocalDate lowerBound = dateLowerBound.getValue();
                 if (hasUpperBound) {
                     LocalDate upperBound = dateUpperBound.getValue();
-                    conditionTreeGrid.addLeafCondition(new DateConditionEntity(conditionEntity.getParent(), lowerBound, upperBound));
+                    conditionTreeGrid.addLeafCondition(new DateConditionEntity(conditionEntity.getParent(), lowerBound, upperBound), plusToDelete);
                 } else {
-                    conditionTreeGrid.addLeafCondition(new DateConditionEntity(conditionEntity.getParent(), lowerBound));
+                    conditionTreeGrid.addLeafCondition(new DateConditionEntity(conditionEntity.getParent(), lowerBound), plusToDelete);
                 }
                 close();
             }
@@ -257,9 +290,9 @@ public class ConditionDialog extends Dialog {
                 LocalTime lowerBound = timeLowerBound.getValue();
                 if (hasUpperBound) {
                     LocalTime upperBound = timeUpperBound.getValue();
-                    conditionTreeGrid.addLeafCondition(new TimeConditionEntity(conditionEntity.getParent(), lowerBound, upperBound));
+                    conditionTreeGrid.addLeafCondition(new TimeConditionEntity(conditionEntity.getParent(), lowerBound, upperBound), plusToDelete);
                 } else {
-                    conditionTreeGrid.addLeafCondition(new TimeConditionEntity(conditionEntity.getParent(), lowerBound));
+                    conditionTreeGrid.addLeafCondition(new TimeConditionEntity(conditionEntity.getParent(), lowerBound), plusToDelete);
                 }
                 close();
             }
@@ -336,5 +369,21 @@ public class ConditionDialog extends Dialog {
         return invalid;
     }
 
+    private Set<ProductInfo> getProducts(Session session, int storeId) {
+        int userId = SessionToIdMapper.getInstance().getCurrentSessionId();
+        Response<Set<ProductInfo>> response = session.getAllStoreProductsInfo(userId, storeId);
+
+        if (response.didntSucceed()) {
+            notifyError("Error: " + response.getMessage());
+            close();
+            return Set.of();
+        }
+        return response.getData();
+    }
+
+    void notifyError(String message) {
+        Notification notification = Notification.show(message);
+        notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+    }
 
 }

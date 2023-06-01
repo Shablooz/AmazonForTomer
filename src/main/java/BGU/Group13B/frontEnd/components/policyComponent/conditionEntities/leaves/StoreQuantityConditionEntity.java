@@ -5,7 +5,7 @@ import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.Logica
 import BGU.Group13B.service.Response;
 import BGU.Group13B.service.Session;
 
-public class StoreQuantityConditionEntity extends ConditionEntity {
+public class StoreQuantityConditionEntity extends ConditionEntity implements LeafConditionEntity {
     private final int lowerBound;
     private final int upperBound;
     public StoreQuantityConditionEntity(LogicalConditionEntity parent) {

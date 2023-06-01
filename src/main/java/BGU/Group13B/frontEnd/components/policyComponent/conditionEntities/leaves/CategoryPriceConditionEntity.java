@@ -5,7 +5,9 @@ import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.Logica
 import BGU.Group13B.service.Response;
 import BGU.Group13B.service.Session;
 
-public class CategoryPriceConditionEntity extends ConditionEntity {
+public class CategoryPriceConditionEntity extends ConditionEntity implements LeafConditionEntity {
+    private final String category;
+
     private final double lowerBound;
     private final double upperBound;
 
@@ -13,16 +15,22 @@ public class CategoryPriceConditionEntity extends ConditionEntity {
         super(parent);
         this.lowerBound = -1;
         this.upperBound = -1;
+        this.category = null;
     }
-    public CategoryPriceConditionEntity(LogicalConditionEntity parent, double lowerBound) {
+
+    public CategoryPriceConditionEntity(String category, LogicalConditionEntity parent, double lowerBound) {
         super(parent);
         this.lowerBound = lowerBound;
         this.upperBound = -1;
+        this.category = category;
+
     }
-    public CategoryPriceConditionEntity(LogicalConditionEntity parent, double lowerBound, double upperBound) {
+
+    public CategoryPriceConditionEntity(String category, LogicalConditionEntity parent, double lowerBound, double upperBound) {
         super(parent);
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
+        this.category = category;
     }
 
     public double getLowerBound() {
@@ -35,10 +43,14 @@ public class CategoryPriceConditionEntity extends ConditionEntity {
 
     public String toString() {
         boolean hasUpperBound = upperBound != -1;
-        if(hasUpperBound)
-            return "Category price is between " + lowerBound + " and " + upperBound;
+        if (hasUpperBound)
+            return "Category " + category + " price is between " + lowerBound + " and " + upperBound;
         else
-            return "Category price is at least " + lowerBound;
+            return "Category " + category + " price is at least " + lowerBound;
+    }
+
+    public String getCategory() {
+        return category;
     }
 
     @Override

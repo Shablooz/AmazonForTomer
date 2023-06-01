@@ -2,6 +2,8 @@ package BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.leave
 
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.LogicalConditions.LogicalConditionEntity;
+import BGU.Group13B.service.Response;
+import BGU.Group13B.service.Session;
 
 public class CategoryQuantityConditionEntity extends ConditionEntity implements LeafConditionEntity{
     private final int lowerBound;
@@ -14,7 +16,7 @@ public class CategoryQuantityConditionEntity extends ConditionEntity implements 
         this.category = null;
     }
 
-    public CategoryQuantityConditionEntity(LogicalConditionEntity parent, int lowerBound, int upperBound) {
+    public CategoryQuantityConditionEntity(String category, LogicalConditionEntity parent, int lowerBound, int upperBound) {
         super(parent);
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
@@ -22,7 +24,7 @@ public class CategoryQuantityConditionEntity extends ConditionEntity implements 
 
     }
 
-    public CategoryQuantityConditionEntity(LogicalConditionEntity parent, int lowerBound) {
+    public CategoryQuantityConditionEntity(String category, LogicalConditionEntity parent, int lowerBound) {
         super(parent);
         this.lowerBound = lowerBound;
         this.upperBound = -1;
@@ -40,9 +42,9 @@ public class CategoryQuantityConditionEntity extends ConditionEntity implements 
     public String toString(){
         boolean hasUpperBound = upperBound != -1;
         if(hasUpperBound)
-            return "Category quantity is between " + lowerBound + " and " + upperBound;
+            return "Category " + category  + " quantity is between " + lowerBound + " and " + upperBound;
         else
-            return "Category quantity is at least " + lowerBound;
+            return "Category " + category  + " quantity is at least " + lowerBound;
     }
 
     public String getCategoryName() {

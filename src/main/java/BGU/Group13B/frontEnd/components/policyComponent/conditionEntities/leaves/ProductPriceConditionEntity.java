@@ -2,8 +2,13 @@ package BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.leave
 
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.LogicalConditions.LogicalConditionEntity;
+import BGU.Group13B.service.Response;
+import BGU.Group13B.service.Session;
 
-public class ProductPriceConditionEntity extends ConditionEntity {
+public class ProductPriceConditionEntity extends ConditionEntity implements LeafConditionEntity {
+    private final int productId;
+    private final String productName;
+
     private final double lowerBound;
     private final double upperBound;
 
@@ -11,18 +16,24 @@ public class ProductPriceConditionEntity extends ConditionEntity {
         super(parent);
         this.lowerBound = -1;
         this.upperBound = -1;
+        this.productId = -1;
+        this.productName = null;
     }
 
-    public ProductPriceConditionEntity(LogicalConditionEntity parent, double lowerBound, double upperBound) {
+    public ProductPriceConditionEntity(int productId, String productName, LogicalConditionEntity parent, double lowerBound, double upperBound) {
         super(parent);
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
+        this.productId = productId;
+        this.productName = productName;
     }
 
-    public ProductPriceConditionEntity(LogicalConditionEntity parent, double lowerBound) {
+    public ProductPriceConditionEntity(int productId, String productName, LogicalConditionEntity parent, double lowerBound) {
         super(parent);
         this.lowerBound = lowerBound;
         upperBound = -1;
+        this.productId = productId;
+        this.productName = productName;
     }
 
     public double getLowerBound() {
@@ -35,10 +46,10 @@ public class ProductPriceConditionEntity extends ConditionEntity {
 
     public String toString(){
         boolean hasUpperBound = upperBound != -1;
-        if(hasUpperBound)
-            return "Product price is between " + lowerBound + " and " + upperBound;
+        if (hasUpperBound)
+            return "Product " + productName + " price is between " + lowerBound + " and " + upperBound;
         else
-            return "Product price is at least " + lowerBound;
+            return "Product " + productName + " price is at least " + lowerBound;
     }
     public int getProductId() {
         return productId;

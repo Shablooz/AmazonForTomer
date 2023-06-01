@@ -6,8 +6,9 @@ import BGU.Group13B.service.Response;
 import BGU.Group13B.service.Session;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-public class DateConditionEntity extends ConditionEntity {
+public class DateConditionEntity extends ConditionEntity implements LeafConditionEntity{
     private final LocalDate lowerBound;
     private final LocalDate upperBound;
     public DateConditionEntity(LogicalConditionEntity parent) {

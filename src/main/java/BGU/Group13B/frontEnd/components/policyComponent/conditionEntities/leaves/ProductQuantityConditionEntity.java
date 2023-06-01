@@ -18,24 +18,28 @@ public class ProductQuantityConditionEntity extends ConditionEntity {
         this.productName = null;
     }
 
-    public ProductQuantityConditionEntity(LogicalConditionEntity parent, int lowerBound) {
+    public ProductQuantityConditionEntity(int productId, String productName, LogicalConditionEntity parent, int lowerBound) {
         super(parent);
         this.lowerBound = lowerBound;
         this.upperBound = -1;
+        this.productId = productId;
+        this.productName = productName;
     }
 
-    public ProductQuantityConditionEntity(LogicalConditionEntity parent, int lowerBound, int upperBound) {
+    public ProductQuantityConditionEntity(int productId, String productName, LogicalConditionEntity parent, int lowerBound, int upperBound) {
         super(parent);
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
+        this.productId = productId;
+        this.productName = productName;
     }
 
     public String toString() {
         boolean hasUpperBound = upperBound != -1;
-        if(hasUpperBound)
-            return "Product quantity is between " + lowerBound + " and " + upperBound;
+        if (hasUpperBound)
+            return "Product " + productName + " quantity is between " + lowerBound + " and " + upperBound;
         else
-            return "Product quantity is at least " + lowerBound;
+            return "Product " + productName + " quantity is at least " + lowerBound;
     }
     public int getProductId() {
         return productId;
