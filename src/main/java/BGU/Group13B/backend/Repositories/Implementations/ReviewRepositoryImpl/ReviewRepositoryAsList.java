@@ -2,15 +2,35 @@ package BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IRepositoryReview;
 import BGU.Group13B.backend.storePackage.Review;
+import jakarta.persistence.*;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
+@Entity
 public class ReviewRepositoryAsList implements IRepositoryReview {
 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    private int id;
 
 
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JoinTable(name = "ReviewRepositoryAsList_review",
+            joinColumns = {@JoinColumn(name = "ReviewRepositoryAsList_id", referencedColumnName = "id")},
+            inverseJoinColumns = {
+                    @JoinColumn(name = "store_id", referencedColumnName = "storeId"),
+                    @JoinColumn(name = "product_id", referencedColumnName = "productId"),
+                    @JoinColumn(name = "user_id", referencedColumnName = "userId")})
+    @MapKeyJoinColumn(name = "userId")
     ConcurrentHashMap<Integer, Review> reviews;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "ReviewRepositoryAsList_scores",
+            joinColumns = {@JoinColumn(name = "ReviewRepositoryAsList_id", referencedColumnName = "id")})
+    @MapKeyColumn(name = "user_Id")
+    @Column(name = "score")
     ConcurrentHashMap<Integer, Integer> scores;
 
 

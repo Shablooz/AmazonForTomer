@@ -10,6 +10,7 @@ import com.vaadin.flow.theme.lumo.Lumo;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -29,6 +30,7 @@ import java.util.Timer;
 @Theme(value = "trading-system", variant = Lumo.DARK)
 @ComponentScan(basePackages = "BGU.Group13B")
 @Push
+@EntityScan(basePackages = {"BGU.Group13B.backend","BGU.Group13B.frontEnd"})
 public class Application implements AppShellConfigurator {
 
     public static void main(String[] args) {
