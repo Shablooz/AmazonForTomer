@@ -28,6 +28,7 @@ import BGU.Group13B.backend.storePackage.payment.PaymentAPI;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
 import BGU.Group13B.service.callbacks.AddToUserCart;
 import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.IOException;
 import java.util.logging.FileHandler;
@@ -59,7 +60,17 @@ public class SingletonCollection {
     private static IStorePurchasePolicyRepository storePurchasePolicyRepository;
     private static IUserPermissionRepository userPermissionRepository;
     private static IStorePermissionsRepository storePermissionRepository;
+    private static ConfigurableApplicationContext context;
 
+    // set context
+    public static void setContext(ConfigurableApplicationContext updated)
+    {
+        context=updated;
+    }
+    public static ConfigurableApplicationContext getContext()
+    {
+        return context;
+    }
 
     /**
      * <h1>callbacks</h1>
