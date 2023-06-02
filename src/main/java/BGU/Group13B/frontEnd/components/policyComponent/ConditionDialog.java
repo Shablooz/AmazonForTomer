@@ -357,7 +357,7 @@ public class ConditionDialog extends Dialog {
             dateLowerBound.setInvalid(true);
             invalid = true;
         }
-        if (hasUpperBound && dateUpperBound.isEmpty() || dateUpperBound.getValue() == null) {
+        if (hasUpperBound && (dateUpperBound.isEmpty() || dateUpperBound.getValue() == null)) {
             dateUpperBound.setInvalid(true);
             invalid = true;
         }

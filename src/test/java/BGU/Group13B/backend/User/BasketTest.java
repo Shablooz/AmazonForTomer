@@ -458,5 +458,85 @@ class BasketTest {
         }
     }
 
+    @Test
+    void purchaseBasketSimpleComplexDiscountTestSuccess1() {
+        SingletonCollection.reset_system();
+        int userId = SingletonCollection.getSession().enterAsGuest();
+        SingletonCollection.getSession().register(userId, "userName", "Password1", "emao@gmail.com", "", "", "", LocalDate.now().minusYears(20));
+        SingletonCollection.getSession().login(userId, "userName", "Password1", "", "", "");
+        int storeId = SingletonCollection.getSession().addStore(userId, "store1", "category1").getData();
+
+
+        try {
+            payBehaviour(true);
+            deliveryBehaviour(true);
+            /*
+             * set up products
+             * */
+            int productId1 = SingletonCollection.getSession().addProduct(userId, storeId, "Yogurt", "milk", 30, 5, "description").getData();
+            int productId2 = SingletonCollection.getSession().addProduct(userId, storeId, "pasta", "category1", 20, 4, "description").getData();
+
+            /*set policy*/
+            int c1 = SingletonCollection.getSession().addStorePriceCondition(storeId, userId, 100).getData();//basket is larger then 100
+            int c2 = SingletonCollection.getSession().addProductQuantityCondition(storeId, userId, productId2, 3).getData();//at least 3 pasta
+            int c3 = SingletonCollection.getSession().addANDCondition(storeId, userId, c1, c2).getData();//and between those 2
+            //store.setPurchasePolicyCondition(userId, c3);
+
+            int discountId1 = SingletonCollection.getSession().addCategoryDiscount(storeId, userId, c3, 0.05, LocalDate.now().plusDays(1), "milk").getData();
+
+            SingletonCollection.getSession().addDiscountAsRoot(storeId, userId, discountId1);
+
+            SingletonCollection.getSession().addProductToCart(userId,  productId1, storeId);
+            SingletonCollection.getSession().changeProductQuantityInCart(userId, storeId, productId1, 4);
+            SingletonCollection.getSession().addProductToCart(userId,  productId2, storeId);
+            SingletonCollection.getSession().changeProductQuantityInCart(userId, storeId, productId2, 3);
+            var basket = SingletonCollection.getBasketRepository().getUserBaskets(userId).stream().toList().get(0);
+            double pricePayed = basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), "");
+            Assertions.assertEquals(174/*30*4*0.95 + 20*3*/, pricePayed);
+        } catch (Exception e) {
+            Assertions.fail(e.getMessage());
+        }
+    }
+    @Test
+    void purchaseBasketSimpleComplexDiscountTestSuccess2() {
+        SingletonCollection.reset_system();
+        int userId = SingletonCollection.getSession().enterAsGuest();
+        SingletonCollection.getSession().register(userId, "userName", "Password1", "emao@gmail.com", "", "", "", LocalDate.now().minusYears(20));
+        SingletonCollection.getSession().login(userId, "userName", "Password1", "", "", "");
+        int storeId = SingletonCollection.getSession().addStore(userId, "store1", "category1").getData();
+
+
+        try {
+            payBehaviour(true);
+            deliveryBehaviour(true);
+            /*
+             * set up products
+             * */
+            int productId1 = SingletonCollection.getSession().addProduct(userId, storeId, "Yogurt", "milk", 30, 5, "description").getData();
+            int productId2 = SingletonCollection.getSession().addProduct(userId, storeId, "pasta", "category1", 20, 4, "description").getData();
+
+            /*set policy*/
+            int c1 = SingletonCollection.getSession().addStorePriceCondition(storeId, userId, 100).getData();//basket is larger then 100
+            int c2 = SingletonCollection.getSession().addProductQuantityCondition(storeId, userId, productId2, 3).getData();//at least 3 pasta
+            int c3 = SingletonCollection.getSession().addANDCondition(storeId, userId, c1, c2).getData();//and between those 2
+            //store.setPurchasePolicyCondition(userId, c3);
+
+            int discountId1 = SingletonCollection.getSession().addCategoryDiscount(storeId, userId, c3, 0.05, LocalDate.now().plusDays(1), "milk").getData();
+            int discountId2 = SingletonCollection.getSession().addStoreDiscount(storeId, userId, 0.04, LocalDate.now().plusDays(1)).getData();
+
+            SingletonCollection.getSession().addDiscountAsRoot(storeId, userId, discountId1);
+            SingletonCollection.getSession().addDiscountToMAXRoot(storeId, userId, discountId2);//max(discount1,discount2)
+
+            SingletonCollection.getSession().addProductToCart(userId,  productId1, storeId);
+            SingletonCollection.getSession().changeProductQuantityInCart(userId, storeId, productId1, 4);
+            SingletonCollection.getSession().addProductToCart(userId,  productId2, storeId);
+            SingletonCollection.getSession().changeProductQuantityInCart(userId, storeId, productId2, 3);
+            var basket = SingletonCollection.getBasketRepository().getUserBaskets(userId).stream().toList().get(0);
+            double pricePayed = basket.purchaseBasket("", "", "", "", "", "", new HashMap<>(), "");
+            Assertions.assertEquals(171.6/*min{min{30*4*0.95, 30*4*0.96} + min{20*3, 20*3*0.96}} = 172.8*/, pricePayed);
+        } catch (Exception e) {
+            Assertions.fail(e.getMessage());
+        }
+    }
 
 }

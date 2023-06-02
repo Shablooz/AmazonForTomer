@@ -220,7 +220,7 @@ public class ConditionTreeGrid extends TreeGrid<ConditionEntity> implements Resp
             if(!(entity instanceof LeafConditionEntity leafCondition)){
                 //plus btn -> the user didn't input a valid condition
                 notifyWarning("The condition isn't valid, please resolve all plus signs");
-                throw new IllegalArgumentException("Condition must be either logical or leaf");
+                throw new IllegalArgumentException("Condition must be either logical or leaf ");
             }
 
             // If it's a leaf condition, process it
