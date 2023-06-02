@@ -147,6 +147,23 @@ public class Session implements ISession {
             throw new RuntimeException(e);
         }
     }
+    @Override
+    public void purchaseProposalApprove(int managerId, int storeId, int productId){
+        try {
+            market.purchaseProposalApprove(managerId, storeId, productId);
+        } catch (NoPermissionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void purchaseProposalReject(int storeId, int managerId, int bidId){
+        try {
+            market.purchaseProposalReject(managerId,storeId, bidId);
+        } catch (NoPermissionException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public void immediatePurchase(int userId, int storeId, int productId, int quantity) {
