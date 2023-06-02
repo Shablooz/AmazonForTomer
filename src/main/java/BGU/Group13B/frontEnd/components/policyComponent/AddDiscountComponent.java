@@ -104,7 +104,7 @@ public class AddDiscountComponent extends VerticalLayout implements ResponseHand
         double discountPercentage = this.discountPercentage.getValue() / 100;
         String coupon = this.coupon.getValue();
         LocalDate expirationDate = this.expirationDate.getValue();
-        boolean hasCoupon = this.coupon.isEmpty() || coupon.equals("");
+        boolean hasCoupon = !this.coupon.isEmpty() && !coupon.equals("");
         if (discountPercentage <= 0 || discountPercentage > 100) {
             notifyInfo("discount percentage must be between 0 and 100");
             return false;
@@ -145,7 +145,7 @@ public class AddDiscountComponent extends VerticalLayout implements ResponseHand
         double discountPercentage = this.discountPercentage.getValue() / 100;
         String coupon = this.coupon.getValue();
         LocalDate expirationDate = this.expirationDate.getValue();
-        boolean hasCoupon = this.coupon.isEmpty() || coupon.equals("");
+        boolean hasCoupon = !this.coupon.isEmpty() && !coupon.equals("");
         if (discountPercentage <= 0 || discountPercentage > 100) {
             this.discountPercentage.setErrorMessage("discount percentage must be between 0 and 100");
             return false;
