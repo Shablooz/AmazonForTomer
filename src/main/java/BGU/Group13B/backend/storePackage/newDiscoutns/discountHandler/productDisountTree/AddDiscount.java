@@ -21,8 +21,16 @@ public class AddDiscount extends DiscountAccumulationTree {
         super(nodeId, left, right);
     }
 
-    public AddDiscount(int nodeId, DiscountAccumulationNode left, DiscountAccumulationNode right) {
-        super(nodeId, left, right);
+    @Override
+    public DiscountAccumulationTreeInfo getInfo() {
+        //left - has the rest of the tree
+        //right - has the current discount node
+
+        DiscountAccumulationTreeInfo leftInfo = left.getInfo();
+        DiscountAccumulationTreeInfo rightInfo = right.getInfo();
+        leftInfo.operators().add(ManageDiscountsView.Operator.ADD);
+        leftInfo.discounts().add(rightInfo.discounts().get(0) /*should only be of size 1*/);
+        return leftInfo;
     }
 
 }

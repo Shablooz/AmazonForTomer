@@ -24,9 +24,12 @@ public class DiscountTreeGrid extends TreeGrid<DiscountNodeEntity>{
         if(data.getRootItems().size() != 1)
             throw new RuntimeException("there should be only one root, system error");
         DiscountNodeEntity preRoot = data.getRootItems().get(0); //should only be one
-        data.removeItem(preRoot);
-        data.addItem(null, node);
-        data.addItem(node, preRoot);
+
+        data.addItem(null, operatorRoot);
+        data.setParent(preRoot, operatorRoot);
+        data.addItem(operatorRoot, newNode);
+        expandRecursively(Stream.of(operatorRoot), 2);
+
         refreshAll();
     }
     public void setRoot(DiscountNodeEntity node){

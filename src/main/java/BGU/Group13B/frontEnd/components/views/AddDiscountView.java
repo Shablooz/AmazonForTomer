@@ -90,6 +90,9 @@ public class AddDiscountView extends VerticalLayout implements HasUrlParameter<I
         mainLayout.setSizeFull();
 
         add(mainLayout, buttonsLayout);
+
+        cancelBtn.addClickListener(e -> navigate("manageDiscounts/" + storeId));
+        cancelBtn.addThemeVariants(ButtonVariant.LUMO_ERROR);
     }
 
     @Override

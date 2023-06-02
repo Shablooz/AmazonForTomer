@@ -48,6 +48,7 @@ public class ManageDiscountsView extends VerticalLayout implements HasUrlParamet
         userId = SessionToIdMapper.getInstance().getCurrentSessionId();
         plusBtn = new Button("add discount to root", new Icon(VaadinIcon.PLUS));
         discountTreeGrid = new DiscountTreeGrid();
+        updateDiscountTreeGrid();
 
         //actions
         plusBtn.addClickListener(e -> {
@@ -73,7 +74,6 @@ public class ManageDiscountsView extends VerticalLayout implements HasUrlParamet
 
         setUpDialog();
         add(discountTreeGrid, plusBtn, reset, addNewDiscount);
-
 
     }
 
@@ -101,7 +101,7 @@ public class ManageDiscountsView extends VerticalLayout implements HasUrlParamet
     private void setUpDialog() {
         Button confirmBtn = new Button("Confirm");
 
-        operator = new ComboBox<>();
+        operator = new ComboBox<>("operator");
         operator.setItems(Operator.values());
         operator.setItemLabelGenerator(Operator::name);
         operator.setVisible(true);
@@ -169,6 +169,13 @@ public class ManageDiscountsView extends VerticalLayout implements HasUrlParamet
 
 
     }
+
+    private void updateDialog() {
+        operator.setVisible(hasRoot);//eize meme
+        discount.setItems(handleOptionalResponse(session.getStoreDiscounts(storeId, userId)).orElse(List.of()));
+    }
+
+
     @Override
     public void setParameter(BeforeEvent event, Integer storeId) {
         this.storeId = storeId;
