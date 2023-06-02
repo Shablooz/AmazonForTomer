@@ -115,7 +115,7 @@ public class ManageDiscountsView extends VerticalLayout implements HasUrlParamet
         addDiscountDialog.setCloseOnOutsideClick(true);
 
         confirmBtn.addClickListener(e -> {
-            if(operator.getValue() == null || discount.getValue() == null){
+            if((hasRoot && operator.getValue() == null) || discount.getValue() == null){
                 return;
             }
             int discountId = discount.getValue().discountId();
