@@ -17,6 +17,7 @@ import BGU.Group13B.service.BroadCaster;
 import BGU.Group13B.service.SingletonCollection;
 //eyal import
 import java.time.LocalDate;
+
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.HashMap;
@@ -78,8 +79,8 @@ public class User {
         this.answer3 = "";
         this.messageId = 1;
         this.isLoggedIn = false;
-        this.messageNotification= false;
-        this.reviewedStoreNotification= false;
+        this.messageNotification = false;
+        this.reviewedStoreNotification = false;
     }
 
 
@@ -100,14 +101,14 @@ public class User {
     //#15
     //returns User on success (for future functionalities)
     public User register(String userName, String password, String email, String answer1, String answer2, String answer3, LocalDate birthdate) {
-        checkRegisterInfo(userName, password, email,birthdate);
+        checkRegisterInfo(userName, password, email, birthdate);
         //updates the user info upon registration - no longer a guest
-        updateUserDetail(userName, password, email, answer1, answer2, answer3,birthdate);
+        updateUserDetail(userName, password, email, answer1, answer2, answer3, birthdate);
         this.userPermissions.register(this.userId);
         return this;
     }
 
-    private void checkRegisterInfo(String userName, String password, String email,LocalDate birthdate){
+    private void checkRegisterInfo(String userName, String password, String email, LocalDate birthdate) {
         String usernameRegex = "^[a-zA-Z0-9_-]{4,16}$"; // 4-16 characters, letters/numbers/underscore/hyphen
         String passwordRegex = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)[A-Za-z\\d]{8,}$"; // need at least 8 characters, 1 uppercase, 1 lowercase, 1 number)
         String emailRegex = "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$"; // checks email validation
@@ -160,17 +161,15 @@ public class User {
 
 
     }
-    public void fetchMessages() throws NoPermissionException
-    {
+
+    public void fetchMessages() throws NoPermissionException {
         if (!isRegistered())
             throw new NoPermissionException("Only registered users can fetch messages");
-        if(getAndSetMessageNotification())
-        {
-            BroadCaster.broadcast(this.userId,"New Message");
+        if (getAndSetMessageNotification()) {
+            BroadCaster.broadcast(this.userId, "New Message");
         }
-        if(getAndSetReviewedStoreNotification())
-        {
-            BroadCaster.broadcast(this.userId,"New Review");
+        if (getAndSetReviewedStoreNotification()) {
+            BroadCaster.broadcast(this.userId, "New Review");
         }
     }
 
@@ -209,12 +208,12 @@ public class User {
         if (!isAdmin())
             throw new NoPermissionException("Only admin can send massages");
         messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), header, massage, receiverId));
-        User receiverNext=SingletonCollection.getUserRepository().getUserByUsername(receiverId);
+        User receiverNext = SingletonCollection.getUserRepository().getUserByUsername(receiverId);
         //if(!PushNotification.pushNotification("New Message",receiverNext.getUserId()))
-         if(!receiverNext.isLoggedIn() || !BroadCaster.broadcast(receiverNext.userId,"New Message"))
+        if (!receiverNext.isLoggedIn() || !BroadCaster.broadcast(receiverNext.userId, "New Message"))
             receiverNext.setMessageNotification(true);
-        System.out.println("ReceiverNext: "+receiverNext.userName+" LoggedIn: "+receiverNext.isLoggedIn());
-        System.out.println("Status: "+receiverNext.getMessageNotification());
+        System.out.println("ReceiverNext: " + receiverNext.userName + " LoggedIn: " + receiverNext.isLoggedIn());
+        System.out.println("Status: " + receiverNext.getMessageNotification());
     }
 
     //tdsfds
@@ -226,15 +225,16 @@ public class User {
             throw new IllegalArgumentException("no complaint to answer");
         messageRepository.markAsRead(regularMessageToReply.getReceiverId(), regularMessageToReply.getSenderId(), regularMessageToReply.getMessageId());
         messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), "RE: " + regularMessageToReply.getHeader(), answer, regularMessageToReply.getSenderId()));
-        User receiverNext=SingletonCollection.getUserRepository().getUserByUsername(regularMessageToReply.getSenderId());
-        if(!receiverNext.isLoggedIn() || !BroadCaster.broadcast(receiverNext.userId,"New Message"))
+        User receiverNext = SingletonCollection.getUserRepository().getUserByUsername(regularMessageToReply.getSenderId());
+        if (!receiverNext.isLoggedIn() || !BroadCaster.broadcast(receiverNext.userId, "New Message"))
             receiverNext.setMessageNotification(true);
         regularMessageToReply = null;
     }
-    public void clearMessageToReply()
-    {
-        regularMessageToReply =null;
+
+    public void clearMessageToReply() {
+        regularMessageToReply = null;
     }
+
     public Message readMassage() throws NoPermissionException {
         if (!isRegistered())
             throw new NoPermissionException("Only registered users can read massages");
@@ -251,19 +251,19 @@ public class User {
         if (regularMessageToReply == null)
             throw new IllegalArgumentException("no message to answer");
         messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), "RE: " + regularMessageToReply.getHeader(), answer, regularMessageToReply.getSenderId()));
-        User receiverNext=SingletonCollection.getUserRepository().getUserByUsername(regularMessageToReply.getSenderId());
+        User receiverNext = SingletonCollection.getUserRepository().getUserByUsername(regularMessageToReply.getSenderId());
 
-        if(!receiverNext.isLoggedIn() || !BroadCaster.broadcast(receiverNext.userId,"New Message"))
+        if (!receiverNext.isLoggedIn() || !BroadCaster.broadcast(receiverNext.userId, "New Message"))
             receiverNext.setMessageNotification(true);
         regularMessageToReply = null;
     }
 
     public void sendMassageBroad(String receiverName, String header, String massage) throws NoPermissionException {
         messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), header, massage, receiverName));
-        User receiverNext=SingletonCollection.getUserRepository().getUserByUsername(receiverName);
-        if(!BroadCaster.broadcast(receiverNext.userId,"New Message"))
+        User receiverNext = SingletonCollection.getUserRepository().getUserByUsername(receiverName);
+        if (!BroadCaster.broadcast(receiverNext.userId, "New Message"))
             receiverNext.setMessageNotification(true);
-        System.out.println("Status: "+receiverNext.getMessageNotification());
+        System.out.println("Status: " + receiverNext.getMessageNotification());
     }
 
     public Message readOldMessage() throws NoPermissionException {
@@ -311,8 +311,8 @@ public class User {
         assert regularMessageToReply.getReceiverId().matches("-?\\d+");
         market.markAsCompleted(regularMessageToReply.getSenderId(), regularMessageToReply.getMessageId(), this.userId, Integer.parseInt(regularMessageToReply.getReceiverId()));
         messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), "RE: " + regularMessageToReply.getHeader(), answer, regularMessageToReply.getSenderId()));
-        User receiverNext=SingletonCollection.getUserRepository().getUserByUsername(regularMessageToReply.getSenderId());
-        if(!BroadCaster.broadcast(receiverNext.userId,"New Message"))
+        User receiverNext = SingletonCollection.getUserRepository().getUserByUsername(regularMessageToReply.getSenderId());
+        if (!BroadCaster.broadcast(receiverNext.userId, "New Message"))
             receiverNext.setMessageNotification(true);
         regularMessageToReply = null;
     }
@@ -344,7 +344,8 @@ public class User {
     public Review getReview(int storeId, int productId) throws NoPermissionException {
         return market.getReview(storeId, productId, this.userId);
     }
-    public List<Review> getAllReviews(int storeId, int productId,int userId) throws NoPermissionException {
+
+    public List<Review> getAllReviews(int storeId, int productId, int userId) throws NoPermissionException {
         return market.getAllReviews(storeId, productId);
     }
 
@@ -352,7 +353,8 @@ public class User {
     public float getProductScore(int storeId, int productId) throws NoPermissionException {
         return market.getProductScore(storeId, productId, userId);
     }
-    public float getProductScoreUser(int userIdTarget,int storeId, int productId) throws NoPermissionException {
+
+    public float getProductScoreUser(int userIdTarget, int storeId, int productId) throws NoPermissionException {
         return market.getProductScoreUser(storeId, productId, userIdTarget);
     }
 
@@ -526,19 +528,19 @@ public class User {
         return userPermissions;
     }
 
-    public void addIndividualPermission(int storeId, UserPermissions.IndividualPermission individualPermission){
+    public void addIndividualPermission(int storeId, UserPermissions.IndividualPermission individualPermission) {
         userPermissions.addIndividualPermission(storeId, individualPermission);
     }
 
-    public void deleteIndividualPermission(int storeId, UserPermissions.IndividualPermission individualPermission){
+    public void deleteIndividualPermission(int storeId, UserPermissions.IndividualPermission individualPermission) {
         userPermissions.deleteIndividualPermission(storeId, individualPermission);
     }
 
-    public Set<UserPermissions.IndividualPermission> getIndividualPermissions(int storeId){
+    public Set<UserPermissions.IndividualPermission> getIndividualPermissions(int storeId) {
         return userPermissions.getIndividualPermissions(storeId);
     }
 
-    public void removeAllIndividualPermissions(int storeId){
+    public void removeAllIndividualPermissions(int storeId) {
         userPermissions.removeAllIndividualPermissions(storeId);
     }
 
@@ -555,11 +557,13 @@ public class User {
     public synchronized boolean getMessageNotification() {
         return messageNotification;
     }
+
     public synchronized boolean getAndSetMessageNotification() {
         boolean messageNotification = this.messageNotification;
-        this.messageNotification= false;
+        this.messageNotification = false;
         return messageNotification;
     }
+
     public synchronized void setMessageNotification(boolean notifications) {
         this.messageNotification = notifications;
     }
@@ -567,11 +571,13 @@ public class User {
     public synchronized boolean getReviewedStoreNotification() {
         return reviewedStoreNotification;
     }
+
     public synchronized boolean getAndSetReviewedStoreNotification() {
         boolean reviewedStoreNotification = this.reviewedStoreNotification;
-        this.reviewedStoreNotification= false;
+        this.reviewedStoreNotification = false;
         return reviewedStoreNotification;
     }
+
     public synchronized void setReviewedStoreNotification(boolean notifications) {
         this.reviewedStoreNotification = notifications;
     }
@@ -590,7 +596,7 @@ public class User {
     }
 
     public String getPurchaseHistory() {
-       return purchaseHistoryRepository.getAllPurchases(userId);
+        return purchaseHistoryRepository.getAllPurchases(userId);
     }
 
     public LocalDate getDateOfBirth() {

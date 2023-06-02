@@ -14,6 +14,7 @@ import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyE
 import BGU.Group13B.service.BroadCaster;
 import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.AddToUserCart;
+import BGU.Group13B.service.info.DiscountAccumulationTreeInfo;
 import BGU.Group13B.service.info.StoreInfo;
 
 
@@ -1126,4 +1127,21 @@ public class Store {
 
     }
 
+    @DefaultFounderFunctionality
+    @DefaultOwnerFunctionality
+    @PoliciesPermission
+    public DiscountAccumulationTreeInfo getDiscountAccumulationTree(int userId) throws NoPermissionException {
+        if(!this.storePermission.checkPermission(userId, hidden))
+            throw new NoPermissionException("User " + userId + " has no permission to get discount accumulation tree in the store: " + this.storeId);
+        return discountPolicy.getDiscountAccumulationTree();
+    }
+
+    @DefaultFounderFunctionality
+    @DefaultOwnerFunctionality
+    @PoliciesPermission
+    public void deleteStoreAccumulationTree(int userId) throws NoPermissionException {
+        if(!this.storePermission.checkPermission(userId, hidden))
+            throw new NoPermissionException("User " + userId + " has no permission to delete discount accumulation tree in the store: " + this.storeId);
+        discountPolicy.deleteStoreAccumulationTree();
+    }
 }

@@ -9,7 +9,7 @@ import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyE
 import java.time.LocalDate;
 import java.util.List;
 
-public class StoreDiscount{
+public class StoreDiscount {
 
     private final int discountId;
     private final int storeId;
@@ -69,12 +69,9 @@ public class StoreDiscount{
     }
 
     private boolean satisfiesCondition(BasketInfo basketInfo, UserInfo userInfo) {
-        if( condition != null){
-            try{
+        if (condition != null) {
+            try {
                 condition.satisfied(basketInfo, userInfo);
-            }
-            catch (PurchaseExceedsPolicyException e){
-                return false;
             } catch (PurchaseFailedException e) {
                 return false;
             }
@@ -89,7 +86,7 @@ public class StoreDiscount{
     @Override
     public String toString() {
         return (condition != null ? (condition + " ⟹ ") : (""))
-                + 100*discountPercentage + "%";
+                + 100 * discountPercentage + "%";
 
     }
 }

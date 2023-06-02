@@ -14,6 +14,7 @@ import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.StoreDisco
 import BGU.Group13B.service.entity.ReviewService;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
 import BGU.Group13B.service.entity.ServiceProduct;
+import BGU.Group13B.service.info.DiscountAccumulationTreeInfo;
 import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
 
@@ -408,6 +409,22 @@ public class ProxySession implements ISession {
     public Response<VoidResponse> addDiscountToADDRoot(int storeId, int userId, int discountId) {
         if (realSession != null)
             return realSession.addDiscountToADDRoot(storeId, userId, discountId);
+
+        return Response.success(new VoidResponse());
+    }
+
+    @Override
+    public Response<DiscountAccumulationTreeInfo> getDiscountAccumulationTree(int storeId, int userId) {
+        if (realSession != null)
+            return realSession.getDiscountAccumulationTree(storeId, userId);
+
+        return null;
+    }
+
+    @Override
+    public Response<VoidResponse> deleteStoreAccumulationTree(int storeId, int userId) {
+        if (realSession != null)
+            return realSession.deleteStoreAccumulationTree(storeId, userId);
 
         return Response.success(new VoidResponse());
     }

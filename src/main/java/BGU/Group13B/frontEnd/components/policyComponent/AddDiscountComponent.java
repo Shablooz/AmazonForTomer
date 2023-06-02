@@ -97,14 +97,17 @@ public class AddDiscountComponent extends VerticalLayout implements ResponseHand
     }
 
 
-    public void addDiscount() {
+    public boolean addDiscount() {
+        if(discountPercentage.isEmpty() || expirationDate.isEmpty()){
+            return false;
+        }
         double discountPercentage = this.discountPercentage.getValue() / 100;
         String coupon = this.coupon.getValue();
         LocalDate expirationDate = this.expirationDate.getValue();
-        boolean hasCoupon = this.coupon.isEmpty() || coupon.equals("");
+        boolean hasCoupon = !this.coupon.isEmpty() && !coupon.equals("");
         if (discountPercentage <= 0 || discountPercentage > 100) {
             notifyInfo("discount percentage must be between 0 and 100");
-            return;
+            return false;
         }
         Integer discount = null;
         switch (discountType.getValue()) {
@@ -130,20 +133,22 @@ public class AddDiscountComponent extends VerticalLayout implements ResponseHand
         }
         if (discount != null) {
             notifySuccess("the discount was added successfully");
+            return true;
         }
+        return false;
     }
 
-    public void addDiscount(int conditionId) {
+    public boolean addDiscount(int conditionId) {
         if(discountPercentage.isEmpty() || expirationDate.isEmpty()){
-            return;
+            return false;
         }
         double discountPercentage = this.discountPercentage.getValue() / 100;
         String coupon = this.coupon.getValue();
         LocalDate expirationDate = this.expirationDate.getValue();
-        boolean hasCoupon = this.coupon.isEmpty() || coupon.equals("");
+        boolean hasCoupon = !this.coupon.isEmpty() && !coupon.equals("");
         if (discountPercentage <= 0 || discountPercentage > 100) {
             this.discountPercentage.setErrorMessage("discount percentage must be between 0 and 100");
-            return;
+            return false;
         }
         Integer discount = null;
         switch (discountType.getValue()) {
@@ -155,7 +160,7 @@ public class AddDiscountComponent extends VerticalLayout implements ResponseHand
             }
             case CATEGORY_DISCOUNT -> {
                 if(categories.isEmpty())
-                    return;
+                    return false;
                 if (hasCoupon)
                     discount = handleResponse(session.addCategoryDiscount(storeId, userId, conditionId, discountPercentage, expirationDate, categories.getValue().category(), coupon));
                 else
@@ -163,7 +168,7 @@ public class AddDiscountComponent extends VerticalLayout implements ResponseHand
             }
             case PRODUCT_DISCOUNT -> {
                 if(products.isEmpty())
-                    return;
+                    return false;
                 if (hasCoupon)
                     discount = handleResponse(session.addProductDiscount(storeId, userId, conditionId, discountPercentage, expirationDate, products.getValue().productId(), coupon));
                 else
@@ -172,8 +177,9 @@ public class AddDiscountComponent extends VerticalLayout implements ResponseHand
         }
         if (discount != null) {
             notifySuccess("the discount was added with the condition successfully");
+            return true;
         }
-
+        return false;
     }
 
     private String getName(DiscountType discountType) {

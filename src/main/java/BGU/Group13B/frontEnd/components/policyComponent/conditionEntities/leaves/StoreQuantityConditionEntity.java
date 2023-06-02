@@ -34,7 +34,7 @@ public class StoreQuantityConditionEntity extends ConditionEntity implements Lea
         return upperBound;
     }
     public String toString(){
-        boolean hasUpperBound = upperBound != 0;
+        boolean hasUpperBound = upperBound != -1;
         if(hasUpperBound)
             return "Store quantity is between " + lowerBound + " and " + upperBound;
         else
