@@ -1,5 +1,6 @@
 package BGU.Group13B.frontEnd;
 
+import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepoSingleService;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 
 import BGU.Group13B.service.SingletonCollection;
@@ -14,6 +15,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,15 +31,18 @@ import java.util.Timer;
 @SpringBootApplication
 @Theme(value = "trading-system", variant = Lumo.DARK)
 @ComponentScan(basePackages = "BGU.Group13B")
+@EnableJpaRepositories(basePackages = {"BGU.Group13B.frontEnd","BGU.Group13B.backend"})
 @Push
-@EntityScan(basePackages = {"BGU.Group13B.backend","BGU.Group13B.frontEnd"})
+@EntityScan(basePackages = {"BGU.Group13B.backend","BGU.Group13B.frontEnd","BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl"})
 public class Application implements AppShellConfigurator {
 
     public static void main(String[] args) {
         //timer for deleting idle sessions
         //running the ui
         ConfigurableApplicationContext context =SpringApplication.run(Application.class, args);
+
         SingletonCollection.setContext(context);
+
 
         //serPerson ser=SingletonCollection.getContext().getBean(serPerson.class);
 

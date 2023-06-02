@@ -20,6 +20,7 @@ public class HomeView extends VerticalLayout implements BeforeEnterObserver, Aft
 
     @Autowired
     public HomeView(Session session) {
+        //TODO initialize the singleton collection is repository tables arent empty
         this.session = session;
         // You can initialise any data required for the connected UI components here.
         //joining as a guest
