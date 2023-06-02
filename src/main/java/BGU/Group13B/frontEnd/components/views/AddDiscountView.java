@@ -70,11 +70,11 @@ public class AddDiscountView extends VerticalLayout implements HasUrlParameter<I
         addDiscountBtn.addClickListener(e -> {
             if (hasCondition) {
                 int conditionId = conditionTreeGrid.confirmCondition();
-                if (conditionId != -1) {
-                    addDiscountComponent.addDiscount(conditionId);
+                if (conditionId != -1 && addDiscountComponent.addDiscount(conditionId)) {
+                    navigate("manageDiscounts/" + storeId);
                 }
-            } else {
-                addDiscountComponent.addDiscount();
+            } else if(addDiscountComponent.addDiscount()){
+                navigate("manageDiscounts/" + storeId);
             }
         });
 

@@ -1305,7 +1305,7 @@ public class Session implements ISession {
     public Response<DiscountInfo> getDiscount(int storeId, int userId, int discountId) {
         try {
             var discount = market.getDiscount(storeId, userId, discountId);
-            return Response.success(new DiscountInfo(discount.toString()));
+            return Response.success(new DiscountInfo(discountId, discount.toString()));
         } catch (Exception e) {
             return Response.exception(e);
         }
