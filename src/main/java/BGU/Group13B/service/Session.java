@@ -13,6 +13,7 @@ import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.service.entity.ReviewService;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
 import BGU.Group13B.service.entity.ServiceProduct;
+import BGU.Group13B.service.info.DiscountAccumulationTreeInfo;
 import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
 import org.springframework.stereotype.Service;
@@ -1355,6 +1356,25 @@ public class Session implements ISession {
     public Response<VoidResponse> addDiscountToADDRoot(int storeId, int userId, int discountId) {
         try {
             market.addDiscountToADDRoot(storeId, userId, discountId);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<DiscountAccumulationTreeInfo> getDiscountAccumulationTree(int storeId, int userId) {
+        try{
+            return Response.success(market.getDiscountAccumulationTree(storeId, userId));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<VoidResponse> deleteStoreAccumulationTree(int storeId, int userId) {
+        try {
+            market.deleteStoreAccumulationTree(storeId, userId);
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);

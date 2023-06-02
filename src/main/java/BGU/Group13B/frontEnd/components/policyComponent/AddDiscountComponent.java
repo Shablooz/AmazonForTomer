@@ -98,6 +98,9 @@ public class AddDiscountComponent extends VerticalLayout implements ResponseHand
 
 
     public boolean addDiscount() {
+        if(discountPercentage.isEmpty() || expirationDate.isEmpty()){
+            return false;
+        }
         double discountPercentage = this.discountPercentage.getValue() / 100;
         String coupon = this.coupon.getValue();
         LocalDate expirationDate = this.expirationDate.getValue();

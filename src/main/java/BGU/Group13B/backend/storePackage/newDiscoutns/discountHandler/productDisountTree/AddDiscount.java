@@ -3,6 +3,8 @@ package BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.productDi
 import BGU.Group13B.backend.User.BasketInfo;
 import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.ProductDiscountMap;
+import BGU.Group13B.frontEnd.components.views.ManageDiscountsView;
+import BGU.Group13B.service.info.DiscountAccumulationTreeInfo;
 
 import java.util.List;
 
@@ -13,6 +15,10 @@ public class AddDiscount extends DiscountAccumulationTree {
         ProductDiscountMap result = left.computeProductDiscountMap(basketInfo, userInfo, coupons);
         result.computeAddDiscount(right.computeProductDiscountMap(basketInfo, userInfo, coupons));
         return result;
+    }
+
+    public AddDiscount(int nodeId, DiscountAccumulationNode left, DiscountAccumulationNode right) {
+        super(nodeId, left, right);
     }
 
     public AddDiscount(int nodeId, DiscountAccumulationNode left, DiscountAccumulationNode right) {

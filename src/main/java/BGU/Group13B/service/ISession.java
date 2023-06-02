@@ -9,11 +9,10 @@ import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.backend.storePackage.WorkerCard;
 import BGU.Group13B.backend.storePackage.newDiscoutns.DiscountInfo;
-import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.StoreDiscount;
-import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.service.entity.ReviewService;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
 import BGU.Group13B.service.entity.ServiceProduct;
+import BGU.Group13B.service.info.DiscountAccumulationTreeInfo;
 import BGU.Group13B.service.info.StoreInfo;
 import BGU.Group13B.service.info.ProductInfo;
 
@@ -36,7 +35,7 @@ public interface ISession {
      * @param price         the product price
      * @param stockQuantity the stock quantity
      * @param description   the product description
-     * @return              the product id
+     * @return the product id
      */
     Response<Integer> addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description);
 
@@ -44,6 +43,7 @@ public interface ISession {
      * #19
      * require 2.3
      * good for development delete this function, does not check if the item exists in a store
+     *
      * @param userId    the user id
      * @param storeId   the store id
      * @param productId the product id
@@ -70,11 +70,11 @@ public interface ISession {
                                String/*store coupons*/ storeCoupon);
 
     Response<VoidResponse> purchaseProductCart(int userId, String creditCardNumber,
-                                                      String creditCardMonth, String creditCardYear,
-                                                      String creditCardHolderFirstName,
-                                                      String creditCardCVV, String id,
-                                                      String address, String city, String country,
-                                                      String zip);
+                                               String creditCardMonth, String creditCardYear,
+                                               String creditCardHolderFirstName,
+                                               String creditCardCVV, String id,
+                                               String address, String city, String country,
+                                               String zip);
 
 
     /**
@@ -258,6 +258,7 @@ public interface ISession {
      * #19
      * require 2.3
      * good for production
+     *
      * @param userId    the user id
      * @param storeId   the store id
      * @param productId the product id
@@ -567,10 +568,10 @@ public interface ISession {
      * #32
      * require 4.1
      *
-     * @param userId        the user id
-     * @param storeId       the store id
-     * @param productId     the product id
-     * @param description   the product description
+     * @param userId      the user id
+     * @param storeId     the store id
+     * @param productId   the product id
+     * @param description the product description
      */
     Response<VoidResponse> setProductDescription(int userId, int storeId, int productId, String description);
 
@@ -725,10 +726,10 @@ public interface ISession {
     void exitSystemAsGuest(int userId);
 
     /**
-     * @param userId the user id
+     * @param userId  the user id
      * @param storeId the store id
      * @return the list of the products that the user failed buy from the store
-     * */
+     */
     List<Integer> getFailedProducts(int userId, int storeId);
 
 
@@ -740,7 +741,6 @@ public interface ISession {
 
 
     /**
-     *
      * @param userId the user id
      * @return all the user's associated stores (all stores that the user has a role in)
      */
@@ -751,8 +751,8 @@ public interface ISession {
      * #39
      * require 4.9
      *
-     * @param userId    the user id (only the founder can do this action)
-     * @param storeId   the store id that will be hidden
+     * @param userId  the user id (only the founder can do this action)
+     * @param storeId the store id that will be hidden
      */
     Response<VoidResponse> hideStore(int userId, int storeId);
 
@@ -760,8 +760,8 @@ public interface ISession {
      * #40
      * require 4.10
      *
-     * @param userId    the user id (only the founder can do this action)
-     * @param storeId   the store id that will be unhidden
+     * @param userId  the user id (only the founder can do this action)
+     * @param storeId the store id that will be unhidden
      */
     Response<VoidResponse> unhideStore(int userId, int storeId);
 
@@ -769,8 +769,8 @@ public interface ISession {
      * #45
      * require 6.1
      *
-     * @param userId    the user id (only an admin can do this action)
-     * @param storeId   the store id that will be deleted
+     * @param userId  the user id (only an admin can do this action)
+     * @param storeId the store id that will be deleted
      */
     Response<VoidResponse> deleteStore(int userId, int storeId);
 
@@ -782,22 +782,25 @@ public interface ISession {
      * @throws Exception
      */
     Response<String> getUserPurchaseHistory(int userId);
+
     Response<String> getUserPurchaseHistoryAsAdmin(int userId, int adminId);
+
     Response<List<PurchaseHistory>> getStorePurchaseHistoryAsAdmin(int storeId, int adminId);
 
 
     Response<VoidResponse> fetchMessages(int userId);
 
     int getStoreFounder(int storeId);
+
     Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, List<String> coupons) throws PurchaseFailedException;
 
     /**
      * #43
      * require 4.13
      *
-     * @param userId    the user id
-     * @param storeId   the store id
-     * @return          the store purchase history
+     * @param userId  the user id
+     * @param storeId the store id
+     * @return the store purchase history
      */
     Response<List<PurchaseHistory>> getStorePurchaseHistory(int userId, int storeId);
 
@@ -805,10 +808,10 @@ public interface ISession {
      * #XX
      * require XXX?
      *
-     * @param userId the user id
+     * @param userId     the user id
      * @param newOwnerId the id of the new owner
-     * @param storeId the id of the store the new owner will own
-     *               as an owner/founder you can add other users as store owners in your store
+     * @param storeId    the id of the store the new owner will own
+     *                   as an owner/founder you can add other users as store owners in your store
      */
     Response<VoidResponse> addOwner(int userId, int newOwnerId, int storeId);
 
@@ -816,10 +819,10 @@ public interface ISession {
      * #XX
      * require XXX?
      *
-     * @param userId the user id
+     * @param userId        the user id
      * @param removeOwnerId the id of the owner to be removed
-     * @param storeId the id of the store the owner will be removed from
-     *               as an owner/founder you can remove owners you assigned yourself
+     * @param storeId       the id of the store the owner will be removed from
+     *                      as an owner/founder you can remove owners you assigned yourself
      */
     Response<VoidResponse> removeOwner(int userId, int removeOwnerId, int storeId);
 
@@ -827,10 +830,10 @@ public interface ISession {
      * #XX
      * require XXX?
      *
-     * @param userId the user id
+     * @param userId       the user id
      * @param newManagerId the id of the new manager
-     * @param storeId the id of the store the new manager will manage
-     *               as an owner/founder you can add other users as store managers in your store
+     * @param storeId      the id of the store the new manager will manage
+     *                     as an owner/founder you can add other users as store managers in your store
      */
     Response<VoidResponse> addManager(int userId, int newManagerId, int storeId);
 
@@ -838,10 +841,10 @@ public interface ISession {
      * #XX
      * require XXX?
      *
-     * @param userId the user id
+     * @param userId          the user id
      * @param removeManagerId the id of the manager to be removed
-     * @param storeId the id of the store the manager will be removed from
-     *               as an owner/founder you can remove managers you assigned yourself
+     * @param storeId         the id of the store the manager will be removed from
+     *                        as an owner/founder you can remove managers you assigned yourself
      */
     Response<VoidResponse> removeManager(int userId, int removeManagerId, int storeId);
 
@@ -849,9 +852,9 @@ public interface ISession {
      * #XX
      * require XXX?
      *
-     * @param userId the user id
+     * @param userId  the user id
      * @param storeId the id of the store to get info from
-     *               as an owner/founder you can get info about the users working in the store
+     *                as an owner/founder you can get info about the users working in the store
      */
     List<WorkerCard> getStoreWorkersInfo(int userId, int storeId);
 
@@ -875,101 +878,108 @@ public interface ISession {
     Response<Integer> addStorePriceCondition(int storeId, int userId, double lowerBound, double upperBound);
 
     Response<Integer> addStorePriceCondition(int storeId, int userId, double lowerBound);
+
     Response<Integer> addStoreQuantityCondition(int storeId, int userId, int lowerBound, int upperBound);
 
     Response<Integer> addStoreQuantityCondition(int storeId, int userId, int lowerBound);
-    Response<Integer> addCategoryPriceCondition(int storeId, int userId, String category, double lowerBound, double upperBound) ;
+
+    Response<Integer> addCategoryPriceCondition(int storeId, int userId, String category, double lowerBound, double upperBound);
 
 
-    Response<Integer> addCategoryPriceCondition(int storeId, int userId, String category, double lowerBound) ;
+    Response<Integer> addCategoryPriceCondition(int storeId, int userId, String category, double lowerBound);
 
 
-    Response<Integer> addCategoryQuantityCondition(int storeId, int userId, String category, int lowerBound, int upperBound) ;
+    Response<Integer> addCategoryQuantityCondition(int storeId, int userId, String category, int lowerBound, int upperBound);
 
 
-    Response<Integer> addCategoryQuantityCondition(int storeId, int userId, String category, int lowerBound)  ;
+    Response<Integer> addCategoryQuantityCondition(int storeId, int userId, String category, int lowerBound);
 
 
-    Response<Integer> addDateCondition(int storeId, int userId, LocalDateTime lowerBound, LocalDateTime upperBound) ;
+    Response<Integer> addDateCondition(int storeId, int userId, LocalDateTime lowerBound, LocalDateTime upperBound);
 
-    Response<Integer> addDateCondition(int storeId, int userId, LocalDateTime lowerBound) ;
-
-
-    Response<Integer> addProductPriceCondition(int storeId, int userId, int productId, double lowerBound, double upperBound) ;
+    Response<Integer> addDateCondition(int storeId, int userId, LocalDateTime lowerBound);
 
 
-    Response<Integer> addProductPriceCondition(int storeId, int userId, int productId, double lowerBound) ;
+    Response<Integer> addProductPriceCondition(int storeId, int userId, int productId, double lowerBound, double upperBound);
 
 
-    Response<Integer> addProductQuantityCondition(int storeId, int userId, int productId, int lowerBound, int upperBound) ;
-
-    Response<Integer> addProductQuantityCondition(int storeId, int userId, int productId, int lowerBound) ;
-
-    Response<Integer> addTimeCondition(int storeId, int userId, LocalDateTime lowerBound, LocalDateTime upperBound)  ;
+    Response<Integer> addProductPriceCondition(int storeId, int userId, int productId, double lowerBound);
 
 
-    Response<Integer> addTimeCondition(int storeId, int userId, LocalDateTime lowerBound)  ;
+    Response<Integer> addProductQuantityCondition(int storeId, int userId, int productId, int lowerBound, int upperBound);
+
+    Response<Integer> addProductQuantityCondition(int storeId, int userId, int productId, int lowerBound);
+
+    Response<Integer> addTimeCondition(int storeId, int userId, LocalDateTime lowerBound, LocalDateTime upperBound);
 
 
-    Response<Integer> addUserAgeCondition(int storeId, int userId, int lowerBound, int upperBound)  ;
+    Response<Integer> addTimeCondition(int storeId, int userId, LocalDateTime lowerBound);
 
-    Response<Integer> addUserAgeCondition(int storeId, int userId, int lowerBound)  ;
+
+    Response<Integer> addUserAgeCondition(int storeId, int userId, int lowerBound, int upperBound);
+
+    Response<Integer> addUserAgeCondition(int storeId, int userId, int lowerBound);
+
     /**
      * <H1>Discounts</H1>
      */
 
-    Response<Integer> addStoreDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, String coupon) ;
+    Response<Integer> addStoreDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, String coupon);
 
 
-    Response<Integer> addStoreDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, String coupon)  ;
+    Response<Integer> addStoreDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, String coupon);
 
-    Response<Integer> addStoreDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate) ;
-
-
-    Response<Integer> addStoreDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate)  ;
-
-    Response<Integer> addCategoryDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, String category, String coupon) ;
-
-    Response<Integer> addCategoryDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, String category, String coupon) ;
+    Response<Integer> addStoreDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate);
 
 
-    Response<Integer> addCategoryDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, String category)  ;
+    Response<Integer> addStoreDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate);
 
-    Response<Integer> addCategoryDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, String category) ;
+    Response<Integer> addCategoryDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, String category, String coupon);
 
-
-    Response<Integer> addProductDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, int productId, String coupon) ;
-
-
-    Response<Integer> addProductDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, int productId, String coupon) ;
+    Response<Integer> addCategoryDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, String category, String coupon);
 
 
-    Response<Integer> addProductDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, int productId) ;
+    Response<Integer> addCategoryDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, String category);
+
+    Response<Integer> addCategoryDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, String category);
 
 
-    Response<Integer> addProductDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, int productId)  ;
+    Response<Integer> addProductDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, int productId, String coupon);
 
 
-    Response<List<DiscountInfo>> getStoreDiscounts(int storeId, int userId) ;
+    Response<Integer> addProductDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, int productId, String coupon);
 
 
-    Response<DiscountInfo> getDiscount(int storeId, int userId, int discountId) ;
+    Response<Integer> addProductDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, int productId);
 
 
-    Response<VoidResponse> removeDiscount(int storeId, int userId, int discountId) ;
+    Response<Integer> addProductDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, int productId);
+
+
+    Response<List<DiscountInfo>> getStoreDiscounts(int storeId, int userId);
+
+
+    Response<DiscountInfo> getDiscount(int storeId, int userId, int discountId);
+
+
+    Response<VoidResponse> removeDiscount(int storeId, int userId, int discountId);
 
     /**
      * <H1>Discount Accumulation Tree</H1>
      */
 
-    Response<VoidResponse> addDiscountAsRoot(int storeId, int userId, int discountId) ;
+    Response<VoidResponse> addDiscountAsRoot(int storeId, int userId, int discountId);
 
 
-    Response<VoidResponse> addDiscountToXORRoot(int storeId, int userId, int discountId) ;
+    Response<VoidResponse> addDiscountToXORRoot(int storeId, int userId, int discountId);
 
 
-    Response<VoidResponse> addDiscountToMAXRoot(int storeId, int userId, int discountId)  ;
+    Response<VoidResponse> addDiscountToMAXRoot(int storeId, int userId, int discountId);
 
 
-    Response<VoidResponse> addDiscountToADDRoot(int storeId, int userId, int discountId)  ;
+    Response<VoidResponse> addDiscountToADDRoot(int storeId, int userId, int discountId);
+
+    Response<DiscountAccumulationTreeInfo> getDiscountAccumulationTree(int storeId, int userId);
+
+    Response<VoidResponse> deleteStoreAccumulationTree(int storeId, int userId);
 }

@@ -44,7 +44,6 @@ public class ManageDiscountsView extends VerticalLayout implements HasUrlParamet
         this.session = session;
 
     }
-
     private void start() {
         userId = SessionToIdMapper.getInstance().getCurrentSessionId();
         plusBtn = new Button("add discount to root", new Icon(VaadinIcon.PLUS));
@@ -52,6 +51,7 @@ public class ManageDiscountsView extends VerticalLayout implements HasUrlParamet
 
         //actions
         plusBtn.addClickListener(e -> {
+            updateDialog();
             addDiscountDialog.open();
 
 
@@ -60,8 +60,12 @@ public class ManageDiscountsView extends VerticalLayout implements HasUrlParamet
         reset.addClickListener(e -> {
             //session.resetStoreDiscounts(storeId, userId);
             //var res = handleResponse(session.discount)
-            discountTreeGrid.reset();
-            hasRoot = false;
+            var res = handleResponse(session.deleteStoreAccumulationTree(storeId, userId));
+            if(res != null){
+                discountTreeGrid.reset();
+                hasRoot = false;
+            }
+
         });
 
         addNewDiscount = new Button("add new discount", new Icon(VaadinIcon.PLUS));
@@ -73,6 +77,27 @@ public class ManageDiscountsView extends VerticalLayout implements HasUrlParamet
 
     }
 
+    private void updateDiscountTreeGrid() {
+        discountTreeGrid.reset();
+
+        var res = handleResponse(session.getDiscountAccumulationTree(storeId, userId), "store/" + storeId);
+        List<Operator> operators = res.operators();
+        List<DiscountInfo> discounts = res.discounts();
+
+        if(discounts.isEmpty()){
+            this.hasRoot = false;
+            return;
+        }
+
+        this.hasRoot = true;
+
+        discountTreeGrid.setRoot(new LeafDiscountNodeEntity(discounts.get(0)));
+        for (int i = 1; i < discounts.size(); i++) {
+            discountTreeGrid.addToRoot(new DiscountOperatorNodeEntity(operators.get(i-1)),
+                    new LeafDiscountNodeEntity(discounts.get(i)));
+        }
+    }
+
     private void setUpDialog() {
         Button confirmBtn = new Button("Confirm");
 
@@ -81,10 +106,8 @@ public class ManageDiscountsView extends VerticalLayout implements HasUrlParamet
         operator.setItemLabelGenerator(Operator::name);
         operator.setVisible(true);
 
-        if(!hasRoot)
-            operator.setVisible(false);
-        discount = new ComboBox<>();
-        discount.setItems(handleOptionalResponse(session.getStoreDiscounts(storeId, userId)).orElse(List.of()));
+        discount = new ComboBox<>("discount");
+        updateDialog();
         discount.setItemLabelGenerator(DiscountInfo::stringRepresentation);
         discount.setVisible(true);
 
@@ -92,6 +115,9 @@ public class ManageDiscountsView extends VerticalLayout implements HasUrlParamet
         addDiscountDialog.setCloseOnOutsideClick(true);
 
         confirmBtn.addClickListener(e -> {
+            if(operator.getValue() == null || discount.getValue() == null){
+                return;
+            }
             int discountId = discount.getValue().discountId();
             if(!hasRoot) {
                 //todo add to root
@@ -114,7 +140,7 @@ public class ManageDiscountsView extends VerticalLayout implements HasUrlParamet
                         addDiscountDialog.close();
                         return;
                     }
-                    discountTreeGrid.addToRoot(new DiscountOperatorNodeEntity(Operator.ADD));
+                    discountTreeGrid.addToRoot(new DiscountOperatorNodeEntity(Operator.ADD), new LeafDiscountNodeEntity(discountId, discount.getValue().stringRepresentation()));
 
                 }
                 case MAX -> {
@@ -123,7 +149,7 @@ public class ManageDiscountsView extends VerticalLayout implements HasUrlParamet
                         addDiscountDialog.close();
                         return;
                     }
-                    discountTreeGrid.addToRoot(new DiscountOperatorNodeEntity(Operator.MAX));
+                    discountTreeGrid.addToRoot(new DiscountOperatorNodeEntity(Operator.MAX), new LeafDiscountNodeEntity(discountId, discount.getValue().stringRepresentation()));
                 }
                 case XOR -> {
                     var res = handleResponse(session.addDiscountToXORRoot(storeId, userId, discountId));
@@ -131,7 +157,7 @@ public class ManageDiscountsView extends VerticalLayout implements HasUrlParamet
                         addDiscountDialog.close();
                         return;
                     }
-                    discountTreeGrid.addToRoot(new DiscountOperatorNodeEntity(Operator.XOR));
+                    discountTreeGrid.addToRoot(new DiscountOperatorNodeEntity(Operator.XOR), new LeafDiscountNodeEntity(discountId, discount.getValue().stringRepresentation()));
                 }
             }
             addDiscountDialog.close();

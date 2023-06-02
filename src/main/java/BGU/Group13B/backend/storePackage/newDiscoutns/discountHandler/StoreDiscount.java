@@ -72,10 +72,7 @@ public class StoreDiscount{
         if( condition != null){
             try{
                 condition.satisfied(basketInfo, userInfo);
-            }
-            catch (PurchaseExceedsPolicyException e){
-                return false;
-            } catch (PurchaseFailedException e) {
+            } catch (PurchaseFailedException e){
                 return false;
             }
         }

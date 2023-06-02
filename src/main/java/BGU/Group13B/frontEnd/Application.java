@@ -28,8 +28,8 @@ public class Application implements AppShellConfigurator {
         //timer for deleting idle sessions
         //running the ui
         SpringApplication.run(Application.class, args);
-        Timer timer = new Timer();
-        timer.schedule(SessionToIdMapper.getInstance().kickExpired(), 5 * 60 * 1000, 5 * 60 * 1000);
+        //Timer timer = new Timer();
+        //timer.schedule(SessionToIdMapper.getInstance().kickExpired(), 5 * 60 * 1000, 5 * 60 * 1000);
     }
 
 }

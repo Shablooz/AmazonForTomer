@@ -5,6 +5,8 @@ import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.data.provider.hierarchy.TreeData;
 import com.vaadin.flow.data.provider.hierarchy.TreeDataProvider;
 
+import java.util.stream.Stream;
+
 public class DiscountTreeGrid extends TreeGrid<DiscountNodeEntity>{
     private final TreeData<DiscountNodeEntity> data = new TreeData<>();
 
@@ -18,7 +20,7 @@ public class DiscountTreeGrid extends TreeGrid<DiscountNodeEntity>{
         addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS);
         addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT);
     }
-    public void addToRoot(DiscountNodeEntity node){
+    public void addToRoot(DiscountOperatorNodeEntity operatorRoot, LeafDiscountNodeEntity newNode){
         if(data.getRootItems().size() != 1)
             throw new RuntimeException("there should be only one root, system error");
         DiscountNodeEntity preRoot = data.getRootItems().get(0); //should only be one
@@ -41,4 +43,10 @@ public class DiscountTreeGrid extends TreeGrid<DiscountNodeEntity>{
     private void refreshAll() {
         getDataProvider().refreshAll();
     }
+
+    public DiscountNodeEntity getRoot(){
+        return data.getRootItems().get(0);
+    }
+
+
 }

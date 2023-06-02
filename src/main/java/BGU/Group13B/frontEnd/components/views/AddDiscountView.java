@@ -5,6 +5,7 @@ import BGU.Group13B.frontEnd.components.policyComponent.AddDiscountComponent;
 import BGU.Group13B.frontEnd.components.policyComponent.ConditionTreeGrid;
 import BGU.Group13B.service.Session;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -22,6 +23,7 @@ public class AddDiscountView extends VerticalLayout implements HasUrlParameter<I
     private final Button showConditionBtn = new Button("Add Condition");
     private final Button hideConditionBtn = new Button("Remove Condition");
     private final Button resetBtn = new Button("Reset condition");
+    private final Button cancelBtn = new Button("Cancel");
     private boolean hasCondition;
     private ConditionTreeGrid conditionTreeGrid;
     private AddDiscountComponent addDiscountComponent;
@@ -78,7 +80,7 @@ public class AddDiscountView extends VerticalLayout implements HasUrlParameter<I
             }
         });
 
-        HorizontalLayout buttonsLayout = new HorizontalLayout(showConditionBtn, hideConditionBtn, resetBtn, addDiscountBtn);
+        HorizontalLayout buttonsLayout = new HorizontalLayout(showConditionBtn, hideConditionBtn, resetBtn, addDiscountBtn, cancelBtn);
         buttonsLayout.setWidth("100%");
         buttonsLayout.setPadding(true);
         buttonsLayout.setJustifyContentMode(JustifyContentMode.CENTER);
