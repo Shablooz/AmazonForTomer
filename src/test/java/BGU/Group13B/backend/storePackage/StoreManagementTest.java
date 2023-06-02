@@ -17,7 +17,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class StoreManagementTest {
     private static IStoreRepository storeRepository;
     private static IProductRepository productRepository;
-    private static IProductPurchasePolicyRepository productPurchasePolicyRepository;
     private static IUserRepository userRepository;
 
     private final int adminId = 1;
@@ -45,7 +44,6 @@ public class StoreManagementTest {
         SingletonCollection.reset_system();
         storeRepository = SingletonCollection.getStoreRepository();
         productRepository = SingletonCollection.getProductRepository();
-        productPurchasePolicyRepository = SingletonCollection.getProductPurchasePolicyRepository();
         userRepository = SingletonCollection.getUserRepository();
 
         founderId = addUser();
@@ -76,13 +74,6 @@ public class StoreManagementTest {
             assertEquals(price, result.getPrice());
             assertEquals(stockQuantity, result.getStockQuantity());
             assertEquals(description, result.getDescription());
-
-            PurchasePolicy purchasePolicy = productPurchasePolicyRepository.getPurchasePolicy(storeId, productId);
-            assertEquals(productId, purchasePolicy.getParentId());
-            assertEquals(0, purchasePolicy.getPriceLowerBound());
-            assertEquals(-1, purchasePolicy.getPriceUpperBound());
-            assertEquals(0, purchasePolicy.getQuantityLowerBound());
-            assertEquals(-1, purchasePolicy.getQuantityUpperBound());
         }
         catch (Exception e){
             fail();
@@ -97,7 +88,6 @@ public class StoreManagementTest {
         Thread[] threads = new Thread[numOfThreads];
         int[] productIds = new int[numOfThreads];
         Product[] products = new Product[numOfThreads];
-        PurchasePolicy[] purchasePolicies = new PurchasePolicy[numOfThreads];
 
         for (int i = 0; i < numOfThreads; i++) {
             int finalI = i;
@@ -107,9 +97,7 @@ public class StoreManagementTest {
                     productIds[finalI] = productId;
 
                     Product result = productRepository.getStoreProductById(productId, storeId);
-                    PurchasePolicy purchasePolicy = productPurchasePolicyRepository.getPurchasePolicy(storeId, productId);
                     products[finalI] = result;
-                    purchasePolicies[finalI] = purchasePolicy;
                 }
                 catch (Exception e){
                     System.out.println("Exception in thread " + finalI + ": " + e.getMessage());
@@ -145,15 +133,6 @@ public class StoreManagementTest {
             assertEquals(price, products[i].getPrice());
             assertEquals(stockQuantity, products[i].getStockQuantity());
             assertEquals(description, products[i].getDescription());
-        }
-
-        // check that all the purchase policies are correct
-        for (int i = 0; i < numOfThreads; i++) {
-            assertEquals(productIds[i], purchasePolicies[i].getParentId());
-            assertEquals(0, purchasePolicies[i].getPriceLowerBound());
-            assertEquals(-1, purchasePolicies[i].getPriceUpperBound());
-            assertEquals(0, purchasePolicies[i].getQuantityLowerBound());
-            assertEquals(-1, purchasePolicies[i].getQuantityUpperBound());
         }
     }
 

@@ -40,6 +40,12 @@ class StoreTest {
     private int tUserId2;
     private int storeId1;
 
+    private int u1Id;
+
+    private int u2Id;
+
+    private int u3Id;
+
     @BeforeEach
     void setUp() throws NoPermissionException {
         /*initializing data*/
@@ -66,7 +72,7 @@ class StoreTest {
         msg = "User " + managerWithPermission + " has submitted a purchase proposal for product " + productId + " in store " + storeId;
         Mockito.doNothing().when(alertManager).sendAlert(managerWithPermission, msg);
         store = new Store(storeId, "store name", "category", null, null, null,
-                alertManager, storePermission, addToUserCart, bidRepository, null, null, null,
+                alertManager, storePermission, addToUserCart, bidRepository, null,
                 null, null, null);
 
     }
@@ -243,15 +249,68 @@ class StoreTest {
         omTestStore = SingletonCollection.getStoreRepository().getStore(storeId1);
     }
 
+    public void RecursiveFireTestSetUp(){
+        u1Id = SingletonCollection.getUserRepository().getNewUserId();
+        SingletonCollection.getUserRepository().addUser(u1Id, new User(u1Id));
+
+        u2Id = SingletonCollection.getUserRepository().getNewUserId();
+        SingletonCollection.getUserRepository().addUser(u2Id, new User(u2Id));
+
+        u3Id = SingletonCollection.getUserRepository().getNewUserId();
+        SingletonCollection.getUserRepository().addUser(u3Id, new User(u3Id));
+
+        u1 = SingletonCollection.getUserRepository().getUser(u1Id);
+        u2 = SingletonCollection.getUserRepository().getUser(u2Id);
+        u3 = SingletonCollection.getUserRepository().getUser(u3Id);
+
+        s1Id = SingletonCollection.getStoreRepository().addStore(u1Id, "s1", "burn them all");
+
+        s1 = SingletonCollection.getStoreRepository().getStore(storeId1);
+    }
+
+    @Test
+    void recursiveFireSuccess() {
+        RecursiveFireTestSetUp();
+        try {
+            s1.addOwner(u1Id, u2Id);
+            s1.addOwner(u2Id, u3Id);
+            Assertions.assertThrows(ChangePermissionException.class, () -> s1.removeOwner(u3Id, u2Id));
+            s1.removeOwner(u1Id, u2Id);
+            assertNull(s1.getStorePermission().getUserRole(u2Id));
+            assertNull(s1.getStorePermission().getUserRole(u3Id));
+        } catch (NoPermissionException | ChangePermissionException e) {
+            fail(e);
+        } finally {
+            tearTheBuildingDown();
+        }
+    }
+
     private static User tUser;
     private static Store omTestStore;
     private static User tUser2;
 
+    private static User u1;
+    private static User u2;
+    private static User u3;
+    private static Store s1;
+    private int s1Id;
+
     public void customTearDown() {
+        SingletonCollection.reset_system();
+        /*
         omTestStore.getStorePermission().clearForTest();
         tUser.getUserPermissions().clearForTest();
         tUser2.getUserPermissions().clearForTest();
         SingletonCollection.getStorePurchasePolicyRepository().reset();
+
+         */
+        //SingletonCollection.reset_system();
+    }
+
+    public void tearTheBuildingDown() {
+        s1.getStorePermission().clearForTest();
+        u1.getUserPermissions().clearForTest();
+        u2.getUserPermissions().clearForTest();
         //SingletonCollection.reset_system();
     }
 
@@ -261,7 +320,7 @@ class StoreTest {
         customSetUp();
         try {
             omTestStore.addOwner(tUserOwnerId, tUserId);
-            Assertions.assertEquals(omTestStore.getStorePermission().getUserPermission(tUserId), UserPermissions.StoreRole.OWNER);
+            Assertions.assertEquals(omTestStore.getStorePermission().getUserRole(tUserId), UserPermissions.StoreRole.OWNER);
             Assertions.assertEquals(tUser.getUserPermissions().getStoreRole(omTestStore.getStoreId()), UserPermissions.StoreRole.OWNER);
         } catch (NoPermissionException | ChangePermissionException e) {
             fail(e);
@@ -289,7 +348,7 @@ class StoreTest {
         try {
             omTestStore.addOwner(tUserOwnerId, tUserId);
             omTestStore.removeOwner(tUserOwnerId, tUserId);
-            assertNull(omTestStore.getStorePermission().getUserPermission(tUserId));
+            assertNull(omTestStore.getStorePermission().getUserRole(tUserId));
             assertNull(tUser.getUserPermissions().getStoreRole(tUserOwnerId));
         } catch (NoPermissionException | ChangePermissionException e) {
             fail(e);
@@ -317,7 +376,7 @@ class StoreTest {
         customSetUp();
         try {
             omTestStore.addManager(tUserOwnerId, tUserId);
-            Assertions.assertEquals(omTestStore.getStorePermission().getUserPermission(tUserId), UserPermissions.StoreRole.MANAGER);
+            Assertions.assertEquals(omTestStore.getStorePermission().getUserRole(tUserId), UserPermissions.StoreRole.MANAGER);
             Assertions.assertEquals(tUser.getUserPermissions().getStoreRole(omTestStore.getStoreId()), UserPermissions.StoreRole.MANAGER);
         } catch (NoPermissionException | ChangePermissionException e) {
             fail(e);
@@ -345,7 +404,7 @@ class StoreTest {
         try {
             omTestStore.addManager(tUserOwnerId, tUserId);
             omTestStore.removeManager(tUserOwnerId, tUserId);
-            assertNull(omTestStore.getStorePermission().getUserPermission(tUserId));
+            assertNull(omTestStore.getStorePermission().getUserRole(tUserId));
             assertNull(tUser.getUserPermissions().getStoreRole(tUserOwnerId));
         } catch (NoPermissionException | ChangePermissionException e) {
             fail(e);
@@ -360,6 +419,20 @@ class StoreTest {
             omTestStore.addManager(tUserOwnerId, tUserId);
             omTestStore.addOwner(tUserOwnerId, tUserId2);
             Assertions.assertThrows(ChangePermissionException.class, () -> omTestStore.removeManager(tUserId2, tUserId));
+        } catch (NoPermissionException | ChangePermissionException e) {
+            fail(e);
+        } finally {
+            customTearDown();
+        }
+    }
+
+    @Test
+    void addIndividualPermissionSuccess() {
+        customSetUp();
+        try {
+            omTestStore.addManager(tUserOwnerId, tUserId);
+            omTestStore.addPermissionToManager(tUserOwnerId, tUserId, UserPermissions.IndividualPermission.STOCK);
+            Assertions.assertTrue(omTestStore.getStorePermission().getUserToIndividualPermissions().get(tUserId).contains(UserPermissions.IndividualPermission.STOCK));
         } catch (NoPermissionException | ChangePermissionException e) {
             fail(e);
         } finally {

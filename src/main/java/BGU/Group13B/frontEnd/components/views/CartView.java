@@ -80,9 +80,9 @@ public class CartView extends Div {
 
 
     private void createItemsForDevelopment() {
-        int storeId = SingletonCollection.getStoreRepository().addStore(SessionToIdMapper.getInstance().getCurrentSessionId(), "StoreName " + (int) (100 * Math.random()), "Category");
-        int newProductId = session.addProduct(SessionToIdMapper.getInstance().getCurrentSessionId(), storeId, "ProductName " + (int) (100 * Math.random()), "Category", (int)(10 * Math.random()) + (double)((int)(100 * Math.random()))/100, 10, "Best Product Ever").getData();
-        session.addToCart(SessionToIdMapper.getInstance().getCurrentSessionId(), storeId, newProductId);
+        int storeId = SingletonCollection.getStoreRepository().addStore(SessionToIdMapper.getInstance().getCurrentSessionId(), "StoreName " + (int) (100 * Math.random()), "store category");
+        int newProductId1 = session.addProduct(SessionToIdMapper.getInstance().getCurrentSessionId(), storeId, "ProductName " + (int) (100 * Math.random()), "product category " + (int)(100*Math.random()), (int)(10 * Math.random()) + (double)((int)(100 * Math.random()))/100, 10, "Best Product Ever").getData();
+        session.addToCart(SessionToIdMapper.getInstance().getCurrentSessionId(), storeId, newProductId1);
     }
 
     private GridPro<ServiceBasketProduct> getServiceProductGrid() {

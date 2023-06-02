@@ -4,16 +4,17 @@ import BGU.Group13B.backend.Repositories.Implementations.AcutionRepositoryImpl.A
 import BGU.Group13B.backend.Repositories.Implementations.BIDRepositoryImpl.BIDRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.BasketProductRepositoryImpl.BasketProductRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.BasketReposistoryImpl.BasketRepositoryAsHashMap;
+import BGU.Group13B.backend.Repositories.Implementations.ConditionRepositoryImpl.ConditionRepositoryAsHashMap;
+import BGU.Group13B.backend.Repositories.Implementations.DiscountAccumulationRepositoryImpl.DiscountAccumulationRepositoryAsHashMap;
+import BGU.Group13B.backend.Repositories.Implementations.DiscountRepositoryImpl.DiscountRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.IStoreScoreRepository.StoreScoreSingle;
 import BGU.Group13B.backend.Repositories.Implementations.MessageRepositoryImpl.MessageRepositorySingle;
-import BGU.Group13B.backend.Repositories.Implementations.ProductDiscountsRepositoryImpl.ProductDiscountsRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.ProductHistoryRepositoryImpl.ProductHistoryRepositoryAsList;
-import BGU.Group13B.backend.Repositories.Implementations.ProductPurchasePolicyRepositoryImpl.ProductPurchasePolicyRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl.ProductRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.PurchaseHistoryRepositoryImpl.PurchaseHistoryRepositoryAsList;
+import BGU.Group13B.backend.Repositories.Implementations.PurchasePolicyRootsRepositoryImpl.PurchasePolicyRootsRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepoSingle;
-import BGU.Group13B.backend.Repositories.Implementations.StoreDiscountsRepositoryImpl.StoreDiscountsRepositoryAsHashMap;
-import BGU.Group13B.backend.Repositories.Implementations.StorePurchasePolicyRepositoryImpl.StorePurchasePolicyRepositoryAsList;
+import BGU.Group13B.backend.Repositories.Implementations.StoreDiscountRootsRepositoryImpl.StoreDiscountRootsRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyImpl.StoreMessageSingle;
 import BGU.Group13B.backend.Repositories.Implementations.StorePermissionsRepositoryImpl.StorePermissionsRepositoryAsHashmap;
 import BGU.Group13B.backend.Repositories.Implementations.StoreRepositoryImpl.StoreRepositoryAsList;
@@ -50,15 +51,16 @@ public class SingletonCollection {
     private static IUserRepository userRepository;
     private static IBasketRepository basketRepository;
     private static IBasketProductRepository basketProductRepository;
-    private static IStoreDiscountsRepository storeDiscountsRepository;
     private static IAuctionRepository auctionRepository;
     private static IProductHistoryRepository productHistoryRepository;
-    private static IProductDiscountsRepository productDiscountsRepository;
     private static IStoreScore storeScoreRepository;
-    private static IProductPurchasePolicyRepository productPurchasePolicyRepository;
-    private static IStorePurchasePolicyRepository storePurchasePolicyRepository;
     private static IUserPermissionRepository userPermissionRepository;
     private static IStorePermissionsRepository storePermissionRepository;
+    private static IDiscountRepository discountRepository;
+    private static IDiscountAccumulationRepository discountAccumulationRepository;
+    private static IConditionRepository conditionRepository;
+    private static IStoreDiscountRootsRepository storeDiscountRootsRepository;
+    private static IPurchasePolicyRootsRepository purchasePolicyRootsRepository;
 
 
     /**
@@ -96,19 +98,20 @@ public class SingletonCollection {
         storeRepository = new StoreRepositoryAsList();
         userRepository = new UserRepositoryAsHashmap();
         basketRepository = new BasketRepositoryAsHashMap();
-        storeDiscountsRepository = new StoreDiscountsRepositoryAsHashMap();
         auctionRepository = new AuctionRepositoryAsHashMap();
         basketProductRepository = new BasketProductRepositoryAsHashMap();
         productHistoryRepository = new ProductHistoryRepositoryAsList();
-        productDiscountsRepository = new ProductDiscountsRepositoryAsHashMap();
-        productPurchasePolicyRepository = new ProductPurchasePolicyRepositoryAsHashMap();
-        storePurchasePolicyRepository = new StorePurchasePolicyRepositoryAsList();
         storeMessagesRepository = new StoreMessageSingle();
         reviewRepository = new ReviewRepoSingle();
         messageRepository = new MessageRepositorySingle();
         storeScoreRepository = new StoreScoreSingle();
         userPermissionRepository = new UserPermissionRepositoryAsHashmap();
         storePermissionRepository = new StorePermissionsRepositoryAsHashmap();
+        discountRepository = new DiscountRepositoryAsHashMap();
+        discountAccumulationRepository = new DiscountAccumulationRepositoryAsHashMap();
+        conditionRepository = new ConditionRepositoryAsHashMap();
+        storeDiscountRootsRepository = new StoreDiscountRootsRepositoryAsHashMap();
+        purchasePolicyRootsRepository = new PurchasePolicyRootsRepositoryAsHashMap();
 
 
         //adapters
@@ -124,8 +127,7 @@ public class SingletonCollection {
 
     }
 
-    public static void reset_system()
-    {
+    public static void reset_system() {
         //repositories
         bidRepository = new BIDRepositoryAsList();
         productRepository = new ProductRepositoryAsHashMap();
@@ -133,21 +135,20 @@ public class SingletonCollection {
         storeRepository = new StoreRepositoryAsList();
         userRepository = new UserRepositoryAsHashmap();
         basketRepository = new BasketRepositoryAsHashMap();
-        storeDiscountsRepository = new StoreDiscountsRepositoryAsHashMap();
         auctionRepository = new AuctionRepositoryAsHashMap();
         basketProductRepository = new BasketProductRepositoryAsHashMap();
         productHistoryRepository = new ProductHistoryRepositoryAsList();
-        productDiscountsRepository = new ProductDiscountsRepositoryAsHashMap();
-        productPurchasePolicyRepository = new ProductPurchasePolicyRepositoryAsHashMap();
-        storePurchasePolicyRepository = new StorePurchasePolicyRepositoryAsList();
         storeMessagesRepository = new StoreMessageSingle();
         reviewRepository = new ReviewRepoSingle();
         messageRepository = new MessageRepositorySingle();
         storeScoreRepository = new StoreScoreSingle();
         userPermissionRepository = new UserPermissionRepositoryAsHashmap();
         storePermissionRepository = new StorePermissionsRepositoryAsHashmap();
-
-
+        discountRepository = new DiscountRepositoryAsHashMap();
+        discountAccumulationRepository = new DiscountAccumulationRepositoryAsHashMap();
+        conditionRepository = new ConditionRepositoryAsHashMap();
+        storeDiscountRootsRepository = new StoreDiscountRootsRepositoryAsHashMap();
+        purchasePolicyRootsRepository = new PurchasePolicyRootsRepositoryAsHashMap();
         //adapters
 
 
@@ -231,44 +232,57 @@ public class SingletonCollection {
         return market;
     }
 
-    public static IStoreDiscountsRepository getStoreDiscountsRepository() {
-        return storeDiscountsRepository;
-    }
 
     public static IAuctionRepository getAuctionRepository() {
         return auctionRepository;
     }
 
-    public static IBasketProductRepository getBasketProductRepository() { return basketProductRepository; }
-
-    public static IProductHistoryRepository getProductHistoryRepository() { return productHistoryRepository;}
-
-    public static IStoreScore getStoreScoreRepository() { return storeScoreRepository; }
-
-    public static IProductDiscountsRepository getProductDiscountsRepository() {
-        return SingletonCollection.productDiscountsRepository;
+    public static IBasketProductRepository getBasketProductRepository() {
+        return basketProductRepository;
     }
 
-    public static IProductPurchasePolicyRepository getProductPurchasePolicyRepository() {
-        return productPurchasePolicyRepository;
+    public static IProductHistoryRepository getProductHistoryRepository() {
+        return productHistoryRepository;
     }
 
-    public static IStorePurchasePolicyRepository getStorePurchasePolicyRepository() {
-        return storePurchasePolicyRepository;
+    public static IStoreScore getStoreScoreRepository() {
+        return storeScoreRepository;
     }
 
-    public static IStorePermissionsRepository getStorePermissionRepository(){
+
+    public static IStorePermissionsRepository getStorePermissionRepository() {
         return storePermissionRepository;
     }
 
-    public static IUserPermissionRepository getUserPermissionRepository(){
+    public static IUserPermissionRepository getUserPermissionRepository() {
         return userPermissionRepository;
     }
 
+    public static IDiscountRepository getDiscountRepository() {
+        return discountRepository;
+    }
+
+    public static IDiscountAccumulationRepository getDiscountAccumulationRepository() {
+
+        return discountAccumulationRepository;
+    }
+
+    public static IConditionRepository getConditionRepository() {
+        return conditionRepository;
+    }
+
+    public static IStoreDiscountRootsRepository getStoreDiscountRootsRepository() {
+        return storeDiscountRootsRepository;
+    }
+
     public static Session getSession() {
-        if(session == null)
+        if (session == null)
             session = new Session(market == null ? new Market() : market);
         return session;
+    }
+
+    public static IPurchasePolicyRootsRepository getPurchasePolicyRootsRepository() {
+        return purchasePolicyRootsRepository;
     }
 
     /**
@@ -298,9 +312,8 @@ public class SingletonCollection {
 
     /**
      * <h1>reset</h1>
-     *
-     * */
-    public static void resetAll(){
+     */
+    public static void resetAll() {
         /*bidRepository.reset();
         productRepository.reset();
         purchaseHistoryRepository.reset();
