@@ -7,6 +7,7 @@ import BGU.Group13B.service.info.StoreInfo;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.fail;
@@ -110,7 +111,7 @@ public abstract class ProjectTest {
         for (var user : users) {
             if (!user.getFirst().equals("guestUser") && !user.getFirst().equals("badUser"))
                 session.register(userIds[i], user.getFirst(), user.getSecond(), userEmails[i],
-                        "BLACK LIVES MATTER " + i, "because i never go back " + i, "YEAH " + i);
+                        "BLACK LIVES MATTER " + i, "because i never go back " + i, "YEAH " + i, LocalDate.MIN);
             i++;
         }
         for (int j = 0; j < users.size(); j++) {

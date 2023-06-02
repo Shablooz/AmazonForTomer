@@ -1,12 +1,8 @@
 package BGU.Group13B.backend.storePackage.purchaseBounders;
 
+import java.util.Objects;
+
 public class PurchaseBounder {
-
-    public enum BounderType {
-        QUANTITY,
-        PRICE
-    }
-
     private int upperBound; //if upperBound == -1 then there is no upper bound
     private int lowerBound;
 
