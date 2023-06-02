@@ -38,7 +38,7 @@ public class RegisterView extends VerticalLayout {
         answer1 = new TextField("your favorite color?");
         answer2 = new TextField("your favorite food?");
         answer3 = new TextField("your favorite book?");
-        birthPicker = new DatePicker("Birth date");
+        birthPicker = new DatePicker("*Birth date");
         email = new EmailField("*Email");
         registerButton = new Button("Register");
         registerButton.addClickListener(e -> {

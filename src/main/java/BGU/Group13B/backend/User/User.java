@@ -10,13 +10,18 @@ import BGU.Group13B.backend.Repositories.Interfaces.IMessageRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IUserPermissionRepository;
 import BGU.Group13B.backend.storePackage.Market;
+import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
+import BGU.Group13B.service.BroadCaster;
 import BGU.Group13B.service.SingletonCollection;
 //eyal import
 import java.time.LocalDate;
+import org.mindrot.jbcrypt.BCrypt;
+
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 public class User {
@@ -95,17 +100,20 @@ public class User {
     //#15
     //returns User on success (for future functionalities)
     public User register(String userName, String password, String email, String answer1, String answer2, String answer3, LocalDate birthdate) {
-        checkRegisterInfo(userName, password, email);
+        checkRegisterInfo(userName, password, email,birthdate);
         //updates the user info upon registration - no longer a guest
         updateUserDetail(userName, password, email, answer1, answer2, answer3,birthdate);
         this.userPermissions.register(this.userId);
         return this;
     }
 
-    private void checkRegisterInfo(String userName, String password, String email) {
+    private void checkRegisterInfo(String userName, String password, String email,LocalDate birthdate){
         String usernameRegex = "^[a-zA-Z0-9_-]{4,16}$"; // 4-16 characters, letters/numbers/underscore/hyphen
         String passwordRegex = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)[A-Za-z\\d]{8,}$"; // need at least 8 characters, 1 uppercase, 1 lowercase, 1 number)
         String emailRegex = "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$"; // checks email validation
+        if (birthdate == null) {
+            throw new IllegalArgumentException("enter birthdate bro");
+        }
         if (!Pattern.matches(usernameRegex, userName)) {
             throw new IllegalArgumentException("Invalid username. Username must be 4-16 characters long and can only contain letters, numbers, underscores, or hyphens.");
         }
@@ -516,6 +524,22 @@ public class User {
 
     public UserPermissions getUserPermissions() {
         return userPermissions;
+    }
+
+    public void addIndividualPermission(int storeId, UserPermissions.IndividualPermission individualPermission){
+        userPermissions.addIndividualPermission(storeId, individualPermission);
+    }
+
+    public void deleteIndividualPermission(int storeId, UserPermissions.IndividualPermission individualPermission){
+        userPermissions.deleteIndividualPermission(storeId, individualPermission);
+    }
+
+    public Set<UserPermissions.IndividualPermission> getIndividualPermissions(int storeId){
+        return userPermissions.getIndividualPermissions(storeId);
+    }
+
+    public void removeAllIndividualPermissions(int storeId){
+        userPermissions.removeAllIndividualPermissions(storeId);
     }
 
 
