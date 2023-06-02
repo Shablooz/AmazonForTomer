@@ -42,7 +42,7 @@ public class Application implements AppShellConfigurator {
         ConfigurableApplicationContext context =SpringApplication.run(Application.class, args);
 
         SingletonCollection.setContext(context);
-
+        //TODO load all repositories from db to memory
 
         //serPerson ser=SingletonCollection.getContext().getBean(serPerson.class);
 
