@@ -97,7 +97,13 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
                 var ui = UI.getCurrent();
                 //Tomer section
                 BroadCaster.register(newId, newMessage -> {
-                    ui.access(() -> createSubmitSuccess(newMessage).open());
+                    ui.access(() -> {
+                        if (newMessage.startsWith("BID"))
+                            createPurchaseProposalSubmitRequest(newMessage).open();
+                        else
+                            createSubmitSuccess(newMessage).open();
+
+                    });
                 });
 
 
@@ -161,6 +167,34 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
 
 
         });
+    }
+
+    private Notification createPurchaseProposalSubmitRequest(String message) {
+        Notification notification = new Notification();
+        //notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+
+        int managerId = SessionToIdMapper.getInstance().getCurrentSessionId();
+        String[] storeProduct = message.substring(4, message.indexOf("]")).split(",");
+        int storeId = Integer.parseInt(storeProduct[0]);
+        int productId = Integer.parseInt(storeProduct[1]);
+        //accept button
+        Button accept = new Button(VaadinIcon.CHECK_CIRCLE.create(), event -> {
+            session.purchaseProposalApprove(managerId, storeId, productId);
+            notification.close();
+        });
+        accept.addThemeVariants(LUMO_TERTIARY_INLINE);
+        //reject button
+        Button reject = new Button(VaadinIcon.CLOSE_SMALL.create(), event -> {
+            session.purchaseProposalReject(managerId, storeId, productId);
+            notification.close();
+        });
+        reject.addThemeVariants(LUMO_TERTIARY_INLINE);
+
+        Div info = new Div(new Text(message));
+        HorizontalLayout layout = new HorizontalLayout(info, accept, reject);
+        layout.setAlignItems(FlexComponent.Alignment.CENTER);
+        notification.add(layout);
+        return notification;
     }
 
     private Notification createSubmitSuccess(String message) {

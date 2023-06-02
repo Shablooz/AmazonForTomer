@@ -8,6 +8,7 @@ import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.WorkerCard;
+import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.newDiscoutns.DiscountInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.StoreDiscount;
 import BGU.Group13B.service.entity.ReviewService;
@@ -417,6 +418,18 @@ public class ProxySession implements ISession {
     public void purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount) {
         if (realSession != null)
             realSession.purchaseProposalSubmit(userId, storeId, productId, proposedPrice, amount);
+    }
+
+    @Override
+    public void purchaseProposalApprove(int managerId, int storeId, int productId) throws NoPermissionException {
+        if(realSession != null)
+            realSession.purchaseProposalApprove(managerId, storeId, productId);
+    }
+
+    @Override
+    public void purchaseProposalReject(int storeId, int managerId, int bidId) throws NoPermissionException {
+        if(realSession != null)
+            realSession.purchaseProposalReject(storeId, managerId, bidId);
     }
 
     @Override
