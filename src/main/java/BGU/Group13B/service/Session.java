@@ -1295,7 +1295,7 @@ public class Session implements ISession {
     @Override
     public Response<List<DiscountInfo>> getStoreDiscounts(int storeId, int userId) {
         try {
-            return Response.success(market.getStoreDiscounts(storeId, userId).stream().map(d -> new DiscountInfo(d.toString())).collect(Collectors.toList()));
+            return Response.success(market.getStoreDiscounts(storeId, userId).stream().map(d -> new DiscountInfo(d.getDiscountId(), d.toString())).collect(Collectors.toList()));
         } catch (Exception e) {
             return Response.exception(e);
         }
