@@ -5,6 +5,7 @@ import BGU.Group13B.frontEnd.components.policyComponent.AddDiscountComponent;
 import BGU.Group13B.frontEnd.components.policyComponent.ConditionTreeGrid;
 import BGU.Group13B.service.Session;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEvent;
