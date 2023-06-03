@@ -1,5 +1,6 @@
 package BGU.Group13B.frontEnd;
 
+import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepoSingle;
 import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepoSingleService;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 
@@ -45,7 +46,16 @@ public class Application implements AppShellConfigurator {
         //TODO load all repositories from db to memory
         //need to access singleton collection here
         //serPerson ser=SingletonCollection.getContext().getBean(serPerson.class);
+        System.out.println("hello world\n");
 
+        ReviewRepoSingle reviewRepoSingle = SingletonCollection.getContext().getBean(ReviewRepoSingleService.class).getReviewRepoSingleJPA();
+        if(reviewRepoSingle == null){
+            ReviewRepoSingle repo=(ReviewRepoSingle) SingletonCollection.getReviewRepository();
+            SingletonCollection.getContext().getBean(ReviewRepoSingleService.class).save(repo);
+        }
+        ReviewRepoSingle reviewRepoSingle1 = SingletonCollection.getContext().getBean(ReviewRepoSingleService.class).getReviewRepoSingleJPA();
+
+        System.out.println("hello world\n");
         //Grade grade1 = new Grade(4444, 99999);
         //Preson person1 = new Preson(2222, "rotem");
         //person1.addGrade(grade1);

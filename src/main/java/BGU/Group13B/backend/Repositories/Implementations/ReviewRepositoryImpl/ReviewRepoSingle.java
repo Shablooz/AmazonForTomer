@@ -5,6 +5,7 @@ import BGU.Group13B.backend.storePackage.Review;
 import jakarta.persistence.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 @Entity
@@ -18,7 +19,7 @@ public class ReviewRepoSingle implements IRepositoryReview {
             joinColumns = {@JoinColumn(name = "ReviewRepoSingle_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "ReviewRepositoryAsList_id", referencedColumnName = "id")})
     @MapKeyColumn(name = "pair_hashcode")
-    ConcurrentHashMap<Integer,ReviewRepositoryAsList> implementations;
+    Map<Integer,ReviewRepositoryAsList> implementations;
 
 
     public ReviewRepoSingle() {
