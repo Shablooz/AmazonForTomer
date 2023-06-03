@@ -9,6 +9,7 @@ import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.WorkerCard;
+import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.newDiscoutns.DiscountInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.StoreDiscount;
@@ -466,6 +467,30 @@ public class ProxySession implements ISession {
     public Response<HashMap<Integer, String>> getUserIdsToUsernamesMapper(List<Integer> userIds) {
         if (realSession != null)
             return realSession.getUserIdsToUsernamesMapper(userIds);
+
+        return null;
+    }
+
+    @Override
+    public Response<Boolean> isStoreHidden(int storeId) {
+        if (realSession != null)
+            return realSession.isStoreHidden(storeId);
+
+        return null;
+    }
+
+    @Override
+    public Response<Boolean> isAdmin(int userId) {
+        if (realSession != null)
+            return realSession.isAdmin(userId);
+
+        return null;
+    }
+
+    @Override
+    public Response<Condition> getStorePurchasePolicy(int storeId, int userId) {
+        if (realSession != null)
+            return realSession.getStorePurchasePolicy(storeId, userId);
 
         return null;
     }

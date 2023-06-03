@@ -1,5 +1,7 @@
 package BGU.Group13B.frontEnd.components.store.products;
 
+import BGU.Group13B.backend.User.UserPermissions;
+import BGU.Group13B.backend.storePackage.WorkerCard;
 import BGU.Group13B.frontEnd.ResponseHandler;
 import BGU.Group13B.service.Session;
 import BGU.Group13B.service.info.ProductInfo;
@@ -20,6 +22,7 @@ public class StoreProductsLayout extends VerticalLayout implements ResponseHandl
     private final Session session;
     private final int userId;
     private final int storeId;
+    private final WorkerCard workerCard;
 
     private final HashMap<String, List<ProductInfo>> categoriesToProducts = new HashMap<>();
     private final HashMap<String, ProductGrid> categoriesToGrids = new HashMap<>();
@@ -28,22 +31,12 @@ public class StoreProductsLayout extends VerticalLayout implements ResponseHandl
     private HorizontalLayout productsHeaderLayout = new HorizontalLayout();
     private final AddProductDialog addProductDialog = new AddProductDialog(this);
 
-    public StoreProductsLayout(int userId, int storeId, Session session){
+    public StoreProductsLayout(int userId, int storeId, Session session, Collection<ProductInfo> products, WorkerCard workerCard){
         super();
         this.userId = userId;;
         this.storeId = storeId;;
         this.session = session;
-
-        setHeader();
-        setProducts(handleResponse(session.getAllStoreProductsInfo(userId, storeId)));
-        add(productsHeaderLayout, categoriesAccordion);
-    }
-
-    public StoreProductsLayout(int userId, int storeId, Session session, Collection<ProductInfo> products){
-        super();
-        this.userId = userId;;
-        this.storeId = storeId;;
-        this.session = session;
+        this.workerCard = workerCard;
 
         setHeader();
         setProducts(products);
@@ -60,8 +53,17 @@ public class StoreProductsLayout extends VerticalLayout implements ResponseHandl
         productsHeaderLayout.setAlignItems(FlexComponent.Alignment.CENTER);
 
         addProductButton.addClickListener(e -> {
-            addProductDialog.open();
+            if(!workerCard.userPermissions().contains(UserPermissions.IndividualPermission.STOCK)){
+                notifyWarning("You don't have permission to add products");
+            }
+            else{
+                addProductDialog.open();
+            }
         });
+
+        if(!workerCard.userPermissions().contains(UserPermissions.IndividualPermission.STOCK)){
+            addProductButton.setVisible(false);
+        }
     }
 
     public void setProducts(Collection<ProductInfo> products){
@@ -81,7 +83,7 @@ public class StoreProductsLayout extends VerticalLayout implements ResponseHandl
         }
 
         for(String category : categoriesToProducts.keySet()) {
-            ProductGrid productGrid = new ProductGrid(categoriesToProducts.get(category));
+            ProductGrid productGrid = new ProductGrid(this, categoriesToProducts.get(category), workerCard);
             categoriesToGrids.put(category, productGrid);
             categoriesAccordion.add(category, productGrid);
         }
@@ -100,12 +102,49 @@ public class StoreProductsLayout extends VerticalLayout implements ResponseHandl
         }
         if(!categoriesToProducts.containsKey(category)){
             categoriesToProducts.put(category, new LinkedList<>());
-            ProductGrid productGrid = new ProductGrid(categoriesToProducts.get(category));
+            ProductGrid productGrid = new ProductGrid(this, categoriesToProducts.get(category), workerCard);
             categoriesToGrids.put(category, productGrid);
             categoriesAccordion.add(category, productGrid);
         }
         categoriesToProducts.get(category).add(productInfo);
         categoriesToGrids.get(category).addProduct(productInfo);
         notifySuccess("Product '" + name + "' added successfully");
+    }
+
+    public void editProductPrice(ProductInfo item, double v) {
+        var res = handleResponse(session.setProductPrice(userId, storeId, item.productId(), v));
+        if(res == null){
+            return;
+        }
+        ProductInfo productInfo = new ProductInfo(item.productId(), item.storeId(), item.seller(), item.name(), item.category(), v, item.stockQuantity(), item.description(), item.score());
+        categoriesToProducts.get(item.category()).remove(item);
+        categoriesToProducts.get(item.category()).add(productInfo);
+        categoriesToGrids.get(item.category()).editProductPrice(item, v);
+    }
+
+    public void editProductStock(ProductInfo item, int stock) {
+        var res = handleResponse(session.setProductStockQuantity(userId, storeId, item.productId(), stock));
+        if(res == null){
+            return;
+        }
+        ProductInfo productInfo = new ProductInfo(item.productId(), item.storeId(), item.seller(), item.name(), item.category(), item.price(), stock, item.description(), item.score());
+        categoriesToProducts.get(item.category()).remove(item);
+        categoriesToProducts.get(item.category()).add(productInfo);
+        categoriesToGrids.get(item.category()).editProductStock(item, stock);
+    }
+
+    public void removeProduct(ProductInfo p) {
+        var res = handleResponse(session.removeProduct(userId, storeId, p.productId()));
+        if(res == null){
+            return;
+        }
+        categoriesToProducts.get(p.category()).remove(p);
+        if(categoriesToProducts.get(p.category()).isEmpty()){
+            categoriesAccordion.remove(categoriesToGrids.get(p.category()));
+            categoriesToGrids.remove(p.category());
+            categoriesToProducts.remove(p.category());
+            return;
+        }
+        categoriesToGrids.get(p.category()).removeProduct(p);
     }
 }

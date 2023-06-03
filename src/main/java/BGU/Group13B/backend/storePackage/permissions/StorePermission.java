@@ -34,7 +34,7 @@ public class StorePermission {
         founderPermissions.add(UserPermissions.IndividualPermission.MESSAGES);
         founderPermissions.add(UserPermissions.IndividualPermission.POLICIES);
         founderPermissions.add(UserPermissions.IndividualPermission.AUCTION);
-        founderPermissions.add(UserPermissions.IndividualPermission.INFO);
+        founderPermissions.add(UserPermissions.IndividualPermission.WORKERS_INFO);
         founderPermissions.add(UserPermissions.IndividualPermission.HISTORY);
         founderPermissions.add(UserPermissions.IndividualPermission.STAFF);
         founderPermissions.add(UserPermissions.IndividualPermission.FONLY);
@@ -88,7 +88,7 @@ public class StorePermission {
             if (method.isAnnotationPresent(AuctionPermission.class))
                 auctionFunctions.add(getFunctionName(method));
 
-            if (method.isAnnotationPresent(InfoPermission.class))
+            if (method.isAnnotationPresent(WorkersInfoPermission.class))
                 infoFunctions.add(getFunctionName(method));
 
             if (method.isAnnotationPresent(HistoryPermission.class))
@@ -206,7 +206,7 @@ public class StorePermission {
                 userToIndividualPermissions.get(newOwnerId).add(UserPermissions.IndividualPermission.MESSAGES);
                 userToIndividualPermissions.get(newOwnerId).add(UserPermissions.IndividualPermission.HISTORY);
                 userToIndividualPermissions.get(newOwnerId).add(UserPermissions.IndividualPermission.AUCTION);
-                userToIndividualPermissions.get(newOwnerId).add(UserPermissions.IndividualPermission.INFO);
+                userToIndividualPermissions.get(newOwnerId).add(UserPermissions.IndividualPermission.WORKERS_INFO);
                 userToIndividualPermissions.get(newOwnerId).add(UserPermissions.IndividualPermission.POLICIES);
                 userToIndividualPermissions.get(newOwnerId).add(UserPermissions.IndividualPermission.STAFF);
             }
@@ -216,7 +216,7 @@ public class StorePermission {
                 newSet.add(UserPermissions.IndividualPermission.MESSAGES);
                 newSet.add(UserPermissions.IndividualPermission.HISTORY);
                 newSet.add(UserPermissions.IndividualPermission.AUCTION);
-                newSet.add(UserPermissions.IndividualPermission.INFO);
+                newSet.add(UserPermissions.IndividualPermission.WORKERS_INFO);
                 newSet.add(UserPermissions.IndividualPermission.POLICIES);
                 newSet.add(UserPermissions.IndividualPermission.STAFF);
                 userToIndividualPermissions.put(newOwnerId, newSet);

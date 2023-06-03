@@ -32,6 +32,7 @@ public class ManageDiscountsView extends VerticalLayout implements HasUrlParamet
     private Button plusBtn;
     private Button reset;
     private Button addNewDiscount;
+    private Button backToStoreBtn;
     private int storeId;
     private int userId;
     private final Session session;
@@ -39,6 +40,7 @@ public class ManageDiscountsView extends VerticalLayout implements HasUrlParamet
     private ComboBox<Operator> operator;
     private ComboBox<DiscountInfo> discount;
     private DiscountTreeGrid discountTreeGrid;
+
     private boolean hasRoot = false;
     public ManageDiscountsView(Session session) {
         this.session = session;
@@ -72,8 +74,11 @@ public class ManageDiscountsView extends VerticalLayout implements HasUrlParamet
         addNewDiscount = new Button("add new discount", new Icon(VaadinIcon.PLUS));
         addNewDiscount.addClickListener(e->navigate("addDiscount/" + storeId));
 
+        backToStoreBtn = new Button("back to store");
+        backToStoreBtn.addClickListener(e -> navigate("store/" + storeId));
+
         setUpDialog();
-        add(discountTreeGrid, plusBtn, reset, addNewDiscount);
+        add(discountTreeGrid, plusBtn, reset, addNewDiscount, backToStoreBtn);
 
     }
 

@@ -54,4 +54,8 @@ public class Bounder<T extends Comparable<T>> {
 
         return upperBound.compareTo(otherBounder.getLowerBound()) < 0 || otherBounder.getUpperBound().compareTo(lowerBound) < 0;
     }
+
+    public boolean hasUpperBound(){
+        return upperBound != null;
+    }
 }

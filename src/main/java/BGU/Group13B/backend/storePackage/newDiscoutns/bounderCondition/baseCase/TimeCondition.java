@@ -6,6 +6,9 @@ import BGU.Group13B.backend.storePackage.newDiscoutns.Bounder;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.newDiscoutns.bounderCondition.time.Time;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
+import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
+import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.LogicalConditions.LogicalConditionEntity;
+import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.leaves.TimeConditionEntity;
 
 import java.time.LocalDateTime;
 
@@ -28,6 +31,14 @@ public class TimeCondition extends Condition {
     public void satisfied(BasketInfo basketInfo, UserInfo user) throws PurchaseExceedsPolicyException {
         if(!timeBounder.inBounds(Time.of(LocalDateTime.now())))
             throw new PurchaseExceedsPolicyException("time must be " + timeBounder);
+    }
+
+    @Override
+    public ConditionEntity convertToUiEntity(LogicalConditionEntity parent) {
+        if(timeBounder.hasUpperBound()){
+            return new TimeConditionEntity(parent, timeBounder.getLowerBound().getTime().toLocalTime(), timeBounder.getUpperBound().getTime().toLocalTime());
+        }
+        return new TimeConditionEntity(parent, timeBounder.getLowerBound().getTime().toLocalTime());
     }
 
     @Override

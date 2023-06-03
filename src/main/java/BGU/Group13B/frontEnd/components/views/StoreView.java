@@ -61,7 +61,9 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
     private List<WorkerCard> workers;
     private HashMap<Integer, String> userIdToUsername;
     private Set<ProductInfo> products;
-    //private boolean isHidden = false;
+    private boolean isAdmin = false;
+    private boolean isHidden = false;
+    private boolean terminate = false;
 
     //components
     private VerticalLayout headerLayout;
@@ -70,10 +72,14 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
     private VerticalLayout scoreLayout;
     private ProgressBar scoreBar;
     private Div scoreLabel;
-    //private Icon hiddenStoreIcon;
+    private Icon hiddenStoreIcon;
     private HorizontalLayout bodyLayout;
     private Button hideStoreButton;
+    private Button unhideStoreButton;
     private Button deleteStoreButton;
+    private Button storePurchaseHistoryButton;
+    private Button manageDiscountsButton;
+    private Button managePurchasePolicyButton;
     private HorizontalLayout bottomButtonsLayout;
     private Button storeMessagesButton;
     private StoreProductsLayout storeProductsLayout;
@@ -93,14 +99,49 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
         init_dataFields();
         //demoData();
         getData();
+        if(terminate){
+            return;
+        }
         getCurrentWorkerCard();
         init_components();
 
         init_header();
         init_body();
         init_bottomButtons();
+        setInvisibleBasedOnPermissions();
         setSizeFull();
     }
+
+    private void setInvisibleBasedOnPermissions(){
+        if(!currentWorker.userPermissions().contains(UserPermissions.IndividualPermission.MESSAGES)){
+            storeMessagesButton.setVisible(false);
+        }
+
+        if(!currentWorker.userPermissions().contains(UserPermissions.IndividualPermission.HISTORY)){
+            storePurchaseHistoryButton.setVisible(false);
+        }
+
+        if(!currentWorker.userPermissions().contains(UserPermissions.IndividualPermission.POLICIES)){
+            managePurchasePolicyButton.setVisible(false);
+            manageDiscountsButton.setVisible(false);
+        }
+
+        if(!currentWorker.userPermissions().contains(UserPermissions.IndividualPermission.FONLY)){
+            hideStoreButton.setVisible(false);
+            unhideStoreButton.setVisible(false);
+        }
+
+        if(!currentWorker.userPermissions().contains(UserPermissions.IndividualPermission.WORKERS_INFO)){
+            storeWorkersLayout.setVisible(false);
+        }
+
+        if(!isAdmin){
+            deleteStoreButton.setVisible(false);
+        }
+
+
+    }
+
 
     private void init_components(){
         headerLayout = new VerticalLayout();
@@ -112,9 +153,13 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
         bodyLayout = new HorizontalLayout();
         bottomButtonsLayout = new HorizontalLayout();
         hideStoreButton = new Button("Hide Store");
+        unhideStoreButton = new Button("Reopen Store");
         deleteStoreButton = new Button("Delete Store");
+        storePurchaseHistoryButton = new Button("Store Purchase History");
+        manageDiscountsButton = new Button("Manage Discounts");
+        managePurchasePolicyButton = new Button("Manage Purchase Policy");
         storeMessagesButton = messageStoreDialog();
-        //hiddenStoreIcon = new Icon(VaadinIcon.EYE_SLASH);
+        hiddenStoreIcon = new Icon(VaadinIcon.EYE_SLASH);
     }
 
     private void init_header(){
@@ -148,13 +193,14 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
         // Define header name and score layout
         H1 storeName = new H1(storeInfo.storeName());
         storeName.getStyle().set("margin-bottom", "0");
-        //hiddenStoreIcon.setVisible(isHidden);
+        hiddenStoreIcon.setVisible(isHidden);
+        hideStoreButton.setVisible(!isHidden);
+        unhideStoreButton.setVisible(isHidden);
         storeMessagesButton.getStyle().set("margin-left", "auto");
-        header_name_score.add(storeName, scoreLayout, storeMessagesButton);
+        header_name_score.add(hiddenStoreIcon, storeName, scoreLayout, storeMessagesButton);
         header_name_score.setSpacing(false);
         header_name_score.getStyle().set("margin-bottom", "0");
         header_name_score.setWidthFull();
-
 
         // Define category label
         Label categoryLabel = new Label("Category: " + storeInfo.category());
@@ -170,17 +216,71 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
 
 
     private void init_body(){
-        storeProductsLayout = new StoreProductsLayout(userId, storeId, session, products);
-        storeWorkersLayout = new StoreWorkersLayout(userId, storeId, session, workers, userIdToUsername);
+        storeProductsLayout = new StoreProductsLayout(userId, storeId, session, products, currentWorker);
+        storeWorkersLayout = new StoreWorkersLayout(userId, storeId, session, workers, userIdToUsername, currentWorker);
         bodyLayout.add(storeProductsLayout, storeWorkersLayout);
         bodyLayout.setSizeFull();
         add(bodyLayout);
     }
 
     private void init_bottomButtons() {
-        hideStoreButton.addClickListener(e -> {
-            handleResponse(session.hideStore(userId, storeId));
+
+        manageDiscountsButton.addClickListener(e -> {
+            if(currentWorker.userPermissions().contains(UserPermissions.IndividualPermission.POLICIES)){
+                navigate("manageDiscounts/" + storeId);
+            }
+            else{
+                notifyWarning("You don't have permission to manage store discounts");
+            }
         });
+
+        managePurchasePolicyButton.addClickListener(e -> {
+            if(currentWorker.userPermissions().contains(UserPermissions.IndividualPermission.POLICIES)){
+                navigate("managePurchasePolicy/" + storeId);
+            }
+            else{
+                notifyWarning("You don't have permission to manage store purchase policy");
+            }
+        });
+
+        storePurchaseHistoryButton.addClickListener(e-> {
+            if(currentWorker.userPermissions().contains(UserPermissions.IndividualPermission.HISTORY)){
+                navigate("purchasehistory/store/" + storeId); //TODO: change, ask eden
+            }
+            else{
+                notifyWarning("You don't have permission to view store purchase history");
+            }
+        });
+
+        hideStoreButton.addClickListener(e -> {
+            if(isHidden){
+                notifyWarning("Store is already hidden");
+                return;
+            }
+            if(handleResponse(session.hideStore(userId, storeId)) != null){
+                isHidden = true;
+                hiddenStoreIcon.setVisible(true);
+                hideStoreButton.setVisible(false);
+                unhideStoreButton.setVisible(true);
+                notifySuccess("Store has been hidden successfully");
+            }
+
+        });
+
+        unhideStoreButton.addClickListener(e -> {
+            if(!isHidden){
+                notifyWarning("Store is not hidden");
+                return;
+            }
+            if(handleResponse(session.unhideStore(userId, storeId)) != null){
+                isHidden = false;
+                hiddenStoreIcon.setVisible(false);
+                hideStoreButton.setVisible(true);
+                unhideStoreButton.setVisible(false);
+                notifySuccess("Store has been reopened successfully");
+            }
+        });
+
         deleteStoreButton.addClickListener(e -> {
             if(handleResponse(session.deleteStore(userId, storeId)) != null){
                 notifySuccess("Store deleted successfully");
@@ -190,20 +290,31 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
         });
         deleteStoreButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
 
-        bottomButtonsLayout.add(hideStoreButton, deleteStoreButton);
+        bottomButtonsLayout.add(manageDiscountsButton, managePurchasePolicyButton, storePurchaseHistoryButton, hideStoreButton, unhideStoreButton, deleteStoreButton);
         bottomButtonsLayout.getStyle().set("margin-top", "auto");
         add(bottomButtonsLayout);
     }
 
     private void getData(){
         //store info
-        storeInfo =  handleResponse(session.getStoreInfo(userId, storeId), "");
+        storeInfo = handleResponse(session.getStoreInfo(userId, storeId));
+        if(storeInfo == null){
+            terminate = true;
+            UI.getCurrent().navigate(HomeView.class);
+            return;
+        }
+
+        //isAdmin
+        isAdmin = handleResponse(session.isAdmin(userId), "");
+
+        //isHidden
+        isHidden = handleResponse(session.isStoreHidden(storeId), "");
 
         //products
         products = handleResponse(session.getAllStoreProductsInfo(userId, storeId), "");
 
         //workers
-        workers = handleResponse(session.getStoreWorkersInfo(userId, storeId), "");
+        workers = handleResponse(session.getStoreWorkersInfo(1 /*mafhhhiiddd*/, storeId), "");
 
         //userIdToUsername
         List<Integer> userIds = workers.stream().map(WorkerCard::userId).collect(Collectors.toList());
@@ -221,13 +332,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
     }
 
     private void getCurrentWorkerCard(){
-        currentWorker = workers.stream().filter(worker -> worker.userId() == userId).findFirst().orElse(null);
-        if(currentWorker == null){
-            Notification erorrNotification = new Notification("Error: could not find worker with id " + userId, 3000);
-            erorrNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
-            erorrNotification.open();
-            navigate("");
-        }
+        currentWorker = workers.stream().filter(worker -> worker.userId() == userId).findFirst().orElse(new WorkerCard(userId, null, Set.of()));
     }
 
 

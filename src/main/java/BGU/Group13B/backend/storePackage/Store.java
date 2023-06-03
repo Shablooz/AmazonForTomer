@@ -6,6 +6,7 @@ import BGU.Group13B.backend.Repositories.Interfaces.*;
 import BGU.Group13B.backend.User.*;
 import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
 import BGU.Group13B.backend.storePackage.newDiscoutns.PurchasePolicy;
+import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.DiscountPolicy;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.StoreDiscount;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
@@ -171,7 +172,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
-    @InfoPermission
+    @WorkersInfoPermission
     public List<WorkerCard> getStoreWorkersInfo(int userId) throws NoPermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to get info about the store workers " + this.storeId);
@@ -379,7 +380,7 @@ public class Store {
          * check if the user has permission to purchase proposal
          * */
         if (!this.storePermission.checkPermission(userId, hidden))//the user should be loggedIn with permissions
-            throw new NoPermissionException("User " + userId + " has no permission to add product to store " + this.storeId);
+            throw new NoPermissionException("User " + userId + " has no permission to add bid " + this.storeId);
 
         if (amount <= 0)
             throw new IllegalArgumentException("Amount must be positive");
@@ -1143,5 +1144,14 @@ public class Store {
         if(!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to delete discount accumulation tree in the store: " + this.storeId);
         discountPolicy.deleteStoreAccumulationTree();
+    }
+
+    @DefaultFounderFunctionality
+    @DefaultOwnerFunctionality
+    @PoliciesPermission
+    public Condition getPurchasePolicy(int userId) throws NoPermissionException {
+        if(!this.storePermission.checkPermission(userId, hidden))
+            throw new NoPermissionException("User " + userId + " has no permission to get the purchase policy in the store: " + this.storeId);
+        return purchasePolicy.getRootCondition();
     }
 }

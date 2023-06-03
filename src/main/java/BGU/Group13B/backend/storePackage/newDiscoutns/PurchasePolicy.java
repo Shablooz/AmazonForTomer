@@ -46,4 +46,8 @@ public class PurchasePolicy {
         if(condition != null)
             condition.satisfied(basketInfo, userInfo);
     }
+
+    public Condition getRootCondition() {
+        return condition;
+    }
 }

@@ -16,7 +16,7 @@ public class WorkersVerticalMenuBar extends VerticalLayout implements ResponseHa
     private final int userId;
     private final int storeId;
 
-    public WorkersVerticalMenuBar(Session session, int userId, int storeId, Collection<WorkerCard> workers, HashMap<Integer, String> userIdToUsername){
+    public WorkersVerticalMenuBar(Session session, int userId, int storeId, Collection<WorkerCard> workers, HashMap<Integer, String> userIdToUsername, WorkerCard currentWorker){
         super();
         this.session = session;
         this.userId = userId;

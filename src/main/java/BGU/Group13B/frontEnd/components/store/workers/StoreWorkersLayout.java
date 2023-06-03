@@ -1,5 +1,6 @@
 package BGU.Group13B.frontEnd.components.store.workers;
 
+import BGU.Group13B.backend.User.UserPermissions;
 import BGU.Group13B.backend.User.UserPermissions.StoreRole;
 import BGU.Group13B.backend.storePackage.WorkerCard;
 import BGU.Group13B.frontEnd.ResponseHandler;
@@ -33,33 +34,19 @@ public class StoreWorkersLayout extends VerticalLayout implements ResponseHandle
     private Accordion rolesAccordion;
     private HashMap<StoreRole, WorkersVerticalMenuBar> rolesToWorkersVerticalMenuBar;
     private Button addWorkerButton;
-
     private AddWorkerDialog addWorkerDialog;
-
     private HashMap<Integer, String> userIdToUsername;
 
-    /*
-    @Deprecated
-    public StoreWorkersLayout(int userId, int storeId, Session session){
-        super();
-        this.userId = userId;
-        this.storeId = storeId;
-        this.session = session;
+    private final WorkerCard currentWorker;
 
-        setHeader();
-        //setWorkers(handleResponse(session.getAllStoreWorkersInfo(userId, storeId)));
-        add(workersHeaderLayout, rolesAccordion);
-        setStyle();
-    }
-
-     */
-
-    public StoreWorkersLayout(int userId, int storeId, Session session, Collection<WorkerCard> workers, HashMap<Integer, String> userIdToUsername){
+    public StoreWorkersLayout(int userId, int storeId, Session session, Collection<WorkerCard> workers, HashMap<Integer, String> userIdToUsername, WorkerCard currentWorker){
         super();
         this.userId = userId;
         this.storeId = storeId;
         this.session = session;
         this.userIdToUsername = userIdToUsername;
+        this.currentWorker = currentWorker;
+
         this.addWorkerDialog = new AddWorkerDialog(this, session, userId, storeId);
         this.rolesAccordion = new Accordion();
 
@@ -84,8 +71,17 @@ public class StoreWorkersLayout extends VerticalLayout implements ResponseHandle
         workersHeaderLayout.setAlignItems(FlexComponent.Alignment.CENTER);
 
         addWorkerButton.addClickListener(e -> {
-            addWorkerDialog.open();
+            if(!currentWorker.userPermissions().contains(UserPermissions.IndividualPermission.STAFF)){
+                notifyWarning("You don't have permission to add workers");
+            }
+            else{
+                addWorkerDialog.open();
+            }
         });
+
+        if(!currentWorker.userPermissions().contains(UserPermissions.IndividualPermission.STAFF)){
+            addWorkerButton.setVisible(false);
+        }
 
         add(workersHeaderLayout);
 
@@ -106,7 +102,7 @@ public class StoreWorkersLayout extends VerticalLayout implements ResponseHandle
         }
 
         for(StoreRole role : rolesToWorkers.keySet()){
-            rolesToWorkersVerticalMenuBar.put(role, new WorkersVerticalMenuBar(session, userId, storeId, rolesToWorkers.get(role), userIdToUsername));
+            rolesToWorkersVerticalMenuBar.put(role, new WorkersVerticalMenuBar(session, userId, storeId, rolesToWorkers.get(role), userIdToUsername, currentWorker));
         }
 
         //ensure founder is first

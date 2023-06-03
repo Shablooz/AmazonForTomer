@@ -8,6 +8,7 @@ import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.WorkerCard;
 import BGU.Group13B.backend.storePackage.newDiscoutns.DiscountInfo;
+import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.service.entity.ReviewService;
@@ -1440,6 +1441,33 @@ public class Session implements ISession {
     public Response<HashMap<Integer, String>> getUserIdsToUsernamesMapper(List<Integer> userIds) {
         try{
             return Response.success(userRepository.getUserIdsToUsernamesMapper(userIds));
+        } catch (Exception e){
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Boolean> isStoreHidden(int storeId) {
+        try{
+            return Response.success(market.isStoreHidden(storeId));
+        } catch (Exception e){
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Boolean> isAdmin(int userId) {
+        try{
+            return Response.success(getUserStatus(userId).equals("Admin"));
+        } catch (Exception e){
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Condition> getStorePurchasePolicy(int storeId, int userId) {
+        try{
+            return Response.success(market.getStorePurchasePolicy(storeId, userId));
         } catch (Exception e){
             return Response.exception(e);
         }

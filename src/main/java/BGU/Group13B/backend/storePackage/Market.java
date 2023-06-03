@@ -4,6 +4,7 @@ package BGU.Group13B.backend.storePackage;
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
 import BGU.Group13B.backend.System.Searcher;
 import BGU.Group13B.backend.User.*;
+import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.StoreDiscount;
 import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.Message;
@@ -525,4 +526,11 @@ public class Market {
         storeRepository.getStore(storeId).deleteStoreAccumulationTree(userId);
     }
 
+    public boolean isStoreHidden(int storeId) {
+        return storeRepository.getStore(storeId).isHidden();
+    }
+
+    public Condition getStorePurchasePolicy(int storeId, int userId) throws NoPermissionException {
+        return storeRepository.getStore(storeId).getPurchasePolicy(userId);
+    }
 }

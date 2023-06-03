@@ -32,7 +32,7 @@ public class UserPermissions {
         MESSAGES,
         POLICIES,
         AUCTION,
-        INFO,
+        WORKERS_INFO,
         HISTORY,
         STAFF,
         FONLY

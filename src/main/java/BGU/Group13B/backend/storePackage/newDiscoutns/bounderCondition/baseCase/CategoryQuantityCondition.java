@@ -6,6 +6,9 @@ import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.Bounder;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
+import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
+import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.LogicalConditions.LogicalConditionEntity;
+import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.leaves.CategoryQuantityConditionEntity;
 
 public class CategoryQuantityCondition extends Condition {
     private final String category;
@@ -39,6 +42,15 @@ public class CategoryQuantityCondition extends Condition {
             throw new PurchaseExceedsPolicyException("quantity of category must be " + quantityBounder);
         }
     }
+
+    @Override
+    public ConditionEntity convertToUiEntity(LogicalConditionEntity parent) {
+        if(quantityBounder.hasUpperBound()){
+            return new CategoryQuantityConditionEntity(category, parent, quantityBounder.getLowerBound(), quantityBounder.getUpperBound());
+        }
+        return new CategoryQuantityConditionEntity(category, parent, quantityBounder.getLowerBound());
+    }
+
     public String toString(){
         return "category: " + category + ", quantity: " + quantityBounder.toString();
     }

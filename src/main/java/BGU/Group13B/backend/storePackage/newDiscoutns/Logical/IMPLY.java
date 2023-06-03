@@ -6,6 +6,7 @@ import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.PurchasePolicy;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
+import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.LogicalConditions.LogicalConditionEntity;
 
 public class IMPLY extends LogicalCondition{
     public IMPLY(int conditionId, Condition operand1, Condition operand2) {
@@ -29,5 +30,10 @@ public class IMPLY extends LogicalCondition{
     @Override
     public String toString() {
         return "( " + operand1 + " ⟹ " + operand2 + " )";
+    }
+
+    @Override
+    public LogicalConditionEntity convertToUiEntity(LogicalConditionEntity parent) {
+        return new LogicalConditionEntity(parent, LogicalConditionEntity.LogicalOperator.IMPLIES);
     }
 }

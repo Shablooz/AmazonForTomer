@@ -1,5 +1,8 @@
 package BGU.Group13B.frontEnd.components.policyComponent;
 
+import BGU.Group13B.backend.storePackage.newDiscoutns.Logical.LogicalCondition;
+import BGU.Group13B.backend.storePackage.newDiscoutns.bounderCondition.baseCase.CategoryPriceCondition;
+import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.frontEnd.ResponseHandler;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
@@ -23,6 +26,7 @@ import com.vaadin.flow.data.provider.hierarchy.TreeDataProvider;
 import org.jsoup.Connection;
 
 import java.util.List;
+import java.util.Objects;
 
 
 public class ConditionTreeGrid extends TreeGrid<ConditionEntity> implements ResponseHandler {
@@ -226,6 +230,24 @@ public class ConditionTreeGrid extends TreeGrid<ConditionEntity> implements Resp
             // If it's a leaf condition, process it
             return handleOptionalResponse(leafCondition.addToBackend(session, storeId, userId)).orElseThrow();
         }
+    }
+
+    public void setConditionsData(Condition rootCondition){
+        conditionsData.clear();
+        addBackendCondition(null, rootCondition);
+    }
+
+    private void addBackendCondition(LogicalConditionEntity parent, Condition condition){
+        if (Objects.requireNonNull(condition) instanceof LogicalCondition logicalCondition) {
+            LogicalConditionEntity logicalConditionEntity = logicalCondition.convertToUiEntity(parent);
+            conditionsData.addItem(parent, logicalConditionEntity);
+            for (Condition child : logicalCondition.getChildren()) {
+                addBackendCondition(logicalConditionEntity, child);
+            }
+            return;
+        }
+        conditionsData.addItem(parent, condition.convertToUiEntity(parent));
+
     }
 
 
