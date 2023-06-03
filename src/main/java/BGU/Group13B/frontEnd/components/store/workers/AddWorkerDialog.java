@@ -48,7 +48,8 @@ public class AddWorkerDialog extends Dialog implements ResponseHandler {
                     if(handleResponse(session.addOwner(userId, newUserId, storeId)) == null){
                         return;
                     }
-                    storeWorkersLayout.addWorkerGUI(newUserId, workerName.getValue());
+                    notifySuccess("Worker added successfully");
+                    storeWorkersLayout.updateWorkers();
                     close();
                 }
                 case Manager -> {
@@ -58,7 +59,8 @@ public class AddWorkerDialog extends Dialog implements ResponseHandler {
                     if (handleResponse(session.addManager(userId, newUserId, storeId)) == null) {
                         return;
                     }
-                    storeWorkersLayout.addWorkerGUI(newUserId, workerName.getValue());
+                    notifySuccess("Worker added successfully");
+                    storeWorkersLayout.updateWorkers();
                     close();
                 }
 

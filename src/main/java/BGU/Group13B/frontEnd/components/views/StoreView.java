@@ -45,10 +45,8 @@ import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.lineawesome.LineAwesomeIcon;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @PageTitle("Store")
@@ -62,7 +60,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
     private StoreInfo storeInfo;
     private List<WorkerCard> workers;
     private HashMap<Integer, String> userIdToUsername;
-    private List<ProductInfo> products;
+    private Set<ProductInfo> products;
     //private boolean isHidden = false;
 
     //components
@@ -93,7 +91,8 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
     private void start(){
         this.removeAll();
         init_dataFields();
-        demoData();
+        //demoData();
+        getData();
         getCurrentWorkerCard();
         init_components();
 
@@ -197,13 +196,18 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
     }
 
     private void getData(){
+        //store info
+        storeInfo =  handleResponse(session.getStoreInfo(userId, storeId), "");
 
-    }
+        //products
+        products = handleResponse(session.getAllStoreProductsInfo(userId, storeId), "");
 
+        //workers
+        workers = handleResponse(session.getStoreWorkersInfo(userId, storeId), "");
 
-
-    private void init_userIdToUsername(){
-        //TODO: get from backend
+        //userIdToUsername
+        List<Integer> userIds = workers.stream().map(WorkerCard::userId).collect(Collectors.toList());
+        userIdToUsername = handleResponse(session.getUserIdsToUsernamesMapper(userIds), "");
     }
 
     private double getRoundedScore(double score){
@@ -252,7 +256,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
         workers.add(worker4);
         workers.add(worker5);
 
-        products = new LinkedList<>();
+        products = new LinkedHashSet<>();
         products.add(new ProductInfo(0, 0, storeInfo.storeName(), "milk", "dairy", 5.0, 10, "milk description", 4.2F));
         products.add(new ProductInfo(-1, 0, storeInfo.storeName(),"cheese", "dairy", 10.0, 20, "cheese description", 4.5F));
         products.add(new ProductInfo(-2, 0, storeInfo.storeName(),"bread", "bakery", 3.0, 30, "bread description", 4.0F));

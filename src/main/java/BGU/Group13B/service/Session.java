@@ -1436,4 +1436,13 @@ public class Session implements ISession {
         }
     }
 
+    @Override
+    public Response<HashMap<Integer, String>> getUserIdsToUsernamesMapper(List<Integer> userIds) {
+        try{
+            return Response.success(userRepository.getUserIdsToUsernamesMapper(userIds));
+        } catch (Exception e){
+            return Response.exception(e);
+        }
+    }
+
 }

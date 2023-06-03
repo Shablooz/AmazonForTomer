@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class StoreWorkersLayout extends VerticalLayout implements ResponseHandler, roleToString {
 
@@ -35,7 +36,7 @@ public class StoreWorkersLayout extends VerticalLayout implements ResponseHandle
 
     private AddWorkerDialog addWorkerDialog;
 
-    private final HashMap<Integer, String> userIdToUsername;
+    private HashMap<Integer, String> userIdToUsername;
 
     /*
     @Deprecated
@@ -122,15 +123,15 @@ public class StoreWorkersLayout extends VerticalLayout implements ResponseHandle
         add(rolesAccordion);
     }
 
-    public void addWorkerGUI(Integer newUserId, String username) {
-        notifySuccess("Worker added successfully");
+    public void updateWorkers() {
         var workers = handleResponse(session.getStoreWorkersInfo(userId, storeId));
         if(workers == null){
             notifyWarning("Failed to get workers info, please try to refresh the page");
             return;
         }
 
-        userIdToUsername.put(newUserId, username);
+        List<Integer> userIds = workers.stream().map(WorkerCard::userId).collect(Collectors.toList());
+        userIdToUsername = handleResponse(session.getUserIdsToUsernamesMapper(userIds), "");
         setWorkers(workers);
     }
 }

@@ -997,4 +997,6 @@ public interface ISession {
     Response<VoidResponse> removeIndividualPermission(int userId, int managerId, int storeId, UserPermissions.IndividualPermission individualPermission);
 
     Response<Integer> getUserIdByUsername(String userName);
+
+    Response<HashMap<Integer, String>> getUserIdsToUsernamesMapper(List<Integer> userIds);
 }

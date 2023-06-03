@@ -3,6 +3,8 @@ package BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl;
 import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
 import BGU.Group13B.backend.User.User;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -89,6 +91,18 @@ public class UserRepositoryAsHashmap implements IUserRepository {
             throw new IllegalArgumentException("cannot find user with this username");
 
         return getUserId(user);
+    }
+
+    @Override
+    public HashMap<Integer, String> getUserIdsToUsernamesMapper(List<Integer> userIds) {
+        HashMap<Integer, String> userIdsToUsernames = new HashMap<>();
+        for (Integer userId : userIds){
+            User user = getUser(userId);
+            if(user == null)
+                throw new IllegalArgumentException("cannot find user with the id " + userId);
+            userIdsToUsernames.put(userId, user.getUserName());
+        }
+        return userIdsToUsernames;
     }
 
 }

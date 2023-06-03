@@ -462,6 +462,14 @@ public class ProxySession implements ISession {
         return null;
     }
 
+    @Override
+    public Response<HashMap<Integer, String>> getUserIdsToUsernamesMapper(List<Integer> userIds) {
+        if (realSession != null)
+            return realSession.getUserIdsToUsernamesMapper(userIds);
+
+        return null;
+    }
+
 
     @Override
     public void purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount) {
