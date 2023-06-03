@@ -71,7 +71,7 @@ class StoreTest {
         Mockito.when(storePermission.checkPermission(managerWithoutPermission, false)).thenReturn(false);
         Mockito.when(storePermission.getAllUsersWithPermission(functionName)).thenReturn(Set.of(managerWithPermission));
         /*verify the method invocation*/
-        Mockito.doNothing().when(addToUserCart).apply(managerWithPermission, storeId, productId);
+        Mockito.doNothing().when(addToUserCart).apply(managerWithPermission, storeId, productId, amount, proposedPrice);
         msg = "User " + managerWithPermission + " has submitted a purchase proposal for product " + productId + " in store " + storeId;
         //Mockito.when(BroadCaster.broadcast(managerWithPermission, msg)).thenReturn(true);
         Mockito.when(productRepository.getProductById(productId)).thenReturn(product);
@@ -183,7 +183,7 @@ class StoreTest {
             thread2.join();
             if (firstThreadToFinish.get() == 1)
                 Mockito.verify(addToUserCart,
-                        Mockito.times(1)).apply(managerWithPermission, storeId, productId);
+                        Mockito.times(1)).apply(managerWithPermission, storeId, productId, amount, proposedPrice);
             else if (firstThreadToFinish.get() == 2)
                 Assertions.assertTrue(true);
                         /*Mockito.verify(broadCaster,
@@ -213,7 +213,7 @@ class StoreTest {
 
             store.purchaseProposalApprove(managerWithPermission, 0);
             Mockito.verify(addToUserCart,
-                    Mockito.times(1)).apply(managerWithPermission, storeId, productId);
+                    Mockito.times(1)).apply(managerWithPermission, storeId, productId, amount, proposedPrice);
             Assertions.assertFalse(bidRepository.getBID(0).orElseThrow().isRejected());
 
         } catch (NoPermissionException | NoSuchElementException e) {
@@ -228,7 +228,7 @@ class StoreTest {
 
             store.purchaseProposalReject(managerWithPermission, 0);
             Mockito.verify(addToUserCart,
-                    Mockito.times(0)).apply(managerWithPermission, storeId, productId);
+                    Mockito.times(0)).apply(managerWithPermission, storeId, productId, amount, proposedPrice);
 
             Assertions.assertEquals(bidRepository.getBID(0), Optional.empty());
 

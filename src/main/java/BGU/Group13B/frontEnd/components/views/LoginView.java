@@ -172,9 +172,9 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
     private Notification createPurchaseProposalSubmitRequest(String message) {
         Notification notification = new Notification();
         //notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-
+        String newMessage = message.substring(message.indexOf("]") + 1);
         int managerId = SessionToIdMapper.getInstance().getCurrentSessionId();
-        String[] storeProduct = message.substring(4, message.indexOf("]")).split(",");
+        String[] storeProduct = message.substring(message.indexOf("[") + 1, message.indexOf("]")).split(",");
         int storeId = Integer.parseInt(storeProduct[0]);
         int productId = Integer.parseInt(storeProduct[1]);
         //accept button
@@ -188,10 +188,12 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
             session.purchaseProposalReject(managerId, storeId, productId);
             notification.close();
         });
+        accept.setVisible(true);
+        reject.setVisible(true);
         reject.addThemeVariants(LUMO_TERTIARY_INLINE);
 
-        Div info = new Div(new Text(message));
-        HorizontalLayout layout = new HorizontalLayout(info, accept, reject);
+        Div info = new Div(new Text(newMessage));
+        VerticalLayout layout = new VerticalLayout(info, accept, reject);
         layout.setAlignItems(FlexComponent.Alignment.CENTER);
         notification.add(layout);
         return notification;

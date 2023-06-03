@@ -80,6 +80,10 @@ public class FilterView extends VerticalLayout {
         applyFilterButton.setIcon(VaadinIcon.FILTER.create());
 
         applyFilterButton.addClickListener(event -> {
+            if(minPriceField.getValue() == null || maxPriceField.getValue() == null){
+                Notification.show("Please fill both price fields");
+                return;
+            }
             Response<List<ProductInfo>> products = session.filterByPriceRange(minPriceField.getValue(), maxPriceField.getValue());
             productGrid.setItems();
             productGrid.setItems(products.getData());
@@ -129,6 +133,10 @@ public class FilterView extends VerticalLayout {
         add(applyFilterButton);
 
         applyFilterButton.addClickListener(event -> {
+            if(minProductRankField.getValue() == null || maxProductRankField.getValue() == null){
+                Notification.show("Please fill both product rank fields");
+                return;
+            }
             Response<List<ProductInfo>> products = session.filterByProductRank(minProductRankField.getValue(), maxProductRankField.getValue());
             productGrid.setItems();
             productGrid.setItems(products.getData());
@@ -150,6 +158,10 @@ public class FilterView extends VerticalLayout {
         add(applyFilterButton);
 
         applyFilterButton.addClickListener(event -> {
+            if(minStoreRankField.getValue() == null || maxStoreRankField.getValue() == null){
+                Notification.show("Please fill both store rank fields");
+                return;
+            }
             Response<List<ProductInfo>> products = session.filterByStoreRank(minStoreRankField.getValue(), maxStoreRankField.getValue());
             productGrid.setItems();
             productGrid.setItems(products.getData());

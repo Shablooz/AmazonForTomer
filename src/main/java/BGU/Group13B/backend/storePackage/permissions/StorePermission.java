@@ -368,5 +368,13 @@ public class StorePermission {
     public HashMap<Integer/*userId*/, Set<UserPermissions.IndividualPermission>> getUserToIndividualPermissions(){
         return userToIndividualPermissions;
     }
+    public List<Integer> getAllUsersWithIndividualPermission(UserPermissions.IndividualPermission individualPermission){
+        List<Integer> users = new ArrayList<>();
+        for(Map.Entry<Integer, Set<UserPermissions.IndividualPermission>> entry : userToIndividualPermissions.entrySet()){
+            if(entry.getValue().contains(individualPermission))
+                users.add(entry.getKey());
+        }
+        return users;
+    }
 
 }
