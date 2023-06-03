@@ -234,7 +234,7 @@ public class Session implements ISession {
     }
 
     @Override
-    public Response<List<ProductInfo>> filterByPriceRange(int minPrice, int maxPrice) {
+    public Response<List<ProductInfo>> filterByPriceRange(double minPrice, double maxPrice) {
         try {
             return Response.success(market.filterByPriceRange(minPrice, maxPrice));
         } catch (Exception e) {
@@ -243,7 +243,7 @@ public class Session implements ISession {
     }
 
     @Override
-    public Response<List<ProductInfo>> filterByProductRank(int minRating, int maxRating) {
+    public Response<List<ProductInfo>> filterByProductRank(double minRating, double maxRating) {
         try {
             return Response.success(market.filterByProductRank(minRating, maxRating));
         } catch (Exception e) {
@@ -261,7 +261,7 @@ public class Session implements ISession {
     }
 
     @Override
-    public Response<List<ProductInfo>> filterByStoreRank(int minRating, int maxRating) {
+    public Response<List<ProductInfo>> filterByStoreRank(double minRating, double maxRating) {
         try {
             return Response.success(market.filterByStoreRank(minRating, maxRating));
         } catch (Exception e) {

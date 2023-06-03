@@ -171,6 +171,8 @@ public class Market {
     }
 
     public List<ProductInfo> search(String searchWords) {
+        if(searchWords == null || searchWords.isEmpty())
+            throw new IllegalArgumentException("search words cannot be empty");
         List<ProductInfo> products = new LinkedList<>();
         products.addAll(searchProductByKeywords(searchWords));
         products.addAll(searchProductByCategory(searchWords));
@@ -180,11 +182,11 @@ public class Market {
         return products;
     }
 
-    public List<ProductInfo> filterByPriceRange(int minPrice, int maxPrice) {
+    public List<ProductInfo> filterByPriceRange(double minPrice, double maxPrice) {
         return searcher.filterByPriceRange(minPrice, maxPrice);
     }
 
-    public List<ProductInfo> filterByProductRank(int minRating, int maxRating) {
+    public List<ProductInfo> filterByProductRank(double minRating, double maxRating) {
         return searcher.filterByProductRank(minRating, maxRating);
     }
 
@@ -192,7 +194,7 @@ public class Market {
         return searcher.filterByCategory(category);
     }
 
-    public List<ProductInfo> filterByStoreRank(int minRating, int maxRating) {
+    public List<ProductInfo> filterByStoreRank(double minRating, double maxRating) {
         return searcher.filterByStoreRank(minRating, maxRating);
     }
 

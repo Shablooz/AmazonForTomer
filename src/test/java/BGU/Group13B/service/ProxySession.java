@@ -506,14 +506,14 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public Response<List<ProductInfo>> filterByPriceRange(int minPrice, int maxPrice) {
+    public Response<List<ProductInfo>> filterByPriceRange(double minPrice, double maxPrice) {
         if (realSession != null)
             realSession.filterByPriceRange(minPrice, maxPrice);
         return null;
     }
 
     @Override
-    public Response<List<ProductInfo>> filterByProductRank(int minRating, int maxRating) {
+    public Response<List<ProductInfo>> filterByProductRank(double minRating, double maxRating) {
         if (realSession != null)
             realSession.filterByProductRank(minRating, maxRating);
         return null;
@@ -527,7 +527,7 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public Response<List<ProductInfo>> filterByStoreRank(int minRating, int maxRating) {
+    public Response<List<ProductInfo>> filterByStoreRank(double minRating, double maxRating) {
         if (realSession != null)
             realSession.filterByStoreRank(minRating, maxRating);
         return null;

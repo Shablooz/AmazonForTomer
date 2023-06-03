@@ -33,6 +33,10 @@ public class Searcher extends HorizontalLayout{
         searchButton.addClickListener(e -> {
             try {
                 String searchTerm = searchField.getValue();
+                if (searchTerm.isEmpty()) {
+                    Notification.show("Please enter a search term");
+                    return;
+                }
                 getUI().ifPresent(ui -> ui.navigate("Search results/" + searchTerm));
             } catch (Exception exception) {
                 Notification.show(exception.getMessage());
