@@ -17,7 +17,7 @@ public class ReviewRepositoryAsList implements IRepositoryReview {
     private int id;
 
 
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
     @JoinTable(name = "ReviewRepositoryAsList_review",
             joinColumns = {@JoinColumn(name = "ReviewRepositoryAsList_id", referencedColumnName = "id")},
             inverseJoinColumns = {
