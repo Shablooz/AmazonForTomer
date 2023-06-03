@@ -42,9 +42,10 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void addToCart(int userId, int storeId, int productId) {
+    public Response<VoidResponse> addToCart(int userId, int storeId, int productId) {
         if (realSession != null)
             realSession.addToCart(userId, storeId, productId);
+        return null;
     }
 
     @Override
@@ -505,9 +506,10 @@ public class ProxySession implements ISession {
 
 
     @Override
-    public void purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount) {
+    public Response<VoidResponse> purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount) {
         if (realSession != null)
             realSession.purchaseProposalSubmit(userId, storeId, productId, proposedPrice, amount);
+        return Response.success(new VoidResponse());
     }
 
     @Override
@@ -580,14 +582,14 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public Response<List<ProductInfo>> filterByPriceRange(int minPrice, int maxPrice) {
+    public Response<List<ProductInfo>> filterByPriceRange(double minPrice, double maxPrice) {
         if (realSession != null)
             realSession.filterByPriceRange(minPrice, maxPrice);
         return null;
     }
 
     @Override
-    public Response<List<ProductInfo>> filterByProductRank(int minRating, int maxRating) {
+    public Response<List<ProductInfo>> filterByProductRank(double minRating, double maxRating) {
         if (realSession != null)
             realSession.filterByProductRank(minRating, maxRating);
         return null;
@@ -601,7 +603,7 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public Response<List<ProductInfo>> filterByStoreRank(int minRating, int maxRating) {
+    public Response<List<ProductInfo>> filterByStoreRank(double minRating, double maxRating) {
         if (realSession != null)
             realSession.filterByStoreRank(minRating, maxRating);
         return null;

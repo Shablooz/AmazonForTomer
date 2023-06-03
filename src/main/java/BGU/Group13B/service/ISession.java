@@ -52,8 +52,9 @@ public interface ISession {
      * @param userId    the user id
      * @param storeId   the store id
      * @param productId the product id
+     * @return
      */
-    void addToCart(int userId, int storeId, int productId);
+    Response<VoidResponse> addToCart(int userId, int storeId, int productId);
 
     /**
      * #22
@@ -91,7 +92,7 @@ public interface ISession {
      * @param productId     the product id
      * @param proposedPrice the proposed price
      */
-    void purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount);
+    Response<VoidResponse> purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount);
 
 
     void purchaseProposalApprove(int managerId, int storeId, int productId) throws NoPermissionException;
@@ -198,7 +199,7 @@ public interface ISession {
      * @param minPrice - the minimum price of the product
      * @param maxPrice - the maximum price of the product
      */
-    Response<List<ProductInfo>> filterByPriceRange(int minPrice, int maxPrice);
+    Response<List<ProductInfo>> filterByPriceRange(double minPrice, double maxPrice);
 
     /**
      * #18
@@ -207,7 +208,7 @@ public interface ISession {
      * @param minRating - the minimum rating of the product
      * @param maxRating - the maximum rating of the product
      */
-    Response<List<ProductInfo>> filterByProductRank(int minRating, int maxRating);
+    Response<List<ProductInfo>> filterByProductRank(double minRating, double maxRating);
 
     /**
      * #18
@@ -224,7 +225,7 @@ public interface ISession {
      * @param minRating - the minimum rating of the store
      * @param maxRating - the maximum rating of the store
      */
-    Response<List<ProductInfo>> filterByStoreRank(int minRating, int maxRating);
+    Response<List<ProductInfo>> filterByStoreRank(double minRating, double maxRating);
 
     /**
      * #16

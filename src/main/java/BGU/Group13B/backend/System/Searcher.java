@@ -51,7 +51,7 @@ public class Searcher {
         return productsInfo;
     }
 
-    public List<ProductInfo> filterByPriceRange(int minPrice, int maxPrice) {
+    public List<ProductInfo> filterByPriceRange(double minPrice, double maxPrice) {
         filterHiddenProducts();
         List<Product> newProducts = new LinkedList<>();
         for (Product product : products) {
@@ -62,7 +62,7 @@ public class Searcher {
         products = newProducts;
         return wrapAsProductInfo(products);
     }
-    public List<ProductInfo> filterByProductRank(int minRating, int maxRating) {
+    public List<ProductInfo> filterByProductRank(double minRating, double maxRating) {
         filterHiddenProducts();
         List<Product> newProducts = new LinkedList<>();
         for (Product product : products) {
@@ -85,7 +85,7 @@ public class Searcher {
         return wrapAsProductInfo(products);
     }
 
-    public List<ProductInfo> filterByStoreRank(int minRating, int maxRating) {
+    public List<ProductInfo> filterByStoreRank(double minRating, double maxRating) {
         filterHiddenProducts();
         List<Product> newProducts = new LinkedList<>();
         for (Product product : products) {

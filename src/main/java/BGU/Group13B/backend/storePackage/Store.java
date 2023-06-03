@@ -372,16 +372,12 @@ public class Store {
                 Thread.currentThread().getStackTrace()[2].getMethodName());
     }
 
-    @DefaultFounderFunctionality
-    @AuctionPermission
-    @DefaultOwnerFunctionality
+
     public void purchaseProposalSubmit(int userId, int productId, double proposedPrice, int amount) throws NoPermissionException {
         /*
          * check if the user has permission to purchase proposal
          * */
-        if (!this.storePermission.checkPermission(userId, hidden))//the user should be loggedIn with permissions
-            throw new NoPermissionException("User " + userId + " has no permission to add product to store " + this.storeId);
-
+        this.storePermission.validateStoreVisibility(userId, hidden);
         if (amount <= 0)
             throw new IllegalArgumentException("Amount must be positive");
         if (proposedPrice <= 0)
