@@ -112,17 +112,18 @@ public class ProductView extends VerticalLayout implements HasUrlParameter<Strin
         FormLayout form = new FormLayout();
         TextField price = new TextField("Price");
         TextField quantity = new TextField("Quantity");
-        TextField dueDate = new TextField("Due Date");
-        form.add(price, quantity, dueDate);
+        form.add(price, quantity);
         dialog.add(form);
         Button submit = new Button("Submit");
         submit.addClickListener(event -> {
-            //Response<VoidResponse> response = session.offerBid(userId, storeId, productId, price.getValue(), quantity.getValue(), dueDate.getValue());
-//            if (response.didntSucceed()) {
-//                Notification.show(response.getMessage());
-//            } else {
-//                Notification.show("Bid offered successfully");
-//            }
+            Response<VoidResponse> response = session.purchaseProposalSubmit
+                    (userId, storeId, productId, Integer.parseInt(price.getValue()), Integer.parseInt(quantity.getValue()));
+            if (response.didntSucceed()) {
+                Notification.show(response.getMessage());
+            } else {
+                Notification.show("Bid offered successfully");
+            }
+            dialog.close();
         });
         dialog.add(submit);
     }

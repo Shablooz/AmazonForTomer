@@ -89,7 +89,7 @@ public interface ISession {
      * @param productId     the product id
      * @param proposedPrice the proposed price
      */
-    void purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount);
+    Response<VoidResponse> purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount);
 
 
     void purchaseProposalApprove(int managerId, int storeId, int productId) throws NoPermissionException;

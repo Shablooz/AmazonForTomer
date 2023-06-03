@@ -145,11 +145,12 @@ public class Session implements ISession {
     }
 
     @Override
-    public void purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount) {
+    public Response<VoidResponse> purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount) {
         try {
             market.purchaseProposalSubmit(userId, storeId, productId, proposedPrice, amount);
+            return Response.success();
         } catch (NoPermissionException e) {
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
     @Override

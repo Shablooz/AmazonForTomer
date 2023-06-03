@@ -415,9 +415,10 @@ public class ProxySession implements ISession {
 
 
     @Override
-    public void purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount) {
+    public Response<VoidResponse> purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount) {
         if (realSession != null)
             realSession.purchaseProposalSubmit(userId, storeId, productId, proposedPrice, amount);
+        return Response.success(new VoidResponse());
     }
 
     @Override
