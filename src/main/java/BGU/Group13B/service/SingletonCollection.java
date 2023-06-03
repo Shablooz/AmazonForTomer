@@ -194,6 +194,14 @@ public class SingletonCollection {
         SingletonCollection.reviewRepository = SingletonCollection.getContext().getBean(ReviewRepoSingleService.class).getReviewRepoSingleJPA();
     }
 
+    //lines below might need to be replaced with a field
+    public static ProductRepositoryAsHashMapService getProductRepositoryAsHashMapService() {
+        return SingletonCollection.getContext().getBean(ProductRepositoryAsHashMapService.class);
+    }
+
+    public static ReviewRepoSingleService getReviewRepoSingleService() {
+        return SingletonCollection.getContext().getBean(ReviewRepoSingleService.class);
+    }
     /**
      * <h1>getters</h1>
      */

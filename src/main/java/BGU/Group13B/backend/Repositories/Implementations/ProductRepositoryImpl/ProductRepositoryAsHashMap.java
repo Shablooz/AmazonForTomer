@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Entity
 public class ProductRepositoryAsHashMap implements IProductRepository {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
     @JoinTable(name = "ProductRepositoryAsHashMap_SkipListHolderClickbate",
