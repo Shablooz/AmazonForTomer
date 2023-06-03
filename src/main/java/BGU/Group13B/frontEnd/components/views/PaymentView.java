@@ -131,12 +131,27 @@ public class PaymentView extends Div implements BeforeLeaveObserver {
         var priceAndSuccessful = session.startPurchaseBasketTransaction(SessionToIdMapper.getInstance().getCurrentSessionId(), new LinkedList<>()); //mafhid
         totalPriceAfterDiscount = priceAndSuccessful.getFirst();
         successfulItems = priceAndSuccessful.getSecond();
-        Span spanBeforeDiscountTitle = new Span("Total price before discount: ");
+        Span spanBeforeDiscountTitle = new Span(totalPriceBeforeDiscount != totalPriceAfterDiscount ?
+                "Total price before discount: " : "Total price: ");
         Span spanBeforeDiscount = new Span(String.valueOf(totalPriceBeforeDiscount));
-        spanBeforeDiscount.getStyle().set("text-decoration", "line-through");
+        if (totalPriceBeforeDiscount != totalPriceAfterDiscount)
+            spanBeforeDiscount.getStyle().set("text-decoration", "line-through");
 
         Span spanAfterDiscount = new Span("Total price after discount: " + totalPriceAfterDiscount);
         spanAfterDiscount.getStyle().set("font-weight", "bold");
+        if (totalPriceBeforeDiscount != totalPriceAfterDiscount) {
+            //light red color
+            spanBeforeDiscount.getStyle().set("color", "#ff6666");
+            //light green color
+            spanAfterDiscount.getStyle().set("text-decoration", "underline");
+            spanAfterDiscount.getStyle().set("color", "#66ff66");
+        } else {
+            //light green color
+            spanBeforeDiscount.getStyle().set("color", "#66ff66");
+            spanBeforeDiscount.getStyle().set("text-decoration", "underline");
+            spanBeforeDiscount.getStyle().set("font-weight", "bold");
+            spanAfterDiscount.setVisible(false);
+        }
         return new HorizontalLayout(spanBeforeDiscountTitle, spanBeforeDiscount, spanAfterDiscount);
     }
 
