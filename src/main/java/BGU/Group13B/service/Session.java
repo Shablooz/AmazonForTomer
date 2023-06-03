@@ -1473,4 +1473,14 @@ public class Session implements ISession {
         }
     }
 
+    @Override
+    public Response<VoidResponse> resetStorePurchasePolicy(int storeId, int userId) {
+        try{
+            market.resetStorePurchasePolicy(storeId, userId);
+            return Response.success(new VoidResponse());
+        } catch (Exception e){
+            return Response.exception(e);
+        }
+    }
+
 }

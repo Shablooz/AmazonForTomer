@@ -533,4 +533,8 @@ public class Market {
     public Condition getStorePurchasePolicy(int storeId, int userId) throws NoPermissionException {
         return storeRepository.getStore(storeId).getPurchasePolicy(userId);
     }
+
+    public void resetStorePurchasePolicy(int storeId, int userId) throws NoPermissionException {
+        storeRepository.getStore(storeId).resetPurchasePolicy(userId);
+    }
 }

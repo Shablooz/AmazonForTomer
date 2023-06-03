@@ -57,7 +57,12 @@ public class PurchasePolicyView extends VerticalLayout implements HasUrlParamete
     }
 
     private void resetBtnListener() {
-        resetBtn.addClickListener(buttonClickEvent -> conditionTreeGrid.reset());
+        resetBtn.addClickListener(buttonClickEvent -> {
+            if (handleResponse(session.resetStorePurchasePolicy(storeId, userId)) != null) {
+                notifySuccess("Purchase Policy was reset successfully");
+                conditionTreeGrid.reset();
+            }
+        });
     }
 
     private void confirmBtnListener() {

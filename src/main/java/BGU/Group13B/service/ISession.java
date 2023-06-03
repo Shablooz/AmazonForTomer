@@ -1008,4 +1008,5 @@ public interface ISession {
 
     Response<Condition> getStorePurchasePolicy(int storeId, int userId);
 
+    Response<VoidResponse> resetStorePurchasePolicy(int storeId, int userId);
 }

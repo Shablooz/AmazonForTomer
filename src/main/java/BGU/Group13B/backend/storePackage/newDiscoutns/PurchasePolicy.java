@@ -50,4 +50,9 @@ public class PurchasePolicy {
     public Condition getRootCondition() {
         return condition;
     }
+
+    public void resetPurchasePolicy() {
+        this.condition = null;
+        this.purchasePolicyRootsRepository.removePurchasePolicyRoot(storeId);
+    }
 }

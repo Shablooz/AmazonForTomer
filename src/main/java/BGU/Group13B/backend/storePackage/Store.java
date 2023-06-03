@@ -1154,4 +1154,13 @@ public class Store {
             throw new NoPermissionException("User " + userId + " has no permission to get the purchase policy in the store: " + this.storeId);
         return purchasePolicy.getRootCondition();
     }
+
+    @DefaultFounderFunctionality
+    @DefaultOwnerFunctionality
+    @PoliciesPermission
+    public void resetPurchasePolicy(int userId) throws NoPermissionException {
+        if(!this.storePermission.checkPermission(userId, hidden))
+            throw new NoPermissionException("User " + userId + " has no permission to reset the purchase policy in the store: " + this.storeId);
+        purchasePolicy.resetPurchasePolicy();
+    }
 }
