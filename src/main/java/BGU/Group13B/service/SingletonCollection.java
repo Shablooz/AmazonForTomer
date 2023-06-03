@@ -14,6 +14,7 @@ import BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl.P
 import BGU.Group13B.backend.Repositories.Implementations.PurchaseHistoryRepositoryImpl.PurchaseHistoryRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.PurchasePolicyRootsRepositoryImpl.PurchasePolicyRootsRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepoSingle;
+import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepoSingleService;
 import BGU.Group13B.backend.Repositories.Implementations.StoreDiscountRootsRepositoryImpl.StoreDiscountRootsRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyImpl.StoreMessageSingle;
 import BGU.Group13B.backend.Repositories.Implementations.StorePermissionsRepositoryImpl.StorePermissionsRepositoryAsHashmap;
@@ -173,6 +174,15 @@ public class SingletonCollection {
     private SingletonCollection() {
     }
 
+
+    public static void setReviewRepository(IRepositoryReview reviewRepository) {
+        ReviewRepoSingle reviewRepoSingle = SingletonCollection.getContext().getBean(ReviewRepoSingleService.class).getReviewRepoSingleJPA();
+        if(reviewRepoSingle == null){
+            ReviewRepoSingle repo=(ReviewRepoSingle) SingletonCollection.getReviewRepository();
+            SingletonCollection.getContext().getBean(ReviewRepoSingleService.class).save(repo);
+        }
+        SingletonCollection.reviewRepository = SingletonCollection.getContext().getBean(ReviewRepoSingleService.class).getReviewRepoSingleJPA();
+    }
 
     /**
      * <h1>getters</h1>

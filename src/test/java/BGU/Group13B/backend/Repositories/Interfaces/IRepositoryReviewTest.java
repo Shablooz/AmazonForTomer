@@ -58,7 +58,7 @@ class IRepositoryReviewTest {
 
     @BeforeEach
     void setUp() {
-        repositoryReview = new ReviewRepoSingle();
+        repositoryReview = new ReviewRepoSingle(false);
     }
 
     @AfterEach

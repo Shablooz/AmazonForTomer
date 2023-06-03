@@ -5,6 +5,7 @@ import BGU.Group13B.backend.storePackage.Review;
 import jakarta.persistence.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -16,7 +17,7 @@ public class ReviewRepositoryAsList implements IRepositoryReview {
     private int id;
 
 
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
     @JoinTable(name = "ReviewRepositoryAsList_review",
             joinColumns = {@JoinColumn(name = "ReviewRepositoryAsList_id", referencedColumnName = "id")},
             inverseJoinColumns = {
@@ -24,14 +25,14 @@ public class ReviewRepositoryAsList implements IRepositoryReview {
                     @JoinColumn(name = "product_id", referencedColumnName = "productId"),
                     @JoinColumn(name = "user_id", referencedColumnName = "userId")})
     @MapKeyJoinColumn(name = "userId")
-    ConcurrentHashMap<Integer, Review> reviews;
+    Map<Integer, Review> reviews;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "ReviewRepositoryAsList_scores",
             joinColumns = {@JoinColumn(name = "ReviewRepositoryAsList_id", referencedColumnName = "id")})
     @MapKeyColumn(name = "user_Id")
     @Column(name = "score")
-    ConcurrentHashMap<Integer, Integer> scores;
+    Map<Integer, Integer> scores;
 
 
     public ReviewRepositoryAsList() {
@@ -67,7 +68,7 @@ public class ReviewRepositoryAsList implements IRepositoryReview {
 
     @Override
     public float getProductScore(int storeId, int productId) {
-        Integer sum = scores.reduceValues(0, Integer::sum);
+        Integer sum = ((ConcurrentHashMap<Integer, Integer>) scores).reduceValues(0, Integer::sum);
         if(sum!=null)
             return (float) sum /scores.size();
         return 0;
