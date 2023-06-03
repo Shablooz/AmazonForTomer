@@ -33,7 +33,7 @@ public class StoreWorkersLayout extends VerticalLayout implements ResponseHandle
     private HashMap<StoreRole, WorkersVerticalMenuBar> rolesToWorkersVerticalMenuBar;
     private Button addWorkerButton;
 
-    private AddWorkerDialog addWorkerDialog = new AddWorkerDialog(this);
+    private AddWorkerDialog addWorkerDialog;
 
     private final HashMap<Integer, String> userIdToUsername;
 
