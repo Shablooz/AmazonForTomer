@@ -43,7 +43,7 @@ public class Application implements AppShellConfigurator {
 
         SingletonCollection.setContext(context);
         //TODO load all repositories from db to memory
-
+        //need to access singleton collection here
         //serPerson ser=SingletonCollection.getContext().getBean(serPerson.class);
 
         //Grade grade1 = new Grade(4444, 99999);
