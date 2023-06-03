@@ -24,7 +24,7 @@ import java.util.Map;
 @Route(value = "Search results", layout = MainLayout.class)
 public class SearcherView extends VerticalLayout implements HasUrlParameter<String>{
     private Session session;
-    private String searchTerm="";
+    public static String searchTerm="";
     public static Grid<ProductInfo> productGrid;
     private FilterView filterComponent;
 
@@ -58,7 +58,7 @@ public class SearcherView extends VerticalLayout implements HasUrlParameter<Stri
 
     private void createFilterComponent() {
         filterComponent = new FilterView(session);
-        filterComponent.setWidth("50%");
+        filterComponent.setWidth("60%");
         add(filterComponent);
     }
 
