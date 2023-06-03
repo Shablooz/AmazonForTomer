@@ -39,10 +39,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.ZoneId;
 import java.time.format.TextStyle;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -131,7 +128,7 @@ public class PaymentView extends Div implements BeforeLeaveObserver {
     }
 
     private HorizontalLayout getPricesLayout(Session session, double totalPriceBeforeDiscount) {
-        var priceAndSuccessful = session.startPurchaseBasketTransaction(SessionToIdMapper.getInstance().getCurrentSessionId(), new HashMap<>(), "");
+        var priceAndSuccessful = session.startPurchaseBasketTransaction(SessionToIdMapper.getInstance().getCurrentSessionId(), new LinkedList<>()); //mafhid
         totalPriceAfterDiscount = priceAndSuccessful.getFirst();
         successfulItems = priceAndSuccessful.getSecond();
         Span spanBeforeDiscountTitle = new Span("Total price before discount: ");

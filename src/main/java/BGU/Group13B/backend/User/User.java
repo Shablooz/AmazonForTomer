@@ -14,6 +14,7 @@ import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.service.SingletonCollection;
 //eyal import
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -32,7 +33,7 @@ public class User {
     private String userName;
     private Message regularMessageToReply;
     private String password;
-
+    private LocalDate dateOfBirth;
     private String email;
 
     private String answer1;
@@ -93,10 +94,10 @@ public class User {
 
     //#15
     //returns User on success (for future functionalities)
-    public User register(String userName, String password, String email, String answer1, String answer2, String answer3) {
+    public User register(String userName, String password, String email, String answer1, String answer2, String answer3, LocalDate birthdate) {
         checkRegisterInfo(userName, password, email);
         //updates the user info upon registration - no longer a guest
-        updateUserDetail(userName, password, email, answer1, answer2, answer3);
+        updateUserDetail(userName, password, email, answer1, answer2, answer3,birthdate);
         this.userPermissions.register(this.userId);
         return this;
     }
@@ -118,11 +119,13 @@ public class User {
 
     //function that currently only used in register, but is cna function as a setter
     //TODO change following fields in the database
-    private void updateUserDetail(String userName, String password, String email, String answer1, String answer2, String answer3) {
+    private void updateUserDetail(String userName, String password, String email, String answer1, String answer2, String answer3,
+                                  LocalDate birthdate) {
         this.answer1 = answer1;
         this.answer2 = answer2;
         this.answer3 = answer3;
         this.userName = userName;
+        this.dateOfBirth = birthdate;
         this.email = email;
         this.password = BCrypt.hashpw(password, BCrypt.gensalt());
     }
@@ -410,11 +413,10 @@ public class User {
                 country, zip);
     }
 
-    public Pair<Double, List<BasketProduct>> startPurchaseBasketTransaction(HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                                                                                   String/*store coupons*/ storeCoupon) throws PurchaseFailedException, NoPermissionException {
+    public Pair<Double, List<BasketProduct>> startPurchaseBasketTransaction(List<String> coupons) throws PurchaseFailedException, NoPermissionException {
         if (isRegistered() && !isLoggedIn)
             throw new NoPermissionException("Only logged in users can purchase cart");
-        return cart.startPurchaseBasketTransaction(productsCoupons, storeCoupon);
+        return cart.startPurchaseBasketTransaction(new UserInfo(LocalDate.now().minusYears(25)/*this.dateOfBirth*/), coupons);//fixme
     }
 
 
@@ -565,5 +567,9 @@ public class User {
 
     public String getPurchaseHistory() {
        return purchaseHistoryRepository.getAllPurchases(userId);
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
     }
 }

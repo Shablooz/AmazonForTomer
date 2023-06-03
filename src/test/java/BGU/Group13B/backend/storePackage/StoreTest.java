@@ -66,7 +66,7 @@ class StoreTest {
         msg = "User " + managerWithPermission + " has submitted a purchase proposal for product " + productId + " in store " + storeId;
         Mockito.doNothing().when(alertManager).sendAlert(managerWithPermission, msg);
         store = new Store(storeId, "store name", "category", null, null, null,
-                alertManager, storePermission, addToUserCart, bidRepository, null, null, null,
+                alertManager, storePermission, addToUserCart, bidRepository, null,
                 null, null, null);
 
     }
@@ -248,10 +248,14 @@ class StoreTest {
     private static User tUser2;
 
     public void customTearDown() {
+        SingletonCollection.reset_system();
+        /*
         omTestStore.getStorePermission().clearForTest();
         tUser.getUserPermissions().clearForTest();
         tUser2.getUserPermissions().clearForTest();
         SingletonCollection.getStorePurchasePolicyRepository().reset();
+
+         */
         //SingletonCollection.reset_system();
     }
 
