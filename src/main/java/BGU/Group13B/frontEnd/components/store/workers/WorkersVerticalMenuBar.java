@@ -23,7 +23,7 @@ public class WorkersVerticalMenuBar extends VerticalLayout implements ResponseHa
         this.storeId = storeId;
         this.workers = new LinkedList<>(workers);
         for(WorkerCard worker : workers){
-            add(new WorkerMenuBar(worker, userIdToUsername.get(worker.userId()), this));
+            add(new WorkerMenuBar(session, userId, storeId, worker, userIdToUsername.get(worker.userId()), this, currentWorker));
         }
 
         setSpacing(false);

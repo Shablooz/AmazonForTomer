@@ -1,9 +1,9 @@
 package BGU.Group13B.frontEnd.components.store.products;
 
-import BGU.Group13B.backend.storePackage.Product;
+import BGU.Group13B.backend.User.UserPermissions;
+import BGU.Group13B.backend.storePackage.WorkerCard;
 import BGU.Group13B.frontEnd.ResponseHandler;
 import BGU.Group13B.service.info.ProductInfo;
-import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.component.gridpro.GridPro;
