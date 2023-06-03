@@ -63,10 +63,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
     private List<WorkerCard> workers;
     private HashMap<Integer, String> userIdToUsername;
     private List<ProductInfo> products;
-    private List<String> allPermissions;
-    private List<String> founderPermissions;
-    private List<String> ownerPermissions;
-    private List<String> managerPermissions;
+    //private boolean isHidden = false;
 
     //components
     private VerticalLayout headerLayout;
@@ -75,6 +72,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
     private VerticalLayout scoreLayout;
     private ProgressBar scoreBar;
     private Div scoreLabel;
+    //private Icon hiddenStoreIcon;
     private HorizontalLayout bodyLayout;
     private Button hideStoreButton;
     private Button deleteStoreButton;
@@ -117,6 +115,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
         hideStoreButton = new Button("Hide Store");
         deleteStoreButton = new Button("Delete Store");
         storeMessagesButton = messageStoreDialog();
+        //hiddenStoreIcon = new Icon(VaadinIcon.EYE_SLASH);
     }
 
     private void init_header(){
@@ -150,6 +149,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
         // Define header name and score layout
         H1 storeName = new H1(storeInfo.storeName());
         storeName.getStyle().set("margin-bottom", "0");
+        //hiddenStoreIcon.setVisible(isHidden);
         storeMessagesButton.getStyle().set("margin-left", "auto");
         header_name_score.add(storeName, scoreLayout, storeMessagesButton);
         header_name_score.setSpacing(false);
@@ -183,7 +183,11 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
             handleResponse(session.hideStore(userId, storeId));
         });
         deleteStoreButton.addClickListener(e -> {
-            Notification.show("not implemented yet in GUI :(");
+            if(handleResponse(session.deleteStore(userId, storeId)) != null){
+                notifySuccess("Store deleted successfully");
+                UI.getCurrent().navigate(HomeView.class);
+            }
+
         });
         deleteStoreButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
 
@@ -194,6 +198,76 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
 
     private void getData(){
 
+    }
+
+
+
+    private void init_userIdToUsername(){
+        //TODO: get from backend
+    }
+
+    private double getRoundedScore(double score){
+        return Math.round(score * 10.0) / 10.0;
+    }
+
+
+    private void init_dataFields(){
+        userIdToUsername = new HashMap<>();
+
+    }
+
+    private void getCurrentWorkerCard(){
+        currentWorker = workers.stream().filter(worker -> worker.userId() == userId).findFirst().orElse(null);
+        if(currentWorker == null){
+            Notification erorrNotification = new Notification("Error: could not find worker with id " + userId, 3000);
+            erorrNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+            erorrNotification.open();
+            navigate("");
+        }
+    }
+
+
+    private void demoData(){
+        storeInfo = new StoreInfo(0, "SheepStore", "sheep", 3.9);
+
+        userIdToUsername.put(0, "lior");
+        userIdToUsername.put(1, "eden");
+        userIdToUsername.put(2, "eyal");
+        userIdToUsername.put(3, "shaun");
+        userIdToUsername.put(4, "tomer");
+        userIdToUsername.put(5, "yoav");
+
+        WorkerCard worker0 = new WorkerCard(0, UserPermissions.StoreRole.FOUNDER, Set.of(UserPermissions.IndividualPermission.values()));
+        WorkerCard worker1 = new WorkerCard(1, UserPermissions.StoreRole.OWNER, Set.of());
+        WorkerCard worker2 = new WorkerCard(2, UserPermissions.StoreRole.OWNER, Set.of());
+        WorkerCard worker3 = new WorkerCard(3, UserPermissions.StoreRole.MANAGER, Set.of());
+        WorkerCard worker4 = new WorkerCard(4, UserPermissions.StoreRole.MANAGER, Set.of());
+        WorkerCard worker5 = new WorkerCard(5, UserPermissions.StoreRole.MANAGER, Set.of());
+
+        workers = new LinkedList<>();
+        workers.add(worker0);
+        workers.add(worker1);
+        workers.add(worker2);
+        workers.add(worker3);
+        workers.add(worker4);
+        workers.add(worker5);
+
+        products = new LinkedList<>();
+        products.add(new ProductInfo(0, 0, storeInfo.storeName(), "milk", "dairy", 5.0, 10, "milk description", 4.2F));
+        products.add(new ProductInfo(-1, 0, storeInfo.storeName(),"cheese", "dairy", 10.0, 20, "cheese description", 4.5F));
+        products.add(new ProductInfo(-2, 0, storeInfo.storeName(),"bread", "bakery", 3.0, 30, "bread description", 4.0F));
+        products.add(new ProductInfo(-3, 0, storeInfo.storeName(),"butter", "dairy", 7.0, 40, "butter description", 4.1F));
+        products.add(new ProductInfo(-4, 0, storeInfo.storeName(),"eggs", "dairy", 8.0, 50, "eggs description", 4.3F));
+        products.add(new ProductInfo(-5, 0, storeInfo.storeName(),"yogurt", "dairy", 6.0, 60, "yogurt description", 4.4F));
+        products.add(new ProductInfo(-6, 0, storeInfo.storeName(),"cake", "bakery", 12.0, 70, "cake description", 4.6F));
+        products.add(new ProductInfo(-7, 0, storeInfo.storeName(),"cookies", "bakery", 9.0, 80, "cookies description", 4.7F));
+        products.add(new ProductInfo(-8, 0, storeInfo.storeName(),"chocolate", "bakery", 11.0, 90, "chocolate description", 4.8F));
+        products.add(new ProductInfo(-9, 0, storeInfo.storeName(),"pizza", "bakery", 15.0, 100, "pizza description", 4.9F));
+        products.add(new ProductInfo(-10, 0, storeInfo.storeName(),"water", "drinks", 2.0, 110, "water description", 3.3F));
+        products.add(new ProductInfo(-11, 0, storeInfo.storeName(),"soda", "drinks", 3.0, 120, "soda description", 2.5F));
+        products.add(new ProductInfo(-12, 0, storeInfo.storeName(),"juice", "drinks", 4.0, 130, "juice description", 1.7F));
+        products.add(new ProductInfo(-13, 0, storeInfo.storeName(),"beer", "drinks", 5.0, 140, "beer description", 3.8F));
+        products.add(new ProductInfo(-14, 0, storeInfo.storeName(),"wine", "drinks", 6.0, 150, "wine description", 2.1F));
     }
 
     //TODO:lior - all the functions below are for store - please provide the store id and call to functions that checks if the store owner
@@ -408,118 +482,6 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
 
         });
 
-    }
-
-    private void init_userIdToUsername(){
-        //TODO: get from backend
-    }
-
-    private double getRoundedScore(double score){
-        return Math.round(score * 10.0) / 10.0;
-    }
-
-
-    private void init_dataFields(){
-        userIdToUsername = new HashMap<>();
-
-        //all permissions: [removeStoreDiscount, setStorePurchasePriceLowerBound, removeManager, removeProduct, setProductPurchasePriceLowerBound, addProduct, hideStore, setProductStockQuantity, setProductName, createAuctionForProduct, setStorePurchaseQuantityLowerBound, addManager, unhideStore, addStoreVisibleDiscount, getAuctionInfo, disallowPurchasePolicyConflicts, setProductPurchaseQuantityLowerBound, addStoreConditionalDiscount, setStorePurchasePriceBounds, setProductDescription, addProductVisibleDiscount, purchaseProposalSubmit, allowPurchasePolicyConflicts, setProductPurchasePriceUpperBound, purchaseProposalReject, removeProductDiscount, markAsCompleted, refreshMessages, auctionPurchase, getReadMessages, setProductPurchaseQuantityUpperBound, addOwner, setProductPurchaseQuantityBounds, getUnreadMessages, endAuctionForProduct, setProductPurchasePriceBounds, setStorePurchaseQuantityBounds, addStoreHiddenDiscount, addProductConditionalDiscount, removeOwner, setProductCategory, setStorePurchasePriceUpperBound, setStorePurchaseQuantityUpperBound, purchaseProposalApprove, addProductHiddenDiscount, getStoreWorkersInfo, setProductPrice, deleteStore]
-        allPermissions = List.of("removeStoreDiscount", "setStorePurchasePriceLowerBound", "removeManager", "removeProduct",
-                "setProductPurchasePriceLowerBound", "addProduct", "hideStore", "setProductStockQuantity",
-                "setProductName", "createAuctionForProduct", "setStorePurchaseQuantityLowerBound", "addManager",
-                "unhideStore", "addStoreVisibleDiscount", "getAuctionInfo", "disallowPurchasePolicyConflicts",
-                "setProductPurchaseQuantityLowerBound", "addStoreConditionalDiscount", "setStorePurchasePriceBounds",
-                "setProductDescription", "addProductVisibleDiscount", "purchaseProposalSubmit", "allowPurchasePolicyConflicts",
-                "setProductPurchasePriceUpperBound", "purchaseProposalReject", "removeProductDiscount", "markAsCompleted",
-                "refreshMessages", "auctionPurchase", "getReadMessages", "setProductPurchaseQuantityUpperBound", "addOwner",
-                "setProductPurchaseQuantityBounds", "getUnreadMessages", "endAuctionForProduct", "setProductPurchasePriceBounds",
-                "setStorePurchaseQuantityBounds", "addStoreHiddenDiscount", "addProductConditionalDiscount", "removeOwner",
-                "setProductCategory", "setStorePurchasePriceUpperBound", "setStorePurchaseQuantityUpperBound",
-                "purchaseProposalApprove", "addProductHiddenDiscount", "getStoreWorkersInfo", "setProductPrice", "deleteStore");
-
-        //founder permissions: [removeStoreDiscount, setStorePurchasePriceLowerBound, removeManager, removeProduct, setProductPurchasePriceLowerBound, addProduct, hideStore, setProductStockQuantity, setProductName, createAuctionForProduct, setStorePurchaseQuantityLowerBound, addManager, unhideStore, addStoreVisibleDiscount, getAuctionInfo, disallowPurchasePolicyConflicts, setProductPurchaseQuantityLowerBound, addStoreConditionalDiscount, setStorePurchasePriceBounds, setProductDescription, addProductVisibleDiscount, purchaseProposalSubmit, allowPurchasePolicyConflicts, setProductPurchasePriceUpperBound, purchaseProposalReject, removeProductDiscount, markAsCompleted, refreshMessages, auctionPurchase, getReadMessages, setProductPurchaseQuantityUpperBound, addOwner, setProductPurchaseQuantityBounds, getUnreadMessages, endAuctionForProduct, setProductPurchasePriceBounds, setStorePurchaseQuantityBounds, addStoreHiddenDiscount, addProductConditionalDiscount, removeOwner, setProductCategory, setStorePurchasePriceUpperBound, setStorePurchaseQuantityUpperBound, purchaseProposalApprove, addProductHiddenDiscount, getStoreWorkersInfo, setProductPrice]
-        founderPermissions = List.of(
-                "removeStoreDiscount", "setStorePurchasePriceLowerBound", "removeManager", "removeProduct",
-                "setProductPurchasePriceLowerBound", "addProduct", "hideStore", "setProductStockQuantity",
-                "setProductName", "createAuctionForProduct", "setStorePurchaseQuantityLowerBound", "addManager",
-                "unhideStore", "addStoreVisibleDiscount", "getAuctionInfo", "disallowPurchasePolicyConflicts",
-                "setProductPurchaseQuantityLowerBound", "addStoreConditionalDiscount", "setStorePurchasePriceBounds",
-                "setProductDescription", "addProductVisibleDiscount", "purchaseProposalSubmit", "allowPurchasePolicyConflicts",
-                "setProductPurchasePriceUpperBound", "purchaseProposalReject", "removeProductDiscount", "markAsCompleted",
-                "refreshMessages", "auctionPurchase", "getReadMessages", "setProductPurchaseQuantityUpperBound", "addOwner",
-                "setProductPurchaseQuantityBounds", "getUnreadMessages", "endAuctionForProduct", "setProductPurchasePriceBounds",
-                "setStorePurchaseQuantityBounds", "addStoreHiddenDiscount", "addProductConditionalDiscount", "removeOwner",
-                "setProductCategory", "setStorePurchasePriceUpperBound", "setStorePurchaseQuantityUpperBound",
-                "purchaseProposalApprove", "addProductHiddenDiscount", "getStoreWorkersInfo", "setProductPrice"
-        );
-
-        //owner permissions: [removeManager, removeProduct, addOwner, addProduct, getUnreadMessages, setProductStockQuantity, setProductName, createAuctionForProduct, endAuctionForProduct, addManager, getAuctionInfo, removeOwner, setProductCategory, setProductDescription, purchaseProposalSubmit, purchaseProposalApprove, purchaseProposalReject, getStoreWorkersInfo, markAsCompleted, setProductPrice, refreshMessages, auctionPurchase, getReadMessages]
-        ownerPermissions = List.of(
-                "removeManager", "removeProduct", "addOwner", "addProduct", "getUnreadMessages", "setProductStockQuantity",
-                "setProductName", "createAuctionForProduct", "endAuctionForProduct", "addManager", "getAuctionInfo",
-                "removeOwner", "setProductCategory", "setProductDescription", "purchaseProposalSubmit", "purchaseProposalApprove",
-                "purchaseProposalReject", "getStoreWorkersInfo", "markAsCompleted", "setProductPrice", "refreshMessages",
-                "auctionPurchase", "getReadMessages"
-        );
-
-        //manager permissions: [addProduct, purchaseProposalSubmit, createAuctionForProduct, endAuctionForProduct, purchaseProposalApprove, purchaseProposalReject, getAuctionInfo, auctionPurchase]
-        managerPermissions = List.of(
-                "addProduct", "purchaseProposalSubmit", "createAuctionForProduct", "endAuctionForProduct",
-                "purchaseProposalApprove", "purchaseProposalReject", "getAuctionInfo", "auctionPurchase"
-        );
-    }
-
-    private void getCurrentWorkerCard(){
-        currentWorker = workers.stream().filter(worker -> worker.userId() == userId).findFirst().orElse(null);
-        if(currentWorker == null){
-            Notification erorrNotification = new Notification("Error: could not find worker with id " + userId, 3000);
-            erorrNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
-            erorrNotification.open();
-            navigate("");
-        }
-    }
-
-
-    private void demoData(){
-        storeInfo = new StoreInfo(0, "SheepStore", "sheep", 3.9);
-
-        userIdToUsername.put(0, "lior");
-        userIdToUsername.put(1, "eden");
-        userIdToUsername.put(2, "eyal");
-        userIdToUsername.put(3, "shaun");
-        userIdToUsername.put(4, "tomer");
-        userIdToUsername.put(5, "yoav");
-
-        WorkerCard worker0 = new WorkerCard(0, UserPermissions.StoreRole.FOUNDER, Set.of(UserPermissions.IndividualPermission.values()));
-        WorkerCard worker1 = new WorkerCard(1, UserPermissions.StoreRole.OWNER, Set.of());
-        WorkerCard worker2 = new WorkerCard(2, UserPermissions.StoreRole.OWNER, Set.of());
-        WorkerCard worker3 = new WorkerCard(3, UserPermissions.StoreRole.MANAGER, Set.of());
-        WorkerCard worker4 = new WorkerCard(4, UserPermissions.StoreRole.MANAGER, Set.of());
-        WorkerCard worker5 = new WorkerCard(5, UserPermissions.StoreRole.MANAGER, Set.of());
-
-        workers = new LinkedList<>();
-        workers.add(worker0);
-        workers.add(worker1);
-        workers.add(worker2);
-        workers.add(worker3);
-        workers.add(worker4);
-        workers.add(worker5);
-
-        products = new LinkedList<>();
-        products.add(new ProductInfo(0, 0, storeInfo.storeName(), "milk", "dairy", 5.0, 10, "milk description", 4.2F));
-        products.add(new ProductInfo(-1, 0, storeInfo.storeName(),"cheese", "dairy", 10.0, 20, "cheese description", 4.5F));
-        products.add(new ProductInfo(-2, 0, storeInfo.storeName(),"bread", "bakery", 3.0, 30, "bread description", 4.0F));
-        products.add(new ProductInfo(-3, 0, storeInfo.storeName(),"butter", "dairy", 7.0, 40, "butter description", 4.1F));
-        products.add(new ProductInfo(-4, 0, storeInfo.storeName(),"eggs", "dairy", 8.0, 50, "eggs description", 4.3F));
-        products.add(new ProductInfo(-5, 0, storeInfo.storeName(),"yogurt", "dairy", 6.0, 60, "yogurt description", 4.4F));
-        products.add(new ProductInfo(-6, 0, storeInfo.storeName(),"cake", "bakery", 12.0, 70, "cake description", 4.6F));
-        products.add(new ProductInfo(-7, 0, storeInfo.storeName(),"cookies", "bakery", 9.0, 80, "cookies description", 4.7F));
-        products.add(new ProductInfo(-8, 0, storeInfo.storeName(),"chocolate", "bakery", 11.0, 90, "chocolate description", 4.8F));
-        products.add(new ProductInfo(-9, 0, storeInfo.storeName(),"pizza", "bakery", 15.0, 100, "pizza description", 4.9F));
-        products.add(new ProductInfo(-10, 0, storeInfo.storeName(),"water", "drinks", 2.0, 110, "water description", 3.3F));
-        products.add(new ProductInfo(-11, 0, storeInfo.storeName(),"soda", "drinks", 3.0, 120, "soda description", 2.5F));
-        products.add(new ProductInfo(-12, 0, storeInfo.storeName(),"juice", "drinks", 4.0, 130, "juice description", 1.7F));
-        products.add(new ProductInfo(-13, 0, storeInfo.storeName(),"beer", "drinks", 5.0, 140, "beer description", 3.8F));
-        products.add(new ProductInfo(-14, 0, storeInfo.storeName(),"wine", "drinks", 6.0, 150, "wine description", 2.1F));
     }
 
     @Override

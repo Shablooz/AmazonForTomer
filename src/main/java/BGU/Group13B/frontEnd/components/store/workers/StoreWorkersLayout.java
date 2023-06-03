@@ -35,6 +35,9 @@ public class StoreWorkersLayout extends VerticalLayout implements ResponseHandle
 
     private AddWorkerDialog addWorkerDialog = new AddWorkerDialog(this);
 
+    private final HashMap<Integer, String> userIdToUsername;
+
+    /*
     @Deprecated
     public StoreWorkersLayout(int userId, int storeId, Session session){
         super();
@@ -48,15 +51,19 @@ public class StoreWorkersLayout extends VerticalLayout implements ResponseHandle
         setStyle();
     }
 
+     */
+
     public StoreWorkersLayout(int userId, int storeId, Session session, Collection<WorkerCard> workers, HashMap<Integer, String> userIdToUsername){
         super();
-        this.userId = userId;;
-        this.storeId = storeId;;
+        this.userId = userId;
+        this.storeId = storeId;
         this.session = session;
+        this.userIdToUsername = userIdToUsername;
+        this.addWorkerDialog = new AddWorkerDialog(this, session, userId, storeId);
+        this.rolesAccordion = new Accordion();
 
         setHeader();
-        setWorkers(workers, userIdToUsername);
-        add(workersHeaderLayout, rolesAccordion);
+        setWorkers(workers);
         setStyle();
     }
 
@@ -79,22 +86,26 @@ public class StoreWorkersLayout extends VerticalLayout implements ResponseHandle
             addWorkerDialog.open();
         });
 
+        add(workersHeaderLayout);
+
     }
 
-    public void setWorkers(Collection<WorkerCard> workers, HashMap<Integer, String> userIdToUsername){
+    public void setWorkers(Collection<WorkerCard> workers){
         rolesToWorkers = new HashMap<>();
         rolesToWorkersVerticalMenuBar = new HashMap<>();
+        rolesAccordion.removeFromParent();
         rolesAccordion = new Accordion();
 
+        for(StoreRole role : StoreRole.values()){
+            rolesToWorkers.put(role, new LinkedList<>());
+        }
+
         for(WorkerCard worker : workers){
-            if(!rolesToWorkers.containsKey(worker.storeRole())){
-                rolesToWorkers.put(worker.storeRole(), new LinkedList<>());
-            }
             rolesToWorkers.get(worker.storeRole()).add(worker);
         }
 
         for(StoreRole role : rolesToWorkers.keySet()){
-            rolesToWorkersVerticalMenuBar.put(role, new WorkersVerticalMenuBar(rolesToWorkers.get(role), userIdToUsername));
+            rolesToWorkersVerticalMenuBar.put(role, new WorkersVerticalMenuBar(session, userId, storeId, rolesToWorkers.get(role), userIdToUsername));
         }
 
         //ensure founder is first
@@ -104,9 +115,22 @@ public class StoreWorkersLayout extends VerticalLayout implements ResponseHandle
 
         for(StoreRole role : rolesToWorkersVerticalMenuBar.keySet()){
             if(!role.equals(StoreRole.FOUNDER)){
-                rolesAccordion.add(rolesToWorkersVerticalMenuBar.get(role).getNumOfWorkers() > 1 ? roleToStringTitle(role) + "s" : roleToStringTitle(role),
-                        rolesToWorkersVerticalMenuBar.get(role));
+                rolesAccordion.add(roleToStringTitle(role) + "s", rolesToWorkersVerticalMenuBar.get(role));
             }
         }
+
+        add(rolesAccordion);
+    }
+
+    public void addWorkerGUI(Integer newUserId, String username) {
+        notifySuccess("Worker added successfully");
+        var workers = handleResponse(session.getStoreWorkersInfo(userId, storeId));
+        if(workers == null){
+            notifyWarning("Failed to get workers info, please try to refresh the page");
+            return;
+        }
+
+        userIdToUsername.put(newUserId, username);
+        setWorkers(workers);
     }
 }

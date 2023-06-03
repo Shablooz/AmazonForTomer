@@ -964,12 +964,11 @@ public class Session implements ISession {
     }
 
     @Override
-    public List<WorkerCard> getStoreWorkersInfo(int userId, int storeId) {
+    public Response<List<WorkerCard>> getStoreWorkersInfo(int userId, int storeId) {
         try {
-            return market.getStoreWorkersInfo(userId, storeId);
+            return Response.success(market.getStoreWorkersInfo(userId, storeId));
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 

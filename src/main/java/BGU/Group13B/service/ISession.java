@@ -854,7 +854,7 @@ public interface ISession {
      * @param storeId the id of the store to get info from
      *               as an owner/founder you can get info about the users working in the store
      */
-    List<WorkerCard> getStoreWorkersInfo(int userId, int storeId);
+    Response<List<WorkerCard>> getStoreWorkersInfo(int userId, int storeId);
 
     /**
      * <H1>Conditions</H1>

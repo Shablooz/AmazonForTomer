@@ -102,7 +102,7 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public List<WorkerCard> getStoreWorkersInfo(int userId, int storeId) {
+    public Response<List<WorkerCard>> getStoreWorkersInfo(int userId, int storeId) {
         if (realSession != null)
             return realSession.getStoreWorkersInfo(userId, storeId);
         return null;

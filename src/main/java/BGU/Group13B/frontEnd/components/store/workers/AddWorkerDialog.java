@@ -13,9 +13,11 @@ import com.vaadin.flow.component.textfield.TextField;
 
 public class AddWorkerDialog extends Dialog implements ResponseHandler {
 
-    private String[] rolesToAdd = {"Owner", "Manager"};
+    enum rolesToAdd {
+        Owner, Manager
+    }
 
-    public AddWorkerDialog(StoreWorkersLayout storeWorkersLayout){
+    public AddWorkerDialog(StoreWorkersLayout storeWorkersLayout, Session session, int userId, int storeId){
         super();
         setWidth("350px");
         setHeight("300px");
@@ -24,13 +26,42 @@ public class AddWorkerDialog extends Dialog implements ResponseHandler {
 
         H2 dialogTitle = new H2("Add Worker");
         TextField workerName = new TextField("Username");
-        ComboBox<String> workerRole = new ComboBox<>("Role");
-        workerRole.setItems(rolesToAdd);
+        workerName.setRequired(true);
+        workerName.setRequiredIndicatorVisible(true);
+        ComboBox<rolesToAdd> workerRole = new ComboBox<>("Role");
+        workerRole.setRequired(true);
+        workerRole.setRequiredIndicatorVisible(true);
+        workerRole.setItems(rolesToAdd.values());
 
         Button confirmButton = new Button("Confirm");
         confirmButton.addClickListener(e2 -> {
-            notifyInfo("not implemented yet in GUI :(");
-            close();
+            if (workerName.getValue().isEmpty() || workerRole.getValue() == null) {
+                return;
+            }
+
+            switch (workerRole.getValue()) {
+
+                case Owner -> {
+                    Integer newUserId = handleResponse(session.getUserIdByUsername(workerName.getValue()));
+                    if(newUserId == null)
+                        return;
+                    if(handleResponse(session.addOwner(userId, newUserId, storeId)) == null){
+                        return;
+                    }
+                    storeWorkersLayout.addWorkerGUI(newUserId, workerName.getValue());
+                }
+                case Manager -> {
+                    Integer newUserId = handleResponse(session.getUserIdByUsername(workerName.getValue()));
+                    if(newUserId == null)
+                        return;
+                    if (handleResponse(session.addManager(userId, newUserId, storeId)) == null) {
+                        return;
+                    }
+                    storeWorkersLayout.addWorkerGUI(newUserId, workerName.getValue());
+                }
+
+
+            }
         });
 
         VerticalLayout dialogLayout = new VerticalLayout();
