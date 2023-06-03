@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Timer;
 
+import static BGU.Group13B.service.SingletonCollection.setProductRepository;
+
 /**
  * The entry point of the Spring Boot application.
  *
@@ -44,6 +46,8 @@ public class Application implements AppShellConfigurator {
 
         SingletonCollection.setContext(context);
         //TODO load all repositories from db to memory
+        SingletonCollection.setReviewRepository();
+        SingletonCollection.setProductRepository();
         //need to access singleton collection here
         //serPerson ser=SingletonCollection.getContext().getBean(serPerson.class);
 

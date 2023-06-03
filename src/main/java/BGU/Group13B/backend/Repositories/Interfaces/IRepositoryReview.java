@@ -1,6 +1,7 @@
 package BGU.Group13B.backend.Repositories.Interfaces;
 
 import BGU.Group13B.backend.storePackage.Review;
+import jakarta.persistence.Entity;
 
 import java.util.List;
 

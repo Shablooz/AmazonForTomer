@@ -11,6 +11,7 @@ import BGU.Group13B.backend.Repositories.Implementations.IStoreScoreRepository.S
 import BGU.Group13B.backend.Repositories.Implementations.MessageRepositoryImpl.MessageRepositorySingle;
 import BGU.Group13B.backend.Repositories.Implementations.ProductHistoryRepositoryImpl.ProductHistoryRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl.ProductRepositoryAsHashMap;
+import BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl.ProductRepositoryAsHashMapService;
 import BGU.Group13B.backend.Repositories.Implementations.PurchaseHistoryRepositoryImpl.PurchaseHistoryRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.PurchasePolicyRootsRepositoryImpl.PurchasePolicyRootsRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepoSingle;
@@ -174,8 +175,17 @@ public class SingletonCollection {
     private SingletonCollection() {
     }
 
+    public static void setProductRepository() {
+        ProductRepositoryAsHashMap productRepositoryAsHashMap = SingletonCollection.getContext().getBean(ProductRepositoryAsHashMapService.class).getProductRepositoryAsHashMapJPA();
+        if(productRepositoryAsHashMap == null){
+            ProductRepositoryAsHashMap repo=(ProductRepositoryAsHashMap) SingletonCollection.getProductRepository();
+            SingletonCollection.getContext().getBean(ProductRepositoryAsHashMapService.class).save(repo);
+        }
+        SingletonCollection.reviewRepository = SingletonCollection.getContext().getBean(ReviewRepoSingleService.class).getReviewRepoSingleJPA();
+    }
 
-    public static void setReviewRepository(IRepositoryReview reviewRepository) {
+
+    public static void setReviewRepository() {
         ReviewRepoSingle reviewRepoSingle = SingletonCollection.getContext().getBean(ReviewRepoSingleService.class).getReviewRepoSingleJPA();
         if(reviewRepoSingle == null){
             ReviewRepoSingle repo=(ReviewRepoSingle) SingletonCollection.getReviewRepository();

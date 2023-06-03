@@ -5,16 +5,21 @@ import java.util.List;
 import BGU.Group13B.backend.Repositories.Interfaces.IRepositoryReview;
 import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.info.ProductInfo;
+import jakarta.persistence.*;
 
+@Entity
 public class Product {
 
     private String name;
+    @Id
     private final int productId;
     private final int storeId;
     private double price;
     private String category;
     private String description;
     private int stockQuantity;
+
+    @Transient
     private final IRepositoryReview repositoryReview;
 
     private boolean deleted = false;
@@ -36,6 +41,18 @@ public class Product {
     public Product(int productId, int storeId, String name, String category, double price, int stockQuantity, String description, boolean hidden){
         this(productId, storeId, name, category, price, stockQuantity, description);
         this.hidden = hidden;
+    }
+
+    public Product() {
+        this.productId = 0;
+        this.storeId = 0;
+        this.name = "";
+        this.category = "";
+        this.setPrice(0);
+        this.setStockQuantity(0);
+        this.description = "";
+        //the line below might be a bug without neder
+        this.repositoryReview = null;
     }
 
     public String getName() {

@@ -2,15 +2,24 @@ package BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
 import BGU.Group13B.backend.storePackage.Product;
+import jakarta.persistence.*;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicInteger;
-
+@Entity
 public class ProductRepositoryAsHashMap implements IProductRepository {
+    @Id
+    private int id;
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
+    @JoinTable(name = "ProductRepositoryAsHashMap_SkipListHolderClickbate",
+            joinColumns = {@JoinColumn(name = "ProductRepositoryAsHashMap_id", referencedColumnName = "id")},
+            inverseJoinColumns = {
+                    @JoinColumn(name = "store_id", referencedColumnName = "storeId")})
+    @MapKeyJoinColumn(name = "storeId")
+    private final Map<Integer/*storeId*/, SkipListHolderClickbate> storeProducts;
 
-    private final ConcurrentHashMap<Integer/*storeId*/, ConcurrentSkipListSet<Product>> storeProducts;
     private final AtomicInteger productIdCounter = new AtomicInteger(0);
 
     public ProductRepositoryAsHashMap() {
@@ -19,7 +28,7 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
 
     @Override
     public Optional<Set<Product>> getStoreProducts(int storeId) {
-        return Optional.ofNullable(storeProducts.get(storeId));
+        return storeProducts.get(storeId).getStoreProducts();
     }
 
     @Override
@@ -32,7 +41,7 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
   
     public synchronized Product addProduct(int storeId, String name, String category, double price, int stockQuantity, String description) {
         if (!storeProducts.containsKey(storeId))
-            storeProducts.put(storeId, new ConcurrentSkipListSet<>(Comparator.comparingInt(Product::getProductId)));
+            storeProducts.put(storeId, new SkipListHolderClickbate());
         int productId = productIdCounter.getAndIncrement();
         Product product=new Product(productId, storeId, name, category, price, stockQuantity, description);
         storeProducts.get(storeId).add(product);
@@ -52,7 +61,7 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
 
     @Override
     public Product getProductById(int productId) {
-        return storeProducts.values().stream().flatMap(Set::stream).filter(product -> product.getProductId() == productId).
+        return storeProducts.values().stream().flatMap(SkipListHolderClickbate::stream).filter(product -> product.getProductId() == productId).
                 findFirst().orElseThrow(
                         () -> new IllegalArgumentException("Product " + productId + " not found")
                 );
@@ -80,7 +89,7 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
     public List<Product> getProductByName(String name) {
         List<Product> products = new LinkedList<>();
         storeProducts.forEach((key, value) -> {
-            for (Product product : value) {
+            for (Product product : value.getStoreProducts().orElse(new ConcurrentSkipListSet<>(Comparator.comparingInt(Product::getProductId)))) {
                 if (product.getName().toLowerCase().contains(name.toLowerCase())) {
                     products.add(product);
                 }
@@ -92,10 +101,10 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
     @Override
     public List<Product> getProductByCategory(String category) {
         List<Product> products = new LinkedList<>();
-        storeProducts.entrySet().forEach(entry -> {
-            Set<Product> storeProducts = entry.getValue();
-            for(Product product : storeProducts){
-                if(product.getCategory().toLowerCase().contains(category.toLowerCase())){
+        storeProducts.forEach((key, value) -> {
+            Set<Product> storeProducts = value.getStoreProducts().orElse(new ConcurrentSkipListSet<>(Comparator.comparingInt(Product::getProductId)));
+            for (Product product : storeProducts) {
+                if (product.getCategory().toLowerCase().contains(category.toLowerCase())) {
                     products.add(product);
                 }
             }
@@ -118,7 +127,7 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
     public List<Product> getProductByKeywords(List<String> keywords) {
         List<Product> products = new LinkedList<>();
         storeProducts.entrySet().forEach(entry -> {
-            Set<Product> storeProducts = entry.getValue();
+            Set<Product> storeProducts = entry.getValue().getStoreProducts().orElse(new ConcurrentSkipListSet<>(Comparator.comparingInt(Product::getProductId)));
             for(Product product : storeProducts){
                 if(checkIfContainsSomeKeywords(keywords, product.getDescription())){
                     products.add(product);
@@ -155,7 +164,7 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
     @Override
     public synchronized int addHiddenProduct(int storeId, String name, String category, double price, int stockQuantity, String description) {
         if (!storeProducts.containsKey(storeId))
-            storeProducts.put(storeId, new ConcurrentSkipListSet<>(Comparator.comparingInt(Product::getProductId)));
+            storeProducts.put(storeId, new SkipListHolderClickbate());
         int productId = productIdCounter.getAndIncrement();
         storeProducts.get(storeId).add(new Product(productId, storeId, name, category, price, stockQuantity, description, true));
         return productId;
