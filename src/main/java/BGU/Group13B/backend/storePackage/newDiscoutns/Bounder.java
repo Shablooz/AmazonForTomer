@@ -26,6 +26,10 @@ public class Bounder<T extends Comparable<T>> {
 
 
     public boolean inBounds(T n) {
+        if(upperBound instanceof Time && upperBound.compareTo(lowerBound) < 0){
+            //in [lowerBound, 23:59:59] or [00:00:00, upperBound]
+            return !(n.compareTo(lowerBound) < 0 && n.compareTo(upperBound) > 0);
+        }
         return !(n.compareTo(lowerBound) < 0 || (upperBound != null && n.compareTo(upperBound) > 0));
     }
 
