@@ -17,7 +17,7 @@ public class AuctionRepositoryAsHashMap implements IAuctionRepository {
     private final AbstractMap<Integer/*storeId*/, List<PublicAuction>> storeAuctions;
     private final AddToUserCart addToCart;
     ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-    private final ConcurrentHashMap<Pair<Integer, Integer>, Future<?>> scheduledFutureHashMap = new ConcurrentHashMap();
+    private final ConcurrentHashMap<Pair<Integer, Integer>, Future<?>> scheduledFutureHashMap = new ConcurrentHashMap<>();
 
     public AuctionRepositoryAsHashMap() {
         storeAuctions = new ConcurrentHashMap<>();

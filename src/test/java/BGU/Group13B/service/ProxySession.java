@@ -14,6 +14,7 @@ import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.StoreDisco
 import BGU.Group13B.service.entity.ReviewService;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
 import BGU.Group13B.service.entity.ServiceProduct;
+import BGU.Group13B.service.info.DiscountAccumulationTreeInfo;
 import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
 
@@ -413,6 +414,22 @@ public class ProxySession implements ISession {
         return Response.success(new VoidResponse());
     }
 
+    @Override
+    public Response<DiscountAccumulationTreeInfo> getDiscountAccumulationTree(int storeId, int userId) {
+        if (realSession != null)
+            return realSession.getDiscountAccumulationTree(storeId, userId);
+
+        return null;
+    }
+
+    @Override
+    public Response<VoidResponse> deleteStoreAccumulationTree(int storeId, int userId) {
+        if (realSession != null)
+            return realSession.deleteStoreAccumulationTree(storeId, userId);
+
+        return Response.success(new VoidResponse());
+    }
+
 
     @Override
     public Response<VoidResponse> purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount) {
@@ -491,14 +508,14 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public Response<List<ProductInfo>> filterByPriceRange(int minPrice, int maxPrice) {
+    public Response<List<ProductInfo>> filterByPriceRange(double minPrice, double maxPrice) {
         if (realSession != null)
             realSession.filterByPriceRange(minPrice, maxPrice);
         return null;
     }
 
     @Override
-    public Response<List<ProductInfo>> filterByProductRank(int minRating, int maxRating) {
+    public Response<List<ProductInfo>> filterByProductRank(double minRating, double maxRating) {
         if (realSession != null)
             realSession.filterByProductRank(minRating, maxRating);
         return null;
@@ -512,7 +529,7 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public Response<List<ProductInfo>> filterByStoreRank(int minRating, int maxRating) {
+    public Response<List<ProductInfo>> filterByStoreRank(double minRating, double maxRating) {
         if (realSession != null)
             realSession.filterByStoreRank(minRating, maxRating);
         return null;

@@ -13,6 +13,7 @@ import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.service.entity.ReviewService;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
 import BGU.Group13B.service.entity.ServiceProduct;
+import BGU.Group13B.service.info.DiscountAccumulationTreeInfo;
 import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
 import org.springframework.stereotype.Service;
@@ -239,7 +240,7 @@ public class Session implements ISession {
     }
 
     @Override
-    public Response<List<ProductInfo>> filterByPriceRange(int minPrice, int maxPrice) {
+    public Response<List<ProductInfo>> filterByPriceRange(double minPrice, double maxPrice) {
         try {
             return Response.success(market.filterByPriceRange(minPrice, maxPrice));
         } catch (Exception e) {
@@ -248,7 +249,7 @@ public class Session implements ISession {
     }
 
     @Override
-    public Response<List<ProductInfo>> filterByProductRank(int minRating, int maxRating) {
+    public Response<List<ProductInfo>> filterByProductRank(double minRating, double maxRating) {
         try {
             return Response.success(market.filterByProductRank(minRating, maxRating));
         } catch (Exception e) {
@@ -266,7 +267,7 @@ public class Session implements ISession {
     }
 
     @Override
-    public Response<List<ProductInfo>> filterByStoreRank(int minRating, int maxRating) {
+    public Response<List<ProductInfo>> filterByStoreRank(double minRating, double maxRating) {
         try {
             return Response.success(market.filterByStoreRank(minRating, maxRating));
         } catch (Exception e) {
@@ -1318,7 +1319,7 @@ public class Session implements ISession {
     @Override
     public Response<List<DiscountInfo>> getStoreDiscounts(int storeId, int userId) {
         try {
-            return Response.success(market.getStoreDiscounts(storeId, userId).stream().map(d -> new DiscountInfo(d.toString())).collect(Collectors.toList()));
+            return Response.success(market.getStoreDiscounts(storeId, userId).stream().map(d -> new DiscountInfo(d.getDiscountId(), d.toString())).collect(Collectors.toList()));
         } catch (Exception e) {
             return Response.exception(e);
         }
@@ -1328,7 +1329,7 @@ public class Session implements ISession {
     public Response<DiscountInfo> getDiscount(int storeId, int userId, int discountId) {
         try {
             var discount = market.getDiscount(storeId, userId, discountId);
-            return Response.success(new DiscountInfo(discount.toString()));
+            return Response.success(new DiscountInfo(discountId, discount.toString()));
         } catch (Exception e) {
             return Response.exception(e);
         }
@@ -1378,6 +1379,25 @@ public class Session implements ISession {
     public Response<VoidResponse> addDiscountToADDRoot(int storeId, int userId, int discountId) {
         try {
             market.addDiscountToADDRoot(storeId, userId, discountId);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<DiscountAccumulationTreeInfo> getDiscountAccumulationTree(int storeId, int userId) {
+        try{
+            return Response.success(market.getDiscountAccumulationTree(storeId, userId));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<VoidResponse> deleteStoreAccumulationTree(int storeId, int userId) {
+        try {
+            market.deleteStoreAccumulationTree(storeId, userId);
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);

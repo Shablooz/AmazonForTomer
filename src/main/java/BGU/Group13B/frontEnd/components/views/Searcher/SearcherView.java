@@ -4,7 +4,6 @@ import BGU.Group13B.frontEnd.components.views.MainLayout;
 import BGU.Group13B.frontEnd.components.views.ProductView;
 import BGU.Group13B.service.Response;
 import BGU.Group13B.service.Session;
-import BGU.Group13B.service.entity.ReviewService;
 import BGU.Group13B.service.info.ProductInfo;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -27,13 +26,12 @@ import static BGU.Group13B.frontEnd.components.views.Searcher.Searcher.searchBut
 public class SearcherView extends VerticalLayout implements HasUrlParameter<String>{
     private Session session;
     private String searchTerm="";
-    private Grid<ProductInfo> productGrid;
-
+    public static Grid<ProductInfo> productGrid;
+    private FilterView filterComponent;
 
     @Autowired
     public SearcherView(Session session) {
         this.session = session;
-        productGrid = new Grid<>();
     }
 
     @Override
@@ -43,6 +41,30 @@ public class SearcherView extends VerticalLayout implements HasUrlParameter<Stri
     }
 
     public void start() {
+       // reset();
+        createFilterComponent();
+        getProductGrid();
+    }
+
+    public void reset() {
+        if(productGrid!=null)
+            remove(productGrid);
+        if(filterComponent!=null)
+            remove(filterComponent);
+    }
+
+    private void createFilterComponent() {
+        if (filterComponent != null) {
+            remove(productGrid); // Remove the productGrid component first
+            remove(filterComponent);
+        }
+        filterComponent = new FilterView(session);
+        filterComponent.setWidth("50%");
+        add(filterComponent);
+    }
+
+    public void getProductGrid() {
+        productGrid = new Grid<>();
         getProductGrid();
     }
 
@@ -50,7 +72,8 @@ public class SearcherView extends VerticalLayout implements HasUrlParameter<Stri
         remove(productGrid);
         productGrid = new Grid<>();
         Response<List<ProductInfo>> productsInfo= session.search(searchTerm);
-        productGrid.setItems(productsInfo.getData());
+        Grid<ProductInfo> productGrid = new Grid<>();
+        productGrid.setItems(productsInfo.getData()); // products is a List<Product> containing the products to be displayed
         productGrid.addColumn(ProductInfo::name).setHeader("Name");
         productGrid.addColumn(ProductInfo::category).setHeader("Category");
         productGrid.addColumn(ProductInfo::description).setHeader("Description");
@@ -60,6 +83,7 @@ public class SearcherView extends VerticalLayout implements HasUrlParameter<Stri
         productGrid.addItemClickListener(event -> {
             ProductInfo clickedProduct = event.getItem();
             //navigate to product page
+            //getUI().ifPresent(ui -> ui.navigate("product/" + clickedProduct.productId() + "/" + clickedProduct.storeId()));
             getUI().ifPresent(ui ->  ui.navigate(ProductView.class, clickedProduct.productId() + "/" + clickedProduct.storeId()));
         });
         add(productGrid);
