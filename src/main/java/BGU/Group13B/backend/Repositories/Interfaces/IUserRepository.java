@@ -24,4 +24,6 @@ public interface IUserRepository {
 
     //TODO in the future this will be replaced with taking a user by username in the database - tomer use this method
     User getUserByUsername(String username);
+
+    int getUserIdByUsername(String username);
 }

@@ -4,6 +4,7 @@ import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.User.PurchaseFailedException;
 import BGU.Group13B.backend.User.PurchaseHistory;
+import BGU.Group13B.backend.User.UserPermissions;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.storePackage.Review;
@@ -409,6 +410,38 @@ public class ProxySession implements ISession {
             return realSession.addDiscountToADDRoot(storeId, userId, discountId);
 
         return Response.success(new VoidResponse());
+    }
+
+    @Override
+    public List<Integer> getStoreOwners(int storeId) {
+        if (realSession != null)
+            return realSession.getStoreOwners(storeId);
+
+        return null;
+    }
+
+    @Override
+    public Response<VoidResponse> addIndividualPermission(int userId, int managerId, int storeId, UserPermissions.IndividualPermission individualPermission) {
+        if (realSession != null)
+            return realSession.addIndividualPermission(userId, managerId, storeId, individualPermission);
+
+        return Response.success(new VoidResponse());
+    }
+
+    @Override
+    public Response<VoidResponse> removeIndividualPermission(int userId, int managerId, int storeId, UserPermissions.IndividualPermission individualPermission) {
+        if (realSession != null)
+            return realSession.removeIndividualPermission(userId, managerId, storeId, individualPermission);
+
+        return Response.success(new VoidResponse());
+    }
+
+    @Override
+    public Response<Integer> getUserIdByUsername(String userName) {
+        if (realSession != null)
+            return realSession.getUserIdByUsername(userName);
+
+        return null;
     }
 
 

@@ -5,6 +5,7 @@ import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.User.PurchaseFailedException;
 import BGU.Group13B.backend.User.PurchaseHistory;
+import BGU.Group13B.backend.User.UserPermissions;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.backend.storePackage.WorkerCard;
@@ -972,4 +973,12 @@ public interface ISession {
 
 
     Response<VoidResponse> addDiscountToADDRoot(int storeId, int userId, int discountId)  ;
+
+    List<Integer> getStoreOwners(int storeId);
+
+    Response<VoidResponse> addIndividualPermission(int userId, int managerId, int storeId, UserPermissions.IndividualPermission individualPermission);
+
+    Response<VoidResponse> removeIndividualPermission(int userId, int managerId, int storeId, UserPermissions.IndividualPermission individualPermission);
+
+    Response<Integer> getUserIdByUsername(String userName);
 }

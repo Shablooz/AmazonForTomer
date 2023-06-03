@@ -1361,6 +1361,7 @@ public class Session implements ISession {
         }
     }
 
+    @Override
     public List<Integer> getStoreOwners(int storeId) {
         try {
             return market.getStoreOwners(storeId);
@@ -1370,7 +1371,7 @@ public class Session implements ISession {
         }
     }
 
-
+    @Override
     public Response<VoidResponse> addIndividualPermission(int userId, int managerId, int storeId, UserPermissions.IndividualPermission individualPermission) {
         try {
             market.addIndividualPermission(userId, managerId, storeId, individualPermission);
@@ -1380,11 +1381,21 @@ public class Session implements ISession {
         }
     }
 
+    @Override
     public Response<VoidResponse> removeIndividualPermission(int userId, int managerId, int storeId, UserPermissions.IndividualPermission individualPermission) {
         try {
             market.removeIndividualPermission(userId, managerId, storeId, individualPermission);
             return Response.success(new VoidResponse());
         } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> getUserIdByUsername(String username) {
+        try{
+            return Response.success(userRepository.getUserIdByUsername(username));
+        } catch (Exception e){
             return Response.exception(e);
         }
     }

@@ -82,4 +82,13 @@ public class UserRepositoryAsHashmap implements IUserRepository {
         return null;
     }
 
+    @Override
+    public int getUserIdByUsername(String username) {
+        User user = getUserByUsername(username);
+        if(user == null)
+            throw new IllegalArgumentException("cannot find user with this username");
+
+        return getUserId(user);
+    }
+
 }
