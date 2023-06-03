@@ -3,6 +3,7 @@ package BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.productDi
 import BGU.Group13B.backend.User.BasketInfo;
 import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.ProductDiscountMap;
+import BGU.Group13B.service.info.DiscountAccumulationTreeInfo;
 
 import java.util.List;
 
@@ -10,4 +11,6 @@ public interface DiscountAccumulationNode {
 
     ProductDiscountMap computeProductDiscountMap(BasketInfo basketInfo, UserInfo userInfo, List<String> coupons);
     int getDiscountNodeId();
+
+    DiscountAccumulationTreeInfo getInfo();
 }

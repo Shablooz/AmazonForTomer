@@ -5,6 +5,8 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 
+import java.util.Optional;
+
 public interface ResponseHandler {
 
     /**
@@ -33,6 +35,19 @@ public interface ResponseHandler {
             return null;
         }
         return response.getData();
+    }
+
+    /**
+     * Handles a response from service, without navigating in case of failure.
+     * @param response              the response to handle
+     * @return                      the data as optional
+     */
+    default <T> Optional<T> handleOptionalResponse(Response<T> response) {
+        if (response.didntSucceed()) {
+            notifyError("Error: " + response.getMessage());
+            return Optional.empty();
+        }
+        return Optional.of(response.getData());
     }
 
     /**

@@ -14,6 +14,7 @@ import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyE
 import BGU.Group13B.service.BroadCaster;
 import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.AddToUserCart;
+import BGU.Group13B.service.info.DiscountAccumulationTreeInfo;
 import BGU.Group13B.service.info.StoreInfo;
 
 
@@ -392,8 +393,14 @@ public class Store {
          * */
         Set<Integer> userIds = this.storePermission.getAllUsersWithPermission(Store.getCurrentMethodName());
         for (Integer id : userIds) {//wait for the interface in AlertManager.java to finish
-            alertManager.sendAlert(id, "User " + userId + " has submitted a purchase proposal for product " + productId + " in store " + this.storeId);
-            //fixme!!!!!!!!!
+            //alertManager.sendAlert(id, "User " + userId + " has submitted a purchase proposal for product " + productId + " in store " + this.storeId);
+            double originalPrice = productRepository.getProductById(productId).getPrice();
+            BroadCaster.broadcast(id,
+                    "BID["+storeId+","+productId+"]User has submitted a purchase proposal for product " + productId +
+                    "\n In store " + this.storeName +
+                            "\nOriginal price: " + originalPrice +
+                            "\nProposed price: " + proposedPrice +
+                            "\nAmount: " + amount + "\n");
         }
     }
 
@@ -410,11 +417,17 @@ public class Store {
                 orElseThrow(() -> new IllegalArgumentException("There is no such bid for store " + this.storeId));
 
         if (currentBid.isRejected())//fixme, use BroadCaster.broadcast
-            alertManager.sendAlert(managerId, "The bid for product " + currentBid.getProductId() + " in store " + this.storeId + " has been rejected already");
+            BroadCaster.broadcast(managerId,
+                    "The bid for product " + productRepository.getProductById(currentBid.getProductId()).getName()
+                            + " has been rejected already");
+            //alertManager.sendAlert(managerId, "The bid for product " + currentBid.getProductId() + " in store " + this.storeId + " has been rejected already");
         currentBid.approve(managerId);
         Set<Integer> managers = storePermission.getAllUsersWithPermission("purchaseProposalSubmit");
 
         if (currentBid.approvedByAll(managers)) {
+            BroadCaster.broadcast(currentBid.getUserId(),
+                    "Your bid for product " + productRepository.getProductById(currentBid.getProductId()).getName()
+                            + " in store " + this.storeName + " approved!, the item added to your cart");
             addToUserCart.apply(currentBid.getUserId(), storeId, currentBid.getProductId());
             //todo send alert to the user that his bid has been approved
         }
@@ -430,6 +443,11 @@ public class Store {
         if (!this.storePermission.checkPermission(managerId, hidden))//the user should be loggedIn with permissions
             throw new NoPermissionException("User " + managerId + " has no permission to reject a purchase proposal in the store: " + this.storeId);
         BID currentBid = bidRepository.getBID(bidId).orElseThrow(() -> new IllegalArgumentException("There is no such bid for store " + this.storeId));
+        if (currentBid.isRejected())
+            BroadCaster.broadcast(managerId,
+                "The bid for product " + productRepository.getProductById(currentBid.getProductId()).getName()
+                        + " has been rejected already");
+
         currentBid.reject();//good for concurrency edge cases
         bidRepository.removeBID(bidId);
         //todo send alert to the user that his bid has been rejected
@@ -1109,4 +1127,21 @@ public class Store {
 
     }
 
+    @DefaultFounderFunctionality
+    @DefaultOwnerFunctionality
+    @PoliciesPermission
+    public DiscountAccumulationTreeInfo getDiscountAccumulationTree(int userId) throws NoPermissionException {
+        if(!this.storePermission.checkPermission(userId, hidden))
+            throw new NoPermissionException("User " + userId + " has no permission to get discount accumulation tree in the store: " + this.storeId);
+        return discountPolicy.getDiscountAccumulationTree();
+    }
+
+    @DefaultFounderFunctionality
+    @DefaultOwnerFunctionality
+    @PoliciesPermission
+    public void deleteStoreAccumulationTree(int userId) throws NoPermissionException {
+        if(!this.storePermission.checkPermission(userId, hidden))
+            throw new NoPermissionException("User " + userId + " has no permission to delete discount accumulation tree in the store: " + this.storeId);
+        discountPolicy.deleteStoreAccumulationTree();
+    }
 }

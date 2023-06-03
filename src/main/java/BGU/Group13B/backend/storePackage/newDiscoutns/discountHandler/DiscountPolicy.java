@@ -8,8 +8,11 @@ import BGU.Group13B.backend.Repositories.Interfaces.IStoreDiscountRootsRepositor
 import BGU.Group13B.backend.User.BasketInfo;
 import BGU.Group13B.backend.User.UserInfo;
 
+import BGU.Group13B.backend.storePackage.newDiscoutns.DiscountInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.productDisountTree.*;
+import BGU.Group13B.frontEnd.components.views.ManageDiscountsView;
 import BGU.Group13B.service.SingletonCollection;
+import BGU.Group13B.service.info.DiscountAccumulationTreeInfo;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -184,16 +187,25 @@ public class DiscountPolicy {
                         }).
                 sum();
     }
-
-
-    public static void main(String[] args) {
-    }
-
     public void removeAllDiscounts() {
         discountRepository.removeAllStoreDiscounts(storeId);
     }
 
     public void removeProductDiscount(int productId){
         discountRepository.removeStoreProductDiscounts(storeId, productId);
+    }
+
+    public DiscountAccumulationTreeInfo getDiscountAccumulationTree() {
+        if(discountAccumulationTree == null)
+            return new DiscountAccumulationTreeInfo(List.of(), List.of());
+        return discountAccumulationTree.getInfo();
+    }
+
+    public void deleteStoreAccumulationTree() {
+        if(discountAccumulationTree == null)
+            return;
+
+        discountRootsRepository.removeStoreDiscountRoot(storeId);
+        discountAccumulationTree = null;
     }
 }

@@ -51,7 +51,7 @@ public class SessionToIdMapper {
         return this.sessionToId.get(VaadinSession.getCurrent().getSession().getId()).getFirst();
     }
 
-    public synchronized TimerTask kickExpired() {
+    /*public synchronized TimerTask kickExpired() {
         TimerTask task = new TimerTask() {
             public void run() {
                 for (String key : sessionToId.keySet()) {
@@ -64,11 +64,11 @@ public class SessionToIdMapper {
     }
 
 
-    public synchronized boolean isSessionExpired() {
+    private synchronized boolean isSessionExpired() {
         // Get the current Vaadin session
         VaadinSession session = VaadinSession.getCurrent();
         return session == null || session.getState() == VaadinSessionState.CLOSED;
-    }
+    }*/
 
     public synchronized boolean containsKey(String sessionId) {
         return this.sessionToId.containsKey(sessionId);
