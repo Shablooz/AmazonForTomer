@@ -6,7 +6,10 @@ import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.Bounder;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
+import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
+import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.LogicalConditions.LogicalConditionEntity;
 import BGU.Group13B.service.SingletonCollection;
+import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.leaves.ProductQuantityConditionEntity;
 
 public class ProductQuantityCondition extends Condition {
     private final int productId;
@@ -39,6 +42,15 @@ public class ProductQuantityCondition extends Condition {
         if((product == null && quantityBounder.getLowerBound() > 0)
                 || !quantityBounder.inBounds(product.getQuantity()))
             throw new PurchaseExceedsPolicyException(productName + " quantity must be " + quantityBounder);
+    }
+
+    @Override
+    public ConditionEntity convertToUiEntity(LogicalConditionEntity parent) {
+        String productName = SingletonCollection.getProductRepository().getProductById(productId).getName();
+        if(quantityBounder.hasUpperBound()){
+            return new ProductQuantityConditionEntity(productId, productName, parent, quantityBounder.getLowerBound(), quantityBounder.getUpperBound());
+        }
+        return new ProductQuantityConditionEntity(productId, productName, parent, quantityBounder.getLowerBound());
     }
 
     public String toString(){

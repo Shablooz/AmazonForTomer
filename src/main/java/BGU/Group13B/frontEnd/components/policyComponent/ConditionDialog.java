@@ -66,9 +66,6 @@ public class ConditionDialog extends Dialog {
     public ConditionDialog(ConditionTreeGrid conditionTreeGrid, ConditionEntity conditionEntity, Session session, int storeId, ConditionEntity plusToDelete) {
         this.conditionTreeGrid = conditionTreeGrid;
 
-        //can't close dialog
-        setCloseOnEsc(false);
-        setCloseOnOutsideClick(false);
         hideAllFields();
         showRelevantLowerBound(conditionEntity);
         revealUpperBoundBtn.addClickListener(event -> {

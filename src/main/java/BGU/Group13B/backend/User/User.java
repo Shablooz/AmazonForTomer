@@ -346,7 +346,7 @@ public class User {
     }
 
     public List<Review> getAllReviews(int storeId, int productId, int userId) throws NoPermissionException {
-        return market.getAllReviews(storeId, productId);
+        return market.getAllReviews(productId, storeId);
     }
 
     //#26

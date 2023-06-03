@@ -46,4 +46,13 @@ public class PurchasePolicy {
         if(condition != null)
             condition.satisfied(basketInfo, userInfo);
     }
+
+    public Condition getRootCondition() {
+        return condition;
+    }
+
+    public void resetPurchasePolicy() {
+        this.condition = null;
+        this.purchasePolicyRootsRepository.removePurchasePolicyRoot(storeId);
+    }
 }

@@ -67,7 +67,7 @@ public class MyStoresView extends VerticalLayout implements BeforeEnterObserver 
             }
             rolesToStores.get(pair.getSecond()).add(pair.getFirst());
         }
-        String[] roles = {"FOUNDER", "OWNER", "MANGER"};
+        String[] roles = {"FOUNDER", "OWNER", "MANAGER"};
         for (String role : roles) {
 
             var grid = new Grid<StoreInfo>();

@@ -4,10 +4,12 @@ import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.User.PurchaseFailedException;
 import BGU.Group13B.backend.User.PurchaseHistory;
+import BGU.Group13B.backend.User.UserPermissions;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.backend.System.SystemInfo;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.WorkerCard;
+import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.newDiscoutns.DiscountInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.StoreDiscount;
@@ -103,7 +105,7 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public List<WorkerCard> getStoreWorkersInfo(int userId, int storeId) {
+    public Response<List<WorkerCard>> getStoreWorkersInfo(int userId, int storeId) {
         if (realSession != null)
             return realSession.getStoreWorkersInfo(userId, storeId);
         return null;
@@ -425,6 +427,78 @@ public class ProxySession implements ISession {
     public Response<VoidResponse> deleteStoreAccumulationTree(int storeId, int userId) {
         if (realSession != null)
             return realSession.deleteStoreAccumulationTree(storeId, userId);
+
+        return Response.success(new VoidResponse());
+    }
+
+    @Override
+    public List<Integer> getStoreOwners(int storeId) {
+        if (realSession != null)
+            return realSession.getStoreOwners(storeId);
+
+        return null;
+    }
+
+    @Override
+    public Response<VoidResponse> addIndividualPermission(int userId, int managerId, int storeId, UserPermissions.IndividualPermission individualPermission) {
+        if (realSession != null)
+            return realSession.addIndividualPermission(userId, managerId, storeId, individualPermission);
+
+        return Response.success(new VoidResponse());
+    }
+
+    @Override
+    public Response<VoidResponse> removeIndividualPermission(int userId, int managerId, int storeId, UserPermissions.IndividualPermission individualPermission) {
+        if (realSession != null)
+            return realSession.removeIndividualPermission(userId, managerId, storeId, individualPermission);
+
+        return Response.success(new VoidResponse());
+    }
+
+    @Override
+    public Response<Integer> getUserIdByUsername(String userName) {
+        if (realSession != null)
+            return realSession.getUserIdByUsername(userName);
+
+        return null;
+    }
+
+    @Override
+    public Response<HashMap<Integer, String>> getUserIdsToUsernamesMapper(List<Integer> userIds) {
+        if (realSession != null)
+            return realSession.getUserIdsToUsernamesMapper(userIds);
+
+        return null;
+    }
+
+    @Override
+    public Response<Boolean> isStoreHidden(int storeId) {
+        if (realSession != null)
+            return realSession.isStoreHidden(storeId);
+
+        return null;
+    }
+
+    @Override
+    public Response<Boolean> isAdmin(int userId) {
+        if (realSession != null)
+            return realSession.isAdmin(userId);
+
+        return null;
+    }
+
+    @Override
+    public Response<Condition> getStorePurchasePolicy(int storeId, int userId) {
+        if (realSession != null)
+            return realSession.getStorePurchasePolicy(storeId, userId);
+
+        return null;
+    }
+
+    @Override
+    public Response<VoidResponse> resetStorePurchasePolicy(int storeId, int userId) {
+        if (realSession != null)
+            return realSession.resetStorePurchasePolicy(storeId, userId);
 
         return Response.success(new VoidResponse());
     }
