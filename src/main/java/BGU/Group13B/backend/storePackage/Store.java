@@ -380,7 +380,7 @@ public class Store {
          * check if the user has permission to purchase proposal
          * */
         if (!this.storePermission.checkPermission(userId, hidden))//the user should be loggedIn with permissions
-            throw new NoPermissionException("User " + userId + " has no permission to add bid " + this.storeId);
+            throw new NoPermissionException("User " + userId + " has no permission to add product to store " + this.storeId);
 
         if (amount <= 0)
             throw new IllegalArgumentException("Amount must be positive");

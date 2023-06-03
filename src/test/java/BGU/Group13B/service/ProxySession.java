@@ -495,6 +495,14 @@ public class ProxySession implements ISession {
         return null;
     }
 
+    @Override
+    public Response<VoidResponse> resetStorePurchasePolicy(int storeId, int userId) {
+        if (realSession != null)
+            return realSession.resetStorePurchasePolicy(storeId, userId);
+
+        return Response.success(new VoidResponse());
+    }
+
 
     @Override
     public void purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount) {

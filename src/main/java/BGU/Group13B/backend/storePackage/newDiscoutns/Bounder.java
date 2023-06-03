@@ -1,6 +1,8 @@
 package BGU.Group13B.backend.storePackage.newDiscoutns;
 
 
+import BGU.Group13B.backend.storePackage.newDiscoutns.bounderCondition.time.Time;
+
 public class Bounder<T extends Comparable<T>> {
 
 
@@ -9,7 +11,7 @@ public class Bounder<T extends Comparable<T>> {
 
 
     public Bounder(T lowerBound, T upperBound) {
-        if (upperBound.compareTo(lowerBound) < 0)
+        if (!(upperBound instanceof Time) && upperBound.compareTo(lowerBound) < 0)
             throw new RuntimeException("upper bound can't be less than lower bound");
 
 
