@@ -105,19 +105,22 @@ public class ProductView extends VerticalLayout implements HasUrlParameter<Strin
 
     private void offerBidDialog(Dialog dialog)
     {
+        dialog.setHeaderTitle("Offer Bid");
         Button exit = new Button();
         exit.setIcon(new Icon(VaadinIcon.CLOSE));
         exit.addClickListener(event -> dialog.close());
         dialog.getHeader().add(exit);
         FormLayout form = new FormLayout();
-        TextField price = new TextField("Price");
+        NumberField price = new NumberField("Price");
+        price.setPlaceholder("Enter price...");
         TextField quantity = new TextField("Quantity");
+        quantity.setPlaceholder("Enter quantity...");
         form.add(price, quantity);
         dialog.add(form);
         Button submit = new Button("Submit");
         submit.addClickListener(event -> {
             Response<VoidResponse> response = session.purchaseProposalSubmit
-                    (userId, storeId, productId, Integer.parseInt(price.getValue()), Integer.parseInt(quantity.getValue()));
+                    (userId, storeId, productId, price.getValue(), Integer.parseInt(quantity.getValue()));
             if (response.didntSucceed()) {
                 Notification.show(response.getMessage());
             } else {

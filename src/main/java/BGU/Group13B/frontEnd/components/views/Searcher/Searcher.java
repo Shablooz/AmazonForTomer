@@ -1,27 +1,16 @@
 package BGU.Group13B.frontEnd.components.views.Searcher;
 
-import BGU.Group13B.service.Session;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasSize;
-import com.vaadin.flow.component.HasStyle;
-import com.vaadin.flow.component.Tag;
+import BGU.Group13B.service.info.ProductInfo;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dependency.JsModule;
-import com.vaadin.flow.component.dependency.NpmPackage;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.router.QueryParameters;
-
-import java.util.HashMap;
-
-import static org.apache.el.lang.ELArithmetic.add;
-
 
 public class Searcher extends HorizontalLayout{
     private TextField searchField;
-    private Button searchButton;
+    public static Button searchButton;
 
     public Searcher() {
         searchField = new TextField();
