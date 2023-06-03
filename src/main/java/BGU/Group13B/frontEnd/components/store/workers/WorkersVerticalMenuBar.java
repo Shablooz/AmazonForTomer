@@ -41,12 +41,14 @@ public class WorkersVerticalMenuBar extends VerticalLayout implements ResponseHa
                 if(handleResponse(session.removeManager(userId, worker.userId(), storeId)) != null){
                     workers.remove(workerMenuBar.getWorkerCard());
                     remove(workerMenuBar);
+                    notifySuccess("Manager removed successfully");
                 }
             }
             case OWNER -> {
                 if(handleResponse(session.removeOwner(userId, worker.userId(), storeId)) != null){
                     workers.remove(workerMenuBar.getWorkerCard());
                     remove(workerMenuBar);
+                    notifySuccess("Owner removed successfully");
                 }
             }
             case FOUNDER -> notifyWarning("Cannot remove founder");

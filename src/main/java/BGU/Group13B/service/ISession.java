@@ -990,8 +990,6 @@ public interface ISession {
 
     Response<VoidResponse> deleteStoreAccumulationTree(int storeId, int userId);
 
-    Response<VoidResponse> addDiscountToADDRoot(int storeId, int userId, int discountId)  ;
-
     List<Integer> getStoreOwners(int storeId);
 
     Response<VoidResponse> addIndividualPermission(int userId, int managerId, int storeId, UserPermissions.IndividualPermission individualPermission);

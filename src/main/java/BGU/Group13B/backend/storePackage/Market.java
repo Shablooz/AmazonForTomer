@@ -258,6 +258,7 @@ public class Market {
 
     public void deleteStore(int userId, int storeId) throws NoPermissionException {
         storeRepository.getStore(storeId).deleteStore(userId);
+        storeRepository.removeStore(storeId);
     }
 
     public List<PurchaseHistory> getStorePurchaseHistory(int userId, int storeId) throws NoPermissionException {

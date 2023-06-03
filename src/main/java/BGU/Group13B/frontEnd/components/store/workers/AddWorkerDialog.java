@@ -49,6 +49,7 @@ public class AddWorkerDialog extends Dialog implements ResponseHandler {
                         return;
                     }
                     storeWorkersLayout.addWorkerGUI(newUserId, workerName.getValue());
+                    close();
                 }
                 case Manager -> {
                     Integer newUserId = handleResponse(session.getUserIdByUsername(workerName.getValue()));
@@ -58,6 +59,7 @@ public class AddWorkerDialog extends Dialog implements ResponseHandler {
                         return;
                     }
                     storeWorkersLayout.addWorkerGUI(newUserId, workerName.getValue());
+                    close();
                 }
 
 
