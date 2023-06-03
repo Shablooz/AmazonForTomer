@@ -1,5 +1,6 @@
 package BGU.Group13B.frontEnd.components.views;
 
+import BGU.Group13B.frontEnd.ResponseHandler;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.service.Response;
 import BGU.Group13B.service.SingletonCollection;
@@ -22,12 +23,13 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Route(value = "cart", layout = MainLayout.class)
 @PageTitle("Cart")
 
-public class CartView extends Div {
+public class CartView extends Div implements ResponseHandler {
     private final Session session;
     private final GridPro<ServiceBasketProduct> cartItemsGrid;
     private final Button purchaseItemsButton = new Button("Purchase Items");
@@ -57,13 +59,20 @@ public class CartView extends Div {
 
     private Component purchaseItemsButton() {
         totalPrice.setReadOnly(true);
-        purchaseItemsButton.addClickListener(buttonClickEvent -> UI.getCurrent().navigate("payment"));
+        purchaseItemsButton.addClickListener(buttonClickEvent -> {
+            var cartItems = session.getCartContent(SessionToIdMapper.getInstance().getCurrentSessionId());
+            if(handleOptionalResponse(cartItems).orElse(new ArrayList<>()).isEmpty()){
+                Notification.show("Please select items to purchase");
+                return;
+            }
+            UI.getCurrent().navigate("payment");
+        });
         return purchaseItemsButton;
     }
 
     private void setItemsToGrid(GridPro<ServiceBasketProduct> cartItemsGrid) {
 
-        createItemsForDevelopment();//delete me
+        //createItemsForDevelopment();//delete me
         //fixme: change to sessionId
         Response<List<ServiceBasketProduct>> serviceProductsResponse = session.getCartContent(SessionToIdMapper.getInstance().getCurrentSessionId());
         if (serviceProductsResponse.getStatus() == Response.Status.SUCCESS) {
