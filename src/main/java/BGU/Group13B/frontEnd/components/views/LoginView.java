@@ -1,7 +1,9 @@
 package BGU.Group13B.frontEnd.components.views;
 
+import BGU.Group13B.backend.storePackage.WorkerCard;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.service.BroadCaster;
+import BGU.Group13B.service.Response;
 import BGU.Group13B.service.Session;
 import BGU.Group13B.service.SingletonCollection;
 import com.vaadin.flow.component.Html;
@@ -35,13 +37,14 @@ import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY_INLIN
 @Tag("login-view")
 @Route(value = "login", layout = MainLayout.class)
 @PageTitle("Login")
-public class LoginView extends VerticalLayout implements BeforeEnterObserver {
+public class LoginView extends VerticalLayout implements BeforeEnterObserver{
 
     private final TextField username = new TextField("Username");
 
     private final PasswordField password = new PasswordField("Password");
     private final Button loginButton = new Button("Login");
     private final Button registerButton = new Button("Register");
+
 
     private final Button authenticate = new Button("authenticate");
 
@@ -69,6 +72,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
         setLoginButton(session, guestId);
 
         setregisterButton();
+
 
         FormLayout formLayout = new FormLayout();
         formLayout.add(username, password);
@@ -108,7 +112,6 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
 
 
                 session.fetchMessages(newId);
-
             } catch (Exception ex) {
                 Notification.show("Login failed");
             }
@@ -122,6 +125,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
             UI.getCurrent().navigate(RegisterView.class);
         });
     }
+
 
     private void hideNoneNeededAuthentication(Session session) {
         if (SingletonCollection.getUserRepository().checkIfUserExists(username.getValue()) == null)
@@ -151,7 +155,6 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
                 SessionToIdMapper.getInstance().updateCurrentSession(newId);
                 // SessionToIdMapper.getInstance().setRefreshRequired(true);
                 UI.getCurrent().navigate(HomeView.class);
-
                 var ui = UI.getCurrent();
                 //Tomer section
                 BroadCaster.register(newId, newMessage -> {

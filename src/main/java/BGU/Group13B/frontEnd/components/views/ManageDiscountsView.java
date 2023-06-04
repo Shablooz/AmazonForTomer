@@ -13,15 +13,14 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.BeforeEvent;
-import com.vaadin.flow.router.HasUrlParameter;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 
 import java.util.List;
 
 
 @Route(value = "manageDiscounts", layout = MainLayout.class)
-public class ManageDiscountsView extends VerticalLayout implements HasUrlParameter<Integer>, ResponseHandler {
+public class ManageDiscountsView extends VerticalLayout implements HasUrlParameter<Integer>, PolicyView {
+
 
     public enum Operator {
         ADD,
@@ -47,6 +46,11 @@ public class ManageDiscountsView extends VerticalLayout implements HasUrlParamet
 
     }
     private void start() {
+        if(!hasAccess(session, storeId)){
+            notifyWarning("You don't have permission to manage discounts in this store");
+            navigate("store/" + storeId);
+            return;
+        }
         userId = SessionToIdMapper.getInstance().getCurrentSessionId();
         plusBtn = new Button("add discount to root", new Icon(VaadinIcon.PLUS));
         discountTreeGrid = new DiscountTreeGrid();
@@ -86,6 +90,8 @@ public class ManageDiscountsView extends VerticalLayout implements HasUrlParamet
         discountTreeGrid.reset();
 
         var res = handleResponse(session.getDiscountAccumulationTree(storeId, userId), "store/" + storeId);
+        if(res == null)
+            return;
         List<Operator> operators = res.operators();
         List<DiscountInfo> discounts = res.discounts();
 
@@ -170,9 +176,6 @@ public class ManageDiscountsView extends VerticalLayout implements HasUrlParamet
 
         addDiscountDialog.add(new VerticalLayout(operator, discount, confirmBtn));
 
-
-
-
     }
 
     private void updateDialog() {
@@ -183,7 +186,19 @@ public class ManageDiscountsView extends VerticalLayout implements HasUrlParamet
 
     @Override
     public void setParameter(BeforeEvent event, Integer storeId) {
+        if(storeId == null){
+            event.rerouteTo("");
+            return;
+        }
         this.storeId = storeId;
+    }
+
+    @Override
+    public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
+        if(!hasAccess(session, storeId)){
+            notifyWarning("You don't have permission to manage discounts in this store");
+            beforeEnterEvent.rerouteTo("store/" + storeId);
+        }
         start();
     }
 }

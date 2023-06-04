@@ -1,6 +1,9 @@
 package BGU.Group13B.frontEnd.components.views;
 
+import BGU.Group13B.backend.User.UserPermissions;
+import BGU.Group13B.backend.storePackage.WorkerCard;
 import BGU.Group13B.frontEnd.ResponseHandler;
+import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.frontEnd.components.policyComponent.AddDiscountComponent;
 import BGU.Group13B.frontEnd.components.policyComponent.ConditionTreeGrid;
 import BGU.Group13B.service.Session;
@@ -9,13 +12,13 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.BeforeEvent;
-import com.vaadin.flow.router.HasUrlParameter;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
+
+import java.util.List;
 
 
 @Route(value = "addDiscount", layout = MainLayout.class)
-public class AddDiscountView extends VerticalLayout implements HasUrlParameter<Integer>, ResponseHandler {
+public class AddDiscountView extends VerticalLayout implements HasUrlParameter<Integer>, PolicyView {
 
     private int storeId;
     private final Session session;
@@ -97,7 +100,19 @@ public class AddDiscountView extends VerticalLayout implements HasUrlParameter<I
 
     @Override
     public void setParameter(BeforeEvent event, Integer storeId) {
+        if(storeId == null){
+            event.rerouteTo("");
+            return;
+        }
         this.storeId = storeId;
+    }
+
+    @Override
+    public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
+        if(!hasAccess(session, storeId)){
+            notifyWarning("You don't have permission to add discount to this store");
+            beforeEnterEvent.rerouteTo("store/" + storeId);
+        }
         start();
     }
 }

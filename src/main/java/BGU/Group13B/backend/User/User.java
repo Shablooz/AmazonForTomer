@@ -18,6 +18,7 @@ import java.time.LocalDate;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -599,5 +600,17 @@ public class User {
 
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
+    }
+
+    public UserCard getUserCard(){
+        List<Pair<Integer, String>> pairs = userPermissions.getStoresAndRoles();
+        StringBuilder stringBuilder = new StringBuilder();
+        for(Pair<Integer, String> pair : pairs){
+            stringBuilder.append("Store: ");
+            stringBuilder.append(pair.getFirst());
+            stringBuilder.append(" Role: ");
+            stringBuilder.append(pair.getSecond());
+        }
+        return new UserCard(userId, userName, email, stringBuilder.toString());
     }
 }

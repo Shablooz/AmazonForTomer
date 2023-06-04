@@ -1492,4 +1492,48 @@ public class Session implements ISession {
         }
     }
 
+    public Response<StoreInfo> getGeneralStoreInfo(int storeId) {
+        try {
+            return Response.success(market.getGeneralStoreInfo(storeId));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<List<StoreInfo>> getAllStores() {
+        try {
+            Set<StoreInfo> storesInfos = market.getAllGeneralStoreInfo();
+            List<StoreInfo> asList = storesInfos.stream().toList();
+            return Response.success(asList);
+        } catch (Exception e) {
+        return Response.exception(e);
+    }
+
+    }
+
+    public UserCard getUserInfo(int userId, int userInfoId){
+        try {
+            return market.getUserInfo(userId, userInfoId);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Response<List<UserCard>> getAllUserCards(int userId){
+        try {
+            return Response.success(market.getAllUserCards(userId));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    public Response<Integer> removeUser(int userId, int removeUserId){
+        try {
+            return Response.success(1);//placeholder for the feature in the branch
+        } catch (Exception e){
+            return Response.exception(e);
+        }
+    }
+
 }

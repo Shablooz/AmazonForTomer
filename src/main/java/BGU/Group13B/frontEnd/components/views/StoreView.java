@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 
 @PageTitle("Store")
 @Route(value = "store", layout = MainLayout.class)
-public class StoreView extends VerticalLayout implements HasUrlParameter<Integer>, ResponseHandler {
+public class StoreView extends VerticalLayout implements HasUrlParameter<Integer>, BeforeEnterObserver, ResponseHandler {
 
     private final Session session;
     private final int userId = SessionToIdMapper.getInstance().getCurrentSessionId();
@@ -279,14 +279,6 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
     }
 
     private void getData(){
-        //store info
-        storeInfo = handleResponse(session.getStoreInfo(userId, storeId));
-        if(storeInfo == null){
-            terminate = true;
-            UI.getCurrent().navigate(HomeView.class);
-            return;
-        }
-
         //isAdmin
         isAdmin = handleResponse(session.isAdmin(userId), "");
 
@@ -578,7 +570,22 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
 
     @Override
     public void setParameter(BeforeEvent beforeEvent, Integer storeIdParam) {
+        if(storeIdParam == null){
+            beforeEvent.rerouteTo("");
+            return;
+        }
+
         this.storeId = storeIdParam;
+    }
+
+    @Override
+    public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
+        storeInfo = handleResponse(session.getStoreInfo(userId, storeId));
+        if(storeInfo == null){
+            terminate = true;
+            beforeEnterEvent.rerouteTo(HomeView.class);
+            return;
+        }
         start();
     }
 }

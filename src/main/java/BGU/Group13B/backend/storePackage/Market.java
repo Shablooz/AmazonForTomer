@@ -9,6 +9,7 @@ import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.StoreDisco
 import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.User.PurchaseHistory;
+import BGU.Group13B.backend.User.UserCard;
 import BGU.Group13B.backend.User.UserPermissions;
 import BGU.Group13B.backend.storePackage.permissions.ChangePermissionException;
 import BGU.Group13B.backend.storePackage.permissions.DefaultFounderFunctionality;
@@ -238,6 +239,19 @@ public class Market {
         return storeRepository.getStore(storeId).getStoreInfo(userId);
     }
 
+    public StoreInfo getGeneralStoreInfo(int storeId) {
+        return storeRepository.getStore(storeId).getGemeralStoreInfo();
+    }
+
+    public Set<StoreInfo> getAllGeneralStoreInfo(){
+        Set<StoreInfo> storeInfos = new HashSet<>();
+        Set<Integer> storeIds = storeRepository.getAllStoresId();
+        for(Integer id : storeIds){
+            storeInfos.add(storeRepository.getStore(id).getGemeralStoreInfo());
+        }
+        return storeInfos;
+    }
+
     public ProductInfo getStoreProductInfo(int userId, int storeId, int productId) throws NoPermissionException {
         return storeRepository.getStore(storeId).getStoreProduct(userId, productId).getProductInfo();
     }
@@ -294,6 +308,18 @@ public class Market {
 
     public List<Integer> getStoreOwners(int storeId) throws NoPermissionException {
         return storeRepository.getStore(storeId).getStoreOwners();
+    }
+
+    public UserCard getUserInfo(int userId, int userInfoId) throws NoPermissionException {
+        if(!SingletonCollection.getUserRepository().getUser(userId).isAdmin())
+            throw new NoPermissionException("Only admins can access this function");
+        return SingletonCollection.getUserRepository().getUser(userInfoId).getUserCard();
+    }
+
+    public List<UserCard> getAllUserCards(int userId)throws NoPermissionException {
+        if(!SingletonCollection.getUserRepository().getUser(userId).isAdmin())
+            throw new NoPermissionException("Only admins can access this function");
+        return SingletonCollection.getUserRepository().getAllUserCards();
     }
 
 
@@ -539,4 +565,5 @@ public class Market {
     public void resetStorePurchasePolicy(int storeId, int userId) throws NoPermissionException {
         storeRepository.getStore(storeId).resetPurchasePolicy(userId);
     }
+
 }
