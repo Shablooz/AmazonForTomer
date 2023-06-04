@@ -43,6 +43,8 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
     private final Button loginButton = new Button("Login");
     private final Button registerButton = new Button("Register");
 
+    private final Button newPageButton = new Button("HAHA");
+
     private final Button authenticate = new Button("authenticate");
 
     private final TextField answer1;
@@ -70,9 +72,12 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
 
         setregisterButton();
 
+        setNewPageButton();
+
         FormLayout formLayout = new FormLayout();
         formLayout.add(username, password);
         add(formLayout, loginButton, registerButton);
+        add(newPageButton);
         //setAlignItems(Alignment.CENTER);
         add(authenticationLayout);
     }
@@ -120,6 +125,12 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
     private void setregisterButton() {
         registerButton.addClickListener(e -> {
             UI.getCurrent().navigate(RegisterView.class);
+        });
+    }
+
+    private void setNewPageButton() {
+        newPageButton.addClickListener(e -> {
+            UI.getCurrent().navigate(AdminView.class);
         });
     }
 

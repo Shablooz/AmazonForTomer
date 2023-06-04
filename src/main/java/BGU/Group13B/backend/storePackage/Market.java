@@ -238,6 +238,19 @@ public class Market {
         return storeRepository.getStore(storeId).getStoreInfo(userId);
     }
 
+    public StoreInfo getGeneralStoreInfo(int storeId) {
+        return storeRepository.getStore(storeId).getGemeralStoreInfo();
+    }
+
+    public Set<StoreInfo> getAllGeneralStoreInfo(){
+        Set<StoreInfo> storeInfos = new HashSet<>();
+        Set<Integer> storeIds = storeRepository.getAllStoresId();
+        for(Integer id : storeIds){
+            storeInfos.add(storeRepository.getStore(id).getGemeralStoreInfo());
+        }
+        return storeInfos;
+    }
+
     public ProductInfo getStoreProductInfo(int userId, int storeId, int productId) throws NoPermissionException {
         return storeRepository.getStore(storeId).getStoreProduct(userId, productId).getProductInfo();
     }

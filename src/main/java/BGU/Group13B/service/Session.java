@@ -1489,4 +1489,19 @@ public class Session implements ISession {
         }
     }
 
+    public Response<StoreInfo> getGeneralStoreInfo(int storeId) {
+        try {
+            return Response.success(market.getGeneralStoreInfo(storeId));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<List<StoreInfo>> getAllStores() {
+        Set<StoreInfo> storesInfos = market.getAllGeneralStoreInfo();
+        List<StoreInfo> asList = storesInfos.stream().toList();
+        return Response.success(asList);
+    }
+
 }

@@ -5,6 +5,7 @@ import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.frontEnd.components.appnav.AppNav;
 import BGU.Group13B.frontEnd.components.appnav.AppNavItem;
+import BGU.Group13B.frontEnd.components.views.viewEntity.AllStoresView;
 import BGU.Group13B.service.BroadCaster;
 import BGU.Group13B.service.Response;
 import BGU.Group13B.service.Session;
@@ -535,6 +536,8 @@ public class MainLayout extends AppLayout {
         if (session.isUserLogged(SessionToIdMapper.getInstance().getCurrentSessionId())) {
             nav.addItem(new AppNavItem("My Stores", MyStoresView.class, LineAwesomeIcon.STORE_SOLID.create()));
         }
+
+        nav.addItem(new AppNavItem("All Stores", AllStoresView.class, LineAwesomeIcon.STORE_ALT_SOLID.create()));
 
 
         return nav;
