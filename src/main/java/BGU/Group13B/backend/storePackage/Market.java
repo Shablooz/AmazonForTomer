@@ -316,6 +316,12 @@ public class Market {
         return SingletonCollection.getUserRepository().getUser(userInfoId).getUserCard();
     }
 
+    public List<UserCard> getAllUserCards(int userId)throws NoPermissionException {
+        if(!SingletonCollection.getUserRepository().getUser(userId).isAdmin())
+            throw new NoPermissionException("Only admins can access this function");
+        return SingletonCollection.getUserRepository().getAllUserCards();
+    }
+
 
     /**
      * <H1>Conditions</H1>

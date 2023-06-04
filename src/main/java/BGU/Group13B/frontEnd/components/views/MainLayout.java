@@ -1,5 +1,6 @@
 package BGU.Group13B.frontEnd.components.views;
 
+import BGU.Group13B.frontEnd.ResponseHandler;
 import BGU.Group13B.frontEnd.components.views.Searcher.Searcher;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
@@ -25,6 +26,7 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.*;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.lumo.LumoUtility;
@@ -253,6 +255,9 @@ public class MainLayout extends AppLayout {
     private void prepareLogoutButton(FlexLayout flexLayout) {
         logoutButton = new Button("Logout");
         logoutButton.addClickListener(event -> {
+            if (session.getUserStatus(USERID).equals(ADMIN)) {
+                getUI().ifPresent(ui -> ui.navigate("login"));
+            }
             session.logout(SessionToIdMapper.getInstance().getCurrentSessionId());
             SessionToIdMapper.getInstance().updateCurrentSession(session.enterAsGuest());
             getUI().ifPresent(ui -> ui.getPage().reload());
@@ -538,6 +543,10 @@ public class MainLayout extends AppLayout {
         }
 
         nav.addItem(new AppNavItem("All Stores", AllStoresView.class, LineAwesomeIcon.STORE_ALT_SOLID.create()));
+
+        if (session.getUserStatus(USERID).equals(ADMIN)){
+            nav.addItem(new AppNavItem("Admin Page", AdminView.class, LineAwesomeIcon.APPLE_PAY.create()));
+        }
 
 
         return nav;

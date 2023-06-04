@@ -2,7 +2,9 @@ package BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
 import BGU.Group13B.backend.User.User;
+import BGU.Group13B.backend.User.UserCard;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,6 +105,15 @@ public class UserRepositoryAsHashmap implements IUserRepository {
             userIdsToUsernames.put(userId, user.getUserName());
         }
         return userIdsToUsernames;
+    }
+
+    @Override
+    public List<UserCard> getAllUserCards(){
+        List<UserCard> userCards = new ArrayList<>();
+        for (User user : integerUserHashMap.values()){
+            userCards.add(user.getUserCard());
+        }
+        return userCards;
     }
 
 }

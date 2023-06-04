@@ -1,7 +1,9 @@
 package BGU.Group13B.frontEnd.components.views;
 
+import BGU.Group13B.backend.storePackage.WorkerCard;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.service.BroadCaster;
+import BGU.Group13B.service.Response;
 import BGU.Group13B.service.Session;
 import BGU.Group13B.service.SingletonCollection;
 import com.vaadin.flow.component.Html;
@@ -35,7 +37,7 @@ import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY_INLIN
 @Tag("login-view")
 @Route(value = "login", layout = MainLayout.class)
 @PageTitle("Login")
-public class LoginView extends VerticalLayout implements BeforeEnterObserver {
+public class LoginView extends VerticalLayout implements BeforeEnterObserver{
 
     private final TextField username = new TextField("Username");
 
@@ -43,7 +45,6 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
     private final Button loginButton = new Button("Login");
     private final Button registerButton = new Button("Register");
 
-    private final Button newPageButton = new Button("HAHA");
 
     private final Button authenticate = new Button("authenticate");
 
@@ -72,12 +73,10 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
 
         setregisterButton();
 
-        setNewPageButton();
 
         FormLayout formLayout = new FormLayout();
         formLayout.add(username, password);
         add(formLayout, loginButton, registerButton);
-        add(newPageButton);
         //setAlignItems(Alignment.CENTER);
         add(authenticationLayout);
     }
@@ -113,7 +112,6 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
 
 
                 session.fetchMessages(newId);
-
             } catch (Exception ex) {
                 Notification.show("Login failed");
             }
@@ -128,11 +126,6 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
         });
     }
 
-    private void setNewPageButton() {
-        newPageButton.addClickListener(e -> {
-            UI.getCurrent().navigate(AdminView.class);
-        });
-    }
 
     private void hideNoneNeededAuthentication(Session session) {
         if (SingletonCollection.getUserRepository().checkIfUserExists(username.getValue()) == null)
@@ -162,7 +155,6 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
                 SessionToIdMapper.getInstance().updateCurrentSession(newId);
                 // SessionToIdMapper.getInstance().setRefreshRequired(true);
                 UI.getCurrent().navigate(HomeView.class);
-
                 var ui = UI.getCurrent();
                 //Tomer section
                 BroadCaster.register(newId, newMessage -> {

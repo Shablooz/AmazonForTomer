@@ -605,6 +605,14 @@ public class User {
     }
 
     public UserCard getUserCard(){
-        return new UserCard(userId, userName, email, userPermissions);
+        List<Pair<Integer, String>> pairs = userPermissions.getStoresAndRoles();
+        StringBuilder stringBuilder = new StringBuilder();
+        for(Pair<Integer, String> pair : pairs){
+            stringBuilder.append("Store: ");
+            stringBuilder.append(pair.getFirst());
+            stringBuilder.append(" Role: ");
+            stringBuilder.append(pair.getSecond());
+        }
+        return new UserCard(userId, userName, email, stringBuilder.toString());
     }
 }
