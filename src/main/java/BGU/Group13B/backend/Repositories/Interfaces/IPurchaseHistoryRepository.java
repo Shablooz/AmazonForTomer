@@ -12,7 +12,7 @@ public interface IPurchaseHistoryRepository {
 
     boolean isPurchaseFromStore(int userId, int storeId);
 
-    String getAllPurchases(int userId);
+    List<PurchaseHistory> getAllPurchases(int userId);
 
     public PurchaseHistory addPurchase(int userId, int storeId, ConcurrentLinkedQueue<BasketProduct> products, double price);
 

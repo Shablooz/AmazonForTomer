@@ -1043,14 +1043,14 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public Response<String> getUserPurchaseHistory(int userId) {
+    public  Response<List<PurchaseHistory>>  getUserPurchaseHistory(int userId) {
         if (realSession != null)
             return realSession.getUserPurchaseHistory(userId);
         return null;
     }
 
     @Override
-    public Response<String> getUserPurchaseHistoryAsAdmin(int userId, int adminId) {
+    public Response<List<PurchaseHistory>>  getUserPurchaseHistoryAsAdmin(int userId, int adminId) {
         if (realSession != null)
             return realSession.getUserPurchaseHistoryAsAdmin(userId, adminId);
         return null;

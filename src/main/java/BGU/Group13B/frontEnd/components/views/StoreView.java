@@ -228,7 +228,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
 
         storePurchaseHistoryButton.addClickListener(e-> {
             if(currentWorker.userPermissions().contains(UserPermissions.IndividualPermission.HISTORY)){
-                navigate("purchasehistory/store/" + storeId); //TODO: change, ask eden
+                navigate("purchaseHistory/" + storeId); //TODO: change, ask eden
             }
             else{
                 notifyWarning("You don't have permission to view store purchase history");
