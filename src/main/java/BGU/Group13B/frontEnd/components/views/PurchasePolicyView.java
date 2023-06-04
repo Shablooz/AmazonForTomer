@@ -7,14 +7,11 @@ import BGU.Group13B.service.Session;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.BeforeEvent;
-import com.vaadin.flow.router.HasUrlParameter;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 
 @PageTitle("Purchase Policy")
 @Route(value = "managePurchasePolicy", layout = MainLayout.class)
-public class PurchasePolicyView extends VerticalLayout implements HasUrlParameter<Integer>, ResponseHandler {
+public class PurchasePolicyView extends VerticalLayout implements HasUrlParameter<Integer>, PolicyView {
     private int storeId;
     private final Session session;
     private ConditionTreeGrid conditionTreeGrid;
@@ -30,6 +27,12 @@ public class PurchasePolicyView extends VerticalLayout implements HasUrlParamete
     }
 
     private void start() {
+        if(!hasAccess(session, storeId)){
+            notifyWarning("You don't have permission to manage the purchase policy of this store");
+            navigate("store/" + storeId);
+            return;
+        }
+
         conditionTreeGrid = new ConditionTreeGrid(session, storeId);
         controlButtons = new HorizontalLayout();
         confirmBtn = new Button("confirm");
@@ -46,7 +49,7 @@ public class PurchasePolicyView extends VerticalLayout implements HasUrlParamete
     }
 
     private void setupData(){
-        var res = handleResponse(session.getStorePurchasePolicy(storeId, userId));
+        var res = handleResponse(session.getStorePurchasePolicy(storeId, userId), "store/" + storeId);
         if (res != null) {
             conditionTreeGrid.setConditionsData(res);
         }
@@ -80,8 +83,20 @@ public class PurchasePolicyView extends VerticalLayout implements HasUrlParamete
     }
 
     @Override
-    public void setParameter(BeforeEvent beforeEvent, Integer storeId) {
+    public void setParameter(BeforeEvent event, Integer storeId) {
+        if(storeId == null){
+            event.rerouteTo("");
+            return;
+        }
         this.storeId = storeId;
+    }
+
+    @Override
+    public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
+        if(!hasAccess(session, storeId)){
+            notifyWarning("You don't have permission to manage purchase policy in this store");
+            beforeEnterEvent.rerouteTo("store/" + storeId);
+        }
         start();
     }
 }
