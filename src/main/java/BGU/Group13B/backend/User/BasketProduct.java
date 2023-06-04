@@ -5,10 +5,12 @@ import BGU.Group13B.backend.storePackage.Product;
 public class BasketProduct {
     private final Product product;
     private int quantity;
+    private double price;
 
     public BasketProduct(Product product) {
         this.product = product;
         this.quantity = 1;
+        this.price = product.getPrice();
     }
 
 
@@ -34,7 +36,7 @@ public class BasketProduct {
     }
 
     public double getPrice() {
-        return product.getPrice();
+        return price;
     }
 
     public String getCategory() {
@@ -55,5 +57,9 @@ public class BasketProduct {
     }
     public double getSubtotal() {
         return getPrice() * quantity;
+    }
+
+    public void setPrice(double price) {
+    	this.price = price;
     }
 }

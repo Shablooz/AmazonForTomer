@@ -392,7 +392,8 @@ public class Store {
         /*
          * Send alert to all the permitted Managers
          * */
-        Set<Integer> userIds = this.storePermission.getAllUsersWithPermission(Store.getCurrentMethodName());
+        //Set<Integer> userIds = this.storePermission.getAllUsersWithPermission(Store.getCurrentMethodName());
+        List<Integer> userIds = this.storePermission.getAllUsersWithIndividualPermission(UserPermissions.IndividualPermission.AUCTION);
         for (Integer id : userIds) {//wait for the interface in AlertManager.java to finish
             //alertManager.sendAlert(id, "User " + userId + " has submitted a purchase proposal for product " + productId + " in store " + this.storeId);
             double originalPrice = productRepository.getProductById(productId).getPrice();
@@ -429,7 +430,7 @@ public class Store {
             BroadCaster.broadcast(currentBid.getUserId(),
                     "Your bid for product " + productRepository.getProductById(currentBid.getProductId()).getName()
                             + " in store " + this.storeName + " approved!, the item added to your cart");
-            addToUserCart.apply(currentBid.getUserId(), storeId, currentBid.getProductId());
+            addToUserCart.apply(currentBid.getUserId(), storeId, currentBid.getProductId(), currentBid.getAmount(), currentBid.getNewProductPrice());
             //todo send alert to the user that his bid has been approved
         }
     }

@@ -79,14 +79,18 @@ public class Session implements ISession {
     }
 
     /*good for development no need check if the item exists*/
-    @Override
-    public Response<VoidResponse> addToCart(int userId, int storeId, int productId) {
+    public Response<VoidResponse> addToCart(int userId, int storeId, int productId, int amount, double newPrice) {
         try {
-            userRepository.getUser(userId).addToCart(storeId, productId);
+            userRepository.getUser(userId).addToCart(storeId, productId, amount, newPrice);
             return Response.success();
         } catch (Exception e) {
             return Response.exception(e);
         }
+    }
+    @Override
+    public Response<VoidResponse> addToCart(int userId, int storeId, int productId) {
+        addToCart(userId, storeId, productId, 1, -1);
+        return Response.success();
     }
 
     @Override
