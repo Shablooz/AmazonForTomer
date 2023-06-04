@@ -1,4 +1,4 @@
-package BGU.Group13B.frontEnd.components.views.viewEntity;
+package BGU.Group13B.frontEnd.components.views;
 
 import BGU.Group13B.backend.Pair;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
@@ -45,7 +45,6 @@ public class AllStoresView extends VerticalLayout{
 
     //components
     HorizontalLayout buttonsLayout = new HorizontalLayout();
-    private final Button createStoreButton = new Button("Create Store"); //fixme remove?
     private final Button enterStoreButton = new Button("Enter Store");
 
     private Grid<StoreInfo> grid;
@@ -96,41 +95,12 @@ public class AllStoresView extends VerticalLayout{
     private void initButtons() {
         //buttons actions
         enterStoreButton.addClickListener(e -> navigateToStore());
-        createStoreButton.addClickListener(e -> addStoreDialog());
 
         add(grid);
 
         //add the buttons to the view in horizontal layout
-        buttonsLayout.add(createStoreButton, enterStoreButton);
+        buttonsLayout.add(enterStoreButton);
         add(buttonsLayout);
-    }
-
-    private void addStoreDialog() {
-        Dialog dialog = new Dialog();
-        dialog.setWidth("350px");
-        dialog.setHeight("550px");
-        dialog.setCloseOnEsc(true);
-        dialog.setCloseOnOutsideClick(true);
-
-        H2 dialogTitle = new H2("Add Store");
-        TextField storeName = new TextField("Name");
-        TextField storeCategory = new TextField("Category");
-
-        Button confirmButton = new Button("Confirm");
-        confirmButton.addClickListener(e2 -> {
-
-            handleResponseAndRefresh(session.addStore(userId, storeName.getValue(), storeCategory.getValue()));
-            dialog.close();
-        });
-
-
-        VerticalLayout dialogLayout = new VerticalLayout();
-        dialogLayout.add(dialogTitle, storeName, storeCategory, confirmButton);
-        dialogLayout.setSpacing(false);
-        dialogLayout.setAlignItems(Alignment.STRETCH);
-
-        dialog.add(dialogLayout);
-        dialog.open();
     }
 
     private void handleResponseAndRefresh(Response<Integer> response) {
@@ -149,7 +119,7 @@ public class AllStoresView extends VerticalLayout{
         var storeInfoList = handleResponse(session.getAllStores());
         //grid.setItems((DataProvider<StoreInfo, Void>) storeInfoList);
         grid.setItems(storeInfoList);
-        buttonsLayout.add(createStoreButton, enterStoreButton);
+        buttonsLayout.add(enterStoreButton);
         add(buttonsLayout);
     }
 

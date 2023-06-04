@@ -43,6 +43,11 @@ public class AdminView extends VerticalLayout implements BeforeEnterObserver, Af
     public AdminView(Session session) {
         super();
         this.session = session;
+
+    }
+
+    private void start(){
+        this.removeAll();
         // You can initialise any data required for the connected UI components here.
         //joining as a guest
         //congratulations on logging in
@@ -147,6 +152,11 @@ public class AdminView extends VerticalLayout implements BeforeEnterObserver, Af
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
+        if(!handleResponse(session.isAdmin(userId))){
+            event.rerouteTo("");
+            return;
+        }
+        start();
 
 
     }
