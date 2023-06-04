@@ -504,6 +504,14 @@ public class ProxySession implements ISession {
         return Response.success(new VoidResponse());
     }
 
+    @Override
+    public Response<List<StoreInfo>> getAllStores() {
+        if (realSession != null)
+            return realSession.getAllStores();
+
+        return null;
+    }
+
 
     @Override
     public Response<VoidResponse> purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount) {

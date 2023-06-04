@@ -285,6 +285,9 @@ public class MainLayout extends AppLayout {
     private void prepareLogoutButton(FlexLayout flexLayout) {
         logoutButton = new Button("Logout");
         logoutButton.addClickListener(event -> {
+            if (session.getUserStatus(USERID).equals(ADMIN)) {
+                getUI().ifPresent(ui -> ui.navigate("login"));
+            }
             session.logout(SessionToIdMapper.getInstance().getCurrentSessionId());
             SessionToIdMapper.getInstance().updateCurrentSession(session.enterAsGuest());
             getUI().ifPresent(ui -> ui.getPage().reload());
@@ -567,6 +570,12 @@ public class MainLayout extends AppLayout {
         //my stores
         if (session.isUserLogged(SessionToIdMapper.getInstance().getCurrentSessionId())) {
             nav.addItem(new AppNavItem("My Stores", MyStoresView.class, LineAwesomeIcon.STORE_SOLID.create()));
+        }
+
+        nav.addItem(new AppNavItem("All Stores", AllStoresView.class, LineAwesomeIcon.STORE_ALT_SOLID.create()));
+
+        if (session.getUserStatus(USERID).equals(ADMIN)){
+            nav.addItem(new AppNavItem("Admin Page", AdminView.class, LineAwesomeIcon.APPLE_PAY.create()));
         }
 
 

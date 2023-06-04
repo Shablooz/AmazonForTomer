@@ -187,6 +187,10 @@ public class Store {
         return storePermission.getStoreOwners();
     }
 
+    public StoreInfo getGemeralStoreInfo()  {
+        return new StoreInfo(this);
+    }
+
     public StorePermission getStorePermission() {
         return storePermission;
     }
