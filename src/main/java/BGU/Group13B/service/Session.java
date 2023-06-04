@@ -1504,4 +1504,12 @@ public class Session implements ISession {
         return Response.success(asList);
     }
 
+    public UserCard getUserInfo(int userId, int userInfoId){
+        try {
+            return market.getUserInfo(userId, userInfoId);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

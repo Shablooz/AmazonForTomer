@@ -20,6 +20,7 @@ import java.time.LocalDate;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -601,5 +602,9 @@ public class User {
 
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
+    }
+
+    public UserCard getUserCard(){
+        return new UserCard(userId, userName, email, userPermissions);
     }
 }

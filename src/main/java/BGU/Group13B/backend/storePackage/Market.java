@@ -9,6 +9,7 @@ import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.StoreDisco
 import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.User.PurchaseHistory;
+import BGU.Group13B.backend.User.UserCard;
 import BGU.Group13B.backend.User.UserPermissions;
 import BGU.Group13B.backend.storePackage.permissions.ChangePermissionException;
 import BGU.Group13B.backend.storePackage.permissions.DefaultFounderFunctionality;
@@ -309,6 +310,12 @@ public class Market {
         return storeRepository.getStore(storeId).getStoreOwners();
     }
 
+    public UserCard getUserInfo(int userId, int userInfoId) throws NoPermissionException {
+        if(!SingletonCollection.getUserRepository().getUser(userId).isAdmin())
+            throw new NoPermissionException("Only admins can access this function");
+        return SingletonCollection.getUserRepository().getUser(userInfoId).getUserCard();
+    }
+
 
     /**
      * <H1>Conditions</H1>
@@ -552,4 +559,5 @@ public class Market {
     public void resetStorePurchasePolicy(int storeId, int userId) throws NoPermissionException {
         storeRepository.getStore(storeId).resetPurchasePolicy(userId);
     }
+
 }
