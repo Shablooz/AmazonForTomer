@@ -14,6 +14,7 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.Icon;
@@ -37,7 +38,7 @@ import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY_INLIN
 
 @PageTitle("All Stores")
 @Route(value = "allstores", layout = MainLayout.class)
-public class AllStoresView extends VerticalLayout implements BeforeEnterObserver {
+public class AllStoresView extends VerticalLayout{
 
     private final int userId = SessionToIdMapper.getInstance().getCurrentSessionId();
     private int selectedStoreId = -1;
@@ -55,8 +56,8 @@ public class AllStoresView extends VerticalLayout implements BeforeEnterObserver
         super();
         this.session = session;
         enterStoreButton.setEnabled(false);
-
-        List<StoreInfo> storeInfos = handleResponse(session.getAllStores());//fixme change name
+        add(new H1("All Stores"));
+        List<StoreInfo> storeInfos = handleResponse(session.getAllStores());
 
         grid = new Grid<StoreInfo>();
         grid.setItems(storeInfos);
@@ -200,14 +201,6 @@ public class AllStoresView extends VerticalLayout implements BeforeEnterObserver
         return userStoresAndRoles;
     }
 
-
-    @Override
-    public void beforeEnter(BeforeEnterEvent event) {
-        if(!session.isUserLogged(userId)){
-            createReportError("Permission denied, please login first.").open();
-            event.rerouteTo(LoginView.class);
-        }
-    }
     private Notification createReportError(String msg) {
         Notification notification = new Notification();
         notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
