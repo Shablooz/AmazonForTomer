@@ -791,9 +791,9 @@ public interface ISession {
      * @return the user's purchase history
      * @throws Exception
      */
-    Response<String> getUserPurchaseHistory(int userId);
+    Response<List<PurchaseHistory>> getUserPurchaseHistory(int userId);
 
-    Response<String> getUserPurchaseHistoryAsAdmin(int userId, int adminId);
+    Response<List<PurchaseHistory>>  getUserPurchaseHistoryAsAdmin(int userId, int adminId);
 
     Response<List<PurchaseHistory>> getStorePurchaseHistoryAsAdmin(int storeId, int adminId);
 

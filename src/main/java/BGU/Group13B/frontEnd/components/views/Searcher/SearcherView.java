@@ -6,6 +6,7 @@ import BGU.Group13B.service.Session;
 import BGU.Group13B.service.entity.ReviewService;
 import BGU.Group13B.service.info.ProductInfo;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.NumberField;
@@ -57,9 +58,12 @@ public class SearcherView extends VerticalLayout implements HasUrlParameter<Stri
     }
 
     private void createFilterComponent() {
+        setAlignItems(Alignment.CENTER);
+        VerticalLayout verticalLayout = new VerticalLayout();
         filterComponent = new FilterView(session);
-        filterComponent.setWidth("60%");
-        add(filterComponent);
+        verticalLayout.add(filterComponent);
+        verticalLayout.setWidth("60%");
+        add(verticalLayout);
     }
 
     public void getProductGrid() {
@@ -72,6 +76,8 @@ public class SearcherView extends VerticalLayout implements HasUrlParameter<Stri
         productGrid.addColumn(ProductInfo::price).setHeader("Price");
         productGrid.addColumn(ProductInfo::score).setHeader("Score");
         productGrid.addColumn(ProductInfo::seller).setHeader("Seller");
+        productGrid.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT);
+        productGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
         productGrid.addItemClickListener(event -> {
             ProductInfo clickedProduct = event.getItem();
             //navigate to product page

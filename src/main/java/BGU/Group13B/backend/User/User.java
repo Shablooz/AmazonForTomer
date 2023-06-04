@@ -2,8 +2,7 @@ package BGU.Group13B.backend.User;
 
 import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.storePackage.Product;
-import BGU.Group13B.service.BroadCaster;
-import BGU.Group13B.service.PushNotification;
+import BGU.Group13B.service.*;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
 import org.mindrot.jbcrypt.BCrypt;
 import BGU.Group13B.backend.Repositories.Interfaces.IMessageRepository;
@@ -14,7 +13,6 @@ import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.service.BroadCaster;
-import BGU.Group13B.service.SingletonCollection;
 //eyal import
 import java.time.LocalDate;
 
@@ -595,7 +593,7 @@ public class User {
         cart.cancelPurchase();
     }
 
-    public String getPurchaseHistory() {
+    public List<PurchaseHistory> getPurchaseHistory() {
         return purchaseHistoryRepository.getAllPurchases(userId);
     }
 
