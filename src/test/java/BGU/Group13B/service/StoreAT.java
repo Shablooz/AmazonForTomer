@@ -2,6 +2,7 @@ package BGU.Group13B.service;
 
 import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.hibernate.validator.internal.util.Contracts.assertTrue;

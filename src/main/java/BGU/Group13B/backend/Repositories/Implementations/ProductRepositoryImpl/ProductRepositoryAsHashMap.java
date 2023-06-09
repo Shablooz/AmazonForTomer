@@ -29,7 +29,9 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
 
     @Override
     public Optional<Set<Product>> getStoreProducts(int storeId) {
-        return storeProducts.get(storeId).getStoreProducts();
+        if(storeProducts.containsKey(storeId))
+            return storeProducts.get(storeId).getStoreProducts();
+        return Optional.empty();
     }
 
     @Override
