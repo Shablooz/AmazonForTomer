@@ -597,7 +597,7 @@ public class Store {
         this.storePermission.validateStoreVisibility(userId, hidden);
         return new StoreInfo(this);
     }
-
+    //TODO check
     public Product getStoreProduct(int userId, int productId) throws NoPermissionException {
         this.storePermission.validateStoreVisibility(userId, hidden);
         return productRepository.getStoreProductById(productId, storeId);
