@@ -10,9 +10,14 @@ import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.Condit
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.LogicalConditions.LogicalConditionEntity;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.leaves.ProductPriceConditionEntity;
 import BGU.Group13B.service.SingletonCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
 
+@Entity
 public class ProductPriceCondition extends Condition {
+
     private final int productId;
+    @OneToOne
     private final Bounder<Double> priceBounder;
 
 
@@ -30,6 +35,13 @@ public class ProductPriceCondition extends Condition {
         super(conditionId);
         this.productId = productId;
         this.priceBounder = new Bounder<>(lowerBound);
+    }
+
+    //added for hibernate
+    public ProductPriceCondition() {
+        super(0);
+        this.productId = 0;
+        this.priceBounder = null;
     }
 
     @Override

@@ -64,7 +64,6 @@ public class Application implements AppShellConfigurator {
 
 
 
-        SpringApplication.run(Application.class, args);
         //Timer timer = new Timer();
         //timer.schedule(SessionToIdMapper.getInstance().kickExpired(), 5 * 60 * 1000, 5 * 60 * 1000);
     }

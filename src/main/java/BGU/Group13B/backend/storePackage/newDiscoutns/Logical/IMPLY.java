@@ -7,10 +7,16 @@ import BGU.Group13B.backend.storePackage.newDiscoutns.PurchasePolicy;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.LogicalConditions.LogicalConditionEntity;
+import jakarta.persistence.Entity;
 
+@Entity
 public class IMPLY extends LogicalCondition{
     public IMPLY(int conditionId, Condition operand1, Condition operand2) {
         super(conditionId, operand1, operand2);
+    }
+
+    public IMPLY() {
+
     }
 
     public void satisfied(BasketInfo basketInfo, UserInfo user) throws PurchaseExceedsPolicyException {

@@ -6,15 +6,17 @@ import BGU.Group13B.backend.storePackage.newDiscoutns.Bounder;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.newDiscoutns.bounderCondition.time.Time;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.LogicalConditions.LogicalConditionEntity;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.leaves.TimeConditionEntity;
 
 import java.time.LocalDateTime;
 
-
+@Entity
 public class TimeCondition extends Condition {
-
+    @OneToOne
     private final Bounder<Time> timeBounder;
 
     public TimeCondition(int conditionId, LocalDateTime lowerBound, LocalDateTime upperBound) {
@@ -25,6 +27,12 @@ public class TimeCondition extends Condition {
     public TimeCondition(int conditionId, LocalDateTime lowerBound) {
         super(conditionId);
         this.timeBounder = new Bounder<>(Time.of(lowerBound));
+    }
+
+    //added for hibernate
+    public TimeCondition() {
+        super(0);
+        this.timeBounder = null;
     }
 
     @Override

@@ -6,10 +6,16 @@ import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.LogicalConditions.LogicalConditionEntity;
+import jakarta.persistence.Entity;
 
+@Entity
 public class AND extends LogicalCondition{
     public AND(int conditionId, Condition operand1, Condition operand2) {
         super(conditionId, operand1, operand2);
+    }
+
+    public AND() {
+        super();
     }
 
     public void satisfied(BasketInfo basketInfo, UserInfo user) throws PurchaseExceedsPolicyException {

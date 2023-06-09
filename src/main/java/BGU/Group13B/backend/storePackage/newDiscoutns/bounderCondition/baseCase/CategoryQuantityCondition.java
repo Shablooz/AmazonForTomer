@@ -6,12 +6,16 @@ import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.Bounder;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.LogicalConditions.LogicalConditionEntity;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.leaves.CategoryQuantityConditionEntity;
 
+@Entity
 public class CategoryQuantityCondition extends Condition {
     private final String category;
+    @OneToOne
     private final Bounder<Integer> quantityBounder;
 
 
@@ -29,6 +33,13 @@ public class CategoryQuantityCondition extends Condition {
         super(conditionId);
         this.category = category;
         this.quantityBounder = new Bounder<>(lowerBound);
+    }
+
+    //added for hibernate
+    public CategoryQuantityCondition() {
+        super(0);
+        this.category = null;
+        this.quantityBounder = null;
     }
 
     @Override

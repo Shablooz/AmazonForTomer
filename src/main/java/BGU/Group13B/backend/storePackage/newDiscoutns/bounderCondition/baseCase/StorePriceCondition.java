@@ -6,11 +6,15 @@ import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.Bounder;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.LogicalConditions.LogicalConditionEntity;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.leaves.StorePriceConditionEntity;
 
+@Entity
 public class StorePriceCondition extends Condition {
+    @OneToOne
     private final Bounder<Double> priceBounder;
 
 
@@ -25,6 +29,11 @@ public class StorePriceCondition extends Condition {
     public StorePriceCondition(int conditionId, double lowerBound) {
         super(conditionId);
         this.priceBounder = new Bounder<>(lowerBound);
+    }
+    //added for hibernate
+    public StorePriceCondition() {
+        super(0);
+        this.priceBounder = null;
     }
 
     @Override

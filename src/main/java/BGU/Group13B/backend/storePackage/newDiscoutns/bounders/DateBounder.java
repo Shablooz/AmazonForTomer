@@ -1,24 +1,25 @@
-package BGU.Group13B.backend.storePackage.newDiscoutns;
+package BGU.Group13B.backend.storePackage.newDiscoutns.bounders;
 
+import BGU.Group13B.backend.storePackage.newDiscoutns.bounderCondition.time.Date;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-
-import BGU.Group13B.backend.storePackage.newDiscoutns.bounderCondition.time.Time;
+import jakarta.persistence.OneToOne;
 
 @Entity
-public class Bounder<T extends Comparable<T>> {
+public class DateBounder {
+
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private int id;
+    @OneToOne
+    private final Date upperBound; //if upperBound == null then there is no upper bound
+    @OneToOne
+    private final Date lowerBound;
 
-    private final T upperBound; //if upperBound == null then there is no upper bound
 
-    private final T lowerBound;
-
-
-    public Bounder(T lowerBound, T upperBound) {
-        if (!(upperBound instanceof Time) && upperBound.compareTo(lowerBound) < 0)
+    public DateBounder(Date lowerBound, Date upperBound) {
+        if (upperBound.compareTo(lowerBound) < 0)
             throw new RuntimeException("upper bound can't be less than lower bound");
 
 
@@ -26,31 +27,27 @@ public class Bounder<T extends Comparable<T>> {
         this.lowerBound = lowerBound;
     }
 
-    public Bounder(T lowerBound) {
+    public DateBounder(Date lowerBound) {
         this.upperBound = null;
         this.lowerBound = lowerBound;
     }
 
     //i just added this constructor for the sake of hibernate
-    public Bounder() {
+    public DateBounder() {
         this.upperBound = null;
         this.lowerBound = null;
     }
 
 
-    public boolean inBounds(T n) {
-        if(upperBound instanceof Time && upperBound.compareTo(lowerBound) < 0){
-            //in [lowerBound, 23:59:59] or [00:00:00, upperBound]
-            return !(n.compareTo(lowerBound) < 0 && n.compareTo(upperBound) > 0);
-        }
+    public boolean inBounds(Date n) {
         return !(n.compareTo(lowerBound) < 0 || (upperBound != null && n.compareTo(upperBound) > 0));
     }
 
-    public T getUpperBound() {
+    public Date getUpperBound() {
         return upperBound;
     }
 
-    public T getLowerBound() {
+    public Date getLowerBound() {
         return lowerBound;
     }
 
@@ -61,7 +58,7 @@ public class Bounder<T extends Comparable<T>> {
     }
 
 
-    public boolean hasConflicts(Bounder<T> otherBounder) {
+    public boolean hasConflicts(DateBounder otherBounder) {
         if (upperBound == null && otherBounder.getUpperBound() == null)
             return false;
 

@@ -9,10 +9,14 @@ import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyE
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.LogicalConditions.LogicalConditionEntity;
 import BGU.Group13B.service.SingletonCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.leaves.ProductQuantityConditionEntity;
 
+@Entity
 public class ProductQuantityCondition extends Condition {
     private final int productId;
+    @OneToOne
     private final Bounder<Integer> quantityBounder;
 
 
@@ -30,6 +34,12 @@ public class ProductQuantityCondition extends Condition {
         super(conditionId);
         this.productId = productId;
         this.quantityBounder = new Bounder<>(lowerBound);
+    }
+    //added for hibernate
+    public ProductQuantityCondition() {
+        super(0);
+        this.productId = 0;
+        this.quantityBounder = null;
     }
 
     @Override

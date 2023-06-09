@@ -1,13 +1,25 @@
 package BGU.Group13B.backend.storePackage.newDiscoutns.bounderCondition.time;
 
-import java.time.LocalDateTime;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
+import java.time.LocalDateTime;
+@Entity
 public class Time implements Comparable<Time> {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
     private final LocalDateTime time;
 
     private Time(LocalDateTime time) {
         this.time = time;
+    }
+
+    public Time() {
+        this.time = null;
     }
 
     public static Time of(LocalDateTime time) {

@@ -1,24 +1,22 @@
-package BGU.Group13B.backend.storePackage.newDiscoutns;
+package BGU.Group13B.backend.storePackage.newDiscoutns.bounders;
 
-import jakarta.persistence.Entity;
+import BGU.Group13B.backend.storePackage.newDiscoutns.Bounder;
+import BGU.Group13B.backend.storePackage.newDiscoutns.bounderCondition.time.Time;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 
-import BGU.Group13B.backend.storePackage.newDiscoutns.bounderCondition.time.Time;
-
-@Entity
-public class Bounder<T extends Comparable<T>> {
+public class IntBounder {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private int id;
 
-    private final T upperBound; //if upperBound == null then there is no upper bound
+    private final Integer upperBound; //if upperBound == null then there is no upper bound
 
-    private final T lowerBound;
+    private final Integer lowerBound;
 
 
-    public Bounder(T lowerBound, T upperBound) {
-        if (!(upperBound instanceof Time) && upperBound.compareTo(lowerBound) < 0)
+    public IntBounder(Integer lowerBound, Integer upperBound) {
+        if (upperBound.compareTo(lowerBound) < 0)
             throw new RuntimeException("upper bound can't be less than lower bound");
 
 
@@ -26,31 +24,27 @@ public class Bounder<T extends Comparable<T>> {
         this.lowerBound = lowerBound;
     }
 
-    public Bounder(T lowerBound) {
+    public IntBounder(Integer lowerBound) {
         this.upperBound = null;
         this.lowerBound = lowerBound;
     }
 
     //i just added this constructor for the sake of hibernate
-    public Bounder() {
+    public IntBounder() {
         this.upperBound = null;
         this.lowerBound = null;
     }
 
 
-    public boolean inBounds(T n) {
-        if(upperBound instanceof Time && upperBound.compareTo(lowerBound) < 0){
-            //in [lowerBound, 23:59:59] or [00:00:00, upperBound]
-            return !(n.compareTo(lowerBound) < 0 && n.compareTo(upperBound) > 0);
-        }
+    public boolean inBounds(Integer n) {
         return !(n.compareTo(lowerBound) < 0 || (upperBound != null && n.compareTo(upperBound) > 0));
     }
 
-    public T getUpperBound() {
+    public Integer getUpperBound() {
         return upperBound;
     }
 
-    public T getLowerBound() {
+    public Integer getLowerBound() {
         return lowerBound;
     }
 
@@ -61,7 +55,7 @@ public class Bounder<T extends Comparable<T>> {
     }
 
 
-    public boolean hasConflicts(Bounder<T> otherBounder) {
+    public boolean hasConflicts(IntBounder otherBounder) {
         if (upperBound == null && otherBounder.getUpperBound() == null)
             return false;
 
@@ -78,3 +72,5 @@ public class Bounder<T extends Comparable<T>> {
         return upperBound != null;
     }
 }
+
+

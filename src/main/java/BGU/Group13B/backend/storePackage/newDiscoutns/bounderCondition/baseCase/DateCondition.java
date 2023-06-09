@@ -9,12 +9,14 @@ import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyE
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.LogicalConditions.LogicalConditionEntity;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.leaves.DateConditionEntity;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
 
 import java.time.LocalDateTime;
 
-
+@Entity
 public class DateCondition extends Condition {
-
+    @OneToOne
     private final Bounder<Date> bounder;
 
     public DateCondition(int conditionId, LocalDateTime lowerBound, LocalDateTime upperBound) {
@@ -25,6 +27,12 @@ public class DateCondition extends Condition {
     public DateCondition(int conditionId, LocalDateTime lowerBound) {
         super(conditionId);
         this.bounder = new Bounder<>(Date.of(lowerBound));
+    }
+
+    //added for hibernate
+    public DateCondition() {
+        super(0);
+        this.bounder = null;
     }
 
     @Override
