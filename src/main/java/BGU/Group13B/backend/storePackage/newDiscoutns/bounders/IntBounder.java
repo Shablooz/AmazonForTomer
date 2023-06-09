@@ -2,9 +2,10 @@ package BGU.Group13B.backend.storePackage.newDiscoutns.bounders;
 
 import BGU.Group13B.backend.storePackage.newDiscoutns.Bounder;
 import BGU.Group13B.backend.storePackage.newDiscoutns.bounderCondition.time.Time;
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-
+@Entity
 public class IntBounder {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)

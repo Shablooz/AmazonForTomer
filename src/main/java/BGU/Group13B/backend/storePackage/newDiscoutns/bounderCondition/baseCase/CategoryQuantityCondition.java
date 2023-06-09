@@ -4,6 +4,7 @@ import BGU.Group13B.backend.User.BasketInfo;
 import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.Bounder;
+import BGU.Group13B.backend.storePackage.newDiscoutns.bounders.IntBounder;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 import jakarta.persistence.Entity;
@@ -16,13 +17,13 @@ import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.leaves
 public class CategoryQuantityCondition extends Condition {
     private final String category;
     @OneToOne
-    private final Bounder<Integer> quantityBounder;
+    private final IntBounder quantityBounder;
 
 
     public CategoryQuantityCondition(int conditionId, String category, int lowerBound, int upperBound){
         super(conditionId);
         this.category = category;
-        this.quantityBounder = new Bounder<>(lowerBound, upperBound);
+        this.quantityBounder = new IntBounder(lowerBound, upperBound);
     }
 
     /**
@@ -32,7 +33,7 @@ public class CategoryQuantityCondition extends Condition {
     public CategoryQuantityCondition(int conditionId, String category, int lowerBound){
         super(conditionId);
         this.category = category;
-        this.quantityBounder = new Bounder<>(lowerBound);
+        this.quantityBounder = new IntBounder(lowerBound);
     }
 
     //added for hibernate

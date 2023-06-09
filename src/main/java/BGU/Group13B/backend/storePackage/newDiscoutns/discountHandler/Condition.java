@@ -8,7 +8,7 @@ import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.Condit
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.LogicalConditions.LogicalConditionEntity;
 import jakarta.persistence.*;
 
-@Entity
+
 @MappedSuperclass
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Condition {

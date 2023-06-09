@@ -10,7 +10,7 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.OneToOne;
 
-@Entity
+
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class LogicalCondition extends Condition {
     @OneToOne

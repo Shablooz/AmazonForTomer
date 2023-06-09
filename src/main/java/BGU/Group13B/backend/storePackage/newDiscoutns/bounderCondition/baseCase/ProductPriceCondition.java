@@ -4,6 +4,7 @@ import BGU.Group13B.backend.User.BasketInfo;
 import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.Bounder;
+import BGU.Group13B.backend.storePackage.newDiscoutns.bounders.DoubleBounder;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
@@ -18,13 +19,13 @@ public class ProductPriceCondition extends Condition {
 
     private final int productId;
     @OneToOne
-    private final Bounder<Double> priceBounder;
+    private final DoubleBounder priceBounder;
 
 
     public ProductPriceCondition(int conditionId, int productId, double lowerBound, double upperBound){
         super(conditionId);
         this.productId = productId;
-        this.priceBounder = new Bounder<>(lowerBound, upperBound);
+        this.priceBounder = new DoubleBounder(lowerBound, upperBound);
     }
 
     /**
@@ -34,7 +35,7 @@ public class ProductPriceCondition extends Condition {
     public ProductPriceCondition(int conditionId, int productId, double lowerBound){
         super(conditionId);
         this.productId = productId;
-        this.priceBounder = new Bounder<>(lowerBound);
+        this.priceBounder = new DoubleBounder(lowerBound);
     }
 
     //added for hibernate

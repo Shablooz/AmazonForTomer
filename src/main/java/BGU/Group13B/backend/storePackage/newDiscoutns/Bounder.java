@@ -6,10 +6,9 @@ import jakarta.persistence.Id;
 
 import BGU.Group13B.backend.storePackage.newDiscoutns.bounderCondition.time.Time;
 
-@Entity
+@Deprecated
 public class Bounder<T extends Comparable<T>> {
-    @Id
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
+
     private int id;
 
     private final T upperBound; //if upperBound == null then there is no upper bound

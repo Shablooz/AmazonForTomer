@@ -4,6 +4,7 @@ import BGU.Group13B.backend.User.BasketInfo;
 import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.Bounder;
+import BGU.Group13B.backend.storePackage.newDiscoutns.bounders.DoubleBounder;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 import jakarta.persistence.ElementCollection;
@@ -20,13 +21,13 @@ public class CategoryPriceCondition extends Condition {
     private final String category;
 
     @OneToOne
-    private final Bounder<Double> priceBounder;
+    private final DoubleBounder priceBounder;
 
 
     public CategoryPriceCondition(int conditionId, String category, double lowerBound, double upperBound) {
         super(conditionId);
         this.category = category;
-        this.priceBounder = new Bounder<>(lowerBound, upperBound);
+        this.priceBounder = new DoubleBounder(lowerBound, upperBound);
     }
 
     /**
@@ -36,7 +37,7 @@ public class CategoryPriceCondition extends Condition {
     public CategoryPriceCondition(int conditionId, String category, double lowerBound) {
         super(conditionId);
         this.category = category;
-        this.priceBounder = new Bounder<>(lowerBound);
+        this.priceBounder = new DoubleBounder(lowerBound);
     }
     //added for hibernate
     public CategoryPriceCondition() {

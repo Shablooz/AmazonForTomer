@@ -3,6 +3,7 @@ package BGU.Group13B.backend.storePackage.newDiscoutns.bounderCondition.baseCase
 import BGU.Group13B.backend.User.BasketInfo;
 import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.Bounder;
+import BGU.Group13B.backend.storePackage.newDiscoutns.bounders.IntBounder;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 import jakarta.persistence.Entity;
@@ -15,11 +16,11 @@ import java.time.LocalDate;
 @Entity
 public class UserAgeCondition extends Condition {
     @OneToOne
-    private final Bounder<Integer> ageBounder;
+    private final IntBounder ageBounder;
 
     public UserAgeCondition(int conditionId, int lowerBound, int upperBound) {
         super(conditionId);
-        this.ageBounder = new Bounder<>(lowerBound, upperBound);
+        this.ageBounder = new IntBounder(lowerBound, upperBound);
     }
 
     /**
@@ -27,7 +28,7 @@ public class UserAgeCondition extends Condition {
      */
     public UserAgeCondition(int conditionId, int lowerBound) {
         super(conditionId);
-        this.ageBounder = new Bounder<>(lowerBound);
+        this.ageBounder = new IntBounder(lowerBound);
     }
     //added for hibernate
     public UserAgeCondition() {

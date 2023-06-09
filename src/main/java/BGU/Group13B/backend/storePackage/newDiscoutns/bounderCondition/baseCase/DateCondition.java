@@ -3,6 +3,7 @@ package BGU.Group13B.backend.storePackage.newDiscoutns.bounderCondition.baseCase
 import BGU.Group13B.backend.User.BasketInfo;
 import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.Bounder;
+import BGU.Group13B.backend.storePackage.newDiscoutns.bounders.DateBounder;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.newDiscoutns.bounderCondition.time.Date;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
@@ -17,16 +18,16 @@ import java.time.LocalDateTime;
 @Entity
 public class DateCondition extends Condition {
     @OneToOne
-    private final Bounder<Date> bounder;
+    private final DateBounder bounder;
 
     public DateCondition(int conditionId, LocalDateTime lowerBound, LocalDateTime upperBound) {
         super(conditionId);
-        this.bounder = new Bounder<>(Date.of(lowerBound), Date.of(upperBound));
+        this.bounder = new DateBounder(Date.of(lowerBound), Date.of(upperBound));
     }
 
     public DateCondition(int conditionId, LocalDateTime lowerBound) {
         super(conditionId);
-        this.bounder = new Bounder<>(Date.of(lowerBound));
+        this.bounder = new DateBounder(Date.of(lowerBound));
     }
 
     //added for hibernate
