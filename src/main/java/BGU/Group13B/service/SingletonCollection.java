@@ -181,7 +181,7 @@ public class SingletonCollection {
             ProductRepositoryAsHashMap repo=(ProductRepositoryAsHashMap) SingletonCollection.getProductRepository();
             SingletonCollection.getContext().getBean(ProductRepositoryAsHashMapService.class).save(repo);
         }
-        SingletonCollection.reviewRepository = SingletonCollection.getContext().getBean(ReviewRepoSingleService.class).getReviewRepoSingleJPA();
+        SingletonCollection.productRepository = SingletonCollection.getContext().getBean(ProductRepositoryAsHashMapService.class).getProductRepositoryAsHashMapJPA();
     }
 
 
