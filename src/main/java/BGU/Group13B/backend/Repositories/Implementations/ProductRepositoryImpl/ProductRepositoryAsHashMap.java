@@ -17,7 +17,7 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
     @JoinTable(name = "ProductRepositoryAsHashMap_SkipListHolderClickbate",
             joinColumns = {@JoinColumn(name = "ProductRepositoryAsHashMap_id", referencedColumnName = "id")},
             inverseJoinColumns = {
-                    @JoinColumn(name = "store_id", referencedColumnName = "storeId")})
+                    @JoinColumn(name = "SkipListHolderClickbate_id", referencedColumnName = "id")})
     @MapKeyJoinColumn(name = "storeId")
     private final Map<Integer/*storeId*/, SkipListHolderClickbate> storeProducts;
 

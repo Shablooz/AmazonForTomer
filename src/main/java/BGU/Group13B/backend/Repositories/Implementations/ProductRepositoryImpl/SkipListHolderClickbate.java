@@ -1,10 +1,7 @@
 package BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl;
 
 import BGU.Group13B.backend.storePackage.Product;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 
 import java.util.Comparator;
 import java.util.List;
@@ -16,9 +13,13 @@ import java.util.stream.Stream;
 @Entity
 public class SkipListHolderClickbate {
     @Id
-    private int storeId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
-    @OneToMany
+    @OneToMany(cascade = jakarta.persistence.CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
+    @JoinTable(name = "SkipListHolderClickbate_Product",
+            joinColumns = {@JoinColumn(name = "SkipListHolderClickbate_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "product_Id", referencedColumnName = "productId")})
     private Set<Product> concurrentSkipListSet;
 
     public SkipListHolderClickbate(Set<Product> concurrentSkipListSet) {
