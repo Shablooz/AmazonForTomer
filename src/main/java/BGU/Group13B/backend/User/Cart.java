@@ -86,19 +86,22 @@ public class Cart {
         return false;
     }
 
-    public void addProductToCart(int productId, int storeId) {
+    public void addProductToCart(int productId, int storeId, int amount, double price) {
         //if user has basket with storeID, add product to it. else, create new basket and add product to it.
         boolean added = false;
         Set<Basket> userBaskets = basketRepository.getUserBaskets(userId);
         for (var basket : userBaskets) {
             if (basket.getStoreId() == storeId) {
-                basket.addProduct(productId);
+                basket.addProduct(productId, amount, price);
                 added = true;
             }
         }
         if (!added) {
-            basketRepository.addUserBasket(userId, storeId).addProduct(productId);
+            basketRepository.addUserBasket(userId, storeId).addProduct(productId, amount, price);
         }
+    }
+    public void addProductToCart(int productId, int storeId){
+        addProductToCart(productId, storeId, 1, -1);
     }
 
     public String getCartDescription() {

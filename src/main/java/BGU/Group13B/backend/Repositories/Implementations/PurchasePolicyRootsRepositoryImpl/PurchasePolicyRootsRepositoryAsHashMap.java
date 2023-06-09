@@ -23,8 +23,6 @@ public class PurchasePolicyRootsRepositoryAsHashMap implements IPurchasePolicyRo
     }
 
     public void removePurchasePolicyRoot(int storeId) {
-        if(!purchasePolicyRoots.containsKey(storeId))
-            throw new IllegalArgumentException("store id does not exist in purchase policy roots repository");
         purchasePolicyRoots.remove(storeId);
     }
 }

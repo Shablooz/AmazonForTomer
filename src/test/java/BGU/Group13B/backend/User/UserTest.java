@@ -247,14 +247,23 @@ class UserTest {
         basketProducts2.add(basketProduct3);
         PurchaseHistory purchaseHistory1 = purchaseHistoryRepository.addPurchase(user1.getUserId(), storeId1, basketProducts1, 8000);
         PurchaseHistory purchaseHistory2 = purchaseHistoryRepository.addPurchase(user1.getUserId(), storeId1, basketProducts2, 12000);
-        Assertions.assertEquals(purchaseHistory1.toString()+'\n'+purchaseHistory2 +'\n',user1.getPurchaseHistory());
+        Assertions.assertEquals(purchaseHistory1.toString()+'\n'+purchaseHistory2.toString()+'\n',getStringPurchase(user1.getPurchaseHistory()));
     }
 
     @Test
     void purchaseUserHistory_Empty() {
         user1.register(goodUsername1, goodPassword1, goodEmail1, "yellow", "", "",LocalDate.MIN);
         user1.login(goodUsername1, goodPassword1, "yellow", "", "");
-        Assertions.assertEquals("", user1.getPurchaseHistory());
+        Assertions.assertEquals("", getStringPurchase(user1.getPurchaseHistory()));
+    }
+
+    private String getStringPurchase(List<PurchaseHistory> purchaseHistories)
+    {
+        String actual = "";
+        for (PurchaseHistory purchaseHistory : purchaseHistories) {
+            actual += purchaseHistory.toString() + '\n';
+        }
+        return actual;
     }
 
 //    @Test

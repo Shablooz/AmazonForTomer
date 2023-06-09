@@ -6,6 +6,9 @@ import BGU.Group13B.backend.storePackage.newDiscoutns.Bounder;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.newDiscoutns.bounderCondition.time.Date;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
+import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
+import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.LogicalConditions.LogicalConditionEntity;
+import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.leaves.DateConditionEntity;
 
 import java.time.LocalDateTime;
 
@@ -28,6 +31,14 @@ public class DateCondition extends Condition {
     public void satisfied(BasketInfo basketInfo, UserInfo user) throws PurchaseExceedsPolicyException {
         if(!bounder.inBounds(Date.of(LocalDateTime.now())))
             throw new PurchaseExceedsPolicyException("date must be " + bounder);
+    }
+
+    @Override
+    public ConditionEntity convertToUiEntity(LogicalConditionEntity parent) {
+        if(bounder.hasUpperBound()){
+            return new DateConditionEntity(parent, bounder.getLowerBound().getDate().toLocalDate(), bounder.getUpperBound().getDate().toLocalDate());
+        }
+        return new DateConditionEntity(parent, bounder.getLowerBound().getDate().toLocalDate());
     }
 
     public String toString(){

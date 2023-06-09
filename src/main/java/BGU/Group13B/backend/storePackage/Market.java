@@ -4,7 +4,13 @@ package BGU.Group13B.backend.storePackage;
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
 import BGU.Group13B.backend.System.Searcher;
 import BGU.Group13B.backend.User.*;
+import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.StoreDiscount;
+import BGU.Group13B.backend.User.BasketProduct;
+import BGU.Group13B.backend.User.Message;
+import BGU.Group13B.backend.User.PurchaseHistory;
+import BGU.Group13B.backend.User.UserCard;
+import BGU.Group13B.backend.User.UserPermissions;
 import BGU.Group13B.backend.storePackage.permissions.ChangePermissionException;
 import BGU.Group13B.backend.storePackage.permissions.DefaultFounderFunctionality;
 import BGU.Group13B.backend.storePackage.permissions.DefaultOwnerFunctionality;
@@ -13,12 +19,12 @@ import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyE
 import BGU.Group13B.service.Response;
 import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.AddToUserCart;
+import BGU.Group13B.service.info.DiscountAccumulationTreeInfo;
 import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
@@ -67,15 +73,15 @@ public class Market {
     }
 
     public void addReview(String review, int storeId, int productId, int userId) throws NoPermissionException { //TODO:check get store impl
-        storeRepository.getStore(storeId).addReview(review, userId,productId);
+        storeRepository.getStore(storeId).addReview(review, userId, productId);
     }
 
     public void removeReview(int storeId, int productId, int userId) throws NoPermissionException {
-        storeRepository.getStore(storeId).removeReview(userId,productId);
+        storeRepository.getStore(storeId).removeReview(userId, productId);
     }
 
     public Review getReview(int storeId, int productId, int userId) throws NoPermissionException {
-        return storeRepository.getStore(storeId).getReview(userId,productId);
+        return storeRepository.getStore(storeId).getReview(userId, productId);
     }
 
     public List<Review> getAllReviews(int productId, int storeId) throws NoPermissionException {
@@ -83,10 +89,11 @@ public class Market {
     }
 
     public float getProductScore(int storeId, int productId, int userId) throws NoPermissionException {
-        return storeRepository.getStore(storeId).getProductScore(productId,userId );
+        return storeRepository.getStore(storeId).getProductScore(productId, userId);
     }
+
     public float getProductScoreUser(int storeId, int productId, int userId) throws NoPermissionException {
-        return storeRepository.getStore(storeId).getProductScoreUser(productId,userId );
+        return storeRepository.getStore(storeId).getProductScoreUser(productId, userId);
     }
 
     public void addAndSetProductScore(int storeId, int productId, int userId, int score) throws NoPermissionException {
@@ -166,20 +173,22 @@ public class Market {
     }
 
     public List<ProductInfo> search(String searchWords) {
-            List<ProductInfo> products = new LinkedList<>();
-            products.addAll(searchProductByKeywords(searchWords));
-            products.addAll(searchProductByCategory(searchWords));
-            products.addAll(searchProductByName(searchWords));
-            Set<ProductInfo> set = new HashSet<>(products.size());
-            products.removeIf(p -> !set.add(p));
-            return products;
+        if(searchWords == null || searchWords.isEmpty())
+            throw new IllegalArgumentException("search words cannot be empty");
+        List<ProductInfo> products = new LinkedList<>();
+        products.addAll(searchProductByKeywords(searchWords));
+        products.addAll(searchProductByCategory(searchWords));
+        products.addAll(searchProductByName(searchWords));
+        Set<ProductInfo> set = new HashSet<>(products.size());
+        products.removeIf(p -> !set.add(p));
+        return products;
     }
 
-    public List<ProductInfo> filterByPriceRange(int minPrice, int maxPrice) {
+    public List<ProductInfo> filterByPriceRange(double minPrice, double maxPrice) {
         return searcher.filterByPriceRange(minPrice, maxPrice);
     }
 
-    public List<ProductInfo> filterByProductRank(int minRating, int maxRating) {
+    public List<ProductInfo> filterByProductRank(double minRating, double maxRating) {
         return searcher.filterByProductRank(minRating, maxRating);
     }
 
@@ -187,12 +196,12 @@ public class Market {
         return searcher.filterByCategory(category);
     }
 
-    public List<ProductInfo> filterByStoreRank(int minRating, int maxRating) {
+    public List<ProductInfo> filterByStoreRank(double minRating, double maxRating) {
         return searcher.filterByStoreRank(minRating, maxRating);
     }
 
     private double calculatePriceOfBasket(int storeId, BasketInfo basketInfo, UserInfo userInfo,
-                                          List<String> coupons) throws PurchaseExceedsPolicyException{//add date of birth
+                                          List<String> coupons) throws PurchaseExceedsPolicyException {//add date of birth
         return Optional.of(storeRepository.getStore(storeId)).orElseThrow(
                 () -> new RuntimeException("Store with id " + storeId + " does not exist")
         ).calculatePriceOfBasket(basketInfo, userInfo, coupons);
@@ -230,6 +239,19 @@ public class Market {
         return storeRepository.getStore(storeId).getStoreInfo(userId);
     }
 
+    public StoreInfo getGeneralStoreInfo(int storeId) {
+        return storeRepository.getStore(storeId).getGemeralStoreInfo();
+    }
+
+    public Set<StoreInfo> getAllGeneralStoreInfo(){
+        Set<StoreInfo> storeInfos = new HashSet<>();
+        Set<Integer> storeIds = storeRepository.getAllStoresId();
+        for(Integer id : storeIds){
+            storeInfos.add(storeRepository.getStore(id).getGemeralStoreInfo());
+        }
+        return storeInfos;
+    }
+
     public ProductInfo getStoreProductInfo(int userId, int storeId, int productId) throws NoPermissionException {
         return storeRepository.getStore(storeId).getStoreProduct(userId, productId).getProductInfo();
     }
@@ -253,6 +275,7 @@ public class Market {
 
     public void deleteStore(int userId, int storeId) throws NoPermissionException {
         storeRepository.getStore(storeId).deleteStore(userId);
+        storeRepository.removeStore(storeId);
     }
 
     public List<PurchaseHistory> getStorePurchaseHistory(int userId, int storeId) throws NoPermissionException {
@@ -287,13 +310,24 @@ public class Market {
         return storeRepository.getStore(storeId).getStoreOwners();
     }
 
+    public UserCard getUserInfo(int userId, int userInfoId) throws NoPermissionException {
+        if(!SingletonCollection.getUserRepository().getUser(userId).isAdmin())
+            throw new NoPermissionException("Only admins can access this function");
+        return SingletonCollection.getUserRepository().getUser(userInfoId).getUserCard();
+    }
+
+    public List<UserCard> getAllUserCards(int userId)throws NoPermissionException {
+        if(!SingletonCollection.getUserRepository().getUser(userId).isAdmin())
+            throw new NoPermissionException("Only admins can access this function");
+        return SingletonCollection.getUserRepository().getAllUserCards();
+    }
 
 
     /**
      * <H1>Conditions</H1>
      */
 
-    public void setPurchasePolicyCondition(int storeId, int userId, int conditionId) throws NoPermissionException{
+    public void setPurchasePolicyCondition(int storeId, int userId, int conditionId) throws NoPermissionException {
         storeRepository.getStore(storeId).setPurchasePolicyCondition(userId, conditionId);
     }
 
@@ -316,19 +350,19 @@ public class Market {
         return storeRepository.getStore(storeId).addIMPLYCondition(userId, condition1, condition2);
     }
 
-    public int addStorePriceCondition(int storeId, int userId, double lowerBound, double upperBound) throws NoPermissionException{
+    public int addStorePriceCondition(int storeId, int userId, double lowerBound, double upperBound) throws NoPermissionException {
         return storeRepository.getStore(storeId).addStorePriceCondition(userId, lowerBound, upperBound);
     }
 
-    public int addStorePriceCondition(int storeId, int userId, double lowerBound) throws NoPermissionException{
+    public int addStorePriceCondition(int storeId, int userId, double lowerBound) throws NoPermissionException {
         return storeRepository.getStore(storeId).addStorePriceCondition(userId, lowerBound);
     }
 
-    public int addStoreQuantityCondition(int storeId, int userId, int lowerBound, int upperBound) throws NoPermissionException{
+    public int addStoreQuantityCondition(int storeId, int userId, int lowerBound, int upperBound) throws NoPermissionException {
         return storeRepository.getStore(storeId).addStoreQuantityCondition(userId, lowerBound, upperBound);
     }
 
-    public int addStoreQuantityCondition(int storeId, int userId, int lowerBound) throws NoPermissionException{
+    public int addStoreQuantityCondition(int storeId, int userId, int lowerBound) throws NoPermissionException {
         return storeRepository.getStore(storeId).addStoreQuantityCondition(userId, lowerBound);
     }
 
@@ -503,4 +537,33 @@ public class Market {
         storeRepository.getStore(storeId).addDiscountToADDRoot(userId, discountId);
 
     }
+
+    public void addIndividualPermission(int userId, int managerId, int storeId, UserPermissions.IndividualPermission individualPermission) throws NoPermissionException, ChangePermissionException {
+        storeRepository.getStore(storeId).addPermissionToManager(userId, managerId, individualPermission);
+    }
+
+    public void removeIndividualPermission(int userId, int managerId, int storeId, UserPermissions.IndividualPermission individualPermission) throws NoPermissionException, ChangePermissionException {
+        storeRepository.getStore(storeId).removePermissionFromManager(userId, managerId, individualPermission);
+    }
+
+    public DiscountAccumulationTreeInfo getDiscountAccumulationTree(int storeId, int userId) throws NoPermissionException {
+        return storeRepository.getStore(storeId).getDiscountAccumulationTree(userId);
+    }
+
+    public void deleteStoreAccumulationTree(int storeId, int userId) throws NoPermissionException {
+        storeRepository.getStore(storeId).deleteStoreAccumulationTree(userId);
+    }
+
+    public boolean isStoreHidden(int storeId) {
+        return storeRepository.getStore(storeId).isHidden();
+    }
+
+    public Condition getStorePurchasePolicy(int storeId, int userId) throws NoPermissionException {
+        return storeRepository.getStore(storeId).getPurchasePolicy(userId);
+    }
+
+    public void resetStorePurchasePolicy(int storeId, int userId) throws NoPermissionException {
+        storeRepository.getStore(storeId).resetPurchasePolicy(userId);
+    }
+
 }

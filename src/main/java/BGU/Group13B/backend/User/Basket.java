@@ -191,12 +191,21 @@ public class Basket {
         }
     }
 
-    public void addProduct(int productId) throws IllegalArgumentException {
+    public void addProduct(int productId, int amount, double newPrice) throws IllegalArgumentException {
         BasketProduct basketProduct = basketProductRepository.getBasketProduct(productId, storeId, userId);
+
         if (basketProduct != null) {
             basketProductRepository.changeProductQuantity(productId, storeId, userId, 1);
-        } else
+            basketProduct.setQuantity(amount);
+            if (newPrice != -1)
+                basketProduct.setPrice(newPrice);
+
+        } else {
             basketProductRepository.addNewProductToBasket(productId, storeId, userId);
+            if(newPrice != -1)
+                basketProductRepository.getBasketProduct(productId, storeId, userId).setPrice(newPrice);
+            basketProductRepository.getBasketProduct(productId, storeId, userId).setQuantity(amount);
+        }
     }
 
     public String getBasketDescription() {

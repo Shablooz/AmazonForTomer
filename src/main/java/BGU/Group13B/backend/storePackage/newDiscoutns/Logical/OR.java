@@ -5,6 +5,7 @@ import BGU.Group13B.backend.User.PurchaseFailedException;
 import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
+import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.LogicalConditions.LogicalConditionEntity;
 
 public class OR extends LogicalCondition{
     public OR(int conditionId, Condition operand1, Condition operand2) {
@@ -24,5 +25,10 @@ public class OR extends LogicalCondition{
     @Override
     public String toString() {
         return "( " + operand1 + " or " + operand2 + " )";
+    }
+
+    @Override
+    public LogicalConditionEntity convertToUiEntity(LogicalConditionEntity parent) {
+        return new LogicalConditionEntity(parent, LogicalConditionEntity.LogicalOperator.OR);
     }
 }

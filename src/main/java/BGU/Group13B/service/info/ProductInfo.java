@@ -15,4 +15,8 @@ public record ProductInfo(int productId, int storeId, String seller, String name
                 product.getCategory(), product.getPrice(), product.getStockQuantity(),
                 product.getDescription(), product.getProductScore());
     }
+
+    public double getRoundedScore() {
+        return Math.round(score * 10.0) / 10.0;
+    }
 }

@@ -1,7 +1,9 @@
 package BGU.Group13B.frontEnd.components.views;
 
+import BGU.Group13B.backend.storePackage.WorkerCard;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.service.BroadCaster;
+import BGU.Group13B.service.Response;
 import BGU.Group13B.service.Session;
 import BGU.Group13B.service.SingletonCollection;
 import com.vaadin.flow.component.Html;
@@ -35,13 +37,14 @@ import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY_INLIN
 @Tag("login-view")
 @Route(value = "login", layout = MainLayout.class)
 @PageTitle("Login")
-public class LoginView extends VerticalLayout implements BeforeEnterObserver {
+public class LoginView extends VerticalLayout implements BeforeEnterObserver{
 
     private final TextField username = new TextField("Username");
 
     private final PasswordField password = new PasswordField("Password");
     private final Button loginButton = new Button("Login");
     private final Button registerButton = new Button("Register");
+
 
     private final Button authenticate = new Button("authenticate");
 
@@ -70,6 +73,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
 
         setregisterButton();
 
+
         FormLayout formLayout = new FormLayout();
         formLayout.add(username, password);
         add(formLayout, loginButton, registerButton);
@@ -97,12 +101,17 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
                 var ui = UI.getCurrent();
                 //Tomer section
                 BroadCaster.register(newId, newMessage -> {
-                    ui.access(() -> createSubmitSuccess(newMessage).open());
+                    ui.access(() -> {
+                        if (newMessage.startsWith("BID"))
+                            createPurchaseProposalSubmitRequest(newMessage).open();
+                        else
+                            createSubmitSuccess(newMessage).open();
+
+                    });
                 });
 
 
                 session.fetchMessages(newId);
-
             } catch (Exception ex) {
                 Notification.show("Login failed");
             }
@@ -116,6 +125,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
             UI.getCurrent().navigate(RegisterView.class);
         });
     }
+
 
     private void hideNoneNeededAuthentication(Session session) {
         if (SingletonCollection.getUserRepository().checkIfUserExists(username.getValue()) == null)
@@ -145,7 +155,6 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
                 SessionToIdMapper.getInstance().updateCurrentSession(newId);
                 // SessionToIdMapper.getInstance().setRefreshRequired(true);
                 UI.getCurrent().navigate(HomeView.class);
-
                 var ui = UI.getCurrent();
                 //Tomer section
                 BroadCaster.register(newId, newMessage -> {
@@ -161,6 +170,36 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
 
 
         });
+    }
+
+    private Notification createPurchaseProposalSubmitRequest(String message) {
+        Notification notification = new Notification();
+        //notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+        String newMessage = message.substring(message.indexOf("]") + 1);
+        int managerId = SessionToIdMapper.getInstance().getCurrentSessionId();
+        String[] storeProduct = message.substring(message.indexOf("[") + 1, message.indexOf("]")).split(",");
+        int storeId = Integer.parseInt(storeProduct[0]);
+        int productId = Integer.parseInt(storeProduct[1]);
+        //accept button
+        Button accept = new Button(VaadinIcon.CHECK_CIRCLE.create(), event -> {
+            session.purchaseProposalApprove(managerId, storeId, productId);
+            notification.close();
+        });
+        accept.addThemeVariants(LUMO_TERTIARY_INLINE);
+        //reject button
+        Button reject = new Button(VaadinIcon.CLOSE_SMALL.create(), event -> {
+            session.purchaseProposalReject(managerId, storeId, productId);
+            notification.close();
+        });
+        accept.setVisible(true);
+        reject.setVisible(true);
+        reject.addThemeVariants(LUMO_TERTIARY_INLINE);
+
+        Div info = new Div(new Text(newMessage));
+        VerticalLayout layout = new VerticalLayout(info, accept, reject);
+        layout.setAlignItems(FlexComponent.Alignment.CENTER);
+        notification.add(layout);
+        return notification;
     }
 
     private Notification createSubmitSuccess(String message) {

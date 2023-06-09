@@ -17,7 +17,7 @@ public class AuctionRepositoryAsHashMap implements IAuctionRepository {
     private final AbstractMap<Integer/*storeId*/, List<PublicAuction>> storeAuctions;
     private final AddToUserCart addToCart;
     ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-    private final ConcurrentHashMap<Pair<Integer, Integer>, Future<?>> scheduledFutureHashMap = new ConcurrentHashMap();
+    private final ConcurrentHashMap<Pair<Integer, Integer>, Future<?>> scheduledFutureHashMap = new ConcurrentHashMap<>();
 
     public AuctionRepositoryAsHashMap() {
         storeAuctions = new ConcurrentHashMap<>();
@@ -69,7 +69,7 @@ public class AuctionRepositoryAsHashMap implements IAuctionRepository {
             v.remove(auction);
             auction.acquireLock();
             if (auction.getCurrentUserId() != -1) {//if there exists a user that won the auction
-                addToCart.apply(auction.getCurrentUserId(), storeId, productId /*could be changed by the user*/);
+                addToCart.apply(auction.getCurrentUserId(), storeId, productId /*could be changed by the user*/, 1, auction.getCurrentPrice());
                 auction.setCurrentUserId(-1);
             } else
                 System.out.println("[DEBUG]:No one won the auction");//add to logger

@@ -8,11 +8,13 @@ import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.backend.storePackage.WorkerCard;
 import BGU.Group13B.backend.storePackage.newDiscoutns.DiscountInfo;
+import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.service.entity.ReviewService;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
 import BGU.Group13B.service.entity.ServiceProduct;
+import BGU.Group13B.service.info.DiscountAccumulationTreeInfo;
 import BGU.Group13B.service.info.ProductInfo;
 import BGU.Group13B.service.info.StoreInfo;
 import org.springframework.stereotype.Service;
@@ -79,9 +81,18 @@ public class Session implements ISession {
     }
 
     /*good for development no need check if the item exists*/
+    public Response<VoidResponse> addToCart(int userId, int storeId, int productId, int amount, double newPrice) {
+        try {
+            userRepository.getUser(userId).addToCart(storeId, productId, amount, newPrice);
+            return Response.success();
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
     @Override
-    public void addToCart(int userId, int storeId, int productId) {
-        userRepository.getUser(userId).addToCart(storeId, productId);
+    public Response<VoidResponse> addToCart(int userId, int storeId, int productId) {
+        addToCart(userId, storeId, productId, 1, -1);
+        return Response.success();
     }
 
     @Override
@@ -143,9 +154,27 @@ public class Session implements ISession {
     }
 
     @Override
-    public void purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount) {
+    public Response<VoidResponse> purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount) {
         try {
             market.purchaseProposalSubmit(userId, storeId, productId, proposedPrice, amount);
+            return Response.success();
+        } catch (NoPermissionException e) {
+            return Response.exception(e);
+        }
+    }
+    @Override
+    public void purchaseProposalApprove(int managerId, int storeId, int productId){
+        try {
+            market.purchaseProposalApprove(managerId, storeId, productId);
+        } catch (NoPermissionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void purchaseProposalReject(int storeId, int managerId, int bidId){
+        try {
+            market.purchaseProposalReject(managerId,storeId, bidId);
         } catch (NoPermissionException e) {
             throw new RuntimeException(e);
         }
@@ -219,7 +248,7 @@ public class Session implements ISession {
     }
 
     @Override
-    public Response<List<ProductInfo>> filterByPriceRange(int minPrice, int maxPrice) {
+    public Response<List<ProductInfo>> filterByPriceRange(double minPrice, double maxPrice) {
         try {
             return Response.success(market.filterByPriceRange(minPrice, maxPrice));
         } catch (Exception e) {
@@ -228,7 +257,7 @@ public class Session implements ISession {
     }
 
     @Override
-    public Response<List<ProductInfo>> filterByProductRank(int minRating, int maxRating) {
+    public Response<List<ProductInfo>> filterByProductRank(double minRating, double maxRating) {
         try {
             return Response.success(market.filterByProductRank(minRating, maxRating));
         } catch (Exception e) {
@@ -246,7 +275,7 @@ public class Session implements ISession {
     }
 
     @Override
-    public Response<List<ProductInfo>> filterByStoreRank(int minRating, int maxRating) {
+    public Response<List<ProductInfo>> filterByStoreRank(double minRating, double maxRating) {
         try {
             return Response.success(market.filterByStoreRank(minRating, maxRating));
         } catch (Exception e) {
@@ -820,7 +849,7 @@ public class Session implements ISession {
     }
 
     @Override
-    public Response<String> getUserPurchaseHistory(int userId) {
+    public Response<List<PurchaseHistory>> getUserPurchaseHistory(int userId) {
         try {
             isUserLogged(userId);
             return Response.success(userRepositoryAsHashmap.getUser(userId).getPurchaseHistory());
@@ -909,8 +938,7 @@ public class Session implements ISession {
     }
 
     @Override
-    public Response<String> getUserPurchaseHistoryAsAdmin(int userId, int adminId) {
-        //change to return purchaseHistory
+    public Response<List<PurchaseHistory>> getUserPurchaseHistoryAsAdmin(int userId, int adminId) {
         try {
             if (!getUserStatus(adminId).equals("Admin") || !isUserLogged(adminId)) {
                 throw new NoPermissionException("The user is not an admin or is not logged in");
@@ -975,12 +1003,11 @@ public class Session implements ISession {
     }
 
     @Override
-    public List<WorkerCard> getStoreWorkersInfo(int userId, int storeId) {
+    public Response<List<WorkerCard>> getStoreWorkersInfo(int userId, int storeId) {
         try {
-            return market.getStoreWorkersInfo(userId, storeId);
+            return Response.success(market.getStoreWorkersInfo(userId, storeId));
         } catch (Exception e) {
-            //TODO: handle exception
-            throw new RuntimeException(e);
+            return Response.exception(e);
         }
     }
 
@@ -1306,7 +1333,7 @@ public class Session implements ISession {
     @Override
     public Response<List<DiscountInfo>> getStoreDiscounts(int storeId, int userId) {
         try {
-            return Response.success(market.getStoreDiscounts(storeId, userId).stream().map(d -> new DiscountInfo(d.toString())).collect(Collectors.toList()));
+            return Response.success(market.getStoreDiscounts(storeId, userId).stream().map(d -> new DiscountInfo(d.getDiscountId(), d.toString())).collect(Collectors.toList()));
         } catch (Exception e) {
             return Response.exception(e);
         }
@@ -1316,7 +1343,7 @@ public class Session implements ISession {
     public Response<DiscountInfo> getDiscount(int storeId, int userId, int discountId) {
         try {
             var discount = market.getDiscount(storeId, userId, discountId);
-            return Response.success(new DiscountInfo(discount.toString()));
+            return Response.success(new DiscountInfo(discountId, discount.toString()));
         } catch (Exception e) {
             return Response.exception(e);
         }
@@ -1372,6 +1399,26 @@ public class Session implements ISession {
         }
     }
 
+    @Override
+    public Response<DiscountAccumulationTreeInfo> getDiscountAccumulationTree(int storeId, int userId) {
+        try{
+            return Response.success(market.getDiscountAccumulationTree(storeId, userId));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<VoidResponse> deleteStoreAccumulationTree(int storeId, int userId) {
+        try {
+            market.deleteStoreAccumulationTree(storeId, userId);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
     public List<Integer> getStoreOwners(int storeId) {
         try {
             return market.getStoreOwners(storeId);
@@ -1381,6 +1428,124 @@ public class Session implements ISession {
         }
     }
 
+    @Override
+    public Response<VoidResponse> addIndividualPermission(int userId, int managerId, int storeId, UserPermissions.IndividualPermission individualPermission) {
+        try {
+            market.addIndividualPermission(userId, managerId, storeId, individualPermission);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<VoidResponse> removeIndividualPermission(int userId, int managerId, int storeId, UserPermissions.IndividualPermission individualPermission) {
+        try {
+            market.removeIndividualPermission(userId, managerId, storeId, individualPermission);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Integer> getUserIdByUsername(String username) {
+        try{
+            return Response.success(userRepository.getUserIdByUsername(username));
+        } catch (Exception e){
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<HashMap<Integer, String>> getUserIdsToUsernamesMapper(List<Integer> userIds) {
+        try{
+            return Response.success(userRepository.getUserIdsToUsernamesMapper(userIds));
+        } catch (Exception e){
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Boolean> isStoreHidden(int storeId) {
+        try{
+            return Response.success(market.isStoreHidden(storeId));
+        } catch (Exception e){
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Boolean> isAdmin(int userId) {
+        try{
+            return Response.success(getUserStatus(userId).equals("Admin"));
+        } catch (Exception e){
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Condition> getStorePurchasePolicy(int storeId, int userId) {
+        try{
+            return Response.success(market.getStorePurchasePolicy(storeId, userId));
+        } catch (Exception e){
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<VoidResponse> resetStorePurchasePolicy(int storeId, int userId) {
+        try{
+            market.resetStorePurchasePolicy(storeId, userId);
+            return Response.success(new VoidResponse());
+        } catch (Exception e){
+            return Response.exception(e);
+        }
+    }
+
+    public Response<StoreInfo> getGeneralStoreInfo(int storeId) {
+        try {
+            return Response.success(market.getGeneralStoreInfo(storeId));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<List<StoreInfo>> getAllStores() {
+        try {
+            Set<StoreInfo> storesInfos = market.getAllGeneralStoreInfo();
+            List<StoreInfo> asList = storesInfos.stream().toList();
+            return Response.success(asList);
+        } catch (Exception e) {
+        return Response.exception(e);
+    }
+
+    }
+
+    public UserCard getUserInfo(int userId, int userInfoId){
+        try {
+            return market.getUserInfo(userId, userInfoId);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Response<List<UserCard>> getAllUserCards(int userId){
+        try {
+            return Response.success(market.getAllUserCards(userId));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    public Response<Integer> removeUser(int userId, int removeUserId){
+        try {
+            return Response.success(1);//placeholder for the feature in the branch
+        } catch (Exception e){
+            return Response.exception(e);
+        }
+    }
     private void updateProductRepository(){
         SingletonCollection.getProductRepositoryAsHashMapService().save(SingletonCollection.getProductRepositoryAsHashMapService().getProductRepositoryAsHashMapJPA());
     }

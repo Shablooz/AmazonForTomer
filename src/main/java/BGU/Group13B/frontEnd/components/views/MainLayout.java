@@ -82,10 +82,43 @@ public class MainLayout extends AppLayout {
 
         var ui = UI.getCurrent();
         //Tomer section
-        BroadCaster.register(USERID, newMessage -> ui.access(() -> createSubmitSuccess(newMessage).open()));
+        BroadCaster.register(USERID, newMessage -> ui.access(() -> {
+            if (newMessage.startsWith("BID"))
+                createPurchaseProposalSubmitRequest(newMessage).open();
+             else
+                createSubmitSuccess(newMessage).open();
+        }));
         session.fetchMessages(USERID);
     }
+    private Notification createPurchaseProposalSubmitRequest(String message) {
+        Notification notification = new Notification();
+        //notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+        String newMessage = message.substring(message.indexOf("]") + 1);
+        int managerId = SessionToIdMapper.getInstance().getCurrentSessionId();
+        String[] storeProduct = message.substring(message.indexOf("[") + 1, message.indexOf("]")).split(",");
+        int storeId = Integer.parseInt(storeProduct[0]);
+        int productId = Integer.parseInt(storeProduct[1]);
+        //accept button
+        Button accept = new Button(VaadinIcon.CHECK_CIRCLE.create(), event -> {
+            session.purchaseProposalApprove(managerId, storeId, productId);
+            notification.close();
+        });
+        accept.addThemeVariants(LUMO_TERTIARY_INLINE);
+        //reject button
+        Button reject = new Button(VaadinIcon.CLOSE_SMALL.create(), event -> {
+            session.purchaseProposalReject(managerId, storeId, productId);
+            notification.close();
+        });
+        accept.setVisible(true);
+        reject.setVisible(true);
+        reject.addThemeVariants(LUMO_TERTIARY_INLINE);
 
+        Div info = new Div(new Text(newMessage));
+        HorizontalLayout layout = new HorizontalLayout(info, accept, reject);
+        layout.setAlignItems(FlexComponent.Alignment.CENTER);
+        notification.add(layout);
+        return notification;
+    }
     private Notification createSubmitSuccess(String message) {
         Notification notification = new Notification();
         notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
@@ -252,6 +285,9 @@ public class MainLayout extends AppLayout {
     private void prepareLogoutButton(FlexLayout flexLayout) {
         logoutButton = new Button("Logout");
         logoutButton.addClickListener(event -> {
+            if (session.getUserStatus(USERID).equals(ADMIN)) {
+                getUI().ifPresent(ui -> ui.navigate("login"));
+            }
             session.logout(SessionToIdMapper.getInstance().getCurrentSessionId());
             SessionToIdMapper.getInstance().updateCurrentSession(session.enterAsGuest());
             getUI().ifPresent(ui -> ui.getPage().reload());
@@ -536,9 +572,19 @@ public class MainLayout extends AppLayout {
             nav.addItem(new AppNavItem("My Stores", MyStoresView.class, LineAwesomeIcon.STORE_SOLID.create()));
         }
 
+        if (session.isUserLogged(SessionToIdMapper.getInstance().getCurrentSessionId())) {
+            nav.addItem(new AppNavItem("Purchase History", PurchaseHistoryView.class, LineAwesomeIcon.HISTORY_SOLID.create()));
+            nav.addItem(new AppNavItem("All Stores", AllStoresView.class, LineAwesomeIcon.STORE_ALT_SOLID.create()));
+        }
+
+        if (session.getUserStatus(USERID).equals(ADMIN)){
+            nav.addItem(new AppNavItem("Admin Page", AdminView.class, LineAwesomeIcon.APPLE_PAY.create()));
+        }
+
 
         return nav;
     }
+
 
     private Searcher createSearcher() {
         Searcher searcher = new Searcher();

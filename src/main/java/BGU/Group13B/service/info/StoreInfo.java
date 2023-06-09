@@ -13,6 +13,10 @@ public record StoreInfo(int storeId, String storeName, String category, double s
     public StoreInfo(Store store) {
         this(store.getStoreId(), store.getStoreName(), store.getCategory(), store.getStoreScore());
     }
+
+    public double getRoundedScore() {
+        return Math.round(storeScore * 10.0) / 10.0;
+    }
 }
 
 

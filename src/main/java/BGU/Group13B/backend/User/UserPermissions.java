@@ -3,9 +3,7 @@ package BGU.Group13B.backend.User;
 
 import BGU.Group13B.backend.Pair;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class UserPermissions {
 
@@ -29,12 +27,25 @@ public class UserPermissions {
         MANAGER,
     }
 
+    public enum IndividualPermission{
+        STOCK,
+        MESSAGES,
+        POLICIES,
+        AUCTION,
+        WORKERS_INFO,
+        HISTORY,
+        STAFF,
+        FONLY
+    }
+
     private UserPermissionStatus userPermissionStatus;
     private HashMap<Integer/*storeId*/, StoreRole> userStoreRole;
+    private HashMap<Integer/*storeId*/, Set<IndividualPermission>> userIndividualPermission;
 
     public UserPermissions() {
         this.userPermissionStatus = UserPermissionStatus.GUEST;
         this.userStoreRole = new HashMap<>();
+        this. userIndividualPermission = new HashMap<>();
     }
 
     public UserPermissionStatus getUserPermissionStatus() {
@@ -65,8 +76,32 @@ public class UserPermissions {
         return userStoreRole.get(storeId);
     }
 
+    public void addIndividualPermission(int storeId, IndividualPermission individualPermission){
+        if (userIndividualPermission.containsKey(storeId)){
+            userIndividualPermission.get(storeId).add(individualPermission);
+        }
+        else{
+            Set<IndividualPermission> ns = new HashSet<>();
+            ns.add(individualPermission);
+            userIndividualPermission.put(storeId, ns);
+        }
+    }
+
+    public void deleteIndividualPermission(int storeId, IndividualPermission individualPermission){
+        userIndividualPermission.get(storeId).remove(individualPermission);
+    }
+
+    public Set<IndividualPermission> getIndividualPermissions(int storeId){
+        return userIndividualPermission.get(storeId);
+    }
+
+    public void removeAllIndividualPermissions(int storeId){
+        userIndividualPermission.get(storeId).clear();
+    }
+
     public void clearForTest(){
         userStoreRole.clear();
+        userIndividualPermission.clear();
     }
 }
 
