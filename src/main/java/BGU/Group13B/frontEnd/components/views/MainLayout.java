@@ -574,7 +574,8 @@ public class MainLayout extends AppLayout {
 
         if (session.isUserLogged(SessionToIdMapper.getInstance().getCurrentSessionId())) {
             nav.addItem(new AppNavItem("Purchase History", PurchaseHistoryView.class, LineAwesomeIcon.HISTORY_SOLID.create()));
-        nav.addItem(new AppNavItem("All Stores", AllStoresView.class, LineAwesomeIcon.STORE_ALT_SOLID.create()));
+            nav.addItem(new AppNavItem("All Stores", AllStoresView.class, LineAwesomeIcon.STORE_ALT_SOLID.create()));
+        }
 
         if (session.getUserStatus(USERID).equals(ADMIN)){
             nav.addItem(new AppNavItem("Admin Page", AdminView.class, LineAwesomeIcon.APPLE_PAY.create()));
@@ -583,6 +584,7 @@ public class MainLayout extends AppLayout {
 
         return nav;
     }
+
 
     private Searcher createSearcher() {
         Searcher searcher = new Searcher();
