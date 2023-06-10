@@ -1,7 +1,9 @@
 package BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl;
 
+import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepoSingleService;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
 import BGU.Group13B.backend.storePackage.Product;
+import BGU.Group13B.service.SingletonCollection;
 import jakarta.persistence.*;
 
 import java.util.*;
@@ -19,9 +21,9 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
             inverseJoinColumns = {
                     @JoinColumn(name = "SkipListHolderClickbate_id", referencedColumnName = "id")})
     @MapKeyJoinColumn(name = "storeId")
-    private final Map<Integer/*storeId*/, SkipListHolderClickbate> storeProducts;
+    private Map<Integer/*storeId*/, SkipListHolderClickbate> storeProducts;
 
-    private final AtomicInteger productIdCounter = new AtomicInteger(0);
+    private AtomicInteger productIdCounter = new AtomicInteger(1);
 
     public ProductRepositoryAsHashMap() {
         this.storeProducts = new ConcurrentHashMap<>();
@@ -39,6 +41,7 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
         getStoreProducts(storeId).orElseThrow(
                 () -> new IllegalArgumentException("Store " + storeId + " not found")
         ).removeIf(product -> product.getProductId() == productId);
+        save();
     }
 
   
@@ -48,6 +51,7 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
         int productId = productIdCounter.getAndIncrement();
         Product product=new Product(productId, storeId, name, category, price, stockQuantity, description);
         storeProducts.get(storeId).add(product);
+        save();
         return product;
     }
 
@@ -144,6 +148,7 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
     public void reset() {
         storeProducts.clear();
         productIdCounter.set(0);
+        save();
     }
 
     @Override
@@ -153,6 +158,7 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
         getStoreProducts(storeId).orElseThrow(
                 () -> new IllegalArgumentException("Store " + storeId + " not found")
         ).forEach(Product::hide);
+        save();
     }
 
     @Override
@@ -162,6 +168,7 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
         getStoreProducts(storeId).orElseThrow(
                 () -> new IllegalArgumentException("Store " + storeId + " not found")
         ).forEach(Product::unhide);
+        save();
     }
 
     @Override
@@ -170,6 +177,36 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
             storeProducts.put(storeId, new SkipListHolderClickbate());
         int productId = productIdCounter.getAndIncrement();
         storeProducts.get(storeId).add(new Product(productId, storeId, name, category, price, stockQuantity, description, true));
+        save();
         return productId;
+    }
+
+    private void save(){
+        SingletonCollection.getContext().getBean(ProductRepositoryAsHashMapService.class).save(this);
+
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Map<Integer, SkipListHolderClickbate> getStoreProducts() {
+        return storeProducts;
+    }
+
+    public void setStoreProducts(Map<Integer, SkipListHolderClickbate> storeProducts) {
+        this.storeProducts = storeProducts;
+    }
+
+    public AtomicInteger getProductIdCounter() {
+        return productIdCounter;
+    }
+
+    public void setProductIdCounter(AtomicInteger productIdCounter) {
+        this.productIdCounter = productIdCounter;
     }
 }

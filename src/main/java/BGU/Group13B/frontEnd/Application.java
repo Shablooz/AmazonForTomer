@@ -1,28 +1,16 @@
 package BGU.Group13B.frontEnd;
 
-import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepoSingle;
-import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepoSingleService;
-import BGU.Group13B.frontEnd.components.SessionToIdMapper;
-
 import BGU.Group13B.service.SingletonCollection;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Timer;
-
-import static BGU.Group13B.service.SingletonCollection.setProductRepository;
 
 /**
  * The entry point of the Spring Boot application.
@@ -50,7 +38,9 @@ public class Application implements AppShellConfigurator {
         SingletonCollection.setProductRepository();
         //need to access singleton collection here
         //serPerson ser=SingletonCollection.getContext().getBean(serPerson.class);
-
+        MyProduct myProduct = new MyProduct();
+        MyProductService ser = context.getBean(MyProductService.class);
+        ser.save(myProduct);
 
 
 

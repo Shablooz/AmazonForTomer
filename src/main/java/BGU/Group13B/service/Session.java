@@ -71,13 +71,17 @@ public class Session implements ISession {
 
     @Override
     public Response<Integer> addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) {
-        try {
-            Integer result = market.addProduct(userId, storeId, productName, category, price, stockQuantity, description);
-            updateProductRepository();
-            return Response.success(result);
-        } catch (Exception e) {
-            return Response.exception(e);
-        }
+       try {
+           Integer result = market.addProduct(userId, storeId, productName, category, price, stockQuantity, description);
+           updateProductRepository();
+           return Response.success(result);
+       } catch (Exception e) {
+           System.out.println(e.getCause());
+           System.out.println(e.getMessage());
+           System.out.println(Arrays.toString(e.getStackTrace()));
+           return Response.exception(e);
+    }
+
     }
 
     /*good for development no need check if the item exists*/

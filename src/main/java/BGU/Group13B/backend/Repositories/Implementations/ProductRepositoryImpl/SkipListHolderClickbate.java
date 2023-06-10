@@ -46,4 +46,20 @@ public class SkipListHolderClickbate {
     public Stream<Product> stream() {
         return concurrentSkipListSet.stream();
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Set<Product> getConcurrentSkipListSet() {
+        return concurrentSkipListSet;
+    }
+
+    public void setConcurrentSkipListSet(Set<Product> concurrentSkipListSet) {
+        this.concurrentSkipListSet = concurrentSkipListSet;
+    }
 }
