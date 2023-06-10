@@ -38,9 +38,6 @@ public class Application implements AppShellConfigurator {
         SingletonCollection.setProductRepository();
         //need to access singleton collection here
         //serPerson ser=SingletonCollection.getContext().getBean(serPerson.class);
-        MyProduct myProduct = new MyProduct();
-        MyProductService ser = context.getBean(MyProductService.class);
-        ser.save(myProduct);
 
 
 
