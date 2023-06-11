@@ -1,6 +1,6 @@
 {
-  "persist": "true",
-
+  "persist": true,
+  "reset": false,
   "functions": [
     {
       "name": "enterAsGuest",
@@ -16,31 +16,6 @@
       "comment": "(int userId, String username, String password, String email, String answer1, String answer2, String answer3, LocalDate birthDate);"
 
     },
-    {
-      "name": "login",
-      "arguments": ["{{enterAsGuest,0}}", "shaun", "Shaun1234", "answer1", "answer2", "answer3"],
-      "types": ["int", "String", "String", "String", "String", "String"],
-      "comment": "int login(int userID, String username, String password, String answer1, String answer2, String answer3);\n"
-    },
-    {
-      "name": "addStore",
-        "arguments": ["{{login,0}}", "Cool Store", "Computers"],
-        "types": ["int", "String", "String"],
-        "comment": "Response<Integer> addStore(int userID, String storeName, String storeDescription);"
-    },
-    {
-      "name": "addProduct",
-        "arguments": ["{{login,0}}", "{{addStore,0}}", "IPhone 14 pro", "Phones", "1500.0", "10", "Cool Product Description"],
-        "types": ["int",              "int",            "String",           "String",    "double", "int", "String"],
-        "comment": "(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description);"
-
-    },
-    {
-      "name": "addProduct",
-      "arguments": ["{{login,0}}", "{{addStore,0}}", "galaxy s30 ultra", "Phones", "1450.0", "10", "Cool Product Description"],
-      "types": ["int",              "int",            "String",           "String",    "double", "int", "String"],
-      "comment": "(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description);"
-    },
 
     {
       "name": "enterAsGuest",
@@ -55,12 +30,6 @@
       "comment": "(int userId, String username, String password, String email, String answer1, String answer2, String answer3, LocalDate birthDate);"
     },
     {
-      "name": "login",
-        "arguments": ["{{enterAsGuest,1}}", "tomer", "Tomer1234", "answer1", "answer2", "answer3"],
-        "types": ["int", "String", "String", "String", "String", "String"],
-        "comment": "int login(int userID, String username, String password, String answer1, String answer2, String answer3);\n"
-    },
-    {
       "name": "enterAsGuest",
       "arguments": [],
       "types": [],
@@ -72,12 +41,7 @@
       "types": ["int", "String", "String", "String", "String", "String", "String", "LocalDate"],
       "comment": "(int userId, String username, String password, String email, String answer1, String answer2, String answer3, LocalDate birthDate);"
     },
-    {
-      "name": "login",
-      "arguments": ["{{enterAsGuest,2}}", "lior", "Lior1234", "answer1", "answer2", "answer3"],
-      "types": ["int", "String", "String", "String", "String", "String"],
-      "comment": "int login(int userID, String username, String password, String answer1, String answer2, String answer3);\n"
-    },
+
     {
       "name": "enterAsGuest",
       "arguments": [],
@@ -90,12 +54,7 @@
       "types": ["int", "String", "String", "String", "String", "String", "String", "LocalDate"],
       "comment": "(int userId, String username, String password, String email, String answer1, String answer2, String answer3, LocalDate birthDate);"
     },
-    {
-      "name": "login",
-      "arguments": ["{{enterAsGuest,3}}", "eden", "Eden1234", "answer1", "answer2", "answer3"],
-      "types": ["int", "String", "String", "String", "String", "String"],
-      "comment": "int login(int userID, String username, String password, String answer1, String answer2, String answer3);\n"
-    },
+
     {
       "name": "enterAsGuest",
       "arguments": [],
@@ -108,12 +67,7 @@
       "types": ["int", "String", "String", "String", "String", "String", "String", "LocalDate"],
       "comment": "(int userId, String username, String password, String email, String answer1, String answer2, String answer3, LocalDate birthDate);"
     },
-    {
-      "name": "login",
-      "arguments": ["{{enterAsGuest,4}}", "eyal", "Eyal1234", "answer1", "answer2", "answer3"],
-      "types": ["int", "String", "String", "String", "String", "String"],
-      "comment": "int login(int userID, String username, String password, String answer1, String answer2, String answer3);\n"
-    },
+
     {
       "name": "enterAsGuest",
       "arguments": [],
@@ -126,11 +80,54 @@
       "types": ["int", "String", "String", "String", "String", "String", "String", "LocalDate"],
       "comment": "(int userId, String username, String password, String email, String answer1, String answer2, String answer3, LocalDate birthDate);"
     },
+
     {
       "name": "login",
-      "arguments": ["{{enterAsGuest,5}}", "yoav", "Yoav1234", "answer1", "answer2", "answer3"],
+      "arguments": ["{{enterAsGuest,0}}", "shaun", "Shaun1234", "answer1", "answer2", "answer3"],
       "types": ["int", "String", "String", "String", "String", "String"],
       "comment": "int login(int userID, String username, String password, String answer1, String answer2, String answer3);\n"
+    },
+    {
+      "name": "addStore",
+      "arguments": ["{{login,0}}", "Cool Store", "Food"],
+      "types": ["int", "String", "String"],
+      "comment": "Response<Integer> addStore(int userID, String storeName, String storeDescription);"
+    },
+    {
+      "name": "addProduct",
+      "arguments": ["{{login,0}}", "{{addStore,0}}", "Bamba", "Food", "30.0", "20", "Best bamba ever!"],
+      "types": ["int",              "int",            "String",           "String",    "double", "int", "String"],
+      "comment": "(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description);"
+    },
+    {
+      "name": "addManager",
+      "arguments": ["{{enterAsGuest,0}}", "{{enterAsGuest,1}}", "{{addStore,0}}"],
+      "types": ["int", "int", "int"],
+      "comment": "addManager(int userID, int storeID, int managerID);"
+    },
+    {
+      "name": "addIndividualPermission",
+      "arguments": ["{{enterAsGuest,0}}", "{{enterAsGuest,1}}", "{{addStore,0}}", "UserPermissions.IndividualPermission.STOCK"],
+      "types": ["int", "int", "int", "UserPermissions.IndividualPermission"],
+      "comment": "addIndividualPermission(int userId, int managerId, int storeId, UserPermissions.IndividualPermission);"
+    },
+    {
+      "name": "addOwner",
+      "arguments": ["{{enterAsGuest,0}}", "{{enterAsGuest,2}}", "{{addStore,0}}"],
+      "types": ["int", "int", "int"],
+      "comment": "addManager(int userID, int storeID, int managerID);"
+    },
+    {
+      "name": "addOwner",
+      "arguments": ["{{enterAsGuest,0}}", "{{enterAsGuest,3}}", "{{addStore,0}}"],
+      "types": ["int", "int", "int"],
+      "comment": "addManager(int userID, int storeID, int managerID);"
+    },
+    {
+      "name": "logout",
+      "arguments": ["{{login,0}}"],
+      "types": ["int"],
+      "comment": "void logout(int userID);\n"
     }
   ]
 

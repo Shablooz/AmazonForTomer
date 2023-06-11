@@ -1,5 +1,6 @@
 package BGU.Group13B.service;
 
+import BGU.Group13B.backend.User.UserPermissions;
 import com.nimbusds.jose.shaded.gson.*;
 
 import java.io.FileReader;
@@ -18,12 +19,16 @@ public class ConfigurationFileParser {
     }
 
     public static void parse() {
-        JsonObject config = loadJsonObject();
+        JsonObject config = loadJsonObject("configurationFile2.json");
         if (config == null) return;
 
         // Get the "functions" array from the configuration
         JsonArray functions = config.getAsJsonArray("functions");
         boolean persist = config.get("persist").getAsBoolean();
+        boolean reset = config.get("reset").getAsBoolean();
+        if(reset){
+            SingletonCollection.reset_system();//ask tomer or zloof
+        }
         if(!persist){
             return;
         }
@@ -32,9 +37,9 @@ public class ConfigurationFileParser {
         }
     }
 
-    private static JsonObject loadJsonObject() {
+    private static JsonObject loadJsonObject(String configurationFileName) {
         JsonObject config;
-        try (FileReader reader = new FileReader("src/main/resources/configurationFile.json")) {
+        try (FileReader reader = new FileReader("src/main/resources/configurationFiles/"+configurationFileName)) {
             Gson gson = new Gson();
             JsonElement element = gson.fromJson(reader, JsonElement.class);
             config = element.getAsJsonObject();
@@ -120,6 +125,7 @@ public class ConfigurationFileParser {
             case "double" -> double.class;
             case "String" -> String.class;
             case "LocalDate" -> LocalDate.class;
+            case "UserPermissions.IndividualPermission" -> UserPermissions.IndividualPermission.class;
             // Add support for other types as needed
             default -> throw new IllegalArgumentException("Unsupported type: " + typeName);
         };
@@ -132,7 +138,14 @@ public class ConfigurationFileParser {
             case "String" -> value;
             case "LocalDate" -> parseDate(value);
             // Add support for other types as needed
-            default -> throw new IllegalArgumentException("Unsupported type: " + type);
+            default -> {
+                if (value.startsWith("UserPermissions.IndividualPermission")) {
+                    String[] split = value.split("\\.");
+                    String permissionName = split[split.length - 1];
+                    yield UserPermissions.IndividualPermission.valueOf(permissionName);
+                }
+                throw new IllegalArgumentException("Unsupported type: " + type);
+            }
         };
     }
 
