@@ -17,7 +17,7 @@ import BGU.Group13B.service.info.DiscountAccumulationTreeInfo;
 import java.time.LocalDate;
 import java.util.*;
 
-
+//NO NEED TO PERSIST UWU
 public class DiscountPolicy {
 
     private final int storeId;

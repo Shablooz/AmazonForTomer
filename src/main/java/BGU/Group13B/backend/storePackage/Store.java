@@ -17,6 +17,7 @@ import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.AddToUserCart;
 import BGU.Group13B.service.info.DiscountAccumulationTreeInfo;
 import BGU.Group13B.service.info.StoreInfo;
+import jakarta.persistence.Transient;
 
 
 import java.time.LocalDate;
@@ -28,6 +29,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 
 public class Store {
     private final IConditionRepository conditionRepository;
+    @Transient
     private final DiscountPolicy discountPolicy;
     private final IProductRepository productRepository;
     private final DeliveryAdapter deliveryAdapter;

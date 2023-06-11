@@ -5,13 +5,12 @@ import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.PurchaseFailedException;
 import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.util.List;
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public class StoreDiscount {
     @Id
     private int discountId;

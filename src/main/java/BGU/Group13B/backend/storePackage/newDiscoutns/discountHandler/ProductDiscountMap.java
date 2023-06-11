@@ -5,7 +5,7 @@ import BGU.Group13B.backend.User.BasketProduct;
 
 
 import java.util.HashMap;
-
+//DO no persist
 public class ProductDiscountMap {
     private HashMap<Integer/*productId*/, Double/*discount percentage*/> productDiscountMap;
 
