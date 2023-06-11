@@ -23,7 +23,7 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
     @MapKeyJoinColumn(name = "storeId")
     private Map<Integer/*storeId*/, SkipListHolderClickbate> storeProducts;
 
-    private AtomicInteger productIdCounter = new AtomicInteger(1);
+    private AtomicInteger productIdCounter = new AtomicInteger(0);
 
     public ProductRepositoryAsHashMap() {
         this.storeProducts = new ConcurrentHashMap<>();
