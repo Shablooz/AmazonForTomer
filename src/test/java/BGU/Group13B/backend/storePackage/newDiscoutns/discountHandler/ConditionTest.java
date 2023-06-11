@@ -2,9 +2,9 @@ package BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler;
 
 import BGU.Group13B.backend.User.*;
 import BGU.Group13B.backend.storePackage.Product;
-import BGU.Group13B.backend.storePackage.newDiscoutns.Logical.AND;
-import BGU.Group13B.backend.storePackage.newDiscoutns.Logical.OR;
-import BGU.Group13B.backend.storePackage.newDiscoutns.Logical.XOR;
+import BGU.Group13B.backend.storePackage.newDiscoutns.Logical.AndCond;
+import BGU.Group13B.backend.storePackage.newDiscoutns.Logical.OrCond;
+import BGU.Group13B.backend.storePackage.newDiscoutns.Logical.XorCond;
 import BGU.Group13B.backend.storePackage.newDiscoutns.bounderCondition.baseCase.*;
 import BGU.Group13B.service.SingletonCollection;
 import org.junit.jupiter.api.BeforeEach;
@@ -132,7 +132,7 @@ class ConditionTest {
 
     @Test
     void satisfied_complex_or_success() {
-        Condition condition = new OR(1, new CategoryPriceCondition(1, "category", 0, 100), new UserAgeCondition(2, 18, 100));
+        Condition condition = new OrCond(1, new CategoryPriceCondition(1, "category", 0, 100), new UserAgeCondition(2, 18, 100));
         BasketInfo basketInfo = new BasketInfo(List.of(product1, product2));
         UserInfo userinfo = new UserInfo(LocalDate.now().minusYears(10));
         assertDoesNotThrow(() -> condition.satisfied(basketInfo, userinfo));
@@ -140,35 +140,35 @@ class ConditionTest {
 
     @Test
     void satisfied_complex_or_fail() {
-        Condition condition = new OR(1, new CategoryPriceCondition(1, "category", 0, 100), new UserAgeCondition(2, 18, 100));
+        Condition condition = new OrCond(1, new CategoryPriceCondition(1, "category", 0, 100), new UserAgeCondition(2, 18, 100));
         BasketInfo basketInfo = new BasketInfo(List.of(product1, product2, product3));
         UserInfo userinfo = new UserInfo(LocalDate.now().minusYears(10));
         assertThrows(PurchaseFailedException.class, () -> condition.satisfied(basketInfo, userinfo));
     }
     @Test
     void satisfied_complex_or_fail2() {
-        Condition condition = new OR(1, new CategoryPriceCondition(1, "category", 0, 100), new UserAgeCondition(2, 2, 18));
+        Condition condition = new OrCond(1, new CategoryPriceCondition(1, "category", 0, 100), new UserAgeCondition(2, 2, 18));
         BasketInfo basketInfo = new BasketInfo(List.of(product1, product2, product3));
         UserInfo userinfo = new UserInfo(LocalDate.now().minusYears(30));
         assertThrows(PurchaseFailedException.class, () -> condition.satisfied(basketInfo, userinfo));
     }
     @Test
     void satisfied_complex_and_success() {
-        Condition condition = new AND(1, new CategoryPriceCondition(1, "category", 0, 100), new UserAgeCondition(2, 18, 100));
+        Condition condition = new AndCond(1, new CategoryPriceCondition(1, "category", 0, 100), new UserAgeCondition(2, 18, 100));
         BasketInfo basketInfo = new BasketInfo(List.of(product1, product2));
         UserInfo userinfo = new UserInfo(LocalDate.now().minusYears(30));
         assertDoesNotThrow(() -> condition.satisfied(basketInfo, userinfo));
     }
     @Test
     void satisfied_complex_and_fail1() {
-        Condition condition = new AND(1, new CategoryPriceCondition(1, "category", 0, 100), new UserAgeCondition(2, 18, 100));
+        Condition condition = new AndCond(1, new CategoryPriceCondition(1, "category", 0, 100), new UserAgeCondition(2, 18, 100));
         BasketInfo basketInfo = new BasketInfo(List.of(product1, product2));
         UserInfo userinfo = new UserInfo(LocalDate.now().minusYears(10));
         assertThrows(PurchaseFailedException.class, () -> condition.satisfied(basketInfo, userinfo));
     }
     @Test
     void satisfied_complex_and_fail2() {
-        Condition condition = new AND(1, new CategoryPriceCondition(1, "category", 0, 100), new UserAgeCondition(2, 18, 100));
+        Condition condition = new AndCond(1, new CategoryPriceCondition(1, "category", 0, 100), new UserAgeCondition(2, 18, 100));
         BasketInfo basketInfo = new BasketInfo(List.of(product1, product2, product3));
         UserInfo userinfo = new UserInfo(LocalDate.now().minusYears(30));
         assertThrows(PurchaseFailedException.class, () -> condition.satisfied(basketInfo, userinfo));
@@ -176,14 +176,14 @@ class ConditionTest {
 
     @Test
     void satisfied_complex_xor_success() {
-        Condition condition = new XOR(1, new CategoryPriceCondition(1, "category", 0, 100), new UserAgeCondition(2, 18, 100));
+        Condition condition = new XorCond(1, new CategoryPriceCondition(1, "category", 0, 100), new UserAgeCondition(2, 18, 100));
         BasketInfo basketInfo = new BasketInfo(List.of(product1, product2));
         UserInfo userinfo = new UserInfo(LocalDate.now().minusYears(10));
         assertDoesNotThrow(() -> condition.satisfied(basketInfo, userinfo));
     }
     @Test
     void satisfied_complex_xor_fail() {
-        Condition condition = new XOR(1, new CategoryPriceCondition(1, "category", 0, 100), new UserAgeCondition(2, 18, 100));
+        Condition condition = new XorCond(1, new CategoryPriceCondition(1, "category", 0, 100), new UserAgeCondition(2, 18, 100));
         BasketInfo basketInfo = new BasketInfo(List.of(product1, product2, product3));
         UserInfo userinfo = new UserInfo(LocalDate.now().minusYears(10));
         assertThrows(PurchaseFailedException.class, () -> condition.satisfied(basketInfo, userinfo));
@@ -191,28 +191,28 @@ class ConditionTest {
 
     @Test
     void satisfied_complex_composition_success1() {
-        Condition condition = new AND(1, new XOR(1, new CategoryPriceCondition(1, "category", 0, 100), new UserAgeCondition(2, 18, 100)), new TimeCondition(3, LocalDateTime.now().minusHours(1), LocalDateTime.now().plusHours(1)));
+        Condition condition = new AndCond(1, new XorCond(1, new CategoryPriceCondition(1, "category", 0, 100), new UserAgeCondition(2, 18, 100)), new TimeCondition(3, LocalDateTime.now().minusHours(1), LocalDateTime.now().plusHours(1)));
         BasketInfo basketInfo = new BasketInfo(List.of(product1, product2));
         UserInfo userinfo = new UserInfo(LocalDate.now().minusYears(10));
         assertDoesNotThrow(() -> condition.satisfied(basketInfo, userinfo));
     }
     @Test
     void satisfied_complex_composition_success2() {
-        Condition condition = new AND(1, new XOR(1, new CategoryPriceCondition(1, "category", 0, 100), new UserAgeCondition(2, 18, 100)), new TimeCondition(3, LocalDateTime.now().minusHours(1), LocalDateTime.now().plusHours(1)));
+        Condition condition = new AndCond(1, new XorCond(1, new CategoryPriceCondition(1, "category", 0, 100), new UserAgeCondition(2, 18, 100)), new TimeCondition(3, LocalDateTime.now().minusHours(1), LocalDateTime.now().plusHours(1)));
         BasketInfo basketInfo = new BasketInfo(List.of(product1, product2, product3));
         UserInfo userinfo = new UserInfo(LocalDate.now().minusYears(30));
         assertDoesNotThrow(() -> condition.satisfied(basketInfo, userinfo));
     }
     @Test
     void satisfied_complex_composition_fail2() {
-        Condition condition = new AND(1, new XOR(1, new CategoryPriceCondition(1, "category", 0, 100), new UserAgeCondition(2, 18, 100)), new TimeCondition(3, LocalDateTime.now().minusHours(1), LocalDateTime.now().plusHours(1)));
+        Condition condition = new AndCond(1, new XorCond(1, new CategoryPriceCondition(1, "category", 0, 100), new UserAgeCondition(2, 18, 100)), new TimeCondition(3, LocalDateTime.now().minusHours(1), LocalDateTime.now().plusHours(1)));
         BasketInfo basketInfo = new BasketInfo(List.of(product1, product2, product3));
         UserInfo userinfo = new UserInfo(LocalDate.now().minusYears(10));
         assertThrows(PurchaseFailedException.class, () -> condition.satisfied(basketInfo, userinfo));
     }
     @Test
     void satisfied_complex_composition_fail3() {
-        Condition condition = new AND(1, new XOR(1, new CategoryPriceCondition(1, "category", 0, 100), new UserAgeCondition(2, 18, 100)), new TimeCondition(3, LocalDateTime.now().minusHours(1), LocalDateTime.now().plusHours(1)));
+        Condition condition = new AndCond(1, new XorCond(1, new CategoryPriceCondition(1, "category", 0, 100), new UserAgeCondition(2, 18, 100)), new TimeCondition(3, LocalDateTime.now().minusHours(1), LocalDateTime.now().plusHours(1)));
         BasketInfo basketInfo = new BasketInfo(List.of(product1, product2));
         UserInfo userinfo = new UserInfo(LocalDate.now().minusYears(30));
         assertThrows(PurchaseFailedException.class, () -> condition.satisfied(basketInfo, userinfo));
@@ -220,20 +220,20 @@ class ConditionTest {
 
     @Test
     void satisfied_complex_composition_fail1() {
-        Condition condition = new AND(1, new XOR(1, new CategoryPriceCondition(1, "category", 0, 100), new UserAgeCondition(2, 18, 100)), new TimeCondition(3, LocalDateTime.now().minusHours(1), LocalDateTime.now().plusHours(1)));
+        Condition condition = new AndCond(1, new XorCond(1, new CategoryPriceCondition(1, "category", 0, 100), new UserAgeCondition(2, 18, 100)), new TimeCondition(3, LocalDateTime.now().minusHours(1), LocalDateTime.now().plusHours(1)));
         BasketInfo basketInfo = new BasketInfo(List.of(product1, product2, product3));
         UserInfo userinfo = new UserInfo(LocalDate.now().minusYears(10));
         assertThrows(PurchaseFailedException.class, () -> condition.satisfied(basketInfo, userinfo));
     }
     @Test
     void satisfied_complex_multiple_composition_success1(){
-        Condition condition = new AND(1,
-                new XOR(1,
+        Condition condition = new AndCond(1,
+                new XorCond(1,
                         new CategoryPriceCondition(1, "category", 0, 100),
                         new UserAgeCondition(2, 5, 18)),
-                new OR(2,
+                new OrCond(2,
                         new TimeCondition(3, LocalDateTime.now().minusHours(1), LocalDateTime.now().plusHours(1)),
-                        new AND(4,
+                        new AndCond(4,
                                 new TimeCondition(5, LocalDateTime.now().minusHours(1), LocalDateTime.now().plusHours(1)),
                                 new UserAgeCondition(6, 18, 100))));
 
@@ -243,13 +243,13 @@ class ConditionTest {
     }
     @Test
     void satisfied_complex_multiple_composition_fail1(){
-        Condition condition = new AND(1,
-                new XOR(1,
+        Condition condition = new AndCond(1,
+                new XorCond(1,
                         new CategoryPriceCondition(1, "category", 0, 100),
                         new UserAgeCondition(2, 5, 18)),
-                new OR(2,
+                new OrCond(2,
                         new TimeCondition(3, LocalDateTime.now().minusHours(1), LocalDateTime.now().plusHours(1)),
-                        new AND(4,
+                        new AndCond(4,
                                 new TimeCondition(5, LocalDateTime.now().minusHours(1), LocalDateTime.now().plusHours(1)),
                                 new UserAgeCondition(6, 18, 100))));
 
@@ -259,13 +259,13 @@ class ConditionTest {
     }
     @Test
     void satisfied_complex_multiple_composition_success2(){
-        Condition condition = new AND(1,
-                new XOR(1,
+        Condition condition = new AndCond(1,
+                new XorCond(1,
                         new CategoryPriceCondition(1, "category", 0, 100),
                         new UserAgeCondition(2, 18, 100)),
-                new OR(2,
+                new OrCond(2,
                         new TimeCondition(3, LocalDateTime.now().minusHours(1), LocalDateTime.now().plusHours(1)),
-                        new AND(4,
+                        new AndCond(4,
                                 new TimeCondition(5, LocalDateTime.now().minusHours(1), LocalDateTime.now().plusHours(1)),
                                 new UserAgeCondition(6, 18, 100))));
 
@@ -275,13 +275,13 @@ class ConditionTest {
     }
     @Test
     void satisfied_complex_multiple_composition_fail2(){
-        Condition condition = new AND(1,
-                new XOR(1,
+        Condition condition = new AndCond(1,
+                new XorCond(1,
                         new CategoryPriceCondition(1, "category", 0, 100),
                         new UserAgeCondition(2, 18, 100)),
-                new OR(2,
+                new OrCond(2,
                         new TimeCondition(3, LocalDateTime.now().minusHours(1), LocalDateTime.now().plusHours(1)),
-                        new AND(4,
+                        new AndCond(4,
                                 new TimeCondition(5, LocalDateTime.now().minusHours(1), LocalDateTime.now().plusHours(1)),
                                 new UserAgeCondition(6, 18, 100))));
 
@@ -291,13 +291,13 @@ class ConditionTest {
     }
     @Test
     void satisfied_complex_multiple_composition_success3(){
-        Condition condition = new AND(1,
-                new XOR(1,
+        Condition condition = new AndCond(1,
+                new XorCond(1,
                         new CategoryPriceCondition(1, "category", 0, 100),
                         new UserAgeCondition(2, 18, 100)),
-                new OR(2,
+                new OrCond(2,
                         new TimeCondition(3, LocalDateTime.now().minusHours(2), LocalDateTime.now().plusHours(1)),
-                        new AND(4,
+                        new AndCond(4,
                                 new TimeCondition(5, LocalDateTime.now().minusHours(1), LocalDateTime.now().plusHours(1)),
                                 new UserAgeCondition(6, 18, 25))));
 
@@ -307,13 +307,13 @@ class ConditionTest {
     }
     @Test
     void satisfied_complex_multiple_composition_fail3(){
-        Condition condition = new AND(1,
-                new XOR(1,
+        Condition condition = new AndCond(1,
+                new XorCond(1,
                         new CategoryPriceCondition(1, "category", 0, 100),
                         new UserAgeCondition(2, 18, 100)),
-                new OR(2,
+                new OrCond(2,
                         new TimeCondition(3, LocalDateTime.now().minusHours(2), LocalDateTime.now().plusHours(1)),
-                        new AND(4,
+                        new AndCond(4,
                                 new TimeCondition(5, LocalDateTime.now().minusHours(1), LocalDateTime.now().plusHours(1)),
                                 new UserAgeCondition(6, 18, 25))));
 

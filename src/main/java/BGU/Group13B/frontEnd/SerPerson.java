@@ -4,13 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class serPerson {
+public class SerPerson {
 
 
     private final PersonJPA personJPA;
 
     @Autowired
-    public serPerson(PersonJPA personJPA) {
+    public SerPerson(PersonJPA personJPA) {
         this.personJPA = personJPA;
     }
 

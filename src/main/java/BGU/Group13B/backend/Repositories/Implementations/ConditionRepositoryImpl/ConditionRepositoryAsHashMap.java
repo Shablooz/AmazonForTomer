@@ -1,14 +1,13 @@
 package BGU.Group13B.backend.Repositories.Implementations.ConditionRepositoryImpl;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IConditionRepository;
-import BGU.Group13B.backend.storePackage.newDiscoutns.Logical.AND;
-import BGU.Group13B.backend.storePackage.newDiscoutns.Logical.IMPLY;
-import BGU.Group13B.backend.storePackage.newDiscoutns.Logical.OR;
-import BGU.Group13B.backend.storePackage.newDiscoutns.Logical.XOR;
+import BGU.Group13B.backend.storePackage.newDiscoutns.Logical.AndCond;
+import BGU.Group13B.backend.storePackage.newDiscoutns.Logical.ImplyCond;
+import BGU.Group13B.backend.storePackage.newDiscoutns.Logical.OrCond;
+import BGU.Group13B.backend.storePackage.newDiscoutns.Logical.XorCond;
 import BGU.Group13B.backend.storePackage.newDiscoutns.bounderCondition.baseCase.*;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 
-import java.sql.Time;
 import java.time.LocalDateTime;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,28 +24,28 @@ public class ConditionRepositoryAsHashMap implements IConditionRepository {
     @Override
     public int addORCondition(int condition1, int condition2) {
         int id = nextId.getAndIncrement();
-        conditions.put(id, new OR(id, getCondition(condition1), getCondition(condition2)));
+        conditions.put(id, new OrCond(id, getCondition(condition1), getCondition(condition2)));
         return id;
     }
 
     @Override
     public int addANDCondition(int condition1, int condition2) {
         int id = nextId.getAndIncrement();
-        conditions.put(id, new AND(id, getCondition(condition1), getCondition(condition2)));
+        conditions.put(id, new AndCond(id, getCondition(condition1), getCondition(condition2)));
         return id;
     }
 
     @Override
     public int addXORCondition(int condition1, int condition2) {
         int id = nextId.getAndIncrement();
-        conditions.put(id, new XOR(id, getCondition(condition1), getCondition(condition2)));
+        conditions.put(id, new XorCond(id, getCondition(condition1), getCondition(condition2)));
         return id;
     }
 
     @Override
     public int addIMPLYCondition(int condition1, int condition2) {
         int id = nextId.getAndIncrement();
-        conditions.put(id, new IMPLY(id, getCondition(condition1), getCondition(condition2)));
+        conditions.put(id, new ImplyCond(id, getCondition(condition1), getCondition(condition2)));
         return id;
     }
 

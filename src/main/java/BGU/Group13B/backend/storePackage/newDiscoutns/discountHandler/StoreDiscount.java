@@ -5,18 +5,24 @@ import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.PurchaseFailedException;
 import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 
 import java.time.LocalDate;
 import java.util.List;
-
+@Entity
 public class StoreDiscount {
+    @Id
+    private int discountId;
+    private int storeId;
+    protected String coupon;
 
-    private final int discountId;
-    private final int storeId;
-    protected final String coupon;
-    protected final Condition condition;
-    protected final double discountPercentage;
-    protected final LocalDate expirationDate;
+    @OneToOne
+    protected Condition condition;
+
+    protected double discountPercentage;
+    protected LocalDate expirationDate;
 
     public StoreDiscount(int discountId, int storeId, Condition condition, double discountPercentage, LocalDate expirationDate, String coupon) {
         this.discountId = discountId;
@@ -43,6 +49,15 @@ public class StoreDiscount {
 
     public StoreDiscount(int discountId, int storeId, double discountPercentage, LocalDate expirationDate) {
         this(discountId, storeId, null, discountPercentage, expirationDate, null);
+    }
+
+    public StoreDiscount() {
+        this.discountId = 1;
+        this.condition = null;
+        this.storeId = 1;
+        this.coupon = null;
+        this.discountPercentage = 0;
+        this.expirationDate = LocalDate.now();
     }
 
     public double getDiscountPercentage(BasketInfo basketInfo, UserInfo userInfo, List<String> coupons) {
