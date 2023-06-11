@@ -11,7 +11,7 @@ import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import java.time.LocalDateTime;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-
+//TODO
 public class ConditionRepositoryAsHashMap implements IConditionRepository {
     private final ConcurrentHashMap<Integer, Condition> conditions;
     private final AtomicInteger nextId;
