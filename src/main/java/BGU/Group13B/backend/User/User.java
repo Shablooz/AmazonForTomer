@@ -613,4 +613,8 @@ public class User {
         }
         return new UserCard(userId, userName, email, stringBuilder.toString());
     }
+
+    public UserPermissions.PopulationStatus getPopulationStatus(){
+        return userPermissions.getPopulationStatus();
+    }
 }
