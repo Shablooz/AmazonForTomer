@@ -12,6 +12,7 @@ public class UserAT extends ProjectTest {
     @BeforeEach
     void userATsetUp() {
         SingletonCollection.reset_system();
+        SingletonCollection.setSaveMode(false);
     }
     @Test
     void joinAsGuest(){

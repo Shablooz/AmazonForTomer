@@ -84,6 +84,7 @@ public abstract class ProjectTest {
     @BeforeEach
     public void setUp() {
         SingletonCollection.reset_system();
+        SingletonCollection.setSaveMode(false);
         this.session = SingletonCollection.getSession();
         setUpUsers();
         setUpAdmin();

@@ -55,11 +55,13 @@ class BasketTest {
                 thenReturn(Mockito.mock(IProductRepository.class));*/ //remember
         //eyal was here
         SingletonCollection.reset_system();
+        SingletonCollection.setSaveMode(false);
         productRepository = SingletonCollection.getProductRepository();
         basketProductRepository = SingletonCollection.getBasketProductRepository();
         calculatePriceOfBasket = SingletonCollection.getCalculatePriceOfBasket();
         //initCalculatePriceOfBasket(market);
         userId = SingletonCollection.getUserRepository().getNewUserId();
+
         SingletonCollection.getUserRepository().addUser(userId, new User(userId));
         storeId = SingletonCollection.getStoreRepository().addStore(userId, "store1", "category1");
         store = SingletonCollection.getStoreRepository().getStore(storeId);
@@ -461,6 +463,7 @@ class BasketTest {
     @Test
     void purchaseBasketSimpleComplexDiscountTestSuccess1() {
         SingletonCollection.reset_system();
+        SingletonCollection.setSaveMode(false);
         int userId = SingletonCollection.getSession().enterAsGuest();
         SingletonCollection.getSession().register(userId, "userName", "Password1", "emao@gmail.com", "", "", "", LocalDate.now().minusYears(20));
         SingletonCollection.getSession().login(userId, "userName", "Password1", "", "", "");
@@ -500,6 +503,7 @@ class BasketTest {
     @Test
     void purchaseBasketSimpleComplexDiscountTestSuccess2() {
         SingletonCollection.reset_system();
+        SingletonCollection.setSaveMode(false);
         int userId = SingletonCollection.getSession().enterAsGuest();
         SingletonCollection.getSession().register(userId, "userName", "Password1", "emao@gmail.com", "", "", "", LocalDate.now().minusYears(20));
         SingletonCollection.getSession().login(userId, "userName", "Password1", "", "", "");

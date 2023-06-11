@@ -62,6 +62,7 @@ class UserTest {
 
     @BeforeEach
     void setUp() {
+        SingletonCollection.setSaveMode(false);
         user1 = new User(1);
         user2 = new User(2);
         user3 = new User(3);
@@ -207,6 +208,7 @@ class UserTest {
     void purchaseCartLoginLogoutSuccess() {
         //setup
         SingletonCollection.reset_system();
+        SingletonCollection.setSaveMode(false);
         int newUserId = SingletonCollection.getUserRepository().getNewUserId();
         User user = new User(newUserId);
         user.register(goodUsername1, goodPassword1, "email@gmail.com", "yellow", "", "",LocalDate.MIN);
@@ -320,6 +322,7 @@ class UserTest {
     void purchaseCartLoginLogoutFail() {
         //setup
         SingletonCollection.reset_system();
+        SingletonCollection.setSaveMode(false);
         int newUserId = SingletonCollection.getUserRepository().getNewUserId();
         user = new User(newUserId);
         user.register(goodUsername1, goodPassword1, "email@gmail.com", "yellow", "", "",LocalDate.MIN);

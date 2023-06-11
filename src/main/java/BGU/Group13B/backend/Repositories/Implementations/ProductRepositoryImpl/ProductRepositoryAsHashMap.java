@@ -12,6 +12,9 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicInteger;
 @Entity
 public class ProductRepositoryAsHashMap implements IProductRepository {
+    @Transient
+    private boolean saveMode;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -27,6 +30,12 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
 
     public ProductRepositoryAsHashMap() {
         this.storeProducts = new ConcurrentHashMap<>();
+        this.saveMode = true;
+    }
+
+    public ProductRepositoryAsHashMap(boolean saveMode) {
+        this.storeProducts = new ConcurrentHashMap<>();
+        this.saveMode = saveMode;
     }
 
     @Override
@@ -181,8 +190,14 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
         return productId;
     }
 
+    @Override
+    public void setSaveMode(boolean saveMode) {
+        this.saveMode = saveMode;
+    }
+
     private void save(){
-        SingletonCollection.getContext().getBean(ProductRepositoryAsHashMapService.class).save(this);
+        if(saveMode)
+            SingletonCollection.getContext().getBean(ProductRepositoryAsHashMapService.class).save(this);
 
     }
 

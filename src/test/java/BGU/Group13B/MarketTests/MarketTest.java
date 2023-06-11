@@ -43,7 +43,7 @@ public class MarketTest {
 
     @BeforeEach
     void setUp() {
-
+        SingletonCollection.setSaveMode(false);
         productName1 = "Dell computer";
         productName2 = "computer";
         productName3 = "Gaming laptop";
@@ -94,6 +94,7 @@ public class MarketTest {
     void tearDown() {
         //deleteAllData();
         SingletonCollection.reset_system();
+        SingletonCollection.setSaveMode(false);
     }
 
     @Test

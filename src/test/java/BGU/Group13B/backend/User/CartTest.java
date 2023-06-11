@@ -33,6 +33,7 @@ public class CartTest {
 
         try {
             SingletonCollection.reset_system();
+            SingletonCollection.setSaveMode(false);
             session = SingletonCollection.getSession();
             //session = new Session(new Market());
             productRepository = SingletonCollection.getProductRepository();

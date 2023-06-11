@@ -73,7 +73,6 @@ public class Session implements ISession {
     public Response<Integer> addProduct(int userId, int storeId, String productName, String category, double price, int stockQuantity, String description) {
        try {
            Integer result = market.addProduct(userId, storeId, productName, category, price, stockQuantity, description);
-           updateProductRepository();
            return Response.success(result);
        } catch (Exception e) {
            System.out.println(e.getCause());
@@ -130,7 +129,6 @@ public class Session implements ISession {
                             creditCardYear, creditCardHolderFirstName,
                             creditCardCVV, id,
                             address, city, country, zip);
-            updateProductRepository();
             return Response.success();
         } catch (PurchaseFailedException | NoPermissionException e) {
             return Response.exception(e);
@@ -646,7 +644,7 @@ public class Session implements ISession {
     public Response<VoidResponse> setProductName(int userId, int storeId, int productId, String name) {
         try {
             market.setProductName(userId, storeId, productId, name);
-            updateProductRepository();
+
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);
@@ -657,7 +655,6 @@ public class Session implements ISession {
     public Response<VoidResponse> setProductCategory(int userId, int storeId, int productId, String category) {
         try {
             market.setProductCategory(userId, storeId, productId, category);
-            updateProductRepository();
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);
@@ -668,7 +665,6 @@ public class Session implements ISession {
     public Response<VoidResponse> setProductPrice(int userId, int storeId, int productId, double price) {
         try {
             market.setProductPrice(userId, storeId, productId, price);
-            updateProductRepository();
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);
@@ -679,7 +675,6 @@ public class Session implements ISession {
     public Response<VoidResponse> setProductStockQuantity(int userId, int storeId, int productId, int stockQuantity) {
         try {
             market.setProductStockQuantity(userId, storeId, productId, stockQuantity);
-            updateProductRepository();
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);
@@ -690,7 +685,7 @@ public class Session implements ISession {
     public Response<VoidResponse> setProductDescription(int userId, int storeId, int productId, String description) {
         try {
             market.setProductDescription(userId, storeId, productId, description);
-            updateProductRepository();
+
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);
@@ -709,7 +704,7 @@ public class Session implements ISession {
     public Response<VoidResponse> removeProduct(int userId, int storeId, int productId) {
         try {
             market.removeProduct(userId, storeId, productId);
-            updateProductRepository();
+
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);
@@ -887,7 +882,6 @@ public class Session implements ISession {
     public Response<VoidResponse> hideStore(int userId, int storeId) {
         try {
             market.hideStore(userId, storeId);
-            updateProductRepository();
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);
@@ -898,7 +892,6 @@ public class Session implements ISession {
     public Response<VoidResponse> unhideStore(int userId, int storeId) {
         try {
             market.unhideStore(userId, storeId);
-            updateProductRepository();
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);
@@ -923,7 +916,6 @@ public class Session implements ISession {
     public Response<VoidResponse> deleteStore(int userId, int storeId) {
         try {
             market.deleteStore(userId, storeId);
-            updateProductRepository();
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);
@@ -1550,9 +1542,7 @@ public class Session implements ISession {
             return Response.exception(e);
         }
     }
-    private void updateProductRepository(){
-        SingletonCollection.getProductRepositoryAsHashMapService().save(SingletonCollection.getProductRepositoryAsHashMapService().getProductRepositoryAsHashMapJPA());
-    }
+
 
 
 }

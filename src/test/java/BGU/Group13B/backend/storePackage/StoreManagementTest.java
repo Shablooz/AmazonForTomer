@@ -42,6 +42,7 @@ public class StoreManagementTest {
     @BeforeEach
     void setUpEach() {
         SingletonCollection.reset_system();
+        SingletonCollection.setSaveMode(false);
         storeRepository = SingletonCollection.getStoreRepository();
         productRepository = SingletonCollection.getProductRepository();
         userRepository = SingletonCollection.getUserRepository();
@@ -57,6 +58,7 @@ public class StoreManagementTest {
     @AfterAll
     static void tearDown() {
         SingletonCollection.reset_system();
+        SingletonCollection.setSaveMode(false);
     }
 
     private int addProduct1() throws NoPermissionException {

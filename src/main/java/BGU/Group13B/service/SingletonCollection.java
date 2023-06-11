@@ -374,6 +374,9 @@ public class SingletonCollection {
         storePermissionRepository.reset();*/
     }
 
+    public static void setSaveMode(boolean saveMode){
+        productRepository.setSaveMode(saveMode);
+    }
     public static void setPaymentFail() {
         paymentAdapter = null;
     }
