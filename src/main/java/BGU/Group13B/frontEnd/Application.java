@@ -37,6 +37,8 @@ public class Application implements AppShellConfigurator {
         SingletonCollection.setReviewRepository();
         SingletonCollection.setProductRepository();
         //need to access singleton collection here
+
+        //remove those - examples
         NoderSonService service = SingletonCollection.getContext().getBean(NoderSonService.class);
         service.addPerson(new NoderSon("until when"));
         service.addPerson(new NoderSon("and how much more"));
