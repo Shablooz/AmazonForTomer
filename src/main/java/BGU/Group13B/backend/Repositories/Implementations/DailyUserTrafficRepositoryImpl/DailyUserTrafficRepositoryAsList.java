@@ -2,6 +2,7 @@ package BGU.Group13B.backend.Repositories.Implementations.DailyUserTrafficReposi
 
 import BGU.Group13B.backend.Repositories.Interfaces.IDailyUserTrafficRepository;
 import BGU.Group13B.backend.System.DailyUserTraffic;
+import BGU.Group13B.backend.System.UserTrafficRecord;
 
 import java.time.LocalDate;
 import java.util.LinkedList;
@@ -61,6 +62,34 @@ public class DailyUserTrafficRepositoryAsList implements IDailyUserTrafficReposi
         var v = dailyUserTrafficList.get(0);
         v.addAdmin();
         v.removeGuest();
+    }
+
+    @Override
+    public synchronized UserTrafficRecord getUserTrafficOfRage(LocalDate start, LocalDate end) {
+        if(start.isAfter(end))
+            throw new IllegalArgumentException("start date must be before end date");
+
+        fillUpToToday();
+        int numOfGuests = 0;
+        int numOfRegularMembers = 0;
+        int numOfStoreManagersThatAreNotOwners = 0;
+        int numOfStoreOwners = 0;
+        int numOfAdmins = 0;
+
+        for(DailyUserTraffic dailyUserTraffic : dailyUserTrafficList){
+            LocalDate date = dailyUserTraffic.getDate();
+            if(date.isAfter(end)) continue;
+            if(date.isBefore(start)) break;
+
+            numOfGuests += dailyUserTraffic.getNumOfGuests();
+            numOfRegularMembers += dailyUserTraffic.getNumOfRegularMembers();
+            numOfStoreManagersThatAreNotOwners += dailyUserTraffic.getNumOfStoreManagersThatAreNotOwners();
+            numOfStoreOwners += dailyUserTraffic.getNumOfStoreOwners();
+            numOfAdmins += dailyUserTraffic.getNumOfAdmins();
+        }
+
+        return new UserTrafficRecord(numOfGuests, numOfRegularMembers, numOfStoreManagersThatAreNotOwners, numOfStoreOwners, numOfAdmins);
+
     }
 
     @Override

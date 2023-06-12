@@ -1,6 +1,7 @@
 package BGU.Group13B.service;
 
 import BGU.Group13B.backend.Pair;
+import BGU.Group13B.backend.System.UserTrafficRecord;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.User.PurchaseFailedException;
 import BGU.Group13B.backend.User.PurchaseHistory;
@@ -509,6 +510,13 @@ public class ProxySession implements ISession {
         if (realSession != null)
             return realSession.getAllStores();
 
+        return null;
+    }
+
+    @Override
+    public Response<UserTrafficRecord> getUserTrafficOfRange(int userId, LocalDate from, LocalDate to) {
+        if (realSession != null)
+            return realSession.getUserTrafficOfRange(userId, from, to);
         return null;
     }
 

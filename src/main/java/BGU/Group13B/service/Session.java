@@ -4,6 +4,7 @@ import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.Repositories.Interfaces.IDailyUserTrafficRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
 import BGU.Group13B.backend.System.SystemInfo;
+import BGU.Group13B.backend.System.UserTrafficRecord;
 import BGU.Group13B.backend.User.*;
 import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.Review;
@@ -1525,6 +1526,23 @@ public class Session implements ISession {
         return Response.exception(e);
     }
 
+    }
+
+    @Override
+    public Response<UserTrafficRecord> getUserTrafficOfRange(int userId, LocalDate from, LocalDate to) {
+        try {
+            var isAdmin = isAdmin(userId);
+            if(isAdmin.didntSucceed())
+                return Response.failure("failed to check user permissions");
+
+            if(!isAdmin.getData())
+                return Response.failure("user is not an admin");
+
+            return Response.success(dailyUserTrafficRepository.getUserTrafficOfRage(from, to));
+
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
     }
 
     public UserCard getUserInfo(int userId, int userInfoId){
