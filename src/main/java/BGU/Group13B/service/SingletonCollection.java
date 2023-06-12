@@ -19,6 +19,7 @@ import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.Re
 import BGU.Group13B.backend.Repositories.Implementations.StoreDiscountRootsRepositoryImpl.StoreDiscountRootsRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyImpl.StoreMessageSingle;
 import BGU.Group13B.backend.Repositories.Implementations.StorePermissionsRepositoryImpl.StorePermissionsRepositoryAsHashmap;
+import BGU.Group13B.backend.Repositories.Implementations.StoreRepositoryImpl.StoreRepoService;
 import BGU.Group13B.backend.Repositories.Implementations.StoreRepositoryImpl.StoreRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.UserPemissionRepositoryImpl.UserPermissionRepositoryAsHashmap;
 import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepositoryAsHashmap;
@@ -195,6 +196,18 @@ public class SingletonCollection {
         }else {
             SingletonCollection.reviewRepository = SingletonCollection.getContext().getBean(ReviewRepoSingleService.class).getReviewRepoSingleJPA();
         }
+    }
+    public static void setStoreRepository() {
+        StoreRepositoryAsList storeRepositoryAsList  = SingletonCollection.getContext().getBean(StoreRepoService.class).getStoreRepoJPA();
+        if(storeRepositoryAsList == null){
+            StoreRepositoryAsList repo=(StoreRepositoryAsList) SingletonCollection.getStoreRepository();
+            SingletonCollection.getContext().getBean(StoreRepoService.class).save(repo);
+        }else {
+            SingletonCollection.storeRepository = SingletonCollection.getContext().getBean(StoreRepoService.class).getStoreRepoJPA();
+        }
+    }
+    public static void setStoreRepository(StoreRepositoryAsList storeRepositoryAsList) {
+        SingletonCollection.storeRepository = storeRepositoryAsList;
     }
 
     //lines below might need to be replaced with a field
@@ -379,6 +392,7 @@ public class SingletonCollection {
 
     public static void setSaveMode(boolean saveMode){
         productRepository.setSaveMode(saveMode);
+        storeRepository.setSaveMode(saveMode);
     }
     public static void setPaymentFail() {
         paymentAdapter = null;

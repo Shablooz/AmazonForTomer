@@ -17,7 +17,7 @@ import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.AddToUserCart;
 import BGU.Group13B.service.info.DiscountAccumulationTreeInfo;
 import BGU.Group13B.service.info.StoreInfo;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 
 
 import java.time.LocalDate;
@@ -26,32 +26,50 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
+@Entity
 
 public class Store {
-    private final IConditionRepository conditionRepository;
+
     @Transient
-    private final DiscountPolicy discountPolicy;
-    private final IProductRepository productRepository;
-    private final DeliveryAdapter deliveryAdapter;
-    private final PaymentAdapter paymentAdapter;
-    private final AlertManager alertManager;
-    private final StorePermission storePermission;
-    private final IStoreMessagesRepository storeMessagesRepository;
-    private final AddToUserCart addToUserCart;
-    private final IBIDRepository bidRepository;
-    private final IUserRepository userRepository;
-    private final IStorePermissionsRepository storePermissionsRepository;
-    private final int storeId;
+    private IConditionRepository conditionRepository;
+    @Transient
+    private   DiscountPolicy discountPolicy;
+    @Transient
+    private   IProductRepository productRepository;
+    @Transient
+    private   DeliveryAdapter deliveryAdapter;
+    @Transient
+    private   PaymentAdapter paymentAdapter;
+    @Transient
+    private   AlertManager alertManager;
+    @Transient
+    private   StorePermission storePermission;
+    @Transient
+    private   IStoreMessagesRepository storeMessagesRepository;
+    @Transient
+    private   AddToUserCart addToUserCart;
+    @Transient
+    private   IBIDRepository bidRepository;
+    @Transient
+    private   IUserRepository userRepository;
+    @Transient
+    private   IStorePermissionsRepository storePermissionsRepository;
+    @Id
+    private   int storeId;
 
+    @Transient
+    private   IPurchaseHistoryRepository purchaseHistoryRepository;
 
-    private final IPurchaseHistoryRepository purchaseHistoryRepository;
-    private final String storeName;
-    private final String category;
-    private final IAuctionRepository auctionRepository;
-    private final IStoreScore storeScore;
+    private   String storeName;
+    private   String category;
+    @Transient
+    private   IAuctionRepository auctionRepository;
+    @Transient
+    private   IStoreScore storeScore;
 
     private boolean hidden = false;
-    private final PurchasePolicy purchasePolicy;
+    @Transient
+    private   PurchasePolicy purchasePolicy;
 
     public Store(int storeId, int founderId, String storeName, String category) {
         this.auctionRepository = SingletonCollection.getAuctionRepository();
@@ -108,6 +126,29 @@ public class Store {
         this.discountPolicy = new DiscountPolicy(storeId);
         this.purchasePolicy = new PurchasePolicy(storeId);
     }
+    public Store() {
+        this.productRepository = null;
+        this.deliveryAdapter = null;
+        this.paymentAdapter = null;
+        this.alertManager = null;
+        this.storePermission = null;
+        this.storeMessagesRepository = null;
+        this.addToUserCart =null;
+        this.bidRepository = null;
+        this.storeId = 0;
+        this.purchaseHistoryRepository = null;
+        this.storeName = null;
+        this.category = null;
+        this.auctionRepository = null;
+        this.storeScore = null;
+        this.userRepository = null;
+        this.storePermissionsRepository = null;
+        this.conditionRepository = null;
+        this.discountPolicy = null;
+        this.purchasePolicy = null;
+    }
+
+
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
@@ -1165,5 +1206,66 @@ public class Store {
         if(!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to reset the purchase policy in the store: " + this.storeId);
         purchasePolicy.resetPurchasePolicy();
+    }
+
+
+    public IConditionRepository getConditionRepository() {
+        return conditionRepository;
+    }
+
+    public DiscountPolicy getDiscountPolicy() {
+        return discountPolicy;
+    }
+
+    public IProductRepository getProductRepository() {
+        return productRepository;
+    }
+
+    public DeliveryAdapter getDeliveryAdapter() {
+        return deliveryAdapter;
+    }
+
+    public PaymentAdapter getPaymentAdapter() {
+        return paymentAdapter;
+    }
+
+    public AlertManager getAlertManager() {
+        return alertManager;
+    }
+
+    public IStoreMessagesRepository getStoreMessagesRepository() {
+        return storeMessagesRepository;
+    }
+
+    public AddToUserCart getAddToUserCart() {
+        return addToUserCart;
+    }
+
+    public IBIDRepository getBidRepository() {
+        return bidRepository;
+    }
+
+    public IUserRepository getUserRepository() {
+        return userRepository;
+    }
+
+    public IStorePermissionsRepository getStorePermissionsRepository() {
+        return storePermissionsRepository;
+    }
+
+    public IPurchaseHistoryRepository getPurchaseHistoryRepository() {
+        return purchaseHistoryRepository;
+    }
+
+    public IAuctionRepository getAuctionRepository() {
+        return auctionRepository;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
+    }
+
+    public PurchasePolicy getPurchasePolicy() {
+        return purchasePolicy;
     }
 }

@@ -238,6 +238,7 @@ class StoreTest {
     }
 
     public void customSetUp() {
+        SingletonCollection.setSaveMode(false);
         tUserOwnerId = SingletonCollection.getUserRepository().getNewUserId();
         SingletonCollection.getUserRepository().addUser(tUserOwnerId, new User(tUserOwnerId));
 
@@ -257,6 +258,7 @@ class StoreTest {
     }
 
     public void RecursiveFireTestSetUp(){
+        SingletonCollection.setSaveMode(false);
         u1Id = SingletonCollection.getUserRepository().getNewUserId();
         SingletonCollection.getUserRepository().addUser(u1Id, new User(u1Id));
 
@@ -304,6 +306,7 @@ class StoreTest {
 
     public void customTearDown() {
         SingletonCollection.reset_system();
+        SingletonCollection.setSaveMode(false);
         /*
         omTestStore.getStorePermission().clearForTest();
         tUser.getUserPermissions().clearForTest();

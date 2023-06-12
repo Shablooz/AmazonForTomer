@@ -322,6 +322,7 @@ public class Session implements ISession {
                     user.addPermission(storeId, UserPermissions.StoreRole.FOUNDER);
                     return Response.success(storeId);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     return Response.exception(e);
                 }
             }

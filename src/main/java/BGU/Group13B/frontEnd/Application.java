@@ -36,6 +36,7 @@ public class Application implements AppShellConfigurator {
         //TODO load all repositories from db to memory
         SingletonCollection.setReviewRepository();
         SingletonCollection.setProductRepository();
+        SingletonCollection.setStoreRepository();
         //need to access singleton collection here
 
         //remove those - examples

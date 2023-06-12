@@ -13,20 +13,24 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static org.junit.jupiter.api.Assertions.*;
 
 class IStoreRepositoryTest {
-    private final IStoreRepository storeRepository = SingletonCollection.getStoreRepository();
+    private  IStoreRepository storeRepository;
 
     @BeforeEach
     void setUp() {
         SingletonCollection.reset_system();
+        SingletonCollection.setSaveMode(false);
+        storeRepository= SingletonCollection.getStoreRepository();
     }
 
     @AfterEach
     void tearDown() {
         SingletonCollection.reset_system();
+        SingletonCollection.setSaveMode(false);
     }
 
     @Test
     void addStoreTest_simpleCase_success(){
+        SingletonCollection.setSaveMode(false);
         int founderId = getFounderId();
         String storeName = "storeName";
         String category = "category";
