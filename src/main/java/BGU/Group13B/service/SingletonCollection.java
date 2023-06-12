@@ -176,12 +176,14 @@ public class SingletonCollection {
     }
 
     public static void setProductRepository() {
+        System.out.println("\n\nsetProductRepository!!!!!!!!!!!!!!\n\n");
         ProductRepositoryAsHashMap productRepositoryAsHashMap = SingletonCollection.getContext().getBean(ProductRepositoryAsHashMapService.class).getProductRepositoryAsHashMapJPA();
         if(productRepositoryAsHashMap == null){
             ProductRepositoryAsHashMap repo=(ProductRepositoryAsHashMap) SingletonCollection.getProductRepository();
             SingletonCollection.getContext().getBean(ProductRepositoryAsHashMapService.class).save(repo);
+        }else{
+            SingletonCollection.productRepository = SingletonCollection.getContext().getBean(ProductRepositoryAsHashMapService.class).getProductRepositoryAsHashMapJPA();
         }
-        SingletonCollection.productRepository = SingletonCollection.getContext().getBean(ProductRepositoryAsHashMapService.class).getProductRepositoryAsHashMapJPA();
     }
 
 
@@ -190,8 +192,9 @@ public class SingletonCollection {
         if(reviewRepoSingle == null){
             ReviewRepoSingle repo=(ReviewRepoSingle) SingletonCollection.getReviewRepository();
             SingletonCollection.getContext().getBean(ReviewRepoSingleService.class).save(repo);
+        }else {
+            SingletonCollection.reviewRepository = SingletonCollection.getContext().getBean(ReviewRepoSingleService.class).getReviewRepoSingleJPA();
         }
-        SingletonCollection.reviewRepository = SingletonCollection.getContext().getBean(ReviewRepoSingleService.class).getReviewRepoSingleJPA();
     }
 
     //lines below might need to be replaced with a field
