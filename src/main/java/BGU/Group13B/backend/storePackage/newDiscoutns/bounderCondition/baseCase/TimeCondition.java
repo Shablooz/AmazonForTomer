@@ -7,6 +7,7 @@ import BGU.Group13B.backend.storePackage.newDiscoutns.bounders.TimeBounder;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.newDiscoutns.bounderCondition.time.Time;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToOne;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
@@ -17,8 +18,8 @@ import java.time.LocalDateTime;
 
 @Entity
 public class TimeCondition extends Condition {
-    @OneToOne
-    private final TimeBounder timeBounder;
+    @OneToOne(cascade = CascadeType.ALL)
+    private TimeBounder timeBounder;
 
     public TimeCondition(int conditionId, LocalDateTime lowerBound, LocalDateTime upperBound) {
         super(conditionId);
@@ -53,5 +54,13 @@ public class TimeCondition extends Condition {
     @Override
     public String toString() {
         return "time: " + timeBounder;
+    }
+
+    public TimeBounder getTimeBounder() {
+        return timeBounder;
+    }
+
+    public void setTimeBounder(TimeBounder timeBounder) {
+        this.timeBounder = timeBounder;
     }
 }

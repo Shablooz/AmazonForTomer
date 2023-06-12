@@ -38,4 +38,12 @@ public class Date implements Comparable<Date>{
     public String toString(){
         return date.getDayOfMonth() + "/" + date.getMonth().getValue();
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }

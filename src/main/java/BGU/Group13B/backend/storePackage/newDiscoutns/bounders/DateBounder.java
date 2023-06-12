@@ -1,10 +1,7 @@
 package BGU.Group13B.backend.storePackage.newDiscoutns.bounders;
 
 import BGU.Group13B.backend.storePackage.newDiscoutns.bounderCondition.time.Date;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 
 @Entity
 public class DateBounder {
@@ -12,10 +9,10 @@ public class DateBounder {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private int id;
-    @OneToOne
-    private final Date upperBound; //if upperBound == null then there is no upper bound
-    @OneToOne
-    private final Date lowerBound;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Date upperBound; //if upperBound == null then there is no upper bound
+    @OneToOne(cascade = CascadeType.ALL)
+    private Date lowerBound;
 
 
     public DateBounder(Date lowerBound, Date upperBound) {
@@ -73,5 +70,21 @@ public class DateBounder {
 
     public boolean hasUpperBound(){
         return upperBound != null;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setUpperBound(Date upperBound) {
+        this.upperBound = upperBound;
+    }
+
+    public void setLowerBound(Date lowerBound) {
+        this.lowerBound = lowerBound;
     }
 }

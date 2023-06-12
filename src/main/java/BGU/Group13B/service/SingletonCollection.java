@@ -5,6 +5,7 @@ import BGU.Group13B.backend.Repositories.Implementations.BIDRepositoryImpl.BIDRe
 import BGU.Group13B.backend.Repositories.Implementations.BasketProductRepositoryImpl.BasketProductRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.BasketReposistoryImpl.BasketRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.ConditionRepositoryImpl.ConditionRepositoryAsHashMap;
+import BGU.Group13B.backend.Repositories.Implementations.ConditionRepositoryImpl.ConditionRepositoryAsHashMapService;
 import BGU.Group13B.backend.Repositories.Implementations.DiscountAccumulationRepositoryImpl.DiscountAccumulationRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.DiscountRepositoryImpl.DiscountRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.IStoreScoreRepository.StoreScoreSingle;
@@ -180,18 +181,30 @@ public class SingletonCollection {
         if(productRepositoryAsHashMap == null){
             ProductRepositoryAsHashMap repo=(ProductRepositoryAsHashMap) SingletonCollection.getProductRepository();
             SingletonCollection.getContext().getBean(ProductRepositoryAsHashMapService.class).save(repo);
+        }else{
+            SingletonCollection.productRepository = SingletonCollection.getContext().getBean(ProductRepositoryAsHashMapService.class).getProductRepositoryAsHashMapJPA();
         }
-        SingletonCollection.productRepository = SingletonCollection.getContext().getBean(ProductRepositoryAsHashMapService.class).getProductRepositoryAsHashMapJPA();
     }
 
 
     public static void setReviewRepository() {
         ReviewRepoSingle reviewRepoSingle = SingletonCollection.getContext().getBean(ReviewRepoSingleService.class).getReviewRepoSingleJPA();
-        if(reviewRepoSingle == null){
-            ReviewRepoSingle repo=(ReviewRepoSingle) SingletonCollection.getReviewRepository();
+        if (reviewRepoSingle == null) {
+            ReviewRepoSingle repo = (ReviewRepoSingle) SingletonCollection.getReviewRepository();
             SingletonCollection.getContext().getBean(ReviewRepoSingleService.class).save(repo);
+        } else {
+            SingletonCollection.reviewRepository = SingletonCollection.getContext().getBean(ReviewRepoSingleService.class).getReviewRepoSingleJPA();
         }
-        SingletonCollection.reviewRepository = SingletonCollection.getContext().getBean(ReviewRepoSingleService.class).getReviewRepoSingleJPA();
+    }
+
+    public static void setConditionRepository() {
+        ConditionRepositoryAsHashMap conditionRepositoryAsHashMap = SingletonCollection.getContext().getBean(ConditionRepositoryAsHashMapService.class).getConditionRepositoryAsHashMap();
+        if(conditionRepositoryAsHashMap == null){
+            ConditionRepositoryAsHashMap repo=(ConditionRepositoryAsHashMap) SingletonCollection.getConditionRepository();
+            SingletonCollection.getContext().getBean(ConditionRepositoryAsHashMapService.class).save(repo);
+        }else{
+            SingletonCollection.conditionRepository = SingletonCollection.getContext().getBean(ConditionRepositoryAsHashMapService.class).getConditionRepositoryAsHashMap();
+        }
     }
 
     //lines below might need to be replaced with a field
@@ -376,6 +389,8 @@ public class SingletonCollection {
 
     public static void setSaveMode(boolean saveMode){
         productRepository.setSaveMode(saveMode);
+        discountAccumulationRepository.setSaveMode(saveMode);
+        conditionRepository.setSaveMode(saveMode);
     }
     public static void setPaymentFail() {
         paymentAdapter = null;

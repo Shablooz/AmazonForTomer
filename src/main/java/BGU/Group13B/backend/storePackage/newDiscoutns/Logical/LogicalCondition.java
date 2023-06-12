@@ -5,17 +5,14 @@ import BGU.Group13B.backend.User.BasketInfo;
 import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.LogicalConditions.LogicalConditionEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class LogicalCondition extends Condition {
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     protected final Condition operand1;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     protected final Condition operand2;
 
     public LogicalCondition(int conditionId, Condition operand1, Condition operand2){

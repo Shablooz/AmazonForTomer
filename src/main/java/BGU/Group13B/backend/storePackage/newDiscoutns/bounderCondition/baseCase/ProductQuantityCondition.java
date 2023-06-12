@@ -10,14 +10,15 @@ import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyE
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.LogicalConditions.LogicalConditionEntity;
 import BGU.Group13B.service.SingletonCollection;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToOne;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.leaves.ProductQuantityConditionEntity;
 
 @Entity
 public class ProductQuantityCondition extends Condition {
-    private final int productId;
-    @OneToOne
+    private int productId;
+    @OneToOne(cascade = CascadeType.ALL)
     private final IntBounder quantityBounder;
 
 

@@ -7,6 +7,7 @@ import BGU.Group13B.backend.storePackage.newDiscoutns.Bounder;
 import BGU.Group13B.backend.storePackage.newDiscoutns.bounders.DoubleBounder;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToOne;
@@ -18,10 +19,10 @@ import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.leaves
 public class CategoryPriceCondition extends Condition {
 
 
-    private final String category;
+    private String category;
 
-    @OneToOne
-    private final DoubleBounder priceBounder;
+    @OneToOne(cascade = CascadeType.ALL)
+    private DoubleBounder priceBounder;
 
 
     public CategoryPriceCondition(int conditionId, String category, double lowerBound, double upperBound) {
@@ -68,5 +69,21 @@ public class CategoryPriceCondition extends Condition {
 
     public String toString() {
         return "category: " + category + ", price: " + priceBounder.toString();
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public DoubleBounder getPriceBounder() {
+        return priceBounder;
+    }
+
+    public void setPriceBounder(DoubleBounder priceBounder) {
+        this.priceBounder = priceBounder;
     }
 }

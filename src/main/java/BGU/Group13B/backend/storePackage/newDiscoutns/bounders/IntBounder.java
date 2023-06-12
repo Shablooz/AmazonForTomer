@@ -11,9 +11,9 @@ public class IntBounder {
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private int id;
 
-    private final Integer upperBound; //if upperBound == null then there is no upper bound
+    private Integer upperBound; //if upperBound == null then there is no upper bound
 
-    private final Integer lowerBound;
+    private Integer lowerBound;
 
 
     public IntBounder(Integer lowerBound, Integer upperBound) {
@@ -71,6 +71,22 @@ public class IntBounder {
 
     public boolean hasUpperBound(){
         return upperBound != null;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setUpperBound(Integer upperBound) {
+        this.upperBound = upperBound;
+    }
+
+    public void setLowerBound(Integer lowerBound) {
+        this.lowerBound = lowerBound;
     }
 }
 

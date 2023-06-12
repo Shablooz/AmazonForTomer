@@ -17,7 +17,7 @@ public class StoreDiscount {
     private int storeId;
     protected String coupon;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     protected Condition condition;
 
     protected double discountPercentage;
@@ -102,5 +102,49 @@ public class StoreDiscount {
         return (condition != null ? (condition + " ⟹ ") : (""))
                 + 100 * discountPercentage + "%";
 
+    }
+
+    public void setDiscountId(int discountId) {
+        this.discountId = discountId;
+    }
+
+    public int getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(int storeId) {
+        this.storeId = storeId;
+    }
+
+    public String getCoupon() {
+        return coupon;
+    }
+
+    public void setCoupon(String coupon) {
+        this.coupon = coupon;
+    }
+
+    public Condition getCondition() {
+        return condition;
+    }
+
+    public void setCondition(Condition condition) {
+        this.condition = condition;
+    }
+
+    public double getDiscountPercentage() {
+        return discountPercentage;
+    }
+
+    public void setDiscountPercentage(double discountPercentage) {
+        this.discountPercentage = discountPercentage;
+    }
+
+    public LocalDate getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setExpirationDate(LocalDate expirationDate) {
+        this.expirationDate = expirationDate;
     }
 }

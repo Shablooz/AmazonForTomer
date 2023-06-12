@@ -9,9 +9,9 @@ public class DoubleBounder {
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private int id;
 
-    private final Double upperBound; //if upperBound == null then there is no upper bound
+    private Double upperBound; //if upperBound == null then there is no upper bound
 
-    private final Double lowerBound;
+    private Double lowerBound;
 
 
     public DoubleBounder(Double lowerBound, Double upperBound) {

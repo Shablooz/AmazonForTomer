@@ -5,9 +5,9 @@ import jakarta.persistence.*;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class DiscountAccumulationTree extends DiscountAccumulationNode {
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     protected DiscountAccumulationNode left;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     protected DiscountAccumulationNode right;
 
     public DiscountAccumulationTree(int nodeId, DiscountAccumulationNode left, DiscountAccumulationNode right) {

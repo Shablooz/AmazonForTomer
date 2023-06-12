@@ -41,4 +41,6 @@ public interface IConditionRepository {
     Condition getCondition(int conditionId);
     void removeCondition(int conditionId);
     void reset();
+
+    void setSaveMode(boolean saveMode);
 }

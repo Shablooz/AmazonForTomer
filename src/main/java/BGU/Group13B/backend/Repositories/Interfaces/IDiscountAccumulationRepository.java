@@ -15,4 +15,6 @@ public interface IDiscountAccumulationRepository {
     void removeDiscountAccumulationNode(int nodeId);
 
     void reset();
+
+    void setSaveMode(boolean saveMode);
 }

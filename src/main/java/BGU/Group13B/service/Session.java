@@ -1130,6 +1130,7 @@ public class Session implements ISession {
         try {
             return Response.success(market.addDateCondition(storeId, userId, lowerBound, upperBound));
         } catch (Exception e) {
+            e.printStackTrace();
             return Response.exception(e);
         }
     }
@@ -1137,8 +1138,10 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addDateCondition(int storeId, int userId, LocalDateTime lowerBound) {
         try {
+
             return Response.success(market.addDateCondition(storeId, userId, lowerBound));
         } catch (Exception e) {
+            e.printStackTrace();
             return Response.exception(e);
         }
     }
@@ -1148,6 +1151,7 @@ public class Session implements ISession {
         try {
             return Response.success(market.addProductPriceCondition(storeId, userId, productId, lowerBound, upperBound));
         } catch (Exception e) {
+            e.printStackTrace();
             return Response.exception(e);
         }
     }
@@ -1157,6 +1161,7 @@ public class Session implements ISession {
         try {
             return Response.success(market.addProductPriceCondition(storeId, userId, productId, lowerBound));
         } catch (Exception e) {
+            e.printStackTrace();
             return Response.exception(e);
         }
     }
@@ -1166,6 +1171,7 @@ public class Session implements ISession {
         try {
             return Response.success(market.addProductQuantityCondition(storeId, userId, productId, lowerBound, upperBound));
         } catch (Exception e) {
+            e.printStackTrace();
             return Response.exception(e);
         }
     }
@@ -1175,6 +1181,7 @@ public class Session implements ISession {
         try {
             return Response.success(market.addProductQuantityCondition(storeId, userId, productId, lowerBound));
         } catch (Exception e) {
+            e.printStackTrace();
             return Response.exception(e);
         }
     }
@@ -1184,6 +1191,7 @@ public class Session implements ISession {
         try {
             return Response.success(market.addTimeCondition(storeId, userId, lowerBound, upperBound));
         } catch (Exception e) {
+            e.printStackTrace();
             return Response.exception(e);
         }
     }
@@ -1193,6 +1201,7 @@ public class Session implements ISession {
         try {
             return Response.success(market.addTimeCondition(storeId, userId, lowerBound));
         } catch (Exception e) {
+            e.printStackTrace();
             return Response.exception(e);
         }
     }
@@ -1202,6 +1211,7 @@ public class Session implements ISession {
         try {
             return Response.success(market.addUserAgeCondition(storeId, userId, lowerBound, upperBound));
         } catch (Exception e) {
+            e.printStackTrace();
             return Response.exception(e);
         }
     }
@@ -1211,6 +1221,7 @@ public class Session implements ISession {
         try {
             return Response.success(market.addUserAgeCondition(storeId, userId, lowerBound));
         } catch (Exception e) {
+            e.printStackTrace();
             return Response.exception(e);
         }
     }
@@ -1220,6 +1231,7 @@ public class Session implements ISession {
         try {
             return Response.success(market.addStoreDiscount(storeId, userId, conditionId, discountPercentage, expirationDate, coupon));
         } catch (Exception e) {
+            e.printStackTrace();
             return Response.exception(e);
         }
     }
