@@ -9,17 +9,23 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 public class ConfigurationFileParser {
     private static final HashMap<String/*functionName*/, List<Object>> results = new HashMap<>();
 
+    private static String CONFIGURATION_FILE_NAME = null;
     public static void main(String[] args) {
         // Read the configuration file
         parse();
     }
 
+
     public static void parse() {
-        JsonObject config = loadJsonObject("configurationFile2.json");
+
+        JsonObject config = loadJsonObject();
         if (config == null) return;
 
         // Get the "functions" array from the configuration
@@ -37,9 +43,24 @@ public class ConfigurationFileParser {
         }
     }
 
-    private static JsonObject loadJsonObject(String configurationFileName) {
+    private static String getConfigurationFileName() {
+        Properties properties = new Properties();
+
+        try {
+            FileInputStream fileInputStream = new FileInputStream("src/main/resources/application.properties");
+            properties.load(fileInputStream);
+            fileInputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return properties.getProperty("configurationFile");
+    }
+
+    private static JsonObject loadJsonObject() {
+        String configFile = CONFIGURATION_FILE_NAME == null ? getConfigurationFileName() : CONFIGURATION_FILE_NAME;
         JsonObject config;
-        try (FileReader reader = new FileReader("src/main/resources/configurationFiles/"+configurationFileName)) {
+        try (FileReader reader = new FileReader("src/main/resources/configurationFiles/"+configFile)) {
             Gson gson = new Gson();
             JsonElement element = gson.fromJson(reader, JsonElement.class);
             config = element.getAsJsonObject();
@@ -160,5 +181,8 @@ public class ConfigurationFileParser {
         } catch (Exception e) {
             return value;
         }
+    }
+    public static void setConfigurationFileName(String configurationFileName) {
+        CONFIGURATION_FILE_NAME = configurationFileName;
     }
 }
