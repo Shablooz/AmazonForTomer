@@ -4,7 +4,9 @@ import BGU.Group13B.backend.System.UserTrafficRecord;
 import BGU.Group13B.frontEnd.ResponseHandler;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.frontEnd.components.SystemInfo.UserTrafficPieChart;
+import BGU.Group13B.service.BroadCaster;
 import BGU.Group13B.service.Session;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
@@ -41,6 +43,10 @@ public class SystemInfoView extends VerticalLayout implements ResponseHandler, B
         userTrafficPieChart = new UserTrafficPieChart(this, userTraffic, today, today);
 
         add(userTrafficPieChart);
+
+        //real-time update
+        var ui = UI.getCurrent();
+        BroadCaster.registerUserTraffic(userId, () -> ui.access(this::refreshUserTrafficChart));
     }
 
     public void setUserTrafficChartValues(LocalDate start, LocalDate end){
