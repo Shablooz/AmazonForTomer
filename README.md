@@ -43,3 +43,24 @@ Once the JAR file is built, you can run it using
 - Find add-ons at [vaadin.com/directory](https://vaadin.com/directory).
 - Ask questions on [Stack Overflow](https://stackoverflow.com/questions/tagged/vaadin) or join our [Discord channel](https://discord.gg/MYFq5RTbBn).
 - Report issues, create pull requests in [GitHub](https://github.com/vaadin).
+
+## Config file explanation
+- `application.properties` in `src/main/resources` contains the configuration of the application.
+- The config file is executed when we start the program from the application class `Application.java` in `src/main/java/BGU/Group13B/frontEnd/Application.java`.
+- There are 2 config file options named: `configurationFile1.json` and `configurationFile2.json` in `src/main/resources/ConfigurationFiles`.
+- We can specify which config file we want to use by changing the `configurationFile` variable in `application.properties`.
+## `configurationFile1.json`
+  - This config file contains 3 new registered users: `shaun`, `tomer`, `lior`.
+  - `shaun` is the store owner of store `Cool Store`
+  - `tomer` is the store owner of store `Cool Store`
+  - `lior` is the store owner of store `Cool Store`
+  - both `lior` and `tomer` are appointed as managers of `Cool Store` by `shaun`
+## `configurationFile2.json`
+  - This config file contains 5 new registered users: `shaun`, `tomer`, `lior`, `eden`, `eyal`.
+  - When `kingOfTheSheep` is an admin.
+  - `shaun` is the store owner of store `Cool Store`
+  - The `cool store` has 1 item: `Bamba` with 20 items in stock and a price of 30.0.
+  - `tomer` is the store owner of store `Cool Store` appointed by `shaun` with manage inventory permissions.
+  - `lior` and `eden` are store owners of store `Cool Store` appointed by `shaun`.
+## TODO: application.properties specification
+
