@@ -124,7 +124,7 @@ public class SingletonCollection {
         searcher = new Searcher(productRepository, storeRepository);
         market = new Market();
         //session = new Session(market);//super bug sad shaun at 3:38 am
-        //ConfigurationFileParser.parse();
+        ConfigurationFileParser.parse();
 
     }
 

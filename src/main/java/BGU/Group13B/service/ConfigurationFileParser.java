@@ -19,7 +19,7 @@ public class ConfigurationFileParser {
     private static String CONFIGURATION_FILE_NAME = null;
     public static void main(String[] args) {
         // Read the configuration file
-        parse();
+        //parse();
     }
 
 
