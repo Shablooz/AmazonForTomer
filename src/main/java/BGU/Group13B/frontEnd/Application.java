@@ -1,6 +1,7 @@
 package BGU.Group13B.frontEnd;
 
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
+import BGU.Group13B.service.ConfigurationFileParser;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.theme.Theme;
@@ -30,6 +31,8 @@ public class Application implements AppShellConfigurator {
         SpringApplication.run(Application.class, args);
         //Timer timer = new Timer();
         //timer.schedule(SessionToIdMapper.getInstance().kickExpired(), 5 * 60 * 1000, 5 * 60 * 1000);
+        //ConfigurationFileParser.parse();
+
     }
 
 }
