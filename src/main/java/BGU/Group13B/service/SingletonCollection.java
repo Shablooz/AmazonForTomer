@@ -5,6 +5,7 @@ import BGU.Group13B.backend.Repositories.Implementations.BIDRepositoryImpl.BIDRe
 import BGU.Group13B.backend.Repositories.Implementations.BasketProductRepositoryImpl.BasketProductRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.BasketReposistoryImpl.BasketRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.ConditionRepositoryImpl.ConditionRepositoryAsHashMap;
+import BGU.Group13B.backend.Repositories.Implementations.DailyUserTrafficRepositoryImpl.DailyUserTrafficRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.DiscountAccumulationRepositoryImpl.DiscountAccumulationRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.DiscountRepositoryImpl.DiscountRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.IStoreScoreRepository.StoreScoreSingle;
@@ -61,6 +62,7 @@ public class SingletonCollection {
     private static IConditionRepository conditionRepository;
     private static IStoreDiscountRootsRepository storeDiscountRootsRepository;
     private static IPurchasePolicyRootsRepository purchasePolicyRootsRepository;
+    private static IDailyUserTrafficRepository dailyUserTrafficRepository;
 
 
     /**
@@ -112,6 +114,7 @@ public class SingletonCollection {
         conditionRepository = new ConditionRepositoryAsHashMap();
         storeDiscountRootsRepository = new StoreDiscountRootsRepositoryAsHashMap();
         purchasePolicyRootsRepository = new PurchasePolicyRootsRepositoryAsHashMap();
+        dailyUserTrafficRepository = new DailyUserTrafficRepositoryAsList();
 
 
         //adapters
@@ -149,6 +152,7 @@ public class SingletonCollection {
         conditionRepository = new ConditionRepositoryAsHashMap();
         storeDiscountRootsRepository = new StoreDiscountRootsRepositoryAsHashMap();
         purchasePolicyRootsRepository = new PurchasePolicyRootsRepositoryAsHashMap();
+        dailyUserTrafficRepository = new DailyUserTrafficRepositoryAsList();
         //adapters
 
 
@@ -273,6 +277,10 @@ public class SingletonCollection {
 
     public static IStoreDiscountRootsRepository getStoreDiscountRootsRepository() {
         return storeDiscountRootsRepository;
+    }
+
+    public static IDailyUserTrafficRepository getDailyUserTrafficRepository() {
+        return dailyUserTrafficRepository;
     }
 
     public static Session getSession() {

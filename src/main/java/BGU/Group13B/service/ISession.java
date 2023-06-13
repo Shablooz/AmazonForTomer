@@ -2,6 +2,7 @@ package BGU.Group13B.service;
 
 import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.System.SystemInfo;
+import BGU.Group13B.backend.System.UserTrafficRecord;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.User.PurchaseFailedException;
 import BGU.Group13B.backend.User.PurchaseHistory;
@@ -1012,4 +1013,6 @@ public interface ISession {
     Response<VoidResponse> resetStorePurchasePolicy(int storeId, int userId);
 
     Response<List<StoreInfo>> getAllStores();
+
+    Response<UserTrafficRecord> getUserTrafficOfRange(int userId, LocalDate from, LocalDate to);
 }
