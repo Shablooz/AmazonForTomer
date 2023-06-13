@@ -4,29 +4,40 @@ import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
 import BGU.Group13B.service.Session;
 import BGU.Group13B.service.SingletonCollection;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Timer;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
 public class PaymentAPI implements PaymentAdapter, DeliveryAdapter {
-    private final String API_URL = "https://php-server-try.000webhostapp.com/";
+    private static final String API_URL;
     private static final Logger LOGGER_INFO = Logger.getLogger(Session.class.getName());
     private static final Logger LOGGER_ERROR = Logger.getLogger(Session.class.getName());
 
     static {
         SingletonCollection.setFileHandler(LOGGER_INFO, true);
         SingletonCollection.setFileHandler(LOGGER_ERROR, false);
-
+        //get API_URL from application.properties
+        API_URL = getExternalPaymentAndDeliveryURL();
     }
+    private static String getExternalPaymentAndDeliveryURL() {
+        Properties properties = new Properties();
 
+        try {
+            FileInputStream fileInputStream = new FileInputStream("src/main/resources/application.properties");
+            properties.load(fileInputStream);
+            fileInputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return properties.getProperty("externalPaymentAndDelivery");
+    }
     public static void main(String[] args) {
         PaymentAPI paymentApi = new PaymentAPI();
 
