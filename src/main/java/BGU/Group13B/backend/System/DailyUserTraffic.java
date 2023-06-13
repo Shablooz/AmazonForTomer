@@ -3,7 +3,7 @@ package BGU.Group13B.backend.System;
 import java.time.LocalDate;
 
 public class DailyUserTraffic {
-    private final LocalDate date;
+    private LocalDate date;
 
     private int numOfGuests;
     private int numOfRegularMembers; // members that are not store owners or managers
@@ -69,4 +69,28 @@ public class DailyUserTraffic {
     }
 
 
+    //should not be used.
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public void setNumOfGuests(int numOfGuests) {
+        this.numOfGuests = numOfGuests;
+    }
+
+    public void setNumOfRegularMembers(int numOfRegularMembers) {
+        this.numOfRegularMembers = numOfRegularMembers;
+    }
+
+    public void setNumOfStoreManagersThatAreNotOwners(int numOfStoreManagersThatAreNotOwners) {
+        this.numOfStoreManagersThatAreNotOwners = numOfStoreManagersThatAreNotOwners;
+    }
+
+    public void setNumOfStoreOwners(int numOfStoreOwners) {
+        this.numOfStoreOwners = numOfStoreOwners;
+    }
+
+    public void setNumOfAdmins(int numOfAdmins) {
+        this.numOfAdmins = numOfAdmins;
+    }
 }
