@@ -38,6 +38,14 @@ public class UserPermissions {
         FONLY
     }
 
+    public enum PopulationStatus{
+        ADMIN,
+        OWNER,
+        MANAGER_NOT_OWNER,
+        REGULAR_MEMBER, //if the user is a member but not a manager or an owner
+        GUEST
+    }
+
     private UserPermissionStatus userPermissionStatus;
     private HashMap<Integer/*storeId*/, StoreRole> userStoreRole;
     private HashMap<Integer/*storeId*/, Set<IndividualPermission>> userIndividualPermission;
@@ -102,6 +110,23 @@ public class UserPermissions {
     public void clearForTest(){
         userStoreRole.clear();
         userIndividualPermission.clear();
+    }
+
+
+    public PopulationStatus getPopulationStatus(){
+        if (userPermissionStatus == UserPermissionStatus.ADMIN)
+            return PopulationStatus.ADMIN;
+
+        if (userPermissionStatus == UserPermissionStatus.GUEST)
+            return PopulationStatus.GUEST;
+
+        if(userStoreRole.containsValue(StoreRole.FOUNDER) || userStoreRole.containsValue(StoreRole.OWNER))
+            return PopulationStatus.OWNER;
+
+        if(userStoreRole.containsValue(StoreRole.MANAGER))
+            return PopulationStatus.MANAGER_NOT_OWNER;
+
+        return PopulationStatus.REGULAR_MEMBER;
     }
 }
 
