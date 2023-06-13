@@ -1176,7 +1176,7 @@ public class Store {
         double[] historyIncome = new double[(endDate.getYear() - startDate.getYear())*365 + (endDate.getDayOfYear() - startDate.getDayOfYear()) + 1];
         for(PurchaseHistory purchase : purchaseHistoryRepository.getStorePurchaseHistory(this.storeId)){
             LocalDate purchaseDate = purchase.getLocalDate();
-            if(purchaseDate.isAfter(startDate) && purchaseDate.isBefore(endDate))
+            if(!(purchaseDate.isBefore(startDate) || purchaseDate.isAfter(endDate)))
                 historyIncome[(endDate.getYear() - purchaseDate.getYear())*365 + purchaseDate.getDayOfYear() - startDate.getDayOfYear()] += purchase.getPrice();
         }
 
