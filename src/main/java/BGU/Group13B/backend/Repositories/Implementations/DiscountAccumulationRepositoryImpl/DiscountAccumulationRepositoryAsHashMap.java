@@ -115,4 +115,32 @@ public class DiscountAccumulationRepositoryAsHashMap implements IDiscountAccumul
         if(saveMode)
             SingletonCollection.getContext().getBean(DiscountAccumulationRepositoryAsHashMapService.class).save(this);
     }
+
+    public boolean isSaveMode() {
+        return saveMode;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Map<Integer, DiscountAccumulationNode> getNoders() {
+        return noders;
+    }
+
+    public void setNoders(Map<Integer, DiscountAccumulationNode> noders) {
+        this.noders = noders;
+    }
+
+    public AtomicInteger getNextId() {
+        return nextId;
+    }
+
+    public void setNextId(AtomicInteger nextId) {
+        this.nextId = nextId;
+    }
 }

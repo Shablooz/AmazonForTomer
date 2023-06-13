@@ -27,7 +27,7 @@ public class DiscountAccumulationRepositoryAsHashMapService {
         discountAccumulationRepositoryAsHashMapJPA.delete(discountAccumulationRepositoryAsHashMap);
     }
 
-    public DiscountAccumulationRepositoryAsHashMap getProductRepositoryAsHashMapJPA() {
+    public DiscountAccumulationRepositoryAsHashMap getDiscountAccumulationAsHashMap() {
         return discountAccumulationRepositoryAsHashMapJPA.findById(1).orElse(null);
     }
 }

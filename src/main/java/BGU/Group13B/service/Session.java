@@ -1373,6 +1373,7 @@ public class Session implements ISession {
             market.addDiscountAsRoot(storeId, userId, discountId);
             return Response.success(new VoidResponse());
         } catch (Exception e) {
+            e.printStackTrace();
             return Response.exception(e);
         }
     }
