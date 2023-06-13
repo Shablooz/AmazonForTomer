@@ -22,6 +22,7 @@ import BGU.Group13B.service.info.StoreInfo;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -1168,17 +1169,17 @@ public class Store {
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
     @HistoryPermission
-    public double getStoreHistoryIncome(int userId, LocalDate startDate, LocalDate endDate) throws NoPermissionException {
+    public double[] getStoreHistoryIncome(int userId, LocalDate startDate, LocalDate endDate) throws NoPermissionException {
         if(!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to get the store history income in the store: " + this.storeId);
 
-
-        List<PurchaseHistory> purchaseHistory = purchaseHistoryRepository.getStorePurchaseHistory(this.storeId);
-        double income = 0;
-        for(PurchaseHistory purchase : purchaseHistory){
-            if(purchase.getLocalDate().isAfter(startDate) && purchase.getLocalDate().isBefore(endDate))
-                income += purchase.getPrice();
+        double[] historyIncome = new double[(endDate.getYear() - startDate.getYear())*365 + (endDate.getDayOfYear() - startDate.getDayOfYear()) + 1];
+        for(PurchaseHistory purchase : purchaseHistoryRepository.getStorePurchaseHistory(this.storeId)){
+            LocalDate purchaseDate = purchase.getLocalDate();
+            if(purchaseDate.isAfter(startDate) && purchaseDate.isBefore(endDate))
+                historyIncome[(endDate.getYear() - purchaseDate.getYear())*365 + purchaseDate.getDayOfYear() - startDate.getDayOfYear()] += purchase.getPrice();
         }
-        return income;
+
+        return historyIncome;
     }
 }

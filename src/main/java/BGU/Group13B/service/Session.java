@@ -1546,7 +1546,7 @@ public class Session implements ISession {
     }
 
     @Override
-    public Response<Double> getStoreHistoryIncome(int storeId, int userId, LocalDate from, LocalDate to) {
+    public Response<double[]> getStoreHistoryIncome(int storeId, int userId, LocalDate from, LocalDate to) {
         try{
             return Response.success(market.getStoreHistoryIncome(storeId, userId, from, to));
         }
