@@ -1015,4 +1015,6 @@ public interface ISession {
     Response<List<StoreInfo>> getAllStores();
 
     Response<UserTrafficRecord> getUserTrafficOfRange(int userId, LocalDate from, LocalDate to);
+
+    Response<Double> getStoreHistoryIncome(int storeId, int userId, LocalDate from, LocalDate to);
 }

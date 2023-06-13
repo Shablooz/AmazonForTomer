@@ -1164,4 +1164,21 @@ public class Store {
             throw new NoPermissionException("User " + userId + " has no permission to reset the purchase policy in the store: " + this.storeId);
         purchasePolicy.resetPurchasePolicy();
     }
+
+    @DefaultFounderFunctionality
+    @DefaultOwnerFunctionality
+    @HistoryPermission
+    public double getStoreHistoryIncome(int userId, LocalDate startDate, LocalDate endDate) throws NoPermissionException {
+        if(!this.storePermission.checkPermission(userId, hidden))
+            throw new NoPermissionException("User " + userId + " has no permission to get the store history income in the store: " + this.storeId);
+
+
+        List<PurchaseHistory> purchaseHistory = purchaseHistoryRepository.getStorePurchaseHistory(this.storeId);
+        double income = 0;
+        for(PurchaseHistory purchase : purchaseHistory){
+            if(purchase.getLocalDate().isAfter(startDate) && purchase.getLocalDate().isBefore(endDate))
+                income += purchase.getPrice();
+        }
+        return income;
+    }
 }

@@ -566,4 +566,8 @@ public class Market {
         storeRepository.getStore(storeId).resetPurchasePolicy(userId);
     }
 
+    public double getStoreHistoryIncome(int storeId, int userId, LocalDate startDate, LocalDate endDate) throws NoPermissionException {
+        return storeRepository.getStore(storeId).getStoreHistoryIncome(userId, startDate, endDate);
+    }
+
 }

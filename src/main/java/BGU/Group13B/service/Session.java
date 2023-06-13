@@ -1545,6 +1545,16 @@ public class Session implements ISession {
         }
     }
 
+    @Override
+    public Response<Double> getStoreHistoryIncome(int storeId, int userId, LocalDate from, LocalDate to) {
+        try{
+            return Response.success(market.getStoreHistoryIncome(storeId, userId, from, to));
+        }
+        catch (Exception e){
+            return Response.exception(e);
+        }
+    }
+
     public UserCard getUserInfo(int userId, int userInfoId){
         try {
             return market.getUserInfo(userId, userInfoId);
