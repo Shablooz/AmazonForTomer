@@ -53,7 +53,7 @@ public class UserTrafficPieChart extends VerticalLayout {
         add(dateLayout, chart);
 
         //style
-        chart.getConfiguration().getTooltip().setPointFormat("{series.name}: <b>{point.percentage:.1f}%</b>");
+        chart.getConfiguration().getTooltip().setPointFormat("<b>Count: {point.y}<br>Percentage: {point.percentage:.1f}%</b>");
         chart.getConfiguration().getChart().setBackgroundColor(new SolidColor(0, 0, 0, 0)); // transparent background
         chart.getConfiguration().getTitle().getStyle().setColor(new SolidColor(255, 255, 255));
     }
