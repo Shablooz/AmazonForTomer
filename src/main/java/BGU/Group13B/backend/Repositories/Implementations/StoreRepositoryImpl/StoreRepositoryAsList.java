@@ -58,7 +58,6 @@ public class StoreRepositoryAsList implements IStoreRepository {
     //(#24) open store - requirement 3.2
     @Override
     public synchronized int addStore(int founderId, String storeName, String category) {
-        System.out.println("\n\naddStore!!!!!!!!!!!!!!!!!\n\n");
         int storeId = storeIdCounter.getAndIncrement();
         this.stores.add(new Store(storeId, founderId, storeName, category));
         save();

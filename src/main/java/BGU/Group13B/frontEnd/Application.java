@@ -37,6 +37,7 @@ public class Application implements AppShellConfigurator {
         SingletonCollection.setReviewRepository();
         SingletonCollection.setProductRepository();
         SingletonCollection.setStoreRepository();
+        SingletonCollection.setStorePermissionRepository();
         //need to access singleton collection here
 
         //remove those - examples
