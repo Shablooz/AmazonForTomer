@@ -29,9 +29,6 @@ public class SystemInfoView extends VerticalLayout implements ResponseHandler, B
     private UserTrafficPieChart userTrafficPieChart;
     private final H1 title = new H1("System Info");
 
-    private Registration registration;
-
-
     @Autowired
     public SystemInfoView(Session session){
         this.session = session;
@@ -52,7 +49,7 @@ public class SystemInfoView extends VerticalLayout implements ResponseHandler, B
 
         //real-time update
         var ui = UI.getCurrent();
-        registration = BroadCaster.registerUserTraffic(userId, () -> ui.access(this::refreshUserTrafficChart));
+        BroadCaster.registerUserTraffic(userId, () -> ui.access(this::refreshUserTrafficChart));
     }
 
     public void setUserTrafficChartValues(LocalDate start, LocalDate end){
