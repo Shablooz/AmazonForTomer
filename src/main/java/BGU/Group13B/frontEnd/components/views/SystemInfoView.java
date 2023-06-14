@@ -59,7 +59,6 @@ public class SystemInfoView extends VerticalLayout implements BeforeEnterObserve
         var ui = UI.getCurrent();
         BroadCaster.registerUserTraffic(userId, () -> ui.access(this::refreshUserTrafficChart));
         BroadCaster.registerIncome(userId, () -> ui.access(this::refreshChart));
-
     }
 
     public void setUserTrafficChartValues(LocalDate start, LocalDate end){
