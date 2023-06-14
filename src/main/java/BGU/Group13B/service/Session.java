@@ -874,6 +874,7 @@ public class Session implements ISession {
                 StoreInfo storeInfo = market.getStoreInfo(userId, storeIdAndRole.getFirst());
                 storeInfosAndRoles.add(Pair.of(storeInfo, storeIdAndRole.getSecond()));
             } catch (Exception ignored) {
+                ignored.printStackTrace();
             }
         }
         return Response.success(storeInfosAndRoles);

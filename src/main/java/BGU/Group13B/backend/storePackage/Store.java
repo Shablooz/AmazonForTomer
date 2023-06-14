@@ -86,10 +86,10 @@ public class Store {
         this.storeId = storeId;
         this.storeName = storeName;
         this.category = category;
-        StorePermission storePermission1 = storePermissionsRepository.getStorePermission(storeId);
+        StorePermission storePermission1 = getStorePermissionsRepository().getStorePermission(storeId);
         if (storePermission1 == null) {
             storePermission1 = new StorePermission(founderId);
-            storePermissionsRepository.addStorePermission(storeId, storePermission1);
+            getStorePermissionsRepository().addStorePermission(storeId, storePermission1);
         }
         this.storePermission = storePermission1;
         userRepository.getUser(founderId).addPermission(storeId, UserPermissions.StoreRole.FOUNDER);
@@ -236,7 +236,7 @@ public class Store {
     }
 
     public StorePermission getStorePermission() {
-        if(storePermissionsRepository.getSaveMode())
+        if(getStorePermissionsRepository().getSaveMode())
             storePermission = getStorePermissionsRepository().getStorePermission(storeId);
         return storePermission;
     }
@@ -735,7 +735,7 @@ public class Store {
     }
 
     private void deleteAllStorePermissions() {
-        storePermissionsRepository.deleteStorePermissions(storeId);
+        getStorePermissionsRepository().deleteStorePermissions(storeId);
     }
 
     public boolean isHidden() {
@@ -1253,7 +1253,8 @@ public class Store {
     }
 
     public IStorePermissionsRepository getStorePermissionsRepository() {
-        storePermissionsRepository= SingletonCollection.getStorePermissionRepository();
+        if(storePermissionsRepository == null || storePermissionsRepository.getSaveMode()) //tomer check
+            storePermissionsRepository= SingletonCollection.getStorePermissionRepository();
         return storePermissionsRepository;
     }
 

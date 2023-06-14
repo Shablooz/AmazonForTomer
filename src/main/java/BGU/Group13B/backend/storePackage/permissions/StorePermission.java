@@ -6,22 +6,36 @@ import BGU.Group13B.backend.User.UserPermissions.StoreRole;
 import BGU.Group13B.backend.storePackage.Store;
 import BGU.Group13B.backend.storePackage.WorkerCard;
 import BGU.Group13B.service.SingletonCollection;
+import jakarta.persistence.*;
 
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Entity
 public class StorePermission {
 
-    private final HashMap<Integer/*permissionNumber*/, Set<String>> userStoreFunctionPermissions;//THIS ONE INCLUDE WHAT EACH ADDITIONAL ROLE INCLUDES
-    private final HashMap<StoreRole, Set<String>> defaultStoreRoleFunctionalities;
-    private final HashMap<Integer/*userId*/, StoreRole> userToStoreRole;
-    private final HashMap<Integer/*got appointed by*/, Set<Integer>/*appointee*/> appointedOwnersMap;
-    private final HashMap<Integer/*userId*/, Set<UserPermissions.IndividualPermission>> userToIndividualPermissions;//THIS ONE EXPLAINS THE "ADDITIONAL ROLES" OF EACH MANAGER
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
-    private final IUserPermissionRepository userPermissionRepository = SingletonCollection.getUserPermissionRepository();
+    private int founderId;
+
+    @Transient
+    private HashMap<Integer/*permissionNumber*/, Set<String>> userStoreFunctionPermissions;//THIS ONE INCLUDE WHAT EACH ADDITIONAL ROLE INCLUDES
+    @Transient
+    private  HashMap<StoreRole, Set<String>> defaultStoreRoleFunctionalities;
+    @Transient
+    private  HashMap<Integer/*userId*/, StoreRole> userToStoreRole;
+    @Transient
+    private  HashMap<Integer/*got appointed by*/, Set<Integer>/*appointee*/> appointedOwnersMap;
+    @Transient
+    private  HashMap<Integer/*userId*/, Set<UserPermissions.IndividualPermission>> userToIndividualPermissions;//THIS ONE EXPLAINS THE "ADDITIONAL ROLES" OF EACH MANAGER
+    @Transient
+    private  IUserPermissionRepository userPermissionRepository = SingletonCollection.getUserPermissionRepository();
 
     public StorePermission(int founderId) {
+        this.founderId= founderId;
         userStoreFunctionPermissions = new HashMap<>();
         defaultStoreRoleFunctionalities = new HashMap<>();
         initDefaultStoreRoleFunctionalities();
@@ -41,6 +55,17 @@ public class StorePermission {
         userToIndividualPermissions.put(founderId, founderPermissions);
         initIndividualPermissionsFunctionalities();
     }
+
+    public StorePermission() {
+        this.founderId= 0;
+        userStoreFunctionPermissions = new HashMap<>();
+        defaultStoreRoleFunctionalities = new HashMap<>();
+        userToStoreRole = new HashMap<>();
+        appointedOwnersMap = new HashMap<>();
+        userToIndividualPermissions = new HashMap<>();
+    }
+
+
 
     private void initDefaultStoreRoleFunctionalities() {
         /*
@@ -377,4 +402,67 @@ public class StorePermission {
         return users;
     }
 
+
+    //getters and setters
+
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getFounderId() {
+        return founderId;
+    }
+
+    public void setFounderId(int founderId) {
+        this.founderId = founderId;
+    }
+
+    public HashMap<Integer, Set<String>> getUserStoreFunctionPermissions() {
+        return userStoreFunctionPermissions;
+    }
+
+    public void setUserStoreFunctionPermissions(HashMap<Integer, Set<String>> userStoreFunctionPermissions) {
+        this.userStoreFunctionPermissions = userStoreFunctionPermissions;
+    }
+
+    public HashMap<StoreRole, Set<String>> getDefaultStoreRoleFunctionalities() {
+        return defaultStoreRoleFunctionalities;
+    }
+
+    public void setDefaultStoreRoleFunctionalities(HashMap<StoreRole, Set<String>> defaultStoreRoleFunctionalities) {
+        this.defaultStoreRoleFunctionalities = defaultStoreRoleFunctionalities;
+    }
+
+    public HashMap<Integer, StoreRole> getUserToStoreRole() {
+        return userToStoreRole;
+    }
+
+    public void setUserToStoreRole(HashMap<Integer, StoreRole> userToStoreRole) {
+        this.userToStoreRole = userToStoreRole;
+    }
+
+    public HashMap<Integer, Set<Integer>> getAppointedOwnersMap() {
+        return appointedOwnersMap;
+    }
+
+    public void setAppointedOwnersMap(HashMap<Integer, Set<Integer>> appointedOwnersMap) {
+        this.appointedOwnersMap = appointedOwnersMap;
+    }
+
+    public void setUserToIndividualPermissions(HashMap<Integer, Set<UserPermissions.IndividualPermission>> userToIndividualPermissions) {
+        this.userToIndividualPermissions = userToIndividualPermissions;
+    }
+
+    public IUserPermissionRepository getUserPermissionRepository() {
+        return userPermissionRepository;
+    }
+
+    public void setUserPermissionRepository(IUserPermissionRepository userPermissionRepository) {
+        this.userPermissionRepository = userPermissionRepository;
+    }
 }

@@ -6,6 +6,7 @@ import BGU.Group13B.backend.storePackage.permissions.StorePermission;
 import BGU.Group13B.service.SingletonCollection;
 import jakarta.persistence.*;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Entity
@@ -16,8 +17,13 @@ public class StorePermissionsRepositoryAsHashmap implements IStorePermissionsRep
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Transient
-    private final ConcurrentHashMap<Integer, StorePermission> integerStorePermissionConcurrentHashMap;
+
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
+    @JoinTable(name = "StorePermissionsRepositoryAsHashmap_StorePermission",
+            joinColumns = {@JoinColumn(name = "StorePermissionsRepositoryAsHashmap_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "StorePermission_id", referencedColumnName = "id")})
+    @MapKeyColumn(name = "storeId")
+    private final Map<Integer, StorePermission> integerStorePermissionConcurrentHashMap;
 
     @Transient
     private boolean saveMode;
@@ -65,6 +71,25 @@ public class StorePermissionsRepositoryAsHashmap implements IStorePermissionsRep
 
     @Override
     public boolean getSaveMode() {
-        return false;
+        return saveMode;
+    }
+
+
+    // geters and setters
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Map<Integer, StorePermission> getIntegerStorePermissionConcurrentHashMap() {
+        return integerStorePermissionConcurrentHashMap;
+    }
+
+    public boolean isSaveMode() {
+        return saveMode;
     }
 }
