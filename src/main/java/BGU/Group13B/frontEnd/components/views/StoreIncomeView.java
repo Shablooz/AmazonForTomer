@@ -14,6 +14,7 @@ import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
+import com.vaadin.flow.shared.Registration;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -29,6 +30,8 @@ public class StoreIncomeView extends VerticalLayout implements HasUrlParameter<I
     private H1 title = new H1("Store Income");
     private IncomeChart storeIncomePieChart;
     private Button backToStore;
+
+    private Registration registration;
 
     public StoreIncomeView(Session session) {
         this.session = session;
@@ -59,11 +62,18 @@ public class StoreIncomeView extends VerticalLayout implements HasUrlParameter<I
 
         //real-time update
         var ui = UI.getCurrent();
-        BroadCaster.registerIncome(userId, () -> ui.access(this::refreshChart));
+        registration = BroadCaster.registerIncome(userId, () -> ui.access(this::refreshChart));
     }
 
     @Override
     public void setChartValues(LocalDate start, LocalDate end) {
+        if(!hasAccess()){
+            registration.remove();
+            notifyWarning("You don't have access to this store's income");
+            navigate("store/" + storeId);
+            return;
+        }
+
         double[] incomeHistory = handleResponse(session.getStoreHistoryIncome(storeId, userId, start, end));
         if(incomeHistory == null)
             return;
@@ -73,6 +83,15 @@ public class StoreIncomeView extends VerticalLayout implements HasUrlParameter<I
 
     @Override
     public void refreshChart() {
+        if(!hasAccess()){
+            registration.remove();
+            getUI().ifPresent(ui -> {
+                notifyWarning("You don't have access to this store's income");
+                ui.navigate("store/" + storeId);
+            });
+            return;
+        }
+
         LocalDate start = storeIncomePieChart.getStartDate();
         LocalDate end = storeIncomePieChart.getEndDate();
 
