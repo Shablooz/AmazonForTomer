@@ -52,7 +52,6 @@ public class SingletonCollection {
     private static IBasketRepository basketRepository;
     private static IBasketProductRepository basketProductRepository;
     private static IAuctionRepository auctionRepository;
-    private static IProductHistoryRepository productHistoryRepository;
     private static IStoreScore storeScoreRepository;
     private static IUserPermissionRepository userPermissionRepository;
     private static IStorePermissionsRepository storePermissionRepository;
@@ -240,10 +239,6 @@ public class SingletonCollection {
 
     public static IBasketProductRepository getBasketProductRepository() {
         return basketProductRepository;
-    }
-
-    public static IProductHistoryRepository getProductHistoryRepository() {
-        return productHistoryRepository;
     }
 
     public static IStoreScore getStoreScoreRepository() {
