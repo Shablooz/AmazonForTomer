@@ -44,7 +44,6 @@ public class SearcherView extends VerticalLayout implements HasUrlParameter<Stri
     }
 
     public void start() {
-        //reset();
         removeAll();
         createFilterComponent();
         getProductGrid();
