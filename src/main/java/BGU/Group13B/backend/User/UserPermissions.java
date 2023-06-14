@@ -35,7 +35,8 @@ public class UserPermissions {
         WORKERS_INFO,
         HISTORY,
         STAFF,
-        FONLY
+        FONLY,
+        STATS
     }
 
     public enum PopulationStatus{

@@ -103,7 +103,6 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
     private void setInvisibleBasedOnPermissions(){
         if(!currentWorker.userPermissions().contains(UserPermissions.IndividualPermission.HISTORY)){
             storePurchaseHistoryButton.setVisible(false);
-            storeIncomeButton.setVisible(false);
         }
 
         if(!currentWorker.userPermissions().contains(UserPermissions.IndividualPermission.POLICIES)){
@@ -124,6 +123,9 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
             deleteStoreButton.setVisible(false);
         }
 
+        if(!currentWorker.userPermissions().contains(UserPermissions.IndividualPermission.STATS)){
+            storeIncomeButton.setVisible(false);
+        }
 
     }
 

@@ -1168,7 +1168,7 @@ public class Store {
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
-    @HistoryPermission
+    @StatsPermission
     public double[] getStoreHistoryIncome(int userId, LocalDate startDate, LocalDate endDate) throws NoPermissionException {
         if(!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to get the store history income in the store: " + this.storeId);

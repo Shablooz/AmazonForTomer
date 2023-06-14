@@ -108,7 +108,7 @@ public class StoreIncomeView extends VerticalLayout implements HasUrlParameter<I
         if(res == null){
             return false;
         }
-        return res.stream().anyMatch(wc -> wc.userId() == userId && wc.userPermissions().contains(UserPermissions.IndividualPermission.HISTORY));
+        return res.stream().anyMatch(wc -> wc.userId() == userId && wc.userPermissions().contains(UserPermissions.IndividualPermission.STATS));
     }
 
     @Override
