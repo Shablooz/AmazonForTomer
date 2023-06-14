@@ -2,7 +2,6 @@ package BGU.Group13B.frontEnd.components.views;
 
 import BGU.Group13B.backend.User.UserPermissions;
 import BGU.Group13B.backend.storePackage.WorkerCard;
-import BGU.Group13B.frontEnd.ResponseHandler;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.frontEnd.components.store.IncomeChart;
 import BGU.Group13B.service.BroadCaster;
@@ -11,7 +10,6 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.shared.Registration;
@@ -28,7 +26,7 @@ public class StoreIncomeView extends VerticalLayout implements HasUrlParameter<I
     private int storeId;
 
     private H1 title = new H1("Store Income");
-    private IncomeChart storeIncomePieChart;
+    private IncomeChart storeIncomeChart;
     private Button backToStore;
 
     private Registration registration;
@@ -47,8 +45,8 @@ public class StoreIncomeView extends VerticalLayout implements HasUrlParameter<I
         if(incomeHistory == null)
             return;
 
-        storeIncomePieChart = new IncomeChart(this, incomeHistory, today, today);
-        add(title, storeIncomePieChart);
+        storeIncomeChart = new IncomeChart(this, incomeHistory, today, today);
+        add(title, storeIncomeChart);
 
         Div spacer = new Div();
         add(spacer);
@@ -78,7 +76,7 @@ public class StoreIncomeView extends VerticalLayout implements HasUrlParameter<I
         if(incomeHistory == null)
             return;
 
-        storeIncomePieChart.setData(incomeHistory, start);
+        storeIncomeChart.setData(incomeHistory, start);
     }
 
     @Override
@@ -92,15 +90,18 @@ public class StoreIncomeView extends VerticalLayout implements HasUrlParameter<I
             return;
         }
 
-        LocalDate start = storeIncomePieChart.getStartDate();
-        LocalDate end = storeIncomePieChart.getEndDate();
+        getUI().ifPresent(ui -> {
+            LocalDate start = storeIncomeChart.getStartDate();
+            LocalDate end = storeIncomeChart.getEndDate();
 
-        double[] incomeHistory = handleResponse(session.getStoreHistoryIncome(storeId, userId, start, end));
-        if(incomeHistory == null){
-            notifyWarning("Failed to refresh store income chart");
-            return;
-        }
-        storeIncomePieChart.setData(incomeHistory, start);
+            double[] incomeHistory = handleResponse(session.getStoreHistoryIncome(storeId, userId, start, end));
+            if(incomeHistory == null){
+                notifyWarning("Failed to refresh store income chart");
+                return;
+            }
+            storeIncomeChart.setData(incomeHistory, start);
+        });
+
     }
 
     private boolean hasAccess(){
