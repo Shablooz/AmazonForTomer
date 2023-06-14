@@ -49,7 +49,7 @@ public class IncomeChart extends VerticalLayout {
         add(dateLayout, chart);
 
         //style
-        //chart.getConfiguration().getTooltip().setPointFormat("{series.name}: <b>{point.percentage:.1f}%</b>");
+        chart.getConfiguration().getTooltip().setPointFormat("<b>income: {point.y}</b>");
         chart.getConfiguration().getChart().setBackgroundColor(new SolidColor(0, 0, 0, 0)); // transparent background
         chart.getConfiguration().getTitle().getStyle().setColor(new SolidColor(255, 255, 255));
         chart.getConfiguration().getxAxis().getLabels().getStyle().setColor(new SolidColor(255, 255, 255));
@@ -83,4 +83,11 @@ public class IncomeChart extends VerticalLayout {
     }
 
 
+    public LocalDate getStartDate() {
+        return startDate.getValue();
+    }
+
+    public LocalDate getEndDate() {
+        return endDate.getValue();
+    }
 }

@@ -5,8 +5,13 @@ import BGU.Group13B.backend.storePackage.WorkerCard;
 import BGU.Group13B.frontEnd.ResponseHandler;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.frontEnd.components.store.IncomeChart;
+import BGU.Group13B.service.BroadCaster;
 import BGU.Group13B.service.Session;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
 
@@ -23,6 +28,7 @@ public class StoreIncomeView extends VerticalLayout implements HasUrlParameter<I
 
     private H1 title = new H1("Store Income");
     private IncomeChart storeIncomePieChart;
+    private Button backToStore;
 
     public StoreIncomeView(Session session) {
         this.session = session;
@@ -30,14 +36,30 @@ public class StoreIncomeView extends VerticalLayout implements HasUrlParameter<I
 
     private void start(){
         removeAll();
-        LocalDate today = LocalDate.now();
+        this.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
+        this.setSizeFull();
 
+        LocalDate today = LocalDate.now();
         double[] incomeHistory = handleResponse(session.getStoreHistoryIncome(storeId, userId, today, today));
         if(incomeHistory == null)
             return;
 
         storeIncomePieChart = new IncomeChart(this, incomeHistory, today, today);
         add(title, storeIncomePieChart);
+
+        Div spacer = new Div();
+        add(spacer);
+        setFlexGrow(1, spacer);
+
+        backToStore = new Button("Back to Store", e -> navigate("store/" + storeId));
+        backToStore.getStyle().set("margin-top", "auto");
+        backToStore.getStyle().set("margin-right", "auto");
+
+        add(backToStore);
+
+        //real-time update
+        var ui = UI.getCurrent();
+        BroadCaster.registerIncome(userId, () -> ui.access(this::refreshChart));
     }
 
     @Override
@@ -46,6 +68,19 @@ public class StoreIncomeView extends VerticalLayout implements HasUrlParameter<I
         if(incomeHistory == null)
             return;
 
+        storeIncomePieChart.setData(incomeHistory, start);
+    }
+
+    @Override
+    public void refreshChart() {
+        LocalDate start = storeIncomePieChart.getStartDate();
+        LocalDate end = storeIncomePieChart.getEndDate();
+
+        double[] incomeHistory = handleResponse(session.getStoreHistoryIncome(storeId, userId, start, end));
+        if(incomeHistory == null){
+            notifyWarning("Failed to refresh store income chart");
+            return;
+        }
         storeIncomePieChart.setData(incomeHistory, start);
     }
 

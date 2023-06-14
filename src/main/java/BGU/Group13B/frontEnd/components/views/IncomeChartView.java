@@ -6,4 +6,5 @@ import java.time.LocalDate;
 
 public interface IncomeChartView extends ResponseHandler {
     void setChartValues(LocalDate start, LocalDate end);
+    void refreshChart();
 }
