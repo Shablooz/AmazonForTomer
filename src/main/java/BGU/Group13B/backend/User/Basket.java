@@ -8,6 +8,7 @@ import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
+import BGU.Group13B.service.BroadCaster;
 import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
 import BGU.Group13B.service.SingletonCollection;
 
@@ -125,6 +126,9 @@ public class Basket {
         purchaseHistoryRepository.addPurchase(userId, storeId, successfulProducts, finalPrice);
         basketProductRepository.removeBasketProducts(storeId, userId);
         successfulProducts.clear();
+
+        //refresh income view
+        BroadCaster.broadcastIncome();
 
     }
 

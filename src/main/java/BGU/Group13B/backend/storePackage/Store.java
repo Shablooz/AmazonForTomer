@@ -22,6 +22,7 @@ import BGU.Group13B.service.info.StoreInfo;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -1163,5 +1164,22 @@ public class Store {
         if(!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to reset the purchase policy in the store: " + this.storeId);
         purchasePolicy.resetPurchasePolicy();
+    }
+
+    @DefaultFounderFunctionality
+    @DefaultOwnerFunctionality
+    @StatsPermission
+    public double[] getStoreHistoryIncome(int userId, LocalDate startDate, LocalDate endDate) throws NoPermissionException {
+        if(!this.storePermission.checkPermission(userId, hidden))
+            throw new NoPermissionException("User " + userId + " has no permission to get the store history income in the store: " + this.storeId);
+
+        double[] historyIncome = new double[(endDate.getYear() - startDate.getYear())*365 + (endDate.getDayOfYear() - startDate.getDayOfYear()) + 1];
+        for(PurchaseHistory purchase : purchaseHistoryRepository.getStorePurchaseHistory(this.storeId)){
+            LocalDate purchaseDate = purchase.getLocalDate();
+            if(!(purchaseDate.isBefore(startDate) || purchaseDate.isAfter(endDate)))
+                historyIncome[(endDate.getYear() - purchaseDate.getYear())*365 + purchaseDate.getDayOfYear() - startDate.getDayOfYear()] += purchase.getPrice();
+        }
+
+        return historyIncome;
     }
 }

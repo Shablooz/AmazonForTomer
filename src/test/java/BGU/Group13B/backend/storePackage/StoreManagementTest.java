@@ -1,6 +1,7 @@
 package BGU.Group13B.backend.storePackage;
 
 import BGU.Group13B.backend.Repositories.Interfaces.*;
+import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.User;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.service.Session;
@@ -9,7 +10,10 @@ import jdk.jshell.spi.ExecutionControl;
 import org.apache.commons.lang3.NotImplementedException;
 import org.junit.jupiter.api.*;
 
+import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,6 +22,7 @@ public class StoreManagementTest {
     private static IStoreRepository storeRepository;
     private static IProductRepository productRepository;
     private static IUserRepository userRepository;
+    private static IPurchaseHistoryRepository purchaseHistoryRepository;
 
     private final int adminId = 1;
     private int founderId;
@@ -45,6 +50,7 @@ public class StoreManagementTest {
         storeRepository = SingletonCollection.getStoreRepository();
         productRepository = SingletonCollection.getProductRepository();
         userRepository = SingletonCollection.getUserRepository();
+        purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
 
         founderId = addUser();
         guestId = addUser();
@@ -666,6 +672,49 @@ public class StoreManagementTest {
             fail();
         } catch (NoPermissionException e){
             assertTrue(true);
+        }
+    }
+
+    @Test
+    void getStoreIncome_simpleCase_success(){
+        try{
+            purchaseHistoryRepository.addPurchase(founderId, storeId, new ConcurrentLinkedQueue<>(), price);
+            double[] income = store.getStoreHistoryIncome(founderId, LocalDate.now(), LocalDate.now());
+            assertEquals(1, income.length);
+            assertEquals(price, income[0]);
+        } catch (NoPermissionException | NotImplementedException e) {
+            fail();
+        }
+    }
+
+    @Test
+    void getStoreIncome_noPermission_fail(){
+        try{
+            store.getStoreHistoryIncome(guestId, LocalDate.now(), LocalDate.now());
+            fail();
+        } catch (NoPermissionException e){
+            assertTrue(true);
+        }
+    }
+
+    @Test
+    void getStoreIncome_multiPurchase_rageOfDates_success(){
+        try{
+            purchaseHistoryRepository.addPurchase(founderId, storeId, new ConcurrentLinkedQueue<>(), price);
+            purchaseHistoryRepository.addPurchase(founderId, storeId, new ConcurrentLinkedQueue<>(), price);
+            purchaseHistoryRepository.addPurchase(founderId, storeId, new ConcurrentLinkedQueue<>(), price);
+            purchaseHistoryRepository.addPurchase(founderId, storeId, new ConcurrentLinkedQueue<>(), price);
+            purchaseHistoryRepository.addPurchase(founderId, storeId, new ConcurrentLinkedQueue<>(), price);
+            purchaseHistoryRepository.addPurchase(founderId, storeId, new ConcurrentLinkedQueue<>(), price);
+            purchaseHistoryRepository.addPurchase(founderId, storeId, new ConcurrentLinkedQueue<>(), price);
+            purchaseHistoryRepository.addPurchase(founderId, storeId, new ConcurrentLinkedQueue<>(), price);
+            double[] income = store.getStoreHistoryIncome(founderId, LocalDate.now().minusDays(1), LocalDate.now().plusDays(1));
+            assertEquals(3, income.length);
+            assertEquals(0, income[0]);
+            assertEquals(price * 8, income[1]);
+            assertEquals(0, income[2]);
+        } catch (NoPermissionException | NotImplementedException e) {
+            fail();
         }
     }
 

@@ -5,6 +5,8 @@ import org.springframework.scheduling.support.SimpleTriggerContext;
 
 import javax.xml.crypto.Data;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -74,5 +76,11 @@ public class PurchaseHistory {
         }
        // sb.append("Price: ").append(price).append("\n");
         return sb.toString();
+    }
+
+    public LocalDate getLocalDate(){
+        return date.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
     }
 }
