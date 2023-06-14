@@ -49,6 +49,7 @@ class BasketTest {
         SingletonCollection.reset_system();
         productRepository = SingletonCollection.getProductRepository();
         basketProductRepository = SingletonCollection.getBasketProductRepository();
+        purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
         calculatePriceOfBasket = SingletonCollection.getCalculatePriceOfBasket();
         //initCalculatePriceOfBasket(market);
         userId = SingletonCollection.getUserRepository().getNewUserId();
@@ -94,7 +95,7 @@ class BasketTest {
 
     private void initBasket() {
         basket = new Basket(userId, storeId, basketProductRepository, purchaseHistoryRepository, paymentAdapter,
-                 calculatePriceOfBasket, deliveryAdapter);
+               calculatePriceOfBasket, deliveryAdapter);
         SingletonCollection.getBasketRepository().addUserBasket(basket);
     }
 
@@ -122,7 +123,7 @@ class BasketTest {
         SingletonCollection.getUserRepository().addUser(userId3, new User(userId3));
         Basket basket2 = new Basket(userId2, storeId, basketProductRepository, purchaseHistoryRepository, paymentAdapter,
                  calculatePriceOfBasket, deliveryAdapter);
-        Basket basket3 = new Basket(userId3, storeId, basketProductRepository, purchaseHistoryRepository, paymentAdapter,
+        Basket basket3 = new Basket(userId3, storeId, basketProductRepository,purchaseHistoryRepository, paymentAdapter,
                  calculatePriceOfBasket, deliveryAdapter);
         SingletonCollection.getBasketRepository().addUserBasket(basket2);
         SingletonCollection.getBasketRepository().addUserBasket(basket3);
