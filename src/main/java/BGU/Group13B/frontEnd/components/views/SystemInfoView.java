@@ -13,6 +13,7 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.shared.Registration;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
@@ -27,6 +28,8 @@ public class SystemInfoView extends VerticalLayout implements ResponseHandler, B
     //components
     private UserTrafficPieChart userTrafficPieChart;
     private final H1 title = new H1("System Info");
+
+    private Registration registration;
 
 
     @Autowired
@@ -49,7 +52,7 @@ public class SystemInfoView extends VerticalLayout implements ResponseHandler, B
 
         //real-time update
         var ui = UI.getCurrent();
-        BroadCaster.registerUserTraffic(userId, () -> ui.access(this::refreshUserTrafficChart));
+        registration = BroadCaster.registerUserTraffic(userId, () -> ui.access(this::refreshUserTrafficChart));
     }
 
     public void setUserTrafficChartValues(LocalDate start, LocalDate end){
@@ -61,12 +64,15 @@ public class SystemInfoView extends VerticalLayout implements ResponseHandler, B
     }
 
     public void refreshUserTrafficChart(){
-        UserTrafficRecord userTraffic = handleResponse(session.getUserTrafficOfRange(userId, userTrafficPieChart.getStartDate(), userTrafficPieChart.getEndDate()));
-        if(userTraffic == null){
-            notifyWarning("Failed to refresh user traffic chart");
-            return;
-        }
-        userTrafficPieChart.setData(userTraffic);
+        getUI().ifPresent(ui -> {
+            UserTrafficRecord userTraffic = handleResponse(session.getUserTrafficOfRange(userId, userTrafficPieChart.getStartDate(), userTrafficPieChart.getEndDate()));
+            if(userTraffic == null){
+                notifyWarning("Failed to refresh user traffic chart");
+                return;
+            }
+            userTrafficPieChart.setData(userTraffic);
+        });
+
     }
 
     @Override
