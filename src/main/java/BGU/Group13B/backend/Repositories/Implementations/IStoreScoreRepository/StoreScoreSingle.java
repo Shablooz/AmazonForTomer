@@ -20,7 +20,7 @@ public class StoreScoreSingle implements IStoreScore {
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
     @JoinTable(name = "StoreScoreSingle_StoreScoreImplNotPer",
             joinColumns = {@JoinColumn(name = "StoreScoreSingle_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "ReviewRepositoryAsList_id", referencedColumnName = "id")})
+            inverseJoinColumns = {@JoinColumn(name = "StoreScoreImplNotPer_id", referencedColumnName = "id")})
     @MapKeyColumn(name = "storeId")
     Map<Integer/*store Id */,StoreScoreImplNotPer> implementations;
 
@@ -38,18 +38,21 @@ public class StoreScoreSingle implements IStoreScore {
     public void addStoreScore(int userId, int storeId, int score) {
         implementations.putIfAbsent(storeId,new StoreScoreImplNotPer());
         implementations.get(storeId).addStoreScore(userId,storeId,score);
+        save();
     }
 
     @Override
     public void removeStoreScore(int userId, int storeId) {
         implementations.putIfAbsent(storeId,new StoreScoreImplNotPer());
         implementations.get(storeId).removeStoreScore(userId,storeId);
+        save();
     }
 
     @Override
     public void modifyStoreScore(int userId, int storeId, int score) {
         implementations.putIfAbsent(storeId,new StoreScoreImplNotPer());
         implementations.get(storeId).modifyStoreScore(userId,storeId,score);
+        save();
     }
 
     @Override
@@ -67,6 +70,7 @@ public class StoreScoreSingle implements IStoreScore {
     @Override
     public void clearStoreScore(int storeId) {
         implementations.remove(storeId);
+        save();
     }
 
     public void save(){
