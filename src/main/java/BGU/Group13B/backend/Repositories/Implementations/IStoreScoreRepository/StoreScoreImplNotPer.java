@@ -1,12 +1,24 @@
 package BGU.Group13B.backend.Repositories.Implementations.IStoreScoreRepository;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreScore;
+import jakarta.persistence.*;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Entity
 public class StoreScoreImplNotPer implements IStoreScore {
 
-    ConcurrentHashMap<Integer, Integer> storeScore;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    private int id;
+
+    @ElementCollection
+    @CollectionTable(name = "StoreScoreImplNotPer_scores",
+            joinColumns = {@JoinColumn(name = "StoreScoreImplNotPer_id", referencedColumnName = "id")})
+    @MapKeyColumn(name = "userId")
+    @Column(name = "score")
+    Map<Integer, Integer> storeScore;
 
     public StoreScoreImplNotPer() {
         storeScore = new ConcurrentHashMap<>();
@@ -39,7 +51,7 @@ public class StoreScoreImplNotPer implements IStoreScore {
 
     @Override
     public float getStoreScore(int storeId) {
-        Integer sum = storeScore.reduceValues(0, Integer::sum);
+        Integer sum = ((ConcurrentHashMap<Integer, Integer>) storeScore).reduceValues(0, Integer::sum);
         if(sum!=null)
             return (float) sum /storeScore.size();
 
@@ -56,4 +68,22 @@ public class StoreScoreImplNotPer implements IStoreScore {
         storeScore.clear();
     }
 
+    //getters and setters
+
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Map<Integer, Integer> getStoreScore() {
+        return storeScore;
+    }
+
+    public void setStoreScore(Map<Integer, Integer> storeScore) {
+        this.storeScore = storeScore;
+    }
 }

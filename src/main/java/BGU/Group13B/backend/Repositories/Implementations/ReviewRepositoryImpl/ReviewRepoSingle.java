@@ -30,6 +30,7 @@ public class ReviewRepoSingle implements IRepositoryReview {
         saveMode = true;
     }
 
+    //for testing
     public ReviewRepoSingle(boolean saveMode) {
         implementations = new ConcurrentHashMap<>();
         this.saveMode = saveMode;

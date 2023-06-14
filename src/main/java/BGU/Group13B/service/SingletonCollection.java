@@ -7,6 +7,7 @@ import BGU.Group13B.backend.Repositories.Implementations.BasketReposistoryImpl.B
 import BGU.Group13B.backend.Repositories.Implementations.ConditionRepositoryImpl.ConditionRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.DiscountAccumulationRepositoryImpl.DiscountAccumulationRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.DiscountRepositoryImpl.DiscountRepositoryAsHashMap;
+import BGU.Group13B.backend.Repositories.Implementations.IStoreScoreRepository.StoreScoreRepoService;
 import BGU.Group13B.backend.Repositories.Implementations.IStoreScoreRepository.StoreScoreSingle;
 import BGU.Group13B.backend.Repositories.Implementations.MessageRepositoryImpl.MessageRepositorySingle;
 import BGU.Group13B.backend.Repositories.Implementations.ProductHistoryRepositoryImpl.ProductHistoryRepositoryAsList;
@@ -216,11 +217,24 @@ public class SingletonCollection {
             SingletonCollection.storePermissionRepository = SingletonCollection.getContext().getBean(StorePermissionsRepositoryAsHashmapService.class).getStorePermissionsRepositoryAsHashmap();
         }
     }
+    public static void setStoreScoreRepository() {
+        StoreScoreSingle storeScoreSingle  = SingletonCollection.getContext().getBean(StoreScoreRepoService.class).getStoreScoreSingle();
+        if(storeScoreSingle == null){
+            StoreScoreSingle repo=(StoreScoreSingle) SingletonCollection.getStoreScoreRepository();
+            SingletonCollection.getContext().getBean(StoreScoreRepoService.class).save(repo);
+        }else {
+            SingletonCollection.storeScoreRepository = SingletonCollection.getContext().getBean(StoreScoreRepoService.class).getStoreScoreSingle();
+        }
+    }
+
     public static void setStoreRepository(StoreRepositoryAsList storeRepositoryAsList) {
         SingletonCollection.storeRepository = storeRepositoryAsList;
     }
     public static void setStorePermissionRepository(StorePermissionsRepositoryAsHashmap storePermissionsRepositoryAsHashmap) {
         SingletonCollection.storePermissionRepository = storePermissionsRepositoryAsHashmap;
+    }
+    public static void setStoreScoreRepository(StoreScoreSingle storeScoreSingle) {
+        SingletonCollection.storeScoreRepository = storeScoreSingle;
     }
 
     //lines below might need to be replaced with a field
@@ -407,6 +421,7 @@ public class SingletonCollection {
         productRepository.setSaveMode(saveMode);
         storeRepository.setSaveMode(saveMode);
         storePermissionRepository.setSaveMode(saveMode);
+
     }
     public static void setPaymentFail() {
         paymentAdapter = null;

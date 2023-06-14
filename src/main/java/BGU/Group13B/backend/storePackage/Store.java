@@ -366,21 +366,21 @@ public class Store {
         this.getStorePermission().validateStoreVisibility(userId, hidden);
         if (purchaseHistoryRepository.isPurchaseFromStore(userId, this.storeId))
             throw new IllegalArgumentException("User with id: " + userId + " did not purchase from store: " + storeId);
-        storeScore.addStoreScore(userId, storeId, score);
+        getStoreScoreRepo().addStoreScore(userId, storeId, score);
     }
 
     public void removeStoreScore(int userId) throws NoPermissionException {
         this.getStorePermission().validateStoreVisibility(userId, hidden);
-        storeScore.removeStoreScore(userId, this.storeId);
+        getStoreScoreRepo().removeStoreScore(userId, this.storeId);
     }
 
     public void modifyStoreScore(int userId, int score) throws NoPermissionException {
         this.getStorePermission().validateStoreVisibility(userId, hidden);
-        storeScore.modifyStoreScore(userId, this.storeId, score);
+        getStoreScoreRepo().modifyStoreScore(userId, this.storeId, score);
     }
 
     public float getStoreScore() {
-        return storeScore.getStoreScore(this.storeId);
+        return getStoreScoreRepo().getStoreScore(this.storeId);
     }
 
 
@@ -725,7 +725,7 @@ public class Store {
     }
 
     private void deleteAllStoreScores() {
-        storeScore.clearStoreScore(storeId);
+        getStoreScoreRepo().clearStoreScore(storeId);
     }
 
     private void deleteAllStoreProducts(int userId) throws NoPermissionException {
@@ -1257,6 +1257,11 @@ public class Store {
             storePermissionsRepository= SingletonCollection.getStorePermissionRepository();
         return storePermissionsRepository;
     }
+    public IStoreScore getStoreScoreRepo() {
+        storeScore = SingletonCollection.getStoreScoreRepository(); // maybe need check
+        return storeScore;
+    }
+
 
     public IPurchaseHistoryRepository getPurchaseHistoryRepository() {
         return purchaseHistoryRepository;
