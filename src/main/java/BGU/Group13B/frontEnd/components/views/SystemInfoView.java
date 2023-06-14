@@ -7,6 +7,7 @@ import BGU.Group13B.frontEnd.components.SystemInfo.UserTrafficPieChart;
 import BGU.Group13B.service.BroadCaster;
 import BGU.Group13B.service.Session;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
@@ -25,6 +26,7 @@ public class SystemInfoView extends VerticalLayout implements ResponseHandler, B
 
     //components
     private UserTrafficPieChart userTrafficPieChart;
+    private final H1 title = new H1("System Info");
 
 
     @Autowired
@@ -34,15 +36,16 @@ public class SystemInfoView extends VerticalLayout implements ResponseHandler, B
 
     private void start(){
         removeAll();
-        LocalDate today = LocalDate.now();
+        this.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
 
+        LocalDate today = LocalDate.now();
         UserTrafficRecord userTraffic = handleResponse(session.getUserTrafficOfRange(userId, today, today));
         if(userTraffic == null)
             return;
 
         userTrafficPieChart = new UserTrafficPieChart(this, userTraffic, today, today);
 
-        add(userTrafficPieChart);
+        add(title, userTrafficPieChart);
 
         //real-time update
         var ui = UI.getCurrent();
