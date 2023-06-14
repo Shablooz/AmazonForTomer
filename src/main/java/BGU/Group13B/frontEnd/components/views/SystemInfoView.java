@@ -4,6 +4,7 @@ import BGU.Group13B.backend.System.UserTrafficRecord;
 import BGU.Group13B.frontEnd.ResponseHandler;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.frontEnd.components.SystemInfo.UserTrafficPieChart;
+import BGU.Group13B.frontEnd.components.store.IncomeChart;
 import BGU.Group13B.service.BroadCaster;
 import BGU.Group13B.service.Session;
 import com.vaadin.flow.component.UI;
@@ -20,17 +21,15 @@ import java.time.LocalDate;
 
 @PageTitle("System Info")
 @Route(value = "systeminfo", layout = MainLayout.class)
-public class SystemInfoView extends VerticalLayout implements ResponseHandler, BeforeEnterObserver {
+public class SystemInfoView extends VerticalLayout implements BeforeEnterObserver, IncomeChartView {
 
     private int userId;
     private final Session session;
 
     //components
     private UserTrafficPieChart userTrafficPieChart;
+    private IncomeChart systemIncomeChart;
     private final H1 title = new H1("System Info");
-
-    private Registration registration;
-
 
     @Autowired
     public SystemInfoView(Session session){
@@ -46,13 +45,21 @@ public class SystemInfoView extends VerticalLayout implements ResponseHandler, B
         if(userTraffic == null)
             return;
 
-        userTrafficPieChart = new UserTrafficPieChart(this, userTraffic, today, today);
+        double[] systemIncome = handleResponse(session.getSystemHistoryIncome(userId, today, today));
+        if(systemIncome == null)
+            return;
 
-        add(title, userTrafficPieChart);
+
+        userTrafficPieChart = new UserTrafficPieChart(this, userTraffic, today, today);
+        systemIncomeChart = new IncomeChart(this, systemIncome, today, today);
+
+        add(title, userTrafficPieChart, systemIncomeChart);
 
         //real-time update
         var ui = UI.getCurrent();
-        registration = BroadCaster.registerUserTraffic(userId, () -> ui.access(this::refreshUserTrafficChart));
+        BroadCaster.registerUserTraffic(userId, () -> ui.access(this::refreshUserTrafficChart));
+        BroadCaster.registerIncome(userId, () -> ui.access(this::refreshChart));
+
     }
 
     public void setUserTrafficChartValues(LocalDate start, LocalDate end){
@@ -73,6 +80,31 @@ public class SystemInfoView extends VerticalLayout implements ResponseHandler, B
             userTrafficPieChart.setData(userTraffic);
         });
 
+    }
+
+    @Override
+    public void setChartValues(LocalDate start, LocalDate end) {
+        double[] systemIncome = handleResponse(session.getSystemHistoryIncome(userId, start, end));
+        if(systemIncome == null)
+            return;
+
+        systemIncomeChart.setData(systemIncome, start);
+    }
+
+    @Override
+    public void refreshChart() {
+        getUI().ifPresent(ui -> {
+
+            LocalDate start = systemIncomeChart.getStartDate();
+            LocalDate end = systemIncomeChart.getEndDate();
+
+            double[] systemIncome = handleResponse(session.getSystemHistoryIncome(userId, start, end));
+            if(systemIncome == null){
+                notifyWarning("Failed to refresh income chart");
+                return;
+            }
+            systemIncomeChart.setData(systemIncome, start);
+        });
     }
 
     @Override
