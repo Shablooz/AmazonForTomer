@@ -304,6 +304,7 @@ public class Session implements ISession {
                     case REGULAR_MEMBER -> dailyUserTrafficRepository.addRegularMember();
                     case GUEST -> dailyUserTrafficRepository.addGuest();
                 }
+                BroadCaster.broadcastUserTraffic();
                 return id;
             }
 
@@ -705,6 +706,7 @@ public class Session implements ISession {
         int id = userRepositoryAsHashmap.getNewUserId();
         userRepositoryAsHashmap.addUser(id, new User(id));
         dailyUserTrafficRepository.addGuest();
+        BroadCaster.broadcastUserTraffic();
         return id;
     }
 
@@ -734,7 +736,7 @@ public class Session implements ISession {
     public void setUserStatus(int admin_id, int userId, int newStatus) {
         if (!getUserStatus(admin_id).equals("Admin")) {
             //should throw an exception
-            throw new IllegalArgumentException("isnt an admin");
+            throw new IllegalArgumentException("isn't an admin");
         }
         if (newStatus == 1 && userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.MEMBER)
             userRepositoryAsHashmap.getUser(userId).setPermissions(UserPermissions.UserPermissionStatus.ADMIN);
