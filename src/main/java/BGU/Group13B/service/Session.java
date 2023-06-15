@@ -304,6 +304,7 @@ public class Session implements ISession {
                     case REGULAR_MEMBER -> dailyUserTrafficRepository.addRegularMember();
                     case GUEST -> dailyUserTrafficRepository.addGuest();
                 }
+                BroadCaster.broadcastUserTraffic();
                 return id;
             }
 
@@ -705,6 +706,7 @@ public class Session implements ISession {
         int id = userRepositoryAsHashmap.getNewUserId();
         userRepositoryAsHashmap.addUser(id, new User(id));
         dailyUserTrafficRepository.addGuest();
+        BroadCaster.broadcastUserTraffic();
         return id;
     }
 
