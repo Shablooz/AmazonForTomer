@@ -1,28 +1,20 @@
 package BGU.Group13B.backend.User;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IBasketProductRepository;
-import BGU.Group13B.backend.Repositories.Interfaces.IProductHistoryRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
-import BGU.Group13B.backend.storePackage.Market;
+import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
 import BGU.Group13B.backend.storePackage.Store;
 import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
-import com.vaadin.flow.data.selection.SelectionModel;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 class BasketTest {
@@ -31,7 +23,7 @@ class BasketTest {
     private static int storeId;
     private static IBasketProductRepository basketProductRepository;
     private PaymentAdapter paymentAdapter;
-    private IProductHistoryRepository productHistoryRepository;
+    private IPurchaseHistoryRepository purchaseHistoryRepository;
     private CalculatePriceOfBasket calculatePriceOfBasket;
     private static IProductRepository productRepository;
     private static int productId1;
@@ -57,6 +49,7 @@ class BasketTest {
         SingletonCollection.reset_system();
         productRepository = SingletonCollection.getProductRepository();
         basketProductRepository = SingletonCollection.getBasketProductRepository();
+        purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
         calculatePriceOfBasket = SingletonCollection.getCalculatePriceOfBasket();
         //initCalculatePriceOfBasket(market);
         userId = SingletonCollection.getUserRepository().getNewUserId();
@@ -82,16 +75,8 @@ class BasketTest {
 
         paymentAdapter = Mockito.mock(PaymentAdapter.class);
         deliveryAdapter = Mockito.mock(DeliveryAdapter.class);
-        productHistoryRepository = Mockito.mock(IProductHistoryRepository.class);
         initBasket();
 
-        paymentAndHistoryBehaviour();
-
-    }
-
-    private void paymentAndHistoryBehaviour() {
-        Mockito.doNothing().when(productHistoryRepository).addProductToHistory(
-                Mockito.any(BasketProduct.class), Mockito.anyInt());
     }
 
     private void payBehaviour(boolean success) {
@@ -109,8 +94,8 @@ class BasketTest {
     }
 
     private void initBasket() {
-        basket = new Basket(userId, storeId, basketProductRepository, paymentAdapter,
-                productHistoryRepository, calculatePriceOfBasket, deliveryAdapter);
+        basket = new Basket(userId, storeId, basketProductRepository, purchaseHistoryRepository, paymentAdapter,
+               calculatePriceOfBasket, deliveryAdapter);
         SingletonCollection.getBasketRepository().addUserBasket(basket);
     }
 
@@ -136,10 +121,10 @@ class BasketTest {
         SingletonCollection.getUserRepository().addUser(userId2, new User(userId2));
         int userId3 = SingletonCollection.getUserRepository().getNewUserId();
         SingletonCollection.getUserRepository().addUser(userId3, new User(userId3));
-        Basket basket2 = new Basket(userId2, storeId, basketProductRepository, paymentAdapter,
-                productHistoryRepository, calculatePriceOfBasket, deliveryAdapter);
-        Basket basket3 = new Basket(userId3, storeId, basketProductRepository, paymentAdapter,
-                productHistoryRepository, calculatePriceOfBasket, deliveryAdapter);
+        Basket basket2 = new Basket(userId2, storeId, basketProductRepository, purchaseHistoryRepository, paymentAdapter,
+                 calculatePriceOfBasket, deliveryAdapter);
+        Basket basket3 = new Basket(userId3, storeId, basketProductRepository,purchaseHistoryRepository, paymentAdapter,
+                 calculatePriceOfBasket, deliveryAdapter);
         SingletonCollection.getBasketRepository().addUserBasket(basket2);
         SingletonCollection.getBasketRepository().addUserBasket(basket3);
         int productId3 = productRepository.addProduct(storeId, "product3", "category3", 15.0, 1, "eyal was still here").getProductId();
