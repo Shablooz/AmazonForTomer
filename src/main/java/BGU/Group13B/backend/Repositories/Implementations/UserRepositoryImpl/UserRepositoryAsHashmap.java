@@ -116,4 +116,9 @@ public class UserRepositoryAsHashmap implements IUserRepository {
         return userCards;
     }
 
+    @Override
+    public void removeMember(int userId) {
+
+    }
+
 }

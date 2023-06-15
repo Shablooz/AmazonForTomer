@@ -1547,6 +1547,18 @@ public class Session implements ISession {
         }
     }
 
+    @Override
+    public Response<Boolean> removeMember(int adminId, int userId) {
+        try {
+            if(!getUserStatus(adminId).equals("ADMIN") || !isUserLogged(adminId))
+                throw new IllegalArgumentException("user is not an admin or not logged in");
+            userRepositoryAsHashmap.removeMember(userId);
+            return Response.success(true);
+        }catch (Exception e) {
+            return Response.failure(e.getMessage());
+        }
+    }
+
     public UserCard getUserInfo(int userId, int userInfoId){
         try {
             return market.getUserInfo(userId, userInfoId);

@@ -35,4 +35,6 @@ public interface IUserRepository {
 
 
     List<UserCard> getAllUserCards();
+
+    void removeMember(int userId);
 }
