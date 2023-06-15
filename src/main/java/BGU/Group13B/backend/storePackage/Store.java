@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -1163,5 +1164,16 @@ public class Store {
         if(!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to reset the purchase policy in the store: " + this.storeId);
         purchasePolicy.resetPurchasePolicy();
+    }
+
+    public void removeAllProducts(int userId) {
+        Optional<Set<Product>> products = productRepository.getStoreProducts(storeId);
+        products.ifPresent(products1 -> products1.forEach(product -> {
+            try {
+                removeProduct(userId, product.getProductId());
+            } catch (NoPermissionException e) {
+                e.printStackTrace();
+            }
+        }));
     }
 }

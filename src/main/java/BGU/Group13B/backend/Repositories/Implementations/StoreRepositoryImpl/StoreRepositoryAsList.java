@@ -51,4 +51,16 @@ public class StoreRepositoryAsList implements IStoreRepository {
         this.stores.clear();
         this.storeIdCounter.set(0);
     }
+
+    @Override
+    public void removeMemberStores(int userId) {
+        //remove stores products
+        for (Store store : this.stores) {
+            if (store.getStorePermission().getFounderId() == userId) {
+                store.getStorePermission().emptyMaps();
+                store.removeAllProducts(userId);
+                this.stores.remove(store);
+            }
+        }
+    }
 }

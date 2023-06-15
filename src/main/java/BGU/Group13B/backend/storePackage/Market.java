@@ -2,6 +2,7 @@ package BGU.Group13B.backend.storePackage;
 
 
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
+import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
 import BGU.Group13B.backend.System.Searcher;
 import BGU.Group13B.backend.User.*;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 
 public class Market {
     private final IStoreRepository storeRepository;
+    private final IUserRepository userRepository;
     private Searcher searcher; //inject in the loading of the system
 
     private final AddToUserCart addToUserCart;
@@ -39,6 +41,7 @@ public class Market {
         SingletonCollection.setCalculatePriceOfBasket(this::calculatePriceOfBasket);
 
         this.storeRepository = SingletonCollection.getStoreRepository();
+        this.userRepository = SingletonCollection.getUserRepository();
         this.searcher = SingletonCollection.getSearcher();
         this.addToUserCart = SingletonCollection.getAddToUserCart();
     }
@@ -566,4 +569,7 @@ public class Market {
         storeRepository.getStore(storeId).resetPurchasePolicy(userId);
     }
 
+    public void removeMemberStores(int userId) {
+        storeRepository.removeMemberStores(userId);
+    }
 }

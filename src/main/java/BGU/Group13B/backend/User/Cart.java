@@ -181,4 +181,8 @@ public class Cart {
             basket.cancelPurchase();
         }
     }
+
+    public void clearCart() {
+        basketRepository.clearUserBaskets(userId);
+    }
 }

@@ -1552,9 +1552,11 @@ public class Session implements ISession {
         try {
             if(!getUserStatus(adminId).equals("ADMIN") || !isUserLogged(adminId))
                 throw new IllegalArgumentException("user is not an admin or not logged in");
+            LOGGER_INFO.info("admin is trying to remove member: " + userId);
             userRepositoryAsHashmap.removeMember(userId);
             return Response.success(true);
         }catch (Exception e) {
+            LOGGER_INFO.info("member removal failed");
             return Response.failure(e.getMessage());
         }
     }

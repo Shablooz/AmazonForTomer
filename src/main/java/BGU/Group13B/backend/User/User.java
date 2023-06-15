@@ -617,4 +617,12 @@ public class User {
     public UserPermissions.PopulationStatus getPopulationStatus(){
         return userPermissions.getPopulationStatus();
     }
+
+    public void deleteStores() {
+        market.removeMemberStores(userId);
+    }
+
+    public void clearCart(){
+        cart.clearCart();
+    }
 }

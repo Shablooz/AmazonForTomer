@@ -118,7 +118,9 @@ public class UserRepositoryAsHashmap implements IUserRepository {
 
     @Override
     public void removeMember(int userId) {
-
+        getUser(userId).deleteStores();
+        getUser(userId).clearCart();
+        removeUser(userId);
     }
 
 }

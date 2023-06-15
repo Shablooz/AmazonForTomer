@@ -16,4 +16,6 @@ public interface IStoreRepository {
     void reset();
 
     public Set<Integer> getAllStoresId();
+
+    void removeMemberStores(int userId);
 }
