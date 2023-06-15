@@ -128,5 +128,11 @@ public class UserPermissions {
 
         return PopulationStatus.REGULAR_MEMBER;
     }
+
+
+    public void clearUserStorePermissions(int storeId) {
+        userStoreRole.remove(storeId);
+        userIndividualPermission.remove(storeId);
+    }
 }
 
