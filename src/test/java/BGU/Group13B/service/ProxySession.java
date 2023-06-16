@@ -149,7 +149,7 @@ public class ProxySession implements ISession {
 
     @Override
     public Response<Integer> addStorePriceCondition(int storeId, int userId, double lowerBound, double upperBound) {
-        if(realSession != null)
+        if (realSession != null)
             return realSession.addStorePriceCondition(storeId, userId, lowerBound, upperBound);
         return null;
     }
@@ -529,13 +529,13 @@ public class ProxySession implements ISession {
 
     @Override
     public void purchaseProposalApprove(int managerId, int storeId, int productId) throws NoPermissionException {
-        if(realSession != null)
+        if (realSession != null)
             realSession.purchaseProposalApprove(managerId, storeId, productId);
     }
 
     @Override
     public void purchaseProposalReject(int storeId, int managerId, int bidId) throws NoPermissionException {
-        if(realSession != null)
+        if (realSession != null)
             realSession.purchaseProposalReject(storeId, managerId, bidId);
     }
 
@@ -791,10 +791,11 @@ public class ProxySession implements ISession {
             return realSession.getProductScore(userId, storeId, productId);
         return Response.success((float) -1);
     }
+
     @Override
-    public Response<Float> getProductScoreUser(int userId, int storeId, int productId,int userIdTarget) {
+    public Response<Float> getProductScoreUser(int userId, int storeId, int productId, int userIdTarget) {
         if (realSession != null)
-            return realSession.getProductScoreUser(userId, storeId, productId,userIdTarget);
+            return realSession.getProductScoreUser(userId, storeId, productId, userIdTarget);
         return Response.success((float) -1);
     }
 
@@ -1040,6 +1041,7 @@ public class ProxySession implements ISession {
     public Response<VoidResponse> cancelPurchase(int userId) {
         if (realSession != null)
             realSession.cancelPurchase(userId);
+        return null;
     }
 
     @Override
@@ -1050,14 +1052,14 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public  Response<List<PurchaseHistory>>  getUserPurchaseHistory(int userId) {
+    public Response<List<PurchaseHistory>> getUserPurchaseHistory(int userId) {
         if (realSession != null)
             return realSession.getUserPurchaseHistory(userId);
         return null;
     }
 
     @Override
-    public Response<List<PurchaseHistory>>  getUserPurchaseHistoryAsAdmin(int userId, int adminId) {
+    public Response<List<PurchaseHistory>> getUserPurchaseHistoryAsAdmin(int userId, int adminId) {
         if (realSession != null)
             return realSession.getUserPurchaseHistoryAsAdmin(userId, adminId);
         return null;
