@@ -12,9 +12,7 @@ import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.backend.storePackage.WorkerCard;
 import BGU.Group13B.backend.storePackage.newDiscoutns.DiscountInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
-import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.StoreDiscount;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
-import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
 import BGU.Group13B.service.entity.ReviewService;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
 import BGU.Group13B.service.entity.ServiceProduct;
@@ -1015,4 +1013,6 @@ public interface ISession {
     Response<List<StoreInfo>> getAllStores();
 
     Response<UserTrafficRecord> getUserTrafficOfRange(int userId, LocalDate from, LocalDate to);
+
+    Response<double[]> getStoreHistoryIncome(int storeId, int userId, LocalDate from, LocalDate to);
 }
