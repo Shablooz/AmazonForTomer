@@ -166,12 +166,14 @@ public class PaymentView extends Div implements BeforeLeaveObserver, ResponseHan
 
 
         ConfirmDialog dialog = new ConfirmDialog();
+
         dialog.setHeader("Some of your items are out of stock");
         dialog.setText("Do you want to proceed the purchase anyway?");
         VerticalLayout dialogFailedProducts = new VerticalLayout();
 
         dialogFailedProducts.setSpacing(false);
-        dialogFailedProducts.add(new Text("Total price after discount: " + totalPriceAfterDiscount));
+        dialogFailedProducts.add(new Text(totalPriceAfterDiscount != 0.0 ?
+                "Total price after discount: " + totalPriceAfterDiscount : "All products are unavailable"));
 
         for (ServiceProduct product : failedProducts) {
             String productName = product.getName();
@@ -186,9 +188,20 @@ public class PaymentView extends Div implements BeforeLeaveObserver, ResponseHan
             UI.getCurrent().navigate("");
         });
 
+        if (totalPriceAfterDiscount != 0) {
+            dialog.setConfirmText("Proceed anyway");
+            dialog.addConfirmListener(event -> dialog.close());
 
-        dialog.setConfirmText("Proceed anyway");
-        dialog.addConfirmListener(event -> dialog.close());
+        } else {
+            dialog.setConfirmText("Go back");
+            dialog.addConfirmListener(event -> {
+                        session.cancelPurchase(SessionToIdMapper.getInstance().getCurrentSessionId());
+                        UI.getCurrent().navigate("");
+                    }
+            );
+            dialog.setCancelable(false);
+
+        }
 
 
         dialog.open();

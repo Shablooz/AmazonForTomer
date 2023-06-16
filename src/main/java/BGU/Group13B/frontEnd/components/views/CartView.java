@@ -19,12 +19,14 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Route(value = "cart", layout = MainLayout.class)
 @PageTitle("Cart")
@@ -71,9 +73,6 @@ public class CartView extends Div implements ResponseHandler {
     }
 
     private void setItemsToGrid(GridPro<ServiceBasketProduct> cartItemsGrid) {
-
-        //createItemsForDevelopment();//delete me
-        //fixme: change to sessionId
         Response<List<ServiceBasketProduct>> serviceProductsResponse = session.getCartContent(SessionToIdMapper.getInstance().getCurrentSessionId());
         if (serviceProductsResponse.getStatus() == Response.Status.SUCCESS) {
             updateGrid(cartItemsGrid, serviceProductsResponse);
@@ -82,7 +81,10 @@ public class CartView extends Div implements ResponseHandler {
     }
 
     private void updateGrid(GridPro<ServiceBasketProduct> cartItemsGrid, Response<List<ServiceBasketProduct>> serviceProductsResponse) {
-        List<ServiceBasketProduct> serviceBasketProducts = serviceProductsResponse.getData();
+        List<ServiceBasketProduct> serviceBasketProducts = serviceProductsResponse.getData().stream().filter(serviceBasketProduct -> serviceBasketProduct.storeExists(session)).toList();
+        List<ServiceBasketProduct> serviceBasketProductsToRemove = serviceProductsResponse.getData().stream().filter(serviceBasketProduct -> !serviceBasketProduct.storeExists(session)).toList();
+        if(serviceBasketProductsToRemove.size() > 0)
+            session.removeBasketProducts(serviceBasketProductsToRemove, SessionToIdMapper.getInstance().getCurrentSessionId());
         cartItemsGrid.setItems(serviceBasketProducts);
         totalPrice.setValue(serviceBasketProducts.stream().mapToDouble(ServiceBasketProduct::getSubtotal).sum());
     }
@@ -101,6 +103,7 @@ public class CartView extends Div implements ResponseHandler {
         cartItemsGrid.addColumn(ServiceBasketProduct::getPrice).setHeader("Price");
         cartItemsGrid.addColumn(ServiceBasketProduct::getSubtotal).setHeader("Subtotal");
         cartItemsGrid.addColumn(ServiceBasketProduct::getCategory).setHeader("Category");
+        cartItemsGrid.addColumn(serviceBasketProduct -> serviceBasketProduct.getStoreName(session)).setHeader("Store name");
         //total price before discounts
         cartItemsGrid.setSizeFull();
         return cartItemsGrid;

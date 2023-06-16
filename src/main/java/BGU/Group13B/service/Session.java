@@ -1571,4 +1571,20 @@ public class Session implements ISession {
         }
     }
 
+    public Response<String> getStoreName(int storeId) {
+        try{
+            return Response.success(market.getStoreName(storeId));
+        }catch (Exception e){
+            return Response.failure(e.getMessage());
+        }
+    }
+
+    public Response<VoidResponse> removeBasketProducts(List<ServiceBasketProduct> serviceBasketProductsToRemove, int userId) {
+        try{
+            userRepository.getUser(userId).removeBasketProducts(serviceBasketProductsToRemove.stream().map(serviceBasketProduct -> Pair.of(serviceBasketProduct.getProductId(), serviceBasketProduct.getStoreId())).toList());
+            return Response.success();
+        }catch (Exception e){
+            return Response.failure(e.getMessage());
+        }
+    }
 }

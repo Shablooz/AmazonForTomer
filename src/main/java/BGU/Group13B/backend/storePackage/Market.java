@@ -1,6 +1,7 @@
 package BGU.Group13B.backend.storePackage;
 
 
+import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
 import BGU.Group13B.backend.System.Searcher;
 import BGU.Group13B.backend.User.*;
@@ -28,6 +29,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Market {
     private final IStoreRepository storeRepository;
@@ -565,5 +567,10 @@ public class Market {
     public void resetStorePurchasePolicy(int storeId, int userId) throws NoPermissionException {
         storeRepository.getStore(storeId).resetPurchasePolicy(userId);
     }
+
+    public String getStoreName(int storeId) {
+        return storeRepository.getStore(storeId).getStoreName();
+    }
+
 
 }

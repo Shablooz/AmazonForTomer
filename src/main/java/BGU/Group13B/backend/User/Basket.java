@@ -209,12 +209,8 @@ public class Basket {
         return basketContent.toString();
     }
 
-    public void removeProduct(int productId) throws Exception {
-        try {
-            basketProductRepository.removeBasketProduct(productId, userId, storeId);
-        } catch (Exception e) {
-            throw e;
-        }
+    public void removeProduct(int productId){
+        basketProductRepository.removeBasketProduct(productId, userId, storeId);
     }
 
     public void changeProductQuantity(int productId, int quantity) throws Exception {

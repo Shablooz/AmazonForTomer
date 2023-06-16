@@ -617,4 +617,8 @@ public class User {
     public UserPermissions.PopulationStatus getPopulationStatus(){
         return userPermissions.getPopulationStatus();
     }
+
+    public void removeBasketProducts(List<Pair<Integer, Integer>> productStoreList) {
+        cart.removeBasketProducts(productStoreList);
+    }
 }
