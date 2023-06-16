@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 @Service
 public class Session implements ISession {
     private Market market;
-    private final IUserRepository userRepository = SingletonCollection.getUserRepository();
+    private  IUserRepository userRepository = SingletonCollection.getUserRepository();
     private static final Logger LOGGER_INFO = Logger.getLogger(Session.class.getName());
     private static final Logger LOGGER_ERROR = Logger.getLogger(Session.class.getName());
 
@@ -59,6 +59,7 @@ public class Session implements ISession {
         SingletonCollection.setAddToUserCart(this::addToCart);
         this.userRepositoryAsHashmap = SingletonCollection.getUserRepository();
 
+        userRepositoryAsHashmap.setSaveMode(false);
         //IMPORTANT need to initialize the session AFTER loading first user (id = 1) from database
         //id should 1
         //This should do nothing if the system was initialized in the past - making first admin
@@ -86,7 +87,7 @@ public class Session implements ISession {
     /*good for development no need check if the item exists*/
     public Response<VoidResponse> addToCart(int userId, int storeId, int productId, int amount, double newPrice) {
         try {
-            userRepository.getUser(userId).addToCart(storeId, productId, amount, newPrice);
+            getUserRepository().getUser(userId).addToCart(storeId, productId, amount, newPrice);
             return Response.success();
         } catch (Exception e) {
             return Response.exception(e);
@@ -106,7 +107,7 @@ public class Session implements ISession {
                                       HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
                                       String/*store coupons*/ storeCoupon) {
         try {
-            return userRepository.getUser(userId).
+            return getUserRepository().getUser(userId).
                     purchaseCart(creditCardNumber, creditCardMonth,
                             creditCardYear, creditCardHolderFirstName,
                             creditCardCcv, id, productsCoupons, storeCoupon);
@@ -123,7 +124,7 @@ public class Session implements ISession {
                                                       String address, String city, String country,
                                                       String zip) {
         try {
-            userRepository.getUser(userId).
+            getUserRepository().getUser(userId).
                     purchaseCart(
                             creditCardNumber, creditCardMonth,
                             creditCardYear, creditCardHolderFirstName,
@@ -138,7 +139,7 @@ public class Session implements ISession {
     @Override
     public Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, List<String> coupons) {
         try {
-            var priceSuccessfulItems = userRepository.getUser(userId).startPurchaseBasketTransaction(coupons);
+            var priceSuccessfulItems = getUserRepository().getUser(userId).startPurchaseBasketTransaction(coupons);
             return new Pair<>(priceSuccessfulItems.getFirst(),
                     priceSuccessfulItems.getSecond().stream().map(ServiceBasketProduct::new).collect(Collectors.toList()));
         } catch (PurchaseFailedException | NoPermissionException e) {
@@ -222,14 +223,14 @@ public class Session implements ISession {
     @Override
     public synchronized void register(int userId, String username, String password,
                                       String email, String answer1, String answer2, String answer3,LocalDate birthDate){
-        User user = userRepositoryAsHashmap.getUser(userId);
+        User user = getUserRepositoryAsHashmap().getUser(userId);
 
         //the first "if" might not be necessary when we will connect to web
-        if (this.userRepositoryAsHashmap.checkIfUserWithEmailExists(email)) {
+        if (this.getUserRepositoryAsHashmap().checkIfUserWithEmailExists(email)) {
             throw new IllegalArgumentException("user with this email already exists!");//temporary
         }
         if (!user.isRegistered()) {
-            if (userRepositoryAsHashmap.checkIfUserExists(username) == null) {
+            if (getUserRepositoryAsHashmap().checkIfUserExists(username) == null) {
                 user.register(username, password, email, answer1, answer2, answer3,birthDate);
             } else {
                 throw new IllegalArgumentException("user with this username already exists!");
@@ -289,13 +290,13 @@ public class Session implements ISession {
     public int login(int userID, String username, String password, String answer1, String answer2, String answer3) {
         try {
             //gets the user that we want to log into
-            User user = userRepositoryAsHashmap.checkIfUserExists(username);
+            User user = getUserRepositoryAsHashmap().checkIfUserExists(username);
             synchronized (user) {
                 user.login(username, password, answer1, answer2, answer3);
                 /*example of use*/
                 LOGGER_INFO.info("user " + username + " logged in");
                 //gets the new id - of the user we're logging into
-                return userRepositoryAsHashmap.getUserId(user);
+                return getUserRepositoryAsHashmap().getUserId(user);
             }
         } catch (Exception e) {
             //line below temporary
@@ -307,14 +308,14 @@ public class Session implements ISession {
 
     @Override
     public void logout(int userID) {
-        synchronized (userRepositoryAsHashmap.getUser(userID)) {
-            userRepositoryAsHashmap.getUser(userID).logout();
+        synchronized (getUserRepositoryAsHashmap().getUser(userID)) {
+            getUserRepositoryAsHashmap().getUser(userID).logout();
         }
     }
 
     @Override
     public Response<Integer> addStore(int userId, String storeName, String category) {
-        User user = userRepositoryAsHashmap.getUser(userId);
+        User user = getUserRepositoryAsHashmap().getUser(userId);
         synchronized (user) {
             if (user.isRegistered()) {
                 try {
@@ -333,7 +334,7 @@ public class Session implements ISession {
     @Override
     public Response<VoidResponse> addProductToCart(int userId, int productId, int storeId) {
         try {
-            userRepositoryAsHashmap.getUser(userId).addProductToCart(productId, storeId);
+            getUserRepositoryAsHashmap().getUser(userId).addProductToCart(productId, storeId);
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);
@@ -343,7 +344,7 @@ public class Session implements ISession {
     @Override
     public Response<VoidResponse> clearMessageToReply(int userId) {
         try {
-            userRepositoryAsHashmap.getUser(userId).clearMessageToReply();
+            getUserRepositoryAsHashmap().getUser(userId).clearMessageToReply();
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);
@@ -352,7 +353,7 @@ public class Session implements ISession {
 
     public Response<VoidResponse> openComplaint(int userId, String header, String complaint) {
         try {
-            userRepositoryAsHashmap.getUser(userId).openComplaint(header, complaint);
+            getUserRepositoryAsHashmap().getUser(userId).openComplaint(header, complaint);
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);
@@ -362,7 +363,7 @@ public class Session implements ISession {
 
     public Response<Message> getComplaint(int userId) {
         try {
-            return Response.success(userRepositoryAsHashmap.getUser(userId).getComplaint());
+            return Response.success(getUserRepositoryAsHashmap().getUser(userId).getComplaint());
         } catch (Exception e) {
             return Response.exception(e);
         }
@@ -371,7 +372,7 @@ public class Session implements ISession {
     @Override
     public Response<VoidResponse> markMessageAsReadAdmin(int userId, String receiverId, String senderId, int messageId) {
         try {
-            userRepositoryAsHashmap.getUser(userId).markMessageAsReadAdmin(receiverId, senderId, messageId);
+            getUserRepositoryAsHashmap().getUser(userId).markMessageAsReadAdmin(receiverId, senderId, messageId);
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);
@@ -381,9 +382,9 @@ public class Session implements ISession {
     @Override
     public Response<VoidResponse> sendMassageAdmin(int userId, String receiverId, String header, String massage) {
         try {
-            if (userRepository.checkIfUserExists(receiverId) == null)
+            if (getUserRepository().checkIfUserExists(receiverId) == null)
                 throw new RuntimeException("receiver Id not found");
-            userRepositoryAsHashmap.getUser(userId).sendMassageAdmin(receiverId, header, massage);
+            getUserRepositoryAsHashmap().getUser(userId).sendMassageAdmin(receiverId, header, massage);
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);
@@ -393,7 +394,7 @@ public class Session implements ISession {
     @Override
     public Response<VoidResponse> answerComplaint(int userId, String answer) {
         try {
-            userRepositoryAsHashmap.getUser(userId).answerComplaint(answer);
+            getUserRepositoryAsHashmap().getUser(userId).answerComplaint(answer);
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);
@@ -403,7 +404,7 @@ public class Session implements ISession {
     @Override
     public Response<Message> readMessage(int userId) {
         try {
-            return Response.success(userRepositoryAsHashmap.getUser(userId).readMassage());
+            return Response.success(getUserRepositoryAsHashmap().getUser(userId).readMassage());
         } catch (Exception e) {
             return Response.exception(e);
         }
@@ -412,7 +413,7 @@ public class Session implements ISession {
     @Override
     public Response<VoidResponse> replayMessage(int userId, String message) {
         try {
-            userRepositoryAsHashmap.getUser(userId).replayMessage(message);
+            getUserRepositoryAsHashmap().getUser(userId).replayMessage(message);
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);
@@ -422,7 +423,7 @@ public class Session implements ISession {
     @Override
     public Response<Message> readOldMessage(int userId) {
         try {
-            return Response.success(userRepositoryAsHashmap.getUser(userId).readOldMessage());
+            return Response.success(getUserRepositoryAsHashmap().getUser(userId).readOldMessage());
         } catch (Exception e) {
             return Response.exception(e);
         }
@@ -431,7 +432,7 @@ public class Session implements ISession {
     @Override
     public Response<VoidResponse> refreshOldMessages(int userId) {
         try {
-            userRepositoryAsHashmap.getUser(userId).refreshOldMessage();
+            getUserRepositoryAsHashmap().getUser(userId).refreshOldMessage();
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);
@@ -441,7 +442,7 @@ public class Session implements ISession {
     @Override
     public Response<VoidResponse> sendMassageStore(int userId, String header, String massage, int storeId) {
         try {
-            userRepositoryAsHashmap.getUser(userId).sendMassageStore(header, massage, storeId);
+            getUserRepositoryAsHashmap().getUser(userId).sendMassageStore(header, massage, storeId);
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);
@@ -451,7 +452,7 @@ public class Session implements ISession {
     @Override
     public Response<Message> readUnreadMassageStore(int userId, int storeId) {
         try {
-            return Response.success(userRepositoryAsHashmap.getUser(userId).readUnreadMassageStore(storeId));
+            return Response.success(getUserRepositoryAsHashmap().getUser(userId).readUnreadMassageStore(storeId));
         } catch (Exception e) {
             return Response.exception(e);
         }
@@ -460,7 +461,7 @@ public class Session implements ISession {
     @Override
     public Response<Message> readReadMassageStore(int userId, int storeId) {
         try {
-            return Response.success(userRepositoryAsHashmap.getUser(userId).readReadMassageStore(storeId));
+            return Response.success(getUserRepositoryAsHashmap().getUser(userId).readReadMassageStore(storeId));
         } catch (Exception e) {
             return Response.exception(e);
         }
@@ -469,7 +470,7 @@ public class Session implements ISession {
     @Override
     public Response<VoidResponse> answerQuestionStore(int userId, String answer) {
         try {
-            userRepositoryAsHashmap.getUser(userId).answerQuestionStore(answer);
+            getUserRepositoryAsHashmap().getUser(userId).answerQuestionStore(answer);
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);
@@ -479,7 +480,7 @@ public class Session implements ISession {
     @Override
     public Response<VoidResponse> refreshOldMessageStore(int userId, int storeId) {
         try {
-            userRepositoryAsHashmap.getUser(userId).refreshOldMessageStore(storeId);
+            getUserRepositoryAsHashmap().getUser(userId).refreshOldMessageStore(storeId);
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);
@@ -489,7 +490,7 @@ public class Session implements ISession {
     @Override
     public Response<VoidResponse> addReview(int userId, String review, int storeId, int productId) {
         try {
-            userRepositoryAsHashmap.getUser(userId).addReview(review, storeId, productId);
+            getUserRepositoryAsHashmap().getUser(userId).addReview(review, storeId, productId);
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);
@@ -499,7 +500,7 @@ public class Session implements ISession {
     @Override
     public Response<VoidResponse> removeReview(int userId, int storeId, int productId) {
         try {
-            userRepositoryAsHashmap.getUser(userId).removeReview(storeId, productId);
+            getUserRepositoryAsHashmap().getUser(userId).removeReview(storeId, productId);
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);
@@ -509,7 +510,7 @@ public class Session implements ISession {
     @Override
     public Response<Review> getReview(int userId, int storeId, int productId) {
         try {
-            return Response.success(userRepositoryAsHashmap.getUser(userId).getReview(storeId, productId));
+            return Response.success(getUserRepositoryAsHashmap().getUser(userId).getReview(storeId, productId));
         } catch (Exception e) {
             return Response.exception(e);
         }
@@ -518,7 +519,7 @@ public class Session implements ISession {
     @Override
     public Response<List<ReviewService>> getAllReviews(int userId, int storeId, int productId) {
         try {
-            List<Review> reviews=userRepositoryAsHashmap.getUser(userId).getAllReviews(storeId, productId,userId);
+            List<Review> reviews=getUserRepositoryAsHashmap().getUser(userId).getAllReviews(storeId, productId,userId);
             List<ReviewService> reviewServices=new ArrayList<>();
             int i=0;
             for (Review review:reviews) {
@@ -529,7 +530,7 @@ public class Session implements ISession {
                 }else{
                     scoreString=scoreResponse.getData().toString();
                 }
-                reviewServices.add(new ReviewService(userRepositoryAsHashmap.getUser(review.getUserId()).getUserName(),review.getReview(),scoreString));
+                reviewServices.add(new ReviewService(getUserRepositoryAsHashmap().getUser(review.getUserId()).getUserName(),review.getReview(),scoreString));
             }
             return Response.success(reviewServices);
         } catch (Exception e) {
@@ -540,7 +541,7 @@ public class Session implements ISession {
     @Override
     public Response<Float> getProductScore(int userId, int storeId, int productId) {
         try {
-            return Response.success(userRepositoryAsHashmap.getUser(userId).getProductScore(storeId, productId));
+            return Response.success(getUserRepositoryAsHashmap().getUser(userId).getProductScore(storeId, productId));
         } catch (Exception e) {
             return Response.exception(e);
         }
@@ -548,7 +549,7 @@ public class Session implements ISession {
     @Override
     public Response<Float> getProductScoreUser(int userId, int storeId, int productId,int userIdTarget) {
         try {
-            return Response.success(userRepositoryAsHashmap.getUser(userId).getProductScoreUser(userIdTarget,storeId, productId));
+            return Response.success(getUserRepositoryAsHashmap().getUser(userId).getProductScoreUser(userIdTarget,storeId, productId));
         } catch (Exception e) {
             return Response.exception(e);
         }
@@ -557,7 +558,7 @@ public class Session implements ISession {
     @Override
     public Response<VoidResponse> addAndSetProductScore(int userId, int storeId, int productId, int score) {
         try {
-            userRepositoryAsHashmap.getUser(userId).addAndSetProductScore(storeId, productId, score);
+            getUserRepositoryAsHashmap().getUser(userId).addAndSetProductScore(storeId, productId, score);
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);
@@ -567,7 +568,7 @@ public class Session implements ISession {
     @Override
     public Response<VoidResponse> removeProductScore(int userId, int storeId, int productId) {
         try {
-            userRepositoryAsHashmap.getUser(userId).removeProductScore(storeId, productId);
+            getUserRepositoryAsHashmap().getUser(userId).removeProductScore(storeId, productId);
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);
@@ -577,7 +578,7 @@ public class Session implements ISession {
     @Override
     public Response<VoidResponse> addStoreScore(int userId, int storeId, int score) {
         try {
-            userRepositoryAsHashmap.getUser(userId).addStoreScore(storeId, score);
+            getUserRepositoryAsHashmap().getUser(userId).addStoreScore(storeId, score);
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);
@@ -587,7 +588,7 @@ public class Session implements ISession {
     @Override
     public Response<VoidResponse> removeStoreScore(int userId, int storeId) {
         try {
-            userRepositoryAsHashmap.getUser(userId).removeStoreScore(storeId);
+            getUserRepositoryAsHashmap().getUser(userId).removeStoreScore(storeId);
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);
@@ -597,7 +598,7 @@ public class Session implements ISession {
     @Override
     public Response<VoidResponse> modifyStoreScore(int userId, int storeId, int score) {
         try {
-            userRepositoryAsHashmap.getUser(userId).modifyStoreScore(storeId, score);
+            getUserRepositoryAsHashmap().getUser(userId).modifyStoreScore(storeId, score);
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);
@@ -607,7 +608,7 @@ public class Session implements ISession {
     @Override
     public Response<Float> getStoreScore(int userId, int storeId) {
         try {
-            return Response.success(userRepositoryAsHashmap.getUser(userId).getStoreScore(storeId));
+            return Response.success(getUserRepositoryAsHashmap().getUser(userId).getStoreScore(storeId));
         } catch (Exception e) {
             return Response.exception(e);
         }
@@ -616,7 +617,7 @@ public class Session implements ISession {
     @Override
     public Response<String> getCartDescription(int userId) {
         try {
-            return Response.success(userRepositoryAsHashmap.getUser(userId).getCartDescription());
+            return Response.success(getUserRepositoryAsHashmap().getUser(userId).getCartDescription());
         } catch (NoPermissionException e) {
             throw new RuntimeException(e);
         }
@@ -626,7 +627,7 @@ public class Session implements ISession {
     public Response<List<ServiceBasketProduct>> getCartContent(int userId) {
         List<BasketProduct> cartContent;
         try {
-            cartContent = userRepositoryAsHashmap.getUser(userId).getCartBasketProducts();
+            cartContent = getUserRepositoryAsHashmap().getUser(userId).getCartBasketProducts();
         } catch (Exception e) {
             return Response.exception(e);
         }
@@ -636,7 +637,7 @@ public class Session implements ISession {
     @Override
     public void removeProductFromCart(int userId, int storeId, int productId) {
         try {
-            userRepositoryAsHashmap.getUser(userId).removeProductFromCart(storeId, productId);
+            getUserRepositoryAsHashmap().getUser(userId).removeProductFromCart(storeId, productId);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -695,8 +696,8 @@ public class Session implements ISession {
 
     @Override
     public int enterAsGuest() {
-        int id = userRepositoryAsHashmap.getNewUserId();
-        userRepositoryAsHashmap.addUser(id, new User(id));
+        int id = getUserRepositoryAsHashmap().getNewUserId();
+        getUserRepositoryAsHashmap().addUser(id, new User(id));
         return id;
     }
 
@@ -714,12 +715,12 @@ public class Session implements ISession {
 
     @Override
     public String getUserName(int userId) {
-        return userRepositoryAsHashmap.getUser(userId).getUserName();
+        return getUserRepositoryAsHashmap().getUser(userId).getUserName();
     }
 
     @Override
     public void setUsername(int userId, String newUsername) {
-        userRepositoryAsHashmap.getUser(userId).setUserName(newUsername);
+        getUserRepositoryAsHashmap().getUser(userId).setUserName(newUsername);
     }
 
     @Override
@@ -728,18 +729,18 @@ public class Session implements ISession {
             //should throw an exception
             throw new IllegalArgumentException("isnt an admin");
         }
-        if (newStatus == 1 && userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.MEMBER)
-            userRepositoryAsHashmap.getUser(userId).setPermissions(UserPermissions.UserPermissionStatus.ADMIN);
+        if (newStatus == 1 && getUserRepositoryAsHashmap().getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.MEMBER)
+            getUserRepositoryAsHashmap().getUser(userId).setPermissions(UserPermissions.UserPermissionStatus.ADMIN);
 
-        if (newStatus == 2 && userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.ADMIN)
-            userRepositoryAsHashmap.getUser(userId).setPermissions(UserPermissions.UserPermissionStatus.MEMBER);
+        if (newStatus == 2 && getUserRepositoryAsHashmap().getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.ADMIN)
+            getUserRepositoryAsHashmap().getUser(userId).setPermissions(UserPermissions.UserPermissionStatus.MEMBER);
     }
 
     @Override
     public String getUserStatus(int userId) {
-        if (userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.MEMBER)
+        if (getUserRepositoryAsHashmap().getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.MEMBER)
             return "Member";
-        else if (userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.ADMIN)
+        else if (getUserRepositoryAsHashmap().getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.ADMIN)
             return "Admin";
         else
             return "Guest";
@@ -747,12 +748,12 @@ public class Session implements ISession {
 
     @Override
     public String getUserEmail(int userId) {
-        return userRepositoryAsHashmap.getUser(userId).getEmail();
+        return getUserRepositoryAsHashmap().getUser(userId).getEmail();
     }
 
     @Override
     public List<Pair<Integer, String>> getStoresOfUser(int userId) {
-        return userRepositoryAsHashmap.getUser(userId).getStoresAndRoles();
+        return getUserRepositoryAsHashmap().getUser(userId).getStoresAndRoles();
     }
 
     public Response<StoreInfo> getStoreInfo(int userId, int storeId) {
@@ -775,7 +776,7 @@ public class Session implements ISession {
     @Override
     public void changeProductQuantityInCart(int userId, int storeId, int productId, int quantity) {
         try {
-            userRepositoryAsHashmap.getUser(userId).changeProductQuantityInCart(storeId, productId, quantity);
+            getUserRepositoryAsHashmap().getUser(userId).changeProductQuantityInCart(storeId, productId, quantity);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -791,17 +792,17 @@ public class Session implements ISession {
     }
 
     public boolean SecurityAnswer1Exists(int userId) {
-        return userRepositoryAsHashmap.getUser(userId).SecurityAnswer1Exists();
+        return getUserRepositoryAsHashmap().getUser(userId).SecurityAnswer1Exists();
     }
 
     @Override
     public boolean SecurityAnswer2Exists(int userId) {
-        return userRepositoryAsHashmap.getUser(userId).SecurityAnswer2Exists();
+        return getUserRepositoryAsHashmap().getUser(userId).SecurityAnswer2Exists();
     }
 
     @Override
     public boolean SecurityAnswer3Exists(int userId) {
-        return userRepositoryAsHashmap.getUser(userId).SecurityAnswer3Exists();
+        return getUserRepositoryAsHashmap().getUser(userId).SecurityAnswer3Exists();
     }
 
     @Override
@@ -811,48 +812,48 @@ public class Session implements ISession {
 
     @Override
     public boolean checkIfQuestionsExist(String userName) {
-        if (userRepositoryAsHashmap.checkIfUserExists(userName) == null)
+        if (getUserRepositoryAsHashmap().checkIfUserExists(userName) == null)
             return false;
-        return checkIfQuestionsExist(userRepositoryAsHashmap.checkIfUserExists(userName).getUserId());
+        return checkIfQuestionsExist(getUserRepositoryAsHashmap().checkIfUserExists(userName).getUserId());
     }
 
     @Override
     public void exitSystemAsGuest(int userId) {
-        userRepositoryAsHashmap.removeUser(userId);
+        getUserRepositoryAsHashmap().removeUser(userId);
     }
 
     @Override
     public List<Integer> getFailedProducts(int userId, int storeId) {
-        return userRepository.getUser(userId).getFailedProducts(storeId);
+        return getUserRepository().getUser(userId).getFailedProducts(storeId);
     }
 
     @Override
     public double getTotalPriceOfCart(int userId) {
-        return userRepository.getUser(userId).getTotalPriceOfCart();
+        return getUserRepository().getUser(userId).getTotalPriceOfCart();
     }
 
     @Override
     public void cancelPurchase(int userId) {
-        userRepository.getUser(userId).cancelPurchase();
+        getUserRepository().getUser(userId).cancelPurchase();
     }
 
     @Override
     public List<ServiceProduct> getAllFailedProductsAfterPayment(int userId) {
-        return userRepository.getUser(userId).getAllFailedProductsAfterPayment().
+        return getUserRepository().getUser(userId).getAllFailedProductsAfterPayment().
                 stream().map(ServiceProduct::new).collect(Collectors.toList());
     }
 
 
     @Override
     public boolean isUserLogged(int userId) {
-        return userRepositoryAsHashmap.getUser(userId).isLoggedIn();
+        return getUserRepositoryAsHashmap().getUser(userId).isLoggedIn();
     }
 
     @Override
     public Response<List<PurchaseHistory>> getUserPurchaseHistory(int userId) {
         try {
             isUserLogged(userId);
-            return Response.success(userRepositoryAsHashmap.getUser(userId).getPurchaseHistory());
+            return Response.success(getUserRepositoryAsHashmap().getUser(userId).getPurchaseHistory());
         } catch (Exception e) {
             return Response.exception(e);
         }
@@ -928,7 +929,7 @@ public class Session implements ISession {
     @Override
     public Response<VoidResponse> fetchMessages(int userId) {
         try {
-            userRepositoryAsHashmap.getUser(userId).fetchMessages();
+            getUserRepositoryAsHashmap().getUser(userId).fetchMessages();
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             return Response.exception(e);
@@ -941,7 +942,7 @@ public class Session implements ISession {
             if (!getUserStatus(adminId).equals("Admin") || !isUserLogged(adminId)) {
                 throw new NoPermissionException("The user is not an admin or is not logged in");
             }
-            User user = userRepositoryAsHashmap.getUser(userId);
+            User user = getUserRepositoryAsHashmap().getUser(userId);
             return Response.success(user.getPurchaseHistory());
         } catch (Exception e) {
             return Response.exception(e);
@@ -1449,7 +1450,7 @@ public class Session implements ISession {
     @Override
     public Response<Integer> getUserIdByUsername(String username) {
         try{
-            return Response.success(userRepository.getUserIdByUsername(username));
+            return Response.success(getUserRepository().getUserIdByUsername(username));
         } catch (Exception e){
             return Response.exception(e);
         }
@@ -1458,7 +1459,7 @@ public class Session implements ISession {
     @Override
     public Response<HashMap<Integer, String>> getUserIdsToUsernamesMapper(List<Integer> userIds) {
         try{
-            return Response.success(userRepository.getUserIdsToUsernamesMapper(userIds));
+            return Response.success(getUserRepository().getUserIdsToUsernamesMapper(userIds));
         } catch (Exception e){
             return Response.exception(e);
         }
@@ -1545,6 +1546,15 @@ public class Session implements ISession {
         }
     }
 
+    public IUserRepository getUserRepository() {
+        userRepository = SingletonCollection.getUserRepository();
+        return userRepository;
+    }
+
+    public IUserRepository getUserRepositoryAsHashmap() {
+        userRepositoryAsHashmap = SingletonCollection.getUserRepository();
+        return userRepositoryAsHashmap;
+    }
 
 
 }

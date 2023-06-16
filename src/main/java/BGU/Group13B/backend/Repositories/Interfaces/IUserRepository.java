@@ -1,7 +1,9 @@
 package BGU.Group13B.backend.Repositories.Interfaces;
 
+import BGU.Group13B.backend.Repositories.Implementations.StoreRepositoryImpl.StoreRepoService;
 import BGU.Group13B.backend.User.User;
 import BGU.Group13B.backend.User.UserCard;
+import BGU.Group13B.service.SingletonCollection;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,4 +37,6 @@ public interface IUserRepository {
 
 
     List<UserCard> getAllUserCards();
+
+    void setSaveMode(boolean saveMode);
 }

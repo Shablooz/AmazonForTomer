@@ -92,7 +92,7 @@ public class Store {
             getStorePermissionsRepository().addStorePermission(storeId, storePermission1);
         }
         this.storePermission = storePermission1;
-        userRepository.getUser(founderId).addPermission(storeId, UserPermissions.StoreRole.FOUNDER);
+        getUserRepo().getUser(founderId).addPermission(storeId, UserPermissions.StoreRole.FOUNDER);
         this.purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
         this.storeScore = SingletonCollection.getStoreScoreRepository();
 
@@ -127,7 +127,7 @@ public class Store {
         this.discountPolicy = new DiscountPolicy(storeId);
         this.purchasePolicy = new PurchasePolicy(storeId);
     }
-    public Store() {
+    public Store() { //maybe need to change nulls
         this.productRepository = null;
         this.deliveryAdapter = null;
         this.paymentAdapter = null;
@@ -158,7 +158,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add an owner to store " + this.storeId);
         getStorePermission().addOwnerPermission(newOwnerId, userId);
-        userRepository.getUser(newOwnerId).addPermission(storeId, UserPermissions.StoreRole.OWNER);
+        getUserRepo().getUser(newOwnerId).addPermission(storeId, UserPermissions.StoreRole.OWNER);
     }
 
     @DefaultFounderFunctionality
@@ -169,7 +169,7 @@ public class Store {
             throw new NoPermissionException("User " + userId + " has no permission to remove an owner to store " + this.storeId);
         Set<Integer> removeUsersList = getStorePermission().removeOwnerPermission(removeOwnerId, userId, false);
         for(Integer removeUserId: removeUsersList){
-            userRepository.getUser(removeUserId).deletePermission(storeId);
+            getUserRepo().getUser(removeUserId).deletePermission(storeId);
         }
 
     }
@@ -181,7 +181,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add a manager to store " + this.storeId);
         getStorePermission().addManagerPermission(newManagerId, userId);
-        userRepository.getUser(newManagerId).addPermission(storeId, UserPermissions.StoreRole.MANAGER);
+        getUserRepo().getUser(newManagerId).addPermission(storeId, UserPermissions.StoreRole.MANAGER);
     }
 
     @DefaultFounderFunctionality
@@ -191,7 +191,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to remove a manager to store " + this.storeId);
         getStorePermission().removeManagerPermission(removeManagerId, userId);
-        userRepository.getUser(removeManagerId).deletePermission(storeId);
+        getUserRepo().getUser(removeManagerId).deletePermission(storeId);
     }
 
     @DefaultFounderFunctionality
@@ -201,7 +201,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add permissions to managers in store " + this.storeId);
         getStorePermission().addIndividualPermission(managerId, individualPermission);
-        userRepository.getUser(managerId).addIndividualPermission(storeId, individualPermission);
+        getUserRepo().getUser(managerId).addIndividualPermission(storeId, individualPermission);
     }
 
     @DefaultFounderFunctionality
@@ -211,7 +211,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to remove permissions from managers in store " + this.storeId);
         getStorePermission().removeIndividualPermission(managerId, individualPermission);
-        userRepository.getUser(managerId).deleteIndividualPermission(storeId, individualPermission);
+        getUserRepo().getUser(managerId).deleteIndividualPermission(storeId, individualPermission);
     }
 
     @DefaultFounderFunctionality
@@ -672,10 +672,10 @@ public class Store {
 
     //will send a message to all the store's workers except the user with the given id
     private void notifyAllWorkers(int userId, String msgHeader, String msgBody) throws NoPermissionException {
-        User user = userRepository.getUser(userId);
+        User user = getUserRepo().getUser(userId);
         for (int workerId : this.getStorePermission().getWorkersInfo().stream().map(WorkerCard::userId).toList()) {
             if (workerId != userId) {
-                String username = userRepository.getUser(workerId).getUserName();
+                String username = getUserRepo().getUser(workerId).getUserName();
                 user.sendMassageBroad(username, msgHeader, msgBody);
             }
         }
@@ -1260,6 +1260,10 @@ public class Store {
     public IStoreScore getStoreScoreRepo() {
         storeScore = SingletonCollection.getStoreScoreRepository(); // maybe need check
         return storeScore;
+    }
+    public IUserRepository getUserRepo() {
+        userRepository = SingletonCollection.getUserRepository();
+        return userRepository;
     }
 
 

@@ -2,6 +2,7 @@ package BGU.Group13B.backend.Repositories.Implementations.IStoreScoreRepository;
 
 import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepoSingle;
 import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepoSingleJPA;
+import BGU.Group13B.service.SingletonCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,7 @@ public class StoreScoreRepoService {
     }
 
     public void save(StoreScoreSingle storeScoreSingle){
-        storeScoreRepoJPA.save(storeScoreSingle);
+        SingletonCollection.setStoreScoreRepository( storeScoreRepoJPA.save(storeScoreSingle));
     }
 
     public void delete(StoreScoreSingle storeScoreSingle){

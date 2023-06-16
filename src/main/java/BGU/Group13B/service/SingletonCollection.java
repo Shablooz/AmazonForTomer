@@ -24,6 +24,7 @@ import BGU.Group13B.backend.Repositories.Implementations.StorePermissionsReposit
 import BGU.Group13B.backend.Repositories.Implementations.StoreRepositoryImpl.StoreRepoService;
 import BGU.Group13B.backend.Repositories.Implementations.StoreRepositoryImpl.StoreRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.UserPemissionRepositoryImpl.UserPermissionRepositoryAsHashmap;
+import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepoService;
 import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepositoryAsHashmap;
 import BGU.Group13B.backend.Repositories.Interfaces.*;
 import BGU.Group13B.backend.System.Searcher;
@@ -226,7 +227,23 @@ public class SingletonCollection {
             SingletonCollection.storeScoreRepository = SingletonCollection.getContext().getBean(StoreScoreRepoService.class).getStoreScoreSingle();
         }
     }
+    public static void setUserRepository() {
+        UserRepositoryAsHashmap userRepositoryAsHashmap  = SingletonCollection.getContext().getBean(UserRepoService.class).getUserRepositoryAsHashmap();
+        if(userRepositoryAsHashmap == null){
+            UserRepositoryAsHashmap repo=(UserRepositoryAsHashmap) SingletonCollection.getUserRepository();
+            SingletonCollection.getContext().getBean(UserRepoService.class).save(repo);
+        }else {
+            SingletonCollection.userRepository = SingletonCollection.getContext().getBean(UserRepoService.class).getUserRepositoryAsHashmap();
+        }
+        SingletonCollection.getUserRepository().setSaveMode(true);
+    }
 
+    public static void setUserRepository(UserRepositoryAsHashmap userRepositoryAsHashmap) {
+        SingletonCollection.userRepository = userRepositoryAsHashmap;
+    }
+    public static void setReviewRepository(ReviewRepoSingle reviewRepository) {
+        SingletonCollection.reviewRepository = reviewRepository;
+    }
     public static void setStoreRepository(StoreRepositoryAsList storeRepositoryAsList) {
         SingletonCollection.storeRepository = storeRepositoryAsList;
     }
@@ -421,6 +438,7 @@ public class SingletonCollection {
         productRepository.setSaveMode(saveMode);
         storeRepository.setSaveMode(saveMode);
         storePermissionRepository.setSaveMode(saveMode);
+        userRepository.setSaveMode(saveMode);
 
     }
     public static void setPaymentFail() {

@@ -1,8 +1,11 @@
 package BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl;
 
+import BGU.Group13B.backend.Repositories.Implementations.StoreRepositoryImpl.StoreRepoService;
 import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
 import BGU.Group13B.backend.User.User;
 import BGU.Group13B.backend.User.UserCard;
+import BGU.Group13B.service.SingletonCollection;
+import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,19 +14,41 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+
+@Entity
 public class UserRepositoryAsHashmap implements IUserRepository {
-    private final ConcurrentHashMap<Integer,User> integerUserHashMap;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
+    @JoinTable(name = "UserRepositoryAsHashmap_integerUserHashMap",
+            joinColumns = {@JoinColumn(name = "UserRepositoryAsHashmap_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "User_id", referencedColumnName = "userId")})
+    @MapKeyJoinColumn(name = "userId")
+    private final Map<Integer,User> integerUserHashMap;
+
+    @Transient
+    private boolean saveMode;
 
     //this integer is the max id that exists in the system
     private AtomicInteger maxId;
 
     public UserRepositoryAsHashmap() {
         this.integerUserHashMap = new ConcurrentHashMap<>();
-
+        this.saveMode = true;
         //TODO when we add the database this maxid should be the highest id we have in the database
         maxId = new AtomicInteger(0);
     }
 
+    //for testing
+    public UserRepositoryAsHashmap(boolean saveMode) {
+        this.integerUserHashMap = new ConcurrentHashMap<>();
+        this.saveMode = saveMode;
+        //TODO when we add the database this maxid should be the highest id we have in the database
+        maxId = new AtomicInteger(0);
+    }
 
     @Override
     public User getUser(int userId) {
@@ -33,12 +58,14 @@ public class UserRepositoryAsHashmap implements IUserRepository {
     @Override
     public void removeUser(int userId) {
         this.integerUserHashMap.remove(userId);
+        save();
     }
 
     @Override
     public void addUser(int userId, User user) {
         this.integerUserHashMap.put(userId,user);
         maxId.getAndIncrement();
+        save();
     }
 
     @Override
@@ -115,5 +142,39 @@ public class UserRepositoryAsHashmap implements IUserRepository {
         }
         return userCards;
     }
+    public void save(){
+        if(saveMode)
+            SingletonCollection.getContext().getBean(UserRepoService.class).save(this);
+    }
 
+    //getters and setters
+
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Map<Integer, User> getIntegerUserHashMap() {
+        return integerUserHashMap;
+    }
+
+    public AtomicInteger getMaxId() {
+        return maxId;
+    }
+
+    public void setMaxId(AtomicInteger maxId) {
+        this.maxId = maxId;
+    }
+
+    public boolean isSaveMode() {
+        return saveMode;
+    }
+
+    public void setSaveMode(boolean saveMode) {
+        this.saveMode = saveMode;
+    }
 }

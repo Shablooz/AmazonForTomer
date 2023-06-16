@@ -9,11 +9,11 @@ import java.time.LocalDate;
 public class UserAT extends ProjectTest {
 
 
-    @BeforeEach
-    void userATsetUp() {
-        SingletonCollection.reset_system();
-        SingletonCollection.setSaveMode(false);
-    }
+//    @BeforeEach
+//    void userATsetUp() {
+//        SingletonCollection.reset_system();
+//        SingletonCollection.setSaveMode(false);
+//    }
     @Test
     void joinAsGuest(){
         //we check that the id counter advances and that the user exists in the repository

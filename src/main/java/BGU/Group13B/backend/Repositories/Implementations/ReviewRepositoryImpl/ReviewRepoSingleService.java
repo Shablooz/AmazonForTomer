@@ -1,5 +1,6 @@
 package BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl;
 
+import BGU.Group13B.service.SingletonCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +19,7 @@ public class ReviewRepoSingleService {
     }
 
     public void save(ReviewRepoSingle reviewRepoSingle){
-        reviewRepoSingleJPA.save(reviewRepoSingle);
+       SingletonCollection.setReviewRepository( reviewRepoSingleJPA.save(reviewRepoSingle));
     }
 
     public void delete(ReviewRepoSingle reviewRepoSingle){

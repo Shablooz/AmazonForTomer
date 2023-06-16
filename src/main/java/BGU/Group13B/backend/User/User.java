@@ -4,6 +4,10 @@ import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.service.*;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import org.mindrot.jbcrypt.BCrypt;
 import BGU.Group13B.backend.Repositories.Interfaces.IMessageRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
@@ -24,20 +28,35 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+@Entity
+@Table(name = "users")
 public class User {
 
-    private final IPurchaseHistoryRepository purchaseHistoryRepository;
+    @Transient
+    private  IPurchaseHistoryRepository purchaseHistoryRepository;
 
-    private final int userId;
-    private final IMessageRepository messageRepository;
-    private final IUserPermissionRepository userPermissionRepository;
-    private final UserPermissions userPermissions;
-    private final Cart cart;
-    private final Market market;
+
+    @Id
+    private  int userId;
+
+    @Transient
+    private  IMessageRepository messageRepository;
+
+    @Transient
+    private  IUserPermissionRepository userPermissionRepository;
+    @Transient
+    private  UserPermissions userPermissions;
+    @Transient
+    private  Cart cart;
+    @Transient
+    private  Market market;
+
     private int messageId;
     private String userName;
-    private Message regularMessageToReply;
+    @Transient
+    private Message regularMessageToReply; //need to map
     private String password;
+    @Transient
     private LocalDate dateOfBirth;
     private String email;
 
@@ -46,13 +65,16 @@ public class User {
     private String answer3;
 
     //TODO: show the messages upon registering
+    @Transient
     private static final String question1 = "What is your favorite color?";
+    @Transient
     private static final String question2 = "What is your favorite food?";
+    @Transient
     private static final String question3 = "What is your favorite book?";
     //eyal addition
     private volatile boolean isLoggedIn;
 
-    private final String adminIdentifier = "Admin";
+    private  String adminIdentifier = "Admin";
     private boolean messageNotification;
     private boolean reviewedStoreNotification;
 
@@ -81,7 +103,27 @@ public class User {
         this.messageNotification = false;
         this.reviewedStoreNotification = false;
     }
+    public User() {
+        this.purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
+        this.userId = 0;
+        this.messageRepository = SingletonCollection.getMessageRepository();
+        this.userPermissionRepository = SingletonCollection.getUserPermissionRepository();
 
+        this.userPermissions = null; //need to map
+        this.cart = null; //need to map
+        this.market = SingletonCollection.getMarket();
+        this.userName = "";
+        this.password = "";
+        this.email = "";
+        //do not change those fields!
+        this.answer1 = "";
+        this.answer2 = "";
+        this.answer3 = "";
+        this.messageId = 1;
+        this.isLoggedIn = false;
+        this.messageNotification = false;
+        this.reviewedStoreNotification = false;
+    }
 
     public boolean isLoggedIn() {
         return isLoggedIn;
@@ -612,5 +654,129 @@ public class User {
             stringBuilder.append(pair.getSecond());
         }
         return new UserCard(userId, userName, email, stringBuilder.toString());
+    }
+
+
+    //getters and setters
+
+
+    public IPurchaseHistoryRepository getPurchaseHistoryRepository() {
+        return purchaseHistoryRepository;
+    }
+
+    public void setPurchaseHistoryRepository(IPurchaseHistoryRepository purchaseHistoryRepository) {
+        this.purchaseHistoryRepository = purchaseHistoryRepository;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public IMessageRepository getMessageRepository() {
+        return messageRepository;
+    }
+
+    public void setMessageRepository(IMessageRepository messageRepository) {
+        this.messageRepository = messageRepository;
+    }
+
+    public IUserPermissionRepository getUserPermissionRepository() {
+        return userPermissionRepository;
+    }
+
+    public void setUserPermissionRepository(IUserPermissionRepository userPermissionRepository) {
+        this.userPermissionRepository = userPermissionRepository;
+    }
+
+    public void setUserPermissions(UserPermissions userPermissions) {
+        this.userPermissions = userPermissions;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
+    }
+
+    public Market getMarket() {
+        return market;
+    }
+
+    public void setMarket(Market market) {
+        this.market = market;
+    }
+
+    public int getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(int messageId) {
+        this.messageId = messageId;
+    }
+
+    public Message getRegularMessageToReply() {
+        return regularMessageToReply;
+    }
+
+    public void setRegularMessageToReply(Message regularMessageToReply) {
+        this.regularMessageToReply = regularMessageToReply;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getAnswer1() {
+        return answer1;
+    }
+
+    public void setAnswer1(String answer1) {
+        this.answer1 = answer1;
+    }
+
+    public String getAnswer2() {
+        return answer2;
+    }
+
+    public void setAnswer2(String answer2) {
+        this.answer2 = answer2;
+    }
+
+    public String getAnswer3() {
+        return answer3;
+    }
+
+    public void setAnswer3(String answer3) {
+        this.answer3 = answer3;
+    }
+
+    public void setLoggedIn(boolean loggedIn) {
+        isLoggedIn = loggedIn;
+    }
+
+    public String getAdminIdentifier() {
+        return adminIdentifier;
+    }
+
+    public void setAdminIdentifier(String adminIdentifier) {
+        this.adminIdentifier = adminIdentifier;
+    }
+
+    public boolean isMessageNotification() {
+        return messageNotification;
+    }
+
+    public boolean isReviewedStoreNotification() {
+        return reviewedStoreNotification;
     }
 }

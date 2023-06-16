@@ -1,5 +1,6 @@
 package BGU.Group13B.frontEnd;
 
+import BGU.Group13B.backend.User.User;
 import BGU.Group13B.service.SingletonCollection;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.component.page.Push;
@@ -11,6 +12,8 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
+import java.time.LocalDate;
 
 /**
  * The entry point of the Spring Boot application.
@@ -39,6 +42,18 @@ public class Application implements AppShellConfigurator {
         SingletonCollection.setStoreRepository();
         SingletonCollection.setStorePermissionRepository();
         SingletonCollection.setStoreScoreRepository();
+        SingletonCollection.setUserRepository();
+
+
+        if(SingletonCollection.getUserRepository().getUser(1)==null)
+        {
+            int id = 1;
+            SingletonCollection.getUserRepository().addUser(id, new User(id));
+            SingletonCollection.getSession().register(id, "kingOfTheSheep", "SheePLover420",
+                    "mrsheep@gmail.com", "11", "11", "11", LocalDate.MIN);
+        }
+
+
         //need to access singleton collection here
 
         //remove those - examples

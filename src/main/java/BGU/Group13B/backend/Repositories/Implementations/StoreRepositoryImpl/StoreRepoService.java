@@ -22,7 +22,6 @@ public class StoreRepoService {
 
     public void save(StoreRepositoryAsList storeRepositoryAsList){
         SingletonCollection.setStoreRepository(storeRepoJPA.save(storeRepositoryAsList));
-        //storeRepoJPA.save(storeRepositoryAsList);
     }
 
     public void delete(StoreRepositoryAsList storeRepositoryAsList){
