@@ -3,12 +3,11 @@ package BGU.Group13B.backend.Repositories.Implementations.PurchaseHistoryReposit
 import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
 import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.PurchaseHistory;
-import BGU.Group13B.service.Response;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class PurchaseHistoryRepositoryAsList implements IPurchaseHistoryRepository {
@@ -69,5 +68,17 @@ public class PurchaseHistoryRepositoryAsList implements IPurchaseHistoryReposito
     @Override
     public void removePurchase(PurchaseHistory purchaseHistory) {
         purchaseHistories.remove(purchaseHistory);
+    }
+
+    @Override
+    public double[] getSystemHistoryIncome(LocalDate startDate, LocalDate endDate) {
+        double[] historyIncome = new double[(endDate.getYear() - startDate.getYear())*365 + (endDate.getDayOfYear() - startDate.getDayOfYear()) + 1];
+        for(PurchaseHistory purchase : purchaseHistories){
+            LocalDate purchaseDate = purchase.getLocalDate();
+            if(!(purchaseDate.isBefore(startDate) || purchaseDate.isAfter(endDate)))
+                historyIncome[(endDate.getYear() - purchaseDate.getYear())*365 + purchaseDate.getDayOfYear() - startDate.getDayOfYear()] += purchase.getPrice();
+        }
+
+        return historyIncome;
     }
 }

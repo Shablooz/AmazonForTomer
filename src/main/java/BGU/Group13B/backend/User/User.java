@@ -425,7 +425,7 @@ public class User {
     public Pair<Double, List<BasketProduct>> startPurchaseBasketTransaction(List<String> coupons) throws PurchaseFailedException, NoPermissionException {
         if (isRegistered() && !isLoggedIn)
             throw new NoPermissionException("Only logged in users can purchase cart");
-        return cart.startPurchaseBasketTransaction(new UserInfo(LocalDate.now().minusYears(25)/*this.dateOfBirth*/), coupons);//fixme
+        return cart.startPurchaseBasketTransaction(new UserInfo(this.dateOfBirth), coupons);
     }
 
 
@@ -620,5 +620,16 @@ public class User {
 
     public void clearCart(){
         cart.clearCart();
+    }
+    public void removeBasketProducts(List<Pair<Integer, Integer>> productStoreList) {
+        cart.removeBasketProducts(productStoreList);
+    }
+
+    public void removeBasketProduct(int productId, int storeId) throws Exception {
+        cart.removeProduct(storeId, productId);
+    }
+
+    public void clearUserStorePermissions(int storeId){
+        userPermissions.clearUserStorePermissions(storeId);
     }
 }

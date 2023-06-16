@@ -1,5 +1,6 @@
 package BGU.Group13B.frontEnd.components.views;
 
+import BGU.Group13B.frontEnd.ResponseHandler;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.frontEnd.components.views.viewEntity.Address;
 import BGU.Group13B.frontEnd.components.views.viewEntity.Card;
@@ -49,7 +50,7 @@ import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY_INLIN
 
 
 @Route(value = "payment", layout = MainLayout.class)
-public class PaymentView extends Div implements BeforeLeaveObserver {
+public class PaymentView extends Div implements BeforeLeaveObserver, ResponseHandler {
 
     private static final String PAYMENT = "Payment";
     private static final String BILLING_ADDRESS = "Billing address";
@@ -83,11 +84,12 @@ public class PaymentView extends Div implements BeforeLeaveObserver {
     public PaymentView(Session session) {
         this.session = session;
         paymentSuccessful = false;
-        double totalPriceBeforeDiscount = session.getTotalPriceOfCart(SessionToIdMapper.getInstance().getCurrentSessionId());
+        double totalPriceBeforeDiscount = handleResponse(session.getTotalPriceOfCart(SessionToIdMapper.getInstance().getCurrentSessionId()), "");
         //coupon code in the future
         add(getPricesLayout(session, totalPriceBeforeDiscount));
 
-        List<ServiceProduct> failedProducts = session.getAllFailedProductsAfterPayment(SessionToIdMapper.getInstance().getCurrentSessionId());
+        List<ServiceProduct> failedProducts = handleResponse(
+                session.getAllFailedProductsAfterPayment(SessionToIdMapper.getInstance().getCurrentSessionId()), "");
         if (failedProducts.size() > 0) {
             add(paymentFailedView(failedProducts, totalPriceAfterDiscount));
         }
@@ -128,7 +130,7 @@ public class PaymentView extends Div implements BeforeLeaveObserver {
     }
 
     private HorizontalLayout getPricesLayout(Session session, double totalPriceBeforeDiscount) {
-        var priceAndSuccessful = session.startPurchaseBasketTransaction(SessionToIdMapper.getInstance().getCurrentSessionId(), new LinkedList<>()); //mafhid
+        var priceAndSuccessful = handleResponse(session.startPurchaseBasketTransaction(SessionToIdMapper.getInstance().getCurrentSessionId(), new LinkedList<>())); //mafhid
         totalPriceAfterDiscount = priceAndSuccessful.getFirst();
         successfulItems = priceAndSuccessful.getSecond();
         Span spanBeforeDiscountTitle = new Span(totalPriceBeforeDiscount != totalPriceAfterDiscount ?
@@ -165,29 +167,44 @@ public class PaymentView extends Div implements BeforeLeaveObserver {
 
 
         ConfirmDialog dialog = new ConfirmDialog();
-        dialog.setHeader("Some of your items are out of stock");
-        dialog.setText("Do you want to proceed the purchase anyway?");
-        VerticalLayout dialogFailedProducts = new VerticalLayout();
 
-        dialogFailedProducts.setSpacing(false);
-        dialogFailedProducts.add(new Text("Total price after discount: " + totalPriceAfterDiscount));
+        dialog.setHeader(totalPriceAfterDiscount != 0.0 ? "Some of your items are out of stock"
+                : "All products are unavailable");
 
-        for (ServiceProduct product : failedProducts) {
-            String productName = product.getName();
-            Span productNameSpan = new Span(productName);
-            productNameSpan.getElement().getStyle().set("list-style-type", "circle");
-            dialogFailedProducts.add(productNameSpan);
+        if(totalPriceAfterDiscount != 0.0){
+            dialog.setText("Do you want to proceed the purchase anyway?");
+            VerticalLayout dialogFailedProducts = new VerticalLayout();
+
+            dialogFailedProducts.setSpacing(false);
+            dialogFailedProducts.add(new Text("Total price before discount: " + totalPriceAfterDiscount));
+
+            for (ServiceProduct product : failedProducts) {
+                String productName = product.getName();
+                Span productNameSpan = new Span(productName);
+                productNameSpan.getElement().getStyle().set("list-style-type", "circle");
+                dialogFailedProducts.add(productNameSpan);
+            }
+            dialog.add(dialogFailedProducts);
+            dialog.setCancelable(true);
+            dialog.addCancelListener(event -> {
+                handleResponse(session.cancelPurchase(SessionToIdMapper.getInstance().getCurrentSessionId()), "");
+                UI.getCurrent().navigate("");
+            });
+
+            dialog.setConfirmText("Proceed anyway");
+            dialog.addConfirmListener(event -> dialog.close());
         }
-        dialog.add(dialogFailedProducts);
-        dialog.setCancelable(true);
-        dialog.addCancelListener(event -> {
-            session.cancelPurchase(SessionToIdMapper.getInstance().getCurrentSessionId());
-            UI.getCurrent().navigate("");
-        });
+        else {
+            dialog.setConfirmText("Go back");
+            dialog.addConfirmListener(event -> {
+                        handleResponse(session.cancelPurchase(SessionToIdMapper.getInstance().getCurrentSessionId()),
+                                "");
+                        UI.getCurrent().navigate("");
+                    }
+            );
+            dialog.setCancelable(false);
 
-
-        dialog.setConfirmText("Proceed anyway");
-        dialog.addConfirmListener(event -> dialog.close());
+        }
 
 
         dialog.open();
@@ -532,7 +549,7 @@ public class PaymentView extends Div implements BeforeLeaveObserver {
     @Override
     public void beforeLeave(BeforeLeaveEvent beforeLeaveEvent) {
         if (!paymentSuccessful) {
-            session.cancelPurchase(SessionToIdMapper.getInstance().getCurrentSessionId());
+            handleResponse(session.cancelPurchase(SessionToIdMapper.getInstance().getCurrentSessionId()));
             Notification.show("Payment cancelled");
         } else
             sendPurchaseMessageToStoreOwners();

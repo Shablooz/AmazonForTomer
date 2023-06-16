@@ -12,9 +12,7 @@ import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.backend.storePackage.WorkerCard;
 import BGU.Group13B.backend.storePackage.newDiscoutns.DiscountInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
-import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.StoreDiscount;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
-import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
 import BGU.Group13B.service.entity.ReviewService;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
 import BGU.Group13B.service.entity.ServiceProduct;
@@ -716,7 +714,7 @@ public interface ISession {
     boolean checkIfQuestionsExist(int userId);
 
 
-    List<ServiceProduct> getAllFailedProductsAfterPayment(int userId);
+    Response<List<ServiceProduct>> getAllFailedProductsAfterPayment(int userId);
 
     /**
      * #13
@@ -744,9 +742,9 @@ public interface ISession {
     List<Integer> getFailedProducts(int userId, int storeId);
 
 
-    double getTotalPriceOfCart(int userId);
+    Response<Double> getTotalPriceOfCart(int userId);
 
-    void cancelPurchase(int userId);
+    Response<VoidResponse> cancelPurchase(int userId);
 
     boolean isUserLogged(int userId);
 
@@ -803,7 +801,7 @@ public interface ISession {
 
     int getStoreFounder(int storeId);
 
-    Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, List<String> coupons) throws PurchaseFailedException;
+    Response<Pair<Double, List<ServiceBasketProduct>>> startPurchaseBasketTransaction(int userId, List<String> coupons) throws PurchaseFailedException;
 
     /**
      * #43
@@ -1017,4 +1015,8 @@ public interface ISession {
     Response<UserTrafficRecord> getUserTrafficOfRange(int userId, LocalDate from, LocalDate to);
 
     Response<Boolean> removeMember(int adminId, int userId);
+  
+    Response<double[]> getStoreHistoryIncome(int storeId, int userId, LocalDate from, LocalDate to);
+
+    Response<double[]> getSystemHistoryIncome(int userId, LocalDate from, LocalDate to);
 }

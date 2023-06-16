@@ -35,7 +35,8 @@ public class UserPermissions {
         WORKERS_INFO,
         HISTORY,
         STAFF,
-        FONLY
+        FONLY,
+        STATS
     }
 
     public enum PopulationStatus{
@@ -127,6 +128,12 @@ public class UserPermissions {
             return PopulationStatus.MANAGER_NOT_OWNER;
 
         return PopulationStatus.REGULAR_MEMBER;
+    }
+
+
+    public void clearUserStorePermissions(int storeId) {
+        userStoreRole.remove(storeId);
+        userIndividualPermission.remove(storeId);
     }
 }
 

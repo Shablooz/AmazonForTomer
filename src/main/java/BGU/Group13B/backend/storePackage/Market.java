@@ -1,6 +1,8 @@
 package BGU.Group13B.backend.storePackage;
 
 
+import BGU.Group13B.backend.Pair;
+import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
 import BGU.Group13B.backend.System.Searcher;
@@ -29,10 +31,12 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Market {
     private final IStoreRepository storeRepository;
     private final IUserRepository userRepository;
+    private final IPurchaseHistoryRepository purchaseHistoryRepository;
     private Searcher searcher; //inject in the loading of the system
 
     private final AddToUserCart addToUserCart;
@@ -42,6 +46,7 @@ public class Market {
 
         this.storeRepository = SingletonCollection.getStoreRepository();
         this.userRepository = SingletonCollection.getUserRepository();
+        this.purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
         this.searcher = SingletonCollection.getSearcher();
         this.addToUserCart = SingletonCollection.getAddToUserCart();
     }
@@ -572,4 +577,17 @@ public class Market {
     public void removeMemberStores(int userId) {
         storeRepository.removeMemberStores(userId);
     }
+
+    public double[] getStoreHistoryIncome(int storeId, int userId, LocalDate startDate, LocalDate endDate) throws NoPermissionException {
+        return storeRepository.getStore(storeId).getStoreHistoryIncome(userId, startDate, endDate);
+    }
+
+    public double[] getSystemHistoryIncome(LocalDate startDate, LocalDate endDate) {
+        return purchaseHistoryRepository.getSystemHistoryIncome(startDate, endDate);
+    }
+
+    public String getStoreName(int storeId) {
+        return storeRepository.getStore(storeId).getStoreName();
+    }
+
 }
