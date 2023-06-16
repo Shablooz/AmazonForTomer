@@ -104,6 +104,7 @@ public class DiscountAccumulationRepositoryAsHashMap implements IDiscountAccumul
     public void reset() {
         noders.clear();
         nextId.set(0);
+        save();
     }
 
     @Override
@@ -144,4 +145,5 @@ public class DiscountAccumulationRepositoryAsHashMap implements IDiscountAccumul
     public void setNoders(Map<Integer, BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.productDisountTree.DiscountAccumulationNode> noders) {
         this.noders = noders;
     }
+
 }

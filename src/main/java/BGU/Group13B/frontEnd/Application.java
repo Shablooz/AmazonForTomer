@@ -36,6 +36,7 @@ public class Application implements AppShellConfigurator {
 
         SingletonCollection.setContext(context);
         //TODO load all repositories from db to memory
+        SingletonCollection.setDailyUserTrafficRepository();
         SingletonCollection.setReviewRepository();
         SingletonCollection.setProductRepository();
         SingletonCollection.setConditionRepository();
@@ -44,7 +45,6 @@ public class Application implements AppShellConfigurator {
         SingletonCollection.setStoreDiscountRootsRepository();
         SingletonCollection.setPurchasePolicyRootsRepository();
         //ConfigurationFileParser.parse();
-
     }
 
     public void setup(){

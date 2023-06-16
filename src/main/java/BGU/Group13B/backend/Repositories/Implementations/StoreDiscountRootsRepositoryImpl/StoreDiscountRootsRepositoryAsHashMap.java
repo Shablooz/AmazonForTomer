@@ -49,6 +49,7 @@ public class StoreDiscountRootsRepositoryAsHashMap implements IStoreDiscountRoot
     @Override
     public void reset() {
         roots.clear();
+        save();
     }
 
     @Override

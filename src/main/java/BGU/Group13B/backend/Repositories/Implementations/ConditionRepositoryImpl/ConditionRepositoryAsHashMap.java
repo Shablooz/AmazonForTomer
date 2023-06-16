@@ -241,6 +241,7 @@ public class ConditionRepositoryAsHashMap implements IConditionRepository {
     public void reset() {
         conditions.clear();
         nextId.set(0);
+        save();
     }
 
     @Override

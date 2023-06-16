@@ -7,6 +7,7 @@ import BGU.Group13B.backend.Repositories.Implementations.BasketReposistoryImpl.B
 import BGU.Group13B.backend.Repositories.Implementations.ConditionRepositoryImpl.ConditionRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.ConditionRepositoryImpl.ConditionRepositoryAsHashMapService;
 import BGU.Group13B.backend.Repositories.Implementations.DailyUserTrafficRepositoryImpl.DailyUserTrafficRepositoryAsList;
+import BGU.Group13B.backend.Repositories.Implementations.DailyUserTrafficRepositoryImpl.DailyUserTrafficRepositoryAsListService;
 import BGU.Group13B.backend.Repositories.Implementations.DiscountAccumulationRepositoryImpl.DiscountAccumulationRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.DiscountAccumulationRepositoryImpl.DiscountAccumulationRepositoryAsHashMapService;
 import BGU.Group13B.backend.Repositories.Implementations.DiscountRepositoryImpl.DiscountRepositoryAsHashMap;
@@ -28,6 +29,7 @@ import BGU.Group13B.backend.Repositories.Implementations.StoreRepositoryImpl.Sto
 import BGU.Group13B.backend.Repositories.Implementations.UserPemissionRepositoryImpl.UserPermissionRepositoryAsHashmap;
 import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepositoryAsHashmap;
 import BGU.Group13B.backend.Repositories.Interfaces.*;
+import BGU.Group13B.backend.System.DailyUserTraffic;
 import BGU.Group13B.backend.System.Searcher;
 import BGU.Group13B.backend.storePackage.AlertManager;
 import BGU.Group13B.backend.storePackage.Market;
@@ -252,6 +254,19 @@ public class SingletonCollection {
         }
     }
 
+    public static void setDailyUserTrafficRepository() {
+        DailyUserTrafficRepositoryAsList dailyUserTrafficRepositoryAsList = SingletonCollection.getContext().getBean(DailyUserTrafficRepositoryAsListService.class).getDailyUserTrafficRepository();
+        if(dailyUserTrafficRepositoryAsList == null){
+            DailyUserTrafficRepositoryAsList repo=(DailyUserTrafficRepositoryAsList) SingletonCollection.getDailyUserTrafficRepository();
+            SingletonCollection.getContext().getBean(DailyUserTrafficRepositoryAsListService.class).save(repo);
+        }else{
+            SingletonCollection.dailyUserTrafficRepository = SingletonCollection.getContext().getBean(DailyUserTrafficRepositoryAsListService.class).getDailyUserTrafficRepository();
+        }
+    }
+
+    public static void setDailyUserTrafficRepository(DailyUserTrafficRepositoryAsList dailyUserTrafficRepositoryAsList) {
+        SingletonCollection.dailyUserTrafficRepository = dailyUserTrafficRepositoryAsList;
+    }
     //lines below might need to be replaced with a field
     public static ProductRepositoryAsHashMapService getProductRepositoryAsHashMapService() {
         return SingletonCollection.getContext().getBean(ProductRepositoryAsHashMapService.class);
@@ -439,6 +454,7 @@ public class SingletonCollection {
         discountRepository.setSaveMode(saveMode);
         storeDiscountRootsRepository.setSaveMode(saveMode);
         purchasePolicyRootsRepository.setSaveMode(saveMode);
+        dailyUserTrafficRepository.setSaveMode(saveMode);
     }
     public static void setPaymentFail() {
         paymentAdapter = null;
