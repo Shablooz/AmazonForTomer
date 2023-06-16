@@ -625,4 +625,8 @@ public class User {
     public void removeBasketProduct(int productId, int storeId) throws Exception {
         cart.removeProduct(storeId, productId);
     }
+
+    public void clearUserStorePermissions(int storeId){
+        userPermissions.clearUserStorePermissions(storeId);
+    }
 }

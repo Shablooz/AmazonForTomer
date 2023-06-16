@@ -54,4 +54,27 @@ public class BroadCaster {
         }
     }
 
+
+    //Lior's addition - for system and store income
+    static HashMap<Integer, Runnable> incomeListeners = new HashMap<>();
+
+    public static synchronized Registration registerIncome(Integer id, Runnable listener) {
+        incomeListeners.put(id, listener);
+
+        return () -> {
+            synchronized (BroadCaster.class) {
+                incomeListeners.remove(id);
+            }
+        };
+    }
+
+    public static synchronized void broadcastIncome() {
+        for (var listener : incomeListeners.values()) {
+            if(listener != null)
+                executor.execute(listener);
+        }
+    }
+
+
+
 }

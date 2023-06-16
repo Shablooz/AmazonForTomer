@@ -519,6 +519,20 @@ public class ProxySession implements ISession {
         return null;
     }
 
+    @Override
+    public Response<double[]> getStoreHistoryIncome(int storeId, int userId, LocalDate from, LocalDate to) {
+        if(realSession != null)
+            return realSession.getStoreHistoryIncome(storeId, userId, from, to);
+        return null;
+    }
+
+    @Override
+    public Response<double[]> getSystemHistoryIncome(int userId, LocalDate from, LocalDate to) {
+        if(realSession != null)
+            return realSession.getSystemHistoryIncome(userId, from, to);
+        return null;
+    }
+
 
     @Override
     public Response<VoidResponse> purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount) {
