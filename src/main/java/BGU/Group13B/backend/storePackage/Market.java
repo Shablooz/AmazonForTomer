@@ -1,6 +1,7 @@
 package BGU.Group13B.backend.storePackage;
 
 
+import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
 import BGU.Group13B.backend.System.Searcher;
@@ -29,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Market {
     private final IStoreRepository storeRepository;
@@ -576,5 +578,10 @@ public class Market {
     public double[] getSystemHistoryIncome(LocalDate startDate, LocalDate endDate) {
         return purchaseHistoryRepository.getSystemHistoryIncome(startDate, endDate);
     }
+
+    public String getStoreName(int storeId) {
+        return storeRepository.getStore(storeId).getStoreName();
+    }
+
 
 }

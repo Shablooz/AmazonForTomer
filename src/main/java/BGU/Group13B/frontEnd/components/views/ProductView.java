@@ -135,7 +135,7 @@ public class ProductView extends VerticalLayout implements HasUrlParameter<Strin
         Button button = new com.vaadin.flow.component.button.Button("Buy Now");
         button.setIcon(VaadinIcon.CREDIT_CARD.create());
         button.addClickListener(event -> {
-            Response<VoidResponse> response = session.addToCart(userId, storeId, productId);//TODO change to Session::addProductToCart
+            Response<VoidResponse> response = session.addProductToCart(userId,productId, storeId );//TODO change to Session::addProductToCart
             UI.getCurrent().navigate("payment");
             if (response.didntSucceed()) {
                 Notification.show(response.getMessage());
@@ -150,7 +150,7 @@ public class ProductView extends VerticalLayout implements HasUrlParameter<Strin
         Button button = new Button("Add To Cart");
         button.setIcon(VaadinIcon.CART_O.create());
         button.addClickListener(event -> {
-            Response<VoidResponse> response = session.addToCart(userId, storeId, productId);//TODO change to Session::addProductToCart
+            Response<VoidResponse> response = session.addProductToCart(userId, productId, storeId);//TODO change to Session::addProductToCart
             if (response.didntSucceed()) {
                 Notification.show(response.getMessage());
             } else {
