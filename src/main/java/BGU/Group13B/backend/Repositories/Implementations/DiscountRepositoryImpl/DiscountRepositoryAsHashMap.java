@@ -207,14 +207,17 @@ public class DiscountRepositoryAsHashMap implements IDiscountRepository {
 
     @Override
     public void removeDiscount(int discountId, int storeId) {
-        discounts.remove(new PairForDiscounts(discountId, storeId));
+        discountToStoreId.remove(discountId);
+        discountToStoreDiscount.remove(discountId);
         save();
     }
 
     @Override
     public void reset() {
-        discounts.clear();
+        discountToStoreId.clear();
+        discountToStoreDiscount.clear();
         nextId.set(0);
+        save();
     }
 
     @Override
@@ -229,7 +232,8 @@ public class DiscountRepositoryAsHashMap implements IDiscountRepository {
         }
 
         for (var key : keysToRemove) {
-            discounts.remove(key);
+            discountToStoreDiscount.remove(key);
+            discountToStoreId.remove(key);
         }
         save();
     }
@@ -237,26 +241,43 @@ public class DiscountRepositoryAsHashMap implements IDiscountRepository {
 
     @Override
     public void removeAllStoreDiscounts(int storeId) {
-        List<PairForDiscounts> keysToRemove = new ArrayList<>();
+        List<Integer> keysToRemove = new ArrayList<>();
 
-        for (var keyValue : discounts.entrySet()) {
-            if (keyValue.getKey().getStoreId_for_pair() == storeId) {
+        for (var keyValue : discountToStoreId.entrySet()) {
+            if (keyValue.getValue() == storeId) {
                 keysToRemove.add(keyValue.getKey());
             }
         }
 
         for (var key : keysToRemove) {
-            discounts.remove(key);
+            discountToStoreDiscount.remove(key);
+            discountToStoreId.remove(key);
         }
         save();
     }
 
-    public ConcurrentHashMap<PairForDiscounts, StoreDiscount> getDiscounts() {
-        return (ConcurrentHashMap<PairForDiscounts, StoreDiscount>) discounts;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public void setDiscounts(ConcurrentHashMap<PairForDiscounts, StoreDiscount> discounts) {
-        this.discounts = discounts;
+    public void setDiscountToStoreDiscount(Map<Integer, StoreDiscount> discountToStoreDiscount) {
+        this.discountToStoreDiscount = discountToStoreDiscount;
+    }
+
+    public void setDiscountToStoreId(Map<Integer, Integer> discountToStoreId) {
+        this.discountToStoreId = discountToStoreId;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public Map<Integer, Integer> getDiscountToStoreId() {
+        return discountToStoreId;
+    }
+
+    public Map<Integer, StoreDiscount> getDiscountToStoreDiscount() {
+        return discountToStoreDiscount;
     }
 
     public AtomicInteger getNextId() {
@@ -276,4 +297,5 @@ public class DiscountRepositoryAsHashMap implements IDiscountRepository {
         if (saveMode)
             SingletonCollection.getContext().getBean(DiscountRepositoryService.class).save(this);
     }
+
 }
