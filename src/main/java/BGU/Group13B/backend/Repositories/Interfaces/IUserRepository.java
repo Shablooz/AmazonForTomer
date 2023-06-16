@@ -39,4 +39,5 @@ public interface IUserRepository {
     List<UserCard> getAllUserCards();
 
     void setSaveMode(boolean saveMode);
+    void save();
 }

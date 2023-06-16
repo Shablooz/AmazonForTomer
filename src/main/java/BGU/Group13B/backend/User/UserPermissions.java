@@ -2,10 +2,15 @@ package BGU.Group13B.backend.User;
 
 
 import BGU.Group13B.backend.Pair;
+import jakarta.persistence.*;
 
 import java.util.*;
 
+@Entity
 public class UserPermissions {
+
+    @Id
+    private int userId;
 
     public List<Pair<Integer, String>> getStoresAndRoles() {
         List<Pair<Integer,String>> lst = new LinkedList<>();
@@ -26,7 +31,6 @@ public class UserPermissions {
         OWNER,
         MANAGER,
     }
-
     public enum IndividualPermission{
         STOCK,
         MESSAGES,
@@ -38,14 +42,34 @@ public class UserPermissions {
         FONLY
     }
 
-    private UserPermissionStatus userPermissionStatus;
-    private HashMap<Integer/*storeId*/, StoreRole> userStoreRole;
-    private HashMap<Integer/*storeId*/, Set<IndividualPermission>> userIndividualPermission;
 
+
+    private UserPermissionStatus userPermissionStatus;
+    @ElementCollection
+    @CollectionTable(name = "UserPermissions_StoreRole",
+            joinColumns = {@JoinColumn(name = "UserPermissions_id", referencedColumnName = "userId")})
+    @MapKeyColumn(name = "storeId")
+    @Column(name = "storeRole")
+    private Map<Integer/*storeId*/, StoreRole> userStoreRole;
+
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
+    @JoinTable(name = "UserPermissions_IndividualPermissionSet",
+            joinColumns = {@JoinColumn(name = "UserPermissions_id", referencedColumnName = "userId")},
+            inverseJoinColumns = {@JoinColumn(name = "IndividualPermissionSet_id", referencedColumnName = "id")})
+    @MapKeyColumn(name = "storeId")
+    private Map<Integer/*storeId*/, IndividualPermissionSet> userIndividualPermission;
+
+    public UserPermissions(int userId) {
+        this.userPermissionStatus = UserPermissionStatus.GUEST;
+        this.userStoreRole = new HashMap<>();
+        this. userIndividualPermission = new HashMap<>();
+        this.userId= userId;
+    }
     public UserPermissions() {
         this.userPermissionStatus = UserPermissionStatus.GUEST;
         this.userStoreRole = new HashMap<>();
         this. userIndividualPermission = new HashMap<>();
+        this.userId=0;
     }
 
     public UserPermissionStatus getUserPermissionStatus() {
@@ -81,7 +105,7 @@ public class UserPermissions {
             userIndividualPermission.get(storeId).add(individualPermission);
         }
         else{
-            Set<IndividualPermission> ns = new HashSet<>();
+            IndividualPermissionSet ns = new IndividualPermissionSet();
             ns.add(individualPermission);
             userIndividualPermission.put(storeId, ns);
         }
@@ -91,9 +115,7 @@ public class UserPermissions {
         userIndividualPermission.get(storeId).remove(individualPermission);
     }
 
-    public Set<IndividualPermission> getIndividualPermissions(int storeId){
-        return userIndividualPermission.get(storeId);
-    }
+
 
     public void removeAllIndividualPermissions(int storeId){
         userIndividualPermission.get(storeId).clear();
@@ -103,5 +125,33 @@ public class UserPermissions {
         userStoreRole.clear();
         userIndividualPermission.clear();
     }
+    //getters and setters
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public Map<Integer, StoreRole> getUserStoreRole() {
+        return userStoreRole;
+    }
+
+    public void setUserStoreRole(Map<Integer, StoreRole> userStoreRole) {
+        this.userStoreRole = userStoreRole;
+    }
+
+    // getters and setters
+
+    public Map<Integer, IndividualPermissionSet> getUserIndividualPermission() {
+        return userIndividualPermission;
+    }
+
+    public void setUserIndividualPermission(Map<Integer, IndividualPermissionSet> userIndividualPermission) {
+        this.userIndividualPermission = userIndividualPermission;
+    }
+
 }
 

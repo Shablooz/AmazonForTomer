@@ -6,4 +6,7 @@ public interface IUserPermissionRepository {
     UserPermissions getUserPermission(int userId);
 
     void addUserPermission(int userId, UserPermissions userPermissions);
+
+    void setSaveMode(boolean saveMode);
+
 }

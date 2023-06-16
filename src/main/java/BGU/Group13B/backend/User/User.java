@@ -43,9 +43,9 @@ public class User {
     private  IMessageRepository messageRepository;
 
     @Transient
-    private  IUserPermissionRepository userPermissionRepository;
+    private  IUserPermissionRepository userPermissionRepository;// v
     @Transient
-    private  UserPermissions userPermissions;
+    private  UserPermissions userPermissions;// v
     @Transient
     private  Cart cart;
     @Transient
@@ -74,6 +74,7 @@ public class User {
     //eyal addition
     private volatile boolean isLoggedIn;
 
+    @Transient
     private  String adminIdentifier = "Admin";
     private boolean messageNotification;
     private boolean reviewedStoreNotification;
@@ -83,10 +84,10 @@ public class User {
         this.userId = userId;
         this.messageRepository = SingletonCollection.getMessageRepository();
         this.userPermissionRepository = SingletonCollection.getUserPermissionRepository();
-        UserPermissions userPermissions1 = userPermissionRepository.getUserPermission(userId);
+        UserPermissions userPermissions1 = getUserPermissionRepository().getUserPermission(userId);
         if (userPermissions1 == null) {
-            userPermissions1 = new UserPermissions();
-            userPermissionRepository.addUserPermission(userId, userPermissions1);
+            userPermissions1 = new UserPermissions(userId);
+            getUserPermissionRepository().addUserPermission(userId, userPermissions1);
         }
         this.userPermissions = userPermissions1;
         this.cart = new Cart(userId);
@@ -131,12 +132,12 @@ public class User {
 
 
     public boolean isRegistered() {
-        return this.userPermissions.getUserPermissionStatus() == UserPermissions.UserPermissionStatus.MEMBER ||
-                this.userPermissions.getUserPermissionStatus() == UserPermissions.UserPermissionStatus.ADMIN;
+        return this.getUserPermissions().getUserPermissionStatus() == UserPermissions.UserPermissionStatus.MEMBER ||
+                this.getUserPermissions().getUserPermissionStatus() == UserPermissions.UserPermissionStatus.ADMIN;
     }
 
     public boolean isAdmin() {
-        return this.userPermissions.getUserPermissionStatus() == UserPermissions.UserPermissionStatus.ADMIN;
+        return this.getUserPermissions().getUserPermissionStatus() == UserPermissions.UserPermissionStatus.ADMIN;
     }
 
     //#15
@@ -145,7 +146,7 @@ public class User {
         checkRegisterInfo(userName, password, email, birthdate);
         //updates the user info upon registration - no longer a guest
         updateUserDetail(userName, password, email, answer1, answer2, answer3, birthdate);
-        this.userPermissions.register(this.userId);
+        this.getUserPermissions().register(this.userId);
         return this;
     }
 
@@ -528,11 +529,11 @@ public class User {
     }
 
     public void setPermissions(UserPermissions.UserPermissionStatus status) {
-        this.userPermissions.setUserPermissionStatus(status);
+        this.getUserPermissions().setUserPermissionStatus(status);
     }
 
     public UserPermissions.UserPermissionStatus getStatus() {
-        return this.userPermissions.getUserPermissionStatus();
+        return this.getUserPermissions().getUserPermissionStatus();
     }
 
     public int getUserId() {
@@ -549,7 +550,7 @@ public class User {
     }
 
     public List<Pair<Integer, String>> getStoresAndRoles() {
-        return this.userPermissions.getStoresAndRoles();
+        return this.getUserPermissions().getStoresAndRoles();
     }
 
 
@@ -558,31 +559,30 @@ public class User {
     }
 
     public void addPermission(int storeId, UserPermissions.StoreRole storeRole) {
-        userPermissions.updateRoleInStore(storeId, storeRole);
+        getUserPermissions().updateRoleInStore(storeId, storeRole);
     }
 
     public void deletePermission(int storeId) {
-        userPermissions.deletePermission(storeId);
+        getUserPermissions().deletePermission(storeId);
     }
 
     public UserPermissions getUserPermissions() {
+        userPermissions= SingletonCollection.getUserPermissionRepository().getUserPermission(userId);
         return userPermissions;
     }
 
     public void addIndividualPermission(int storeId, UserPermissions.IndividualPermission individualPermission) {
-        userPermissions.addIndividualPermission(storeId, individualPermission);
+        getUserPermissions().addIndividualPermission(storeId, individualPermission);
     }
 
     public void deleteIndividualPermission(int storeId, UserPermissions.IndividualPermission individualPermission) {
-        userPermissions.deleteIndividualPermission(storeId, individualPermission);
+        getUserPermissions().deleteIndividualPermission(storeId, individualPermission);
     }
 
-    public Set<UserPermissions.IndividualPermission> getIndividualPermissions(int storeId) {
-        return userPermissions.getIndividualPermissions(storeId);
-    }
+
 
     public void removeAllIndividualPermissions(int storeId) {
-        userPermissions.removeAllIndividualPermissions(storeId);
+        getUserPermissions().removeAllIndividualPermissions(storeId);
     }
 
 
@@ -645,7 +645,7 @@ public class User {
     }
 
     public UserCard getUserCard(){
-        List<Pair<Integer, String>> pairs = userPermissions.getStoresAndRoles();
+        List<Pair<Integer, String>> pairs = getUserPermissions().getStoresAndRoles();
         StringBuilder stringBuilder = new StringBuilder();
         for(Pair<Integer, String> pair : pairs){
             stringBuilder.append("Store: ");
@@ -681,6 +681,7 @@ public class User {
     }
 
     public IUserPermissionRepository getUserPermissionRepository() {
+        userPermissionRepository= SingletonCollection.getUserPermissionRepository();
         return userPermissionRepository;
     }
 
@@ -691,6 +692,8 @@ public class User {
     public void setUserPermissions(UserPermissions userPermissions) {
         this.userPermissions = userPermissions;
     }
+
+
 
     public void setCart(Cart cart) {
         this.cart = cart;

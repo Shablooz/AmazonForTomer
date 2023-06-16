@@ -23,6 +23,7 @@ import BGU.Group13B.backend.Repositories.Implementations.StorePermissionsReposit
 import BGU.Group13B.backend.Repositories.Implementations.StorePermissionsRepositoryImpl.StorePermissionsRepositoryAsHashmap;
 import BGU.Group13B.backend.Repositories.Implementations.StoreRepositoryImpl.StoreRepoService;
 import BGU.Group13B.backend.Repositories.Implementations.StoreRepositoryImpl.StoreRepositoryAsList;
+import BGU.Group13B.backend.Repositories.Implementations.UserPemissionRepositoryImpl.UserPermissionRepService;
 import BGU.Group13B.backend.Repositories.Implementations.UserPemissionRepositoryImpl.UserPermissionRepositoryAsHashmap;
 import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepoService;
 import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepositoryAsHashmap;
@@ -175,6 +176,39 @@ public class SingletonCollection {
         market = new Market();
         session = new Session(market);
     }
+    //reset with flag
+    public static void reset_system(boolean saveMode ) {
+        //repositories
+        bidRepository = new BIDRepositoryAsList();
+        productRepository = new ProductRepositoryAsHashMap();
+        purchaseHistoryRepository = new PurchaseHistoryRepositoryAsList();
+        storeRepository = new StoreRepositoryAsList();
+        userRepository = new UserRepositoryAsHashmap();
+        basketRepository = new BasketRepositoryAsHashMap();
+        auctionRepository = new AuctionRepositoryAsHashMap();
+        basketProductRepository = new BasketProductRepositoryAsHashMap();
+        productHistoryRepository = new ProductHistoryRepositoryAsList();
+        storeMessagesRepository = new StoreMessageSingle();
+        reviewRepository = new ReviewRepoSingle();
+        messageRepository = new MessageRepositorySingle();
+        storeScoreRepository = new StoreScoreSingle();
+        userPermissionRepository = new UserPermissionRepositoryAsHashmap();
+        storePermissionRepository = new StorePermissionsRepositoryAsHashmap();
+        discountRepository = new DiscountRepositoryAsHashMap();
+        discountAccumulationRepository = new DiscountAccumulationRepositoryAsHashMap();
+        conditionRepository = new ConditionRepositoryAsHashMap();
+        storeDiscountRootsRepository = new StoreDiscountRootsRepositoryAsHashMap();
+        purchasePolicyRootsRepository = new PurchasePolicyRootsRepositoryAsHashMap();
+        //adapters
+
+        setSaveMode(saveMode);
+
+        //additional classes
+        alertManager = new AlertManager(userRepository);
+        searcher = new Searcher(productRepository, storeRepository);
+        market = new Market();
+        session = new Session(market);
+    }
 
     private SingletonCollection() {
     }
@@ -237,12 +271,25 @@ public class SingletonCollection {
         }
         SingletonCollection.getUserRepository().setSaveMode(true);
     }
-
-    public static void setUserRepository(UserRepositoryAsHashmap userRepositoryAsHashmap) {
-        SingletonCollection.userRepository = userRepositoryAsHashmap;
+    public static void setUserPermissionRepository() {
+        UserPermissionRepositoryAsHashmap userPermissionRepositoryAsHashmap  = SingletonCollection.getContext().getBean(UserPermissionRepService.class).getUserPermissionRepositoryAsHashmap();
+        if(userPermissionRepositoryAsHashmap == null){
+            UserPermissionRepositoryAsHashmap repo=(UserPermissionRepositoryAsHashmap) SingletonCollection.getUserPermissionRepository();
+            SingletonCollection.getContext().getBean(UserPermissionRepService.class).save(repo);
+        }else {
+            SingletonCollection.userPermissionRepository = SingletonCollection.getContext().getBean(UserPermissionRepService.class).getUserPermissionRepositoryAsHashmap();
+        }
+        SingletonCollection.getUserPermissionRepository().setSaveMode(true);
     }
+    public static void setUserPermissionRepository(UserPermissionRepositoryAsHashmap userPermissionRepositoryAsHashmap) {
+        SingletonCollection.userPermissionRepository = userPermissionRepositoryAsHashmap;
+    }
+
     public static void setReviewRepository(ReviewRepoSingle reviewRepository) {
         SingletonCollection.reviewRepository = reviewRepository;
+    }
+    public static void setUserRepository(UserRepositoryAsHashmap userRepositoryAsHashmap) {
+        SingletonCollection.userRepository = userRepositoryAsHashmap;
     }
     public static void setStoreRepository(StoreRepositoryAsList storeRepositoryAsList) {
         SingletonCollection.storeRepository = storeRepositoryAsList;
@@ -439,6 +486,7 @@ public class SingletonCollection {
         storeRepository.setSaveMode(saveMode);
         storePermissionRepository.setSaveMode(saveMode);
         userRepository.setSaveMode(saveMode);
+        userPermissionRepository.setSaveMode(saveMode);
 
     }
     public static void setPaymentFail() {

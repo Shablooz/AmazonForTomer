@@ -17,14 +17,14 @@ class IStoreRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        SingletonCollection.reset_system();
+        SingletonCollection.reset_system(false);
         SingletonCollection.setSaveMode(false);
         storeRepository= SingletonCollection.getStoreRepository();
     }
 
     @AfterEach
     void tearDown() {
-        SingletonCollection.reset_system();
+        SingletonCollection.reset_system(false);
         SingletonCollection.setSaveMode(false);
     }
 

@@ -93,7 +93,7 @@ public class MarketTest {
     @AfterEach
     void tearDown() {
         //deleteAllData();
-        SingletonCollection.reset_system();
+        SingletonCollection.reset_system(false);
         SingletonCollection.setSaveMode(false);
     }
 

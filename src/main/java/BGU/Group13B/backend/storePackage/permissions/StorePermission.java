@@ -174,7 +174,7 @@ public class StorePermission {
     }
 
     private boolean hasAdminPermission(int userId)  {
-        return userPermissionRepository.getUserPermission(userId).getUserPermissionStatus()
+        return getUserPermissionRepository().getUserPermission(userId).getUserPermissionStatus()
                 .equals(UserPermissions.UserPermissionStatus.ADMIN);
     }
 
@@ -459,6 +459,7 @@ public class StorePermission {
     }
 
     public IUserPermissionRepository getUserPermissionRepository() {
+        userPermissionRepository = SingletonCollection.getUserPermissionRepository();
         return userPermissionRepository;
     }
 

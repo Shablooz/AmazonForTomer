@@ -83,7 +83,7 @@ public abstract class ProjectTest {
 
     @BeforeEach
     public void setUp() {
-        SingletonCollection.reset_system();
+        SingletonCollection.reset_system(false);
         SingletonCollection.setSaveMode(false);
         this.session = SingletonCollection.getSession();
         setUpUsers();
@@ -95,7 +95,7 @@ public abstract class ProjectTest {
 
     @AfterAll
     public static void teardown() {
-        SingletonCollection.reset_system();
+        SingletonCollection.reset_system(false);
     }
 
     private void setUpStoresManagers() {

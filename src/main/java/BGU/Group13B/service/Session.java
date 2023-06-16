@@ -60,6 +60,7 @@ public class Session implements ISession {
         this.userRepositoryAsHashmap = SingletonCollection.getUserRepository();
 
         userRepositoryAsHashmap.setSaveMode(false);
+        SingletonCollection.getUserPermissionRepository().setSaveMode(false);
         //IMPORTANT need to initialize the session AFTER loading first user (id = 1) from database
         //id should 1
         //This should do nothing if the system was initialized in the past - making first admin
@@ -232,6 +233,7 @@ public class Session implements ISession {
         if (!user.isRegistered()) {
             if (getUserRepositoryAsHashmap().checkIfUserExists(username) == null) {
                 user.register(username, password, email, answer1, answer2, answer3,birthDate);
+                getUserRepositoryAsHashmap().save();
             } else {
                 throw new IllegalArgumentException("user with this username already exists!");
             }

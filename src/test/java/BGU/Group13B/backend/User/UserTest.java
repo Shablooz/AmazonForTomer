@@ -207,7 +207,7 @@ class UserTest {
     @Test
     void purchaseCartLoginLogoutSuccess() {
         //setup
-        SingletonCollection.reset_system();
+        SingletonCollection.reset_system(false);
         SingletonCollection.setSaveMode(false);
         int newUserId = SingletonCollection.getUserRepository().getNewUserId();
         User user = new User(newUserId);
@@ -321,7 +321,7 @@ class UserTest {
     @Test
     void purchaseCartLoginLogoutFail() {
         //setup
-        SingletonCollection.reset_system();
+        SingletonCollection.reset_system(false);
         SingletonCollection.setSaveMode(false);
         int newUserId = SingletonCollection.getUserRepository().getNewUserId();
         user = new User(newUserId);

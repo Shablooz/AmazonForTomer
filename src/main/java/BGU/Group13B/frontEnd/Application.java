@@ -43,6 +43,7 @@ public class Application implements AppShellConfigurator {
         SingletonCollection.setStorePermissionRepository();
         SingletonCollection.setStoreScoreRepository();
         SingletonCollection.setUserRepository();
+        SingletonCollection.setUserPermissionRepository();
 
 
         if(SingletonCollection.getUserRepository().getUser(1)==null)

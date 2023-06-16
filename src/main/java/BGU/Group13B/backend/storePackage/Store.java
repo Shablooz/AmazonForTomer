@@ -42,9 +42,9 @@ public class Store {
     @Transient
     private   PaymentAdapter paymentAdapter;
     @Transient
-    private   AlertManager alertManager;
+    private   AlertManager alertManager; // not needed
     @Transient
-    private   StorePermission storePermission;
+    private   StorePermission storePermission; //v
     @Transient
     private   IStoreMessagesRepository storeMessagesRepository;
     @Transient
@@ -52,9 +52,9 @@ public class Store {
     @Transient
     private   IBIDRepository bidRepository;
     @Transient
-    private   IUserRepository userRepository;
+    private   IUserRepository userRepository;// v
     @Transient
-    private   IStorePermissionsRepository storePermissionsRepository;
+    private   IStorePermissionsRepository storePermissionsRepository; //v
     @Id
     private   int storeId;
 
@@ -66,7 +66,7 @@ public class Store {
     @Transient
     private   IAuctionRepository auctionRepository;
     @Transient
-    private   IStoreScore storeScore;
+    private   IStoreScore storeScore; //v
 
     private boolean hidden = false;
     @Transient

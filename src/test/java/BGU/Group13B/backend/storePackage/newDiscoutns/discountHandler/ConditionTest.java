@@ -24,7 +24,7 @@ class ConditionTest {
 
     @BeforeEach
     void setUp() {
-        SingletonCollection.reset_system();
+        SingletonCollection.reset_system(false);
         SingletonCollection.setSaveMode(false);
         Product _product1 = SingletonCollection.getProductRepository().addProduct(1, "name", "category", 15.0, 3, "description");
         Product _product2 = SingletonCollection.getProductRepository().addProduct(2, "name", "category", 30.0, 3, "description");

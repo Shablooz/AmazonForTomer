@@ -305,7 +305,7 @@ class StoreTest {
     private int s1Id;
 
     public void customTearDown() {
-        SingletonCollection.reset_system();
+        SingletonCollection.reset_system(false);
         SingletonCollection.setSaveMode(false);
         /*
         omTestStore.getStorePermission().clearForTest();
