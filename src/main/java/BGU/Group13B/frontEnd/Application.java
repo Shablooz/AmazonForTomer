@@ -41,16 +41,10 @@ public class Application implements AppShellConfigurator {
         SingletonCollection.setDiscountaccuRepository();
         SingletonCollection.setDiscountRepository();
         SingletonCollection.setStoreDiscountRootsRepository();
+        SingletonCollection.setPurchasePolicyRootsRepository();
     }
 
     public void setup(){
-
-
-
-
-
-        //Timer timer = new Timer();
-        //timer.schedule(SessionToIdMapper.getInstance().kickExpired(), 5 * 60 * 1000, 5 * 60 * 1000);
     }
 
 }

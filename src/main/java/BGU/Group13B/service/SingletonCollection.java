@@ -17,6 +17,7 @@ import BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl.P
 import BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl.ProductRepositoryAsHashMapService;
 import BGU.Group13B.backend.Repositories.Implementations.PurchaseHistoryRepositoryImpl.PurchaseHistoryRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.PurchasePolicyRootsRepositoryImpl.PurchasePolicyRootsRepositoryAsHashMap;
+import BGU.Group13B.backend.Repositories.Implementations.PurchasePolicyRootsRepositoryImpl.PurchasePolicyRootsRepositoryAsHashMapService;
 import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepoSingle;
 import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepoSingleService;
 import BGU.Group13B.backend.Repositories.Implementations.StoreDiscountRootsRepositoryImpl.StoreDiscountRootRepositoryAsHashMapService;
@@ -240,6 +241,16 @@ public class SingletonCollection {
         }
     }
 
+    public static void setPurchasePolicyRootsRepository() {
+        PurchasePolicyRootsRepositoryAsHashMap purchasePolicyRootsRepositoryAsHashMap = SingletonCollection.getContext().getBean(PurchasePolicyRootsRepositoryAsHashMapService.class).getPurchesPolicyHashMap();
+        if(purchasePolicyRootsRepositoryAsHashMap == null){
+            PurchasePolicyRootsRepositoryAsHashMap repo=(PurchasePolicyRootsRepositoryAsHashMap) SingletonCollection.getPurchasePolicyRootsRepository();
+            SingletonCollection.getContext().getBean(PurchasePolicyRootsRepositoryAsHashMapService.class).save(repo);
+        }else{
+            SingletonCollection.purchasePolicyRootsRepository = SingletonCollection.getContext().getBean(PurchasePolicyRootsRepositoryAsHashMapService.class).getPurchesPolicyHashMap();
+        }
+    }
+
     //lines below might need to be replaced with a field
     public static ProductRepositoryAsHashMapService getProductRepositoryAsHashMapService() {
         return SingletonCollection.getContext().getBean(ProductRepositoryAsHashMapService.class);
@@ -426,6 +437,7 @@ public class SingletonCollection {
         conditionRepository.setSaveMode(saveMode);
         discountRepository.setSaveMode(saveMode);
         storeDiscountRootsRepository.setSaveMode(saveMode);
+        purchasePolicyRootsRepository.setSaveMode(saveMode);
     }
     public static void setPaymentFail() {
         paymentAdapter = null;
