@@ -1,8 +1,10 @@
 package BGU.Group13B.service;
 
 import BGU.Group13B.backend.Pair;
+import BGU.Group13B.backend.Repositories.Interfaces.IDailyUserTrafficRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
 import BGU.Group13B.backend.System.SystemInfo;
+import BGU.Group13B.backend.System.UserTrafficRecord;
 import BGU.Group13B.backend.User.*;
 import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.Review;
@@ -37,6 +39,8 @@ public class Session implements ISession {
     private final IUserRepository userRepository = SingletonCollection.getUserRepository();
     private static final Logger LOGGER_INFO = Logger.getLogger(Session.class.getName());
     private static final Logger LOGGER_ERROR = Logger.getLogger(Session.class.getName());
+
+    private final IDailyUserTrafficRepository dailyUserTrafficRepository = SingletonCollection.getDailyUserTrafficRepository();
 
     static {
         SingletonCollection.setFileHandler(LOGGER_INFO, true);
@@ -295,8 +299,20 @@ public class Session implements ISession {
                 /*example of use*/
                 LOGGER_INFO.info("user " + username + " logged in");
                 //gets the new id - of the user we're logging into
-                return userRepositoryAsHashmap.getUserId(user);
+                int id = userRepositoryAsHashmap.getUserId(user);
+
+                //update daily visitors
+                switch (user.getPopulationStatus()){
+                    case ADMIN -> dailyUserTrafficRepository.addAdmin();
+                    case OWNER -> dailyUserTrafficRepository.addStoreOwner();
+                    case MANAGER_NOT_OWNER -> dailyUserTrafficRepository.addStoreManagerThatIsNotOwner();
+                    case REGULAR_MEMBER -> dailyUserTrafficRepository.addRegularMember();
+                    case GUEST -> dailyUserTrafficRepository.addGuest();
+                }
+                BroadCaster.broadcastUserTraffic();
+                return id;
             }
+
         } catch (Exception e) {
             //line below temporary
             throw new IllegalArgumentException(e.getMessage());
@@ -696,6 +712,8 @@ public class Session implements ISession {
     public int enterAsGuest() {
         int id = userRepositoryAsHashmap.getNewUserId();
         userRepositoryAsHashmap.addUser(id, new User(id));
+        dailyUserTrafficRepository.addGuest();
+        BroadCaster.broadcastUserTraffic();
         return id;
     }
 
@@ -725,7 +743,7 @@ public class Session implements ISession {
     public void setUserStatus(int admin_id, int userId, int newStatus) {
         if (!getUserStatus(admin_id).equals("Admin")) {
             //should throw an exception
-            throw new IllegalArgumentException("isnt an admin");
+            throw new IllegalArgumentException("isn't an admin");
         }
         if (newStatus == 1 && userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.MEMBER)
             userRepositoryAsHashmap.getUser(userId).setPermissions(UserPermissions.UserPermissionStatus.ADMIN);
@@ -1531,6 +1549,23 @@ public class Session implements ISession {
         return Response.exception(e);
     }
 
+    }
+
+    @Override
+    public Response<UserTrafficRecord> getUserTrafficOfRange(int userId, LocalDate from, LocalDate to) {
+        try {
+            var isAdmin = isAdmin(userId);
+            if(isAdmin.didntSucceed())
+                return Response.failure("failed to check user permissions");
+
+            if(!isAdmin.getData())
+                return Response.failure("user is not an admin");
+
+            return Response.success(dailyUserTrafficRepository.getUserTrafficOfRage(from, to));
+
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
     }
 
     public UserCard getUserInfo(int userId, int userInfoId){

@@ -3,6 +3,7 @@ package BGU.Group13B.frontEnd;
 import BGU.Group13B.backend.Repositories.Implementations.DiscountRepositoryImpl.PairForDiscountService;
 import BGU.Group13B.backend.Repositories.Implementations.DiscountRepositoryImpl.PairForDiscounts;
 import BGU.Group13B.service.SingletonCollection;
+import BGU.Group13B.service.ConfigurationFileParser;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.theme.Theme;
@@ -42,6 +43,8 @@ public class Application implements AppShellConfigurator {
         SingletonCollection.setDiscountRepository();
         SingletonCollection.setStoreDiscountRootsRepository();
         SingletonCollection.setPurchasePolicyRootsRepository();
+        //ConfigurationFileParser.parse();
+
     }
 
     public void setup(){
