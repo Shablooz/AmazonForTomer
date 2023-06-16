@@ -1,5 +1,6 @@
 package BGU.Group13B.frontEnd.components.views;
 
+import BGU.Group13B.frontEnd.ResponseHandler;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.frontEnd.components.views.viewEntity.Address;
 import BGU.Group13B.frontEnd.components.views.viewEntity.Card;
@@ -49,7 +50,7 @@ import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY_INLIN
 
 
 @Route(value = "payment", layout = MainLayout.class)
-public class PaymentView extends Div implements BeforeLeaveObserver {
+public class PaymentView extends Div implements BeforeLeaveObserver, ResponseHandler {
 
     private static final String PAYMENT = "Payment";
     private static final String BILLING_ADDRESS = "Billing address";
@@ -128,7 +129,7 @@ public class PaymentView extends Div implements BeforeLeaveObserver {
     }
 
     private HorizontalLayout getPricesLayout(Session session, double totalPriceBeforeDiscount) {
-        var priceAndSuccessful = session.startPurchaseBasketTransaction(SessionToIdMapper.getInstance().getCurrentSessionId(), new LinkedList<>()); //mafhid
+        var priceAndSuccessful = handleResponse(session.startPurchaseBasketTransaction(SessionToIdMapper.getInstance().getCurrentSessionId(), new LinkedList<>())); //mafhid
         totalPriceAfterDiscount = priceAndSuccessful.getFirst();
         successfulItems = priceAndSuccessful.getSecond();
         Span spanBeforeDiscountTitle = new Span(totalPriceBeforeDiscount != totalPriceAfterDiscount ?

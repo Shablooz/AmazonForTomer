@@ -135,13 +135,13 @@ public class Session implements ISession {
     }
 
     @Override
-    public Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, List<String> coupons) {
+    public Response<Pair<Double, List<ServiceBasketProduct>>> startPurchaseBasketTransaction(int userId, List<String> coupons) {
         try {
             var priceSuccessfulItems = userRepository.getUser(userId).startPurchaseBasketTransaction(coupons);
-            return new Pair<>(priceSuccessfulItems.getFirst(),
-                    priceSuccessfulItems.getSecond().stream().map(ServiceBasketProduct::new).collect(Collectors.toList()));
+            return Response.success(new Pair<>(priceSuccessfulItems.getFirst(),
+                    priceSuccessfulItems.getSecond().stream().map(ServiceBasketProduct::new).collect(Collectors.toList())));
         } catch (PurchaseFailedException | NoPermissionException e) {
-            throw new RuntimeException(e);
+            return Response.failure(e.getMessage());
         }
     }
 

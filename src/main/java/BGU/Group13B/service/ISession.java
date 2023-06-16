@@ -803,7 +803,7 @@ public interface ISession {
 
     int getStoreFounder(int storeId);
 
-    Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, List<String> coupons) throws PurchaseFailedException;
+    Response<Pair<Double, List<ServiceBasketProduct>>> startPurchaseBasketTransaction(int userId, List<String> coupons) throws PurchaseFailedException;
 
     /**
      * #43

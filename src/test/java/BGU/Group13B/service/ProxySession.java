@@ -65,7 +65,7 @@ public class ProxySession implements ISession {
 
 
     @Override
-    public Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, List<String> coupons) throws PurchaseFailedException {
+    public Response<Pair<Double, List<ServiceBasketProduct>>> startPurchaseBasketTransaction(int userId, List<String> coupons) throws PurchaseFailedException {
         if (realSession != null)
             return realSession.startPurchaseBasketTransaction(userId, coupons);
         return null;

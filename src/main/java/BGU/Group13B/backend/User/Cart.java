@@ -53,6 +53,7 @@ public class Cart {
         double totalPrice = 0;
         for (var basket : userBaskets) {
             var transaction = basket.startPurchaseBasketTransactionWithSuccessful(userInfo, coupons);
+            if(transaction.getFirst() == -1) continue;//in case the store has been deleted
             totalPrice += transaction.getFirst();
             successfulProducts.addAll(transaction.getSecond());
         }

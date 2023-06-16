@@ -45,8 +45,8 @@ public class Basket {
     }
 
     //used for testing
-    public Basket(int userId, int storeId, IBasketProductRepository productRepository,IPurchaseHistoryRepository purchaseHistoryRepository,
-                  PaymentAdapter paymentAdapter,CalculatePriceOfBasket calculatePriceOfBasket, DeliveryAdapter deliveryAdapter) {
+    public Basket(int userId, int storeId, IBasketProductRepository productRepository, IPurchaseHistoryRepository purchaseHistoryRepository,
+                  PaymentAdapter paymentAdapter, CalculatePriceOfBasket calculatePriceOfBasket, DeliveryAdapter deliveryAdapter) {
         this.userId = userId;
         this.storeId = storeId;
         this.basketProductRepository = productRepository;
@@ -90,9 +90,11 @@ public class Basket {
         getSuccessfulProducts();
         //double totalAmount = getTotalAmount(productsCoupons);//fixme
         //calculate the total price of the products by the store discount policy
-        var basketProducts= basketProductRepository.getBasketProducts(storeId, userId).orElseGet(LinkedList::new);
+        var basketProducts = basketProductRepository.getBasketProducts(storeId, userId).orElseGet(LinkedList::new);
+        if(successfulProducts.isEmpty()) return Pair.of(-1.0, new LinkedList<>());
         finalPrice = calculateStoreDiscount(userInfo, coupons);
         return Pair.of(finalPrice, new LinkedList<>(successfulProducts));
+
     }
 
     public void purchaseBasket(String creditCardNumber,
@@ -192,7 +194,7 @@ public class Basket {
 
         } else {
             basketProductRepository.addNewProductToBasket(productId, storeId, userId);
-            if(newPrice != -1)
+            if (newPrice != -1)
                 basketProductRepository.getBasketProduct(productId, storeId, userId).setPrice(newPrice);
             basketProductRepository.getBasketProduct(productId, storeId, userId).setQuantity(amount);
         }
