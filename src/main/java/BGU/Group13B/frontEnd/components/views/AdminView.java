@@ -5,6 +5,7 @@ import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.service.Response;
 import BGU.Group13B.service.Session;
 import BGU.Group13B.service.info.StoreInfo;
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -19,6 +20,7 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -75,7 +77,23 @@ public class AdminView extends VerticalLayout implements BeforeEnterObserver, Af
         grid.addColumn(UserCard::userId).setHeader("User ID");
         grid.addColumn(UserCard::userName).setHeader("Username");
         grid.addColumn(UserCard::email).setHeader("Email");
-        grid.addColumn(UserCard::userPermissions).setHeader("Permission");//fixme change to string?
+        grid.addColumn(UserCard::userPermissions).setHeader("Permission");
+        grid.setItemDetailsRenderer(new ComponentRenderer<>(userCard -> new Text(userCard.userPermissions())));
+        grid.addItemClickListener(event -> {
+            UserCard userCard = event.getItem();
+            if (grid.isDetailsVisible(userCard)) {
+                grid.setDetailsVisible(userCard, false);
+            } else {
+                grid.setDetailsVisible(userCard, true);
+            }
+        });
+
+        /*grid.addColumn(new ComponentRenderer<>(userCard -> { this has a tooltip feature
+            Label label = new Label(userCard.userPermissions());
+            label.getElement().setProperty("title", userCard.userPermissions());
+            return label;
+        })).setHeader("Permission");*/
+
 
         //actions
         grid.addItemClickListener(item -> {

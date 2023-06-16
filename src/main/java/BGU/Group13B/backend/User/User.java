@@ -8,6 +8,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import BGU.Group13B.backend.Repositories.Interfaces.IMessageRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IUserPermissionRepository;
+import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
 import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.backend.storePackage.Review;
@@ -31,6 +32,7 @@ public class User {
     private final int userId;
     private final IMessageRepository messageRepository;
     private final IUserPermissionRepository userPermissionRepository;
+    private final IStoreRepository storeRepository;
     private final UserPermissions userPermissions;
     private final Cart cart;
     private final Market market;
@@ -61,6 +63,7 @@ public class User {
         this.userId = userId;
         this.messageRepository = SingletonCollection.getMessageRepository();
         this.userPermissionRepository = SingletonCollection.getUserPermissionRepository();
+        this.storeRepository = SingletonCollection.getStoreRepository();
         UserPermissions userPermissions1 = userPermissionRepository.getUserPermission(userId);
         if (userPermissions1 == null) {
             userPermissions1 = new UserPermissions();
@@ -606,8 +609,8 @@ public class User {
         List<Pair<Integer, String>> pairs = userPermissions.getStoresAndRoles();
         StringBuilder stringBuilder = new StringBuilder();
         for(Pair<Integer, String> pair : pairs){
-            stringBuilder.append("Store: ");
-            stringBuilder.append(pair.getFirst());
+            stringBuilder.append(" Store: ");
+            stringBuilder.append(storeRepository.getStore(pair.getFirst()).getStoreName());
             stringBuilder.append(" Role: ");
             stringBuilder.append(pair.getSecond());
         }
