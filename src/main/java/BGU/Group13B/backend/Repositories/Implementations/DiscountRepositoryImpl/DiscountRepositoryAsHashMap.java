@@ -54,8 +54,8 @@ public class DiscountRepositoryAsHashMap implements IDiscountRepository {
         StoreDiscount storeDiscount = new StoreDiscount(id, storeId, condition, discountPercentage, expirationDate, coupon);
         //PairForDiscounts pair = new PairForDiscounts(id, storeId);
         //discounts.put(pair, storeDiscount);
-        discountToStoreId.put(this.id, storeId);
-        discountToStoreDiscount.put(this.id, storeDiscount);
+        discountToStoreId.put(id, storeId);
+        discountToStoreDiscount.put(id, storeDiscount);
         save();
         return id;
     }
@@ -63,10 +63,9 @@ public class DiscountRepositoryAsHashMap implements IDiscountRepository {
     @Override
     public int addStoreDiscount(int storeId, double discountPercentage, LocalDate expirationDate, String coupon) {
         int id = nextId.getAndIncrement();
-        //PairForDiscounts pair = new PairForDiscounts(id, storeId);
         StoreDiscount storeDiscount = new StoreDiscount(id, storeId, discountPercentage, expirationDate, coupon);
-        discountToStoreId.put(this.id, storeId);
-        discountToStoreDiscount.put(this.id, storeDiscount);
+        discountToStoreId.put(id, storeId);
+        discountToStoreDiscount.put(id, storeDiscount);
 
         save();
         return id;
@@ -75,10 +74,9 @@ public class DiscountRepositoryAsHashMap implements IDiscountRepository {
     @Override
     public int addStoreDiscount(int storeId, Condition condition, double discountPercentage, LocalDate expirationDate) {
         int id = nextId.getAndIncrement();
-        PairForDiscounts pair = new PairForDiscounts(id, storeId);
         StoreDiscount storeDiscount = new StoreDiscount(id, storeId, condition, discountPercentage, expirationDate);
-        discountToStoreId.put(this.id, storeId);
-        discountToStoreDiscount.put(this.id, storeDiscount);
+        discountToStoreId.put(id, storeId);
+        discountToStoreDiscount.put(id, storeDiscount);
         save();
         return id;
 
@@ -88,8 +86,8 @@ public class DiscountRepositoryAsHashMap implements IDiscountRepository {
     public int addStoreDiscount(int storeId, double discountPercentage, LocalDate expirationDate) {
         int id = nextId.getAndIncrement();
         StoreDiscount storeDiscount = new StoreDiscount(id, storeId, discountPercentage, expirationDate);
-        discountToStoreId.put(this.id, storeId);
-        discountToStoreDiscount.put(this.id, storeDiscount);
+        discountToStoreId.put(id, storeId);
+        discountToStoreDiscount.put(id, storeDiscount);
         save();
         return id;
     }
@@ -98,8 +96,8 @@ public class DiscountRepositoryAsHashMap implements IDiscountRepository {
     public int addCategoryDiscount(int storeId, Condition condition, double discountPercentage, LocalDate expirationDate, String category, String coupon) {
         int id = nextId.getAndIncrement();
         StoreDiscount storeDiscount = new CategoryDiscount(id, storeId, condition, discountPercentage, expirationDate, category, coupon);
-        discountToStoreId.put(this.id, storeId);
-        discountToStoreDiscount.put(this.id, storeDiscount);
+        discountToStoreId.put(id, storeId);
+        discountToStoreDiscount.put(id, storeDiscount);
         save();
         return id;
     }
@@ -108,8 +106,8 @@ public class DiscountRepositoryAsHashMap implements IDiscountRepository {
     public int addCategoryDiscount(int storeId, double discountPercentage, LocalDate expirationDate, String category, String coupon) {
         int id = nextId.getAndIncrement();
         StoreDiscount storeDiscount = new CategoryDiscount(id, storeId, discountPercentage, expirationDate, category, coupon);
-        discountToStoreId.put(this.id, storeId);
-        discountToStoreDiscount.put(this.id, storeDiscount);
+        discountToStoreId.put(id, storeId);
+        discountToStoreDiscount.put(id, storeDiscount);
         save();
         return id;
     }
@@ -118,8 +116,8 @@ public class DiscountRepositoryAsHashMap implements IDiscountRepository {
     public int addCategoryDiscount(int storeId, Condition condition, double discountPercentage, LocalDate expirationDate, String category) {
         int id = nextId.getAndIncrement();
         StoreDiscount storeDiscount = new CategoryDiscount(id, storeId, condition, discountPercentage, expirationDate, category);
-        discountToStoreId.put(this.id, storeId);
-        discountToStoreDiscount.put(this.id, storeDiscount);
+        discountToStoreId.put(id, storeId);
+        discountToStoreDiscount.put(id, storeDiscount);
         save();
         return id;
     }
@@ -128,8 +126,8 @@ public class DiscountRepositoryAsHashMap implements IDiscountRepository {
     public int addCategoryDiscount(int storeId, double discountPercentage, LocalDate expirationDate, String category) {
         int id = nextId.getAndIncrement();
         StoreDiscount storeDiscount = new CategoryDiscount(id, storeId, discountPercentage, expirationDate, category);
-        discountToStoreId.put(this.id, storeId);
-        discountToStoreDiscount.put(this.id, storeDiscount);
+        discountToStoreId.put(id, storeId);
+        discountToStoreDiscount.put(id, storeDiscount);
         save();
         return id;
     }
@@ -138,8 +136,8 @@ public class DiscountRepositoryAsHashMap implements IDiscountRepository {
     public int addProductDiscount(int storeId, Condition condition, double discountPercentage, LocalDate expirationDate, int productId, String coupon) {
         int id = nextId.getAndIncrement();
         StoreDiscount storeDiscount = new ProductDiscount(id, storeId, condition, discountPercentage, expirationDate, productId, coupon);
-        discountToStoreId.put(this.id, storeId);
-        discountToStoreDiscount.put(this.id, storeDiscount);
+        discountToStoreId.put(id, storeId);
+        discountToStoreDiscount.put(id, storeDiscount);
         save();
         return id;
     }
@@ -148,8 +146,8 @@ public class DiscountRepositoryAsHashMap implements IDiscountRepository {
     public int addProductDiscount(int storeId, double discountPercentage, LocalDate expirationDate, int productId, String coupon) {
         int id = nextId.getAndIncrement();
         StoreDiscount storeDiscount = new ProductDiscount(id, storeId, discountPercentage, expirationDate, productId, coupon);
-        discountToStoreId.put(this.id, storeId);
-        discountToStoreDiscount.put(this.id, storeDiscount);
+        discountToStoreId.put(id, storeId);
+        discountToStoreDiscount.put(id, storeDiscount);
         save();
         return id;
     }
@@ -158,8 +156,8 @@ public class DiscountRepositoryAsHashMap implements IDiscountRepository {
     public int addProductDiscount(int storeId, Condition condition, double discountPercentage, LocalDate expirationDate, int productId) {
         int id = nextId.getAndIncrement();
         StoreDiscount storeDiscount = new ProductDiscount(id, storeId, condition, discountPercentage, expirationDate, productId);
-        discountToStoreId.put(this.id, storeId);
-        discountToStoreDiscount.put(this.id, storeDiscount);
+        discountToStoreId.put(id, storeId);
+        discountToStoreDiscount.put(id, storeDiscount);
         save();
         return id;
     }
@@ -168,8 +166,8 @@ public class DiscountRepositoryAsHashMap implements IDiscountRepository {
     public int addProductDiscount(int storeId, double discountPercentage, LocalDate expirationDate, int productId) {
         int id = nextId.getAndIncrement();
         StoreDiscount storeDiscount = new ProductDiscount(id, storeId, discountPercentage, expirationDate, productId);
-        discountToStoreId.put(this.id, storeId);
-        discountToStoreDiscount.put(this.id, storeDiscount);
+        discountToStoreId.put(id, storeId);
+        discountToStoreDiscount.put(id, storeDiscount);
         save();
         return id;
     }
