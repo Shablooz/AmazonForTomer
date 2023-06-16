@@ -22,6 +22,8 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
@@ -34,8 +36,6 @@ public class CartView extends Div implements ResponseHandler {
     private final Session session;
     private final GridPro<ServiceBasketProduct> cartItemsGrid;
     private final Button purchaseItemsButton = new Button("Purchase Items");
-    private final Button deleteProduct = new Button("Delete product");
-    private final Dialog dialog = new Dialog();
     private final NumberField totalPrice = new NumberField("Total Price");
     private ComboBox<Product> storeName;
     private ComboBox<Product> productName;
@@ -49,27 +49,10 @@ public class CartView extends Div implements ResponseHandler {
         cartItemsGrid.addThemeVariants(GridProVariant.LUMO_HIGHLIGHT_READ_ONLY_CELLS);
         //cartItemsGrid.setSizeFull();
         // Add the grid to the layout
-        initDialog();
         cartItemsGrid.setAllRowsVisible(true);
         add(getLowerButtons());
 
         setItemsToGrid(cartItemsGrid);
-    }
-
-    private void initDialog() {
-
-        dialog.setHeaderTitle("Remove product");
-
-        VerticalLayout dialogLayout = createDialogLayout();
-        dialog.add(dialogLayout);
-
-        Button removeButton = createRemoveButton(dialog);
-        Button cancelButton = new Button("Cancel", e -> dialog.close());
-        dialog.setCloseOnEsc(false);
-        dialog.getFooter().add(cancelButton);
-        dialog.getFooter().add(removeButton);
-
-        add(dialog);
     }
 
     private VerticalLayout createDialogLayout() {
@@ -113,12 +96,16 @@ public class CartView extends Div implements ResponseHandler {
             }
             int userId = SessionToIdMapper.getInstance().getCurrentSessionId();
             List<ServiceBasketProduct> serviceProducts = handleResponse(session.getCartContent(SessionToIdMapper.getInstance().getCurrentSessionId()));
+            if(serviceProducts == null)
+                return;
             String productNameString = productName.getValue().getProductName();
             String storeNameString = storeName.getValue().getStoreName();
             int productId = serviceProducts.stream().filter(serviceBasketProduct -> serviceBasketProduct.getName().equals(productNameString)).findFirst().get().getProductId();
             int storeId = serviceProducts.stream().filter(serviceBasketProduct -> serviceBasketProduct.getStoreName(session).equals(storeNameString)).findFirst().get().getStoreId();
             handleResponse(session.removeBasketProduct(userId, productId, storeId));
-            var serviceProductsResponse = session.getCartContent(SessionToIdMapper.getInstance().getCurrentSessionId());
+            var serviceProductsResponse = handleResponse(session.getCartContent(SessionToIdMapper.getInstance().getCurrentSessionId()), "");
+            if(serviceProductsResponse == null)
+                return;
 
             updateGrid(cartItemsGrid, serviceProductsResponse);
             dialog.close();
@@ -129,15 +116,9 @@ public class CartView extends Div implements ResponseHandler {
     }
 
     private VerticalLayout getLowerButtons() {
-        var horizontal = new HorizontalLayout(deleteProductButton(), purchaseItemsButton(), totalPrice);
+        var horizontal = new HorizontalLayout(purchaseItemsButton(), totalPrice);
         horizontal.setAlignItems(FlexComponent.Alignment.BASELINE);
         return new VerticalLayout(cartItemsGrid, horizontal);
-    }
-
-    private Component deleteProductButton() {
-        deleteProduct.setVisible(true);
-        deleteProduct.addClickListener(event -> dialog.open());
-        return deleteProduct;
     }
 
     private Component purchaseItemsButton() {
@@ -154,18 +135,17 @@ public class CartView extends Div implements ResponseHandler {
     }
 
     private void setItemsToGrid(GridPro<ServiceBasketProduct> cartItemsGrid) {
-        Response<List<ServiceBasketProduct>> serviceProductsResponse = session.getCartContent(SessionToIdMapper.getInstance().getCurrentSessionId());
-        if (serviceProductsResponse.getStatus() == Response.Status.SUCCESS) {
-            updateGrid(cartItemsGrid, serviceProductsResponse);
-        } else
-            Notification.show(serviceProductsResponse.getMessage());
+        var cartContent = handleResponse(session.getCartContent(SessionToIdMapper.getInstance().getCurrentSessionId()));
+        updateGrid(cartItemsGrid, cartContent);
     }
 
-    private void updateGrid(GridPro<ServiceBasketProduct> cartItemsGrid, Response<List<ServiceBasketProduct>> serviceProductsResponse) {
-        List<ServiceBasketProduct> serviceBasketProducts = serviceProductsResponse.getData().stream().filter(serviceBasketProduct -> serviceBasketProduct.storeExists(session)).toList();
-        List<ServiceBasketProduct> serviceBasketProductsToRemove = serviceProductsResponse.getData().stream().filter(serviceBasketProduct -> !serviceBasketProduct.storeExists(session)).toList();
+    private void updateGrid(GridPro<ServiceBasketProduct> cartItemsGrid, List<ServiceBasketProduct> serviceProductsResponse) {
+        if(serviceProductsResponse == null)
+            return;
+        List<ServiceBasketProduct> serviceBasketProducts = serviceProductsResponse.stream().filter(serviceBasketProduct -> serviceBasketProduct.storeExists(session)).toList();
+        List<ServiceBasketProduct> serviceBasketProductsToRemove = serviceProductsResponse.stream().filter(serviceBasketProduct -> !serviceBasketProduct.storeExists(session)).toList();
         if (serviceBasketProductsToRemove.size() > 0)
-            session.removeBasketProducts(serviceBasketProductsToRemove, SessionToIdMapper.getInstance().getCurrentSessionId());
+            handleResponse(session.removeBasketProducts(serviceBasketProductsToRemove, SessionToIdMapper.getInstance().getCurrentSessionId()));
         cartItemsGrid.setItems(serviceBasketProducts);
         totalPrice.setValue(serviceBasketProducts.stream().mapToDouble(ServiceBasketProduct::getSubtotal).sum());
     }
@@ -185,6 +165,10 @@ public class CartView extends Div implements ResponseHandler {
         cartItemsGrid.addColumn(ServiceBasketProduct::getSubtotal).setHeader("Subtotal");
         cartItemsGrid.addColumn(ServiceBasketProduct::getCategory).setHeader("Category");
         cartItemsGrid.addColumn(serviceBasketProduct -> serviceBasketProduct.getStoreName(session)).setHeader("Store name");
+        cartItemsGrid.addComponentColumn(serviceBasketProduct -> new Button("Remove", e -> {
+            handleResponse(session.removeBasketProduct(SessionToIdMapper.getInstance().getCurrentSessionId(), serviceBasketProduct.getProductId(), serviceBasketProduct.getStoreId()));
+            updateGrid(cartItemsGrid, handleResponse(session.getCartContent(SessionToIdMapper.getInstance().getCurrentSessionId())));
+        })).setHeader("Remove");
         //total price before discounts
         cartItemsGrid.setSizeFull();
         return cartItemsGrid;
@@ -206,7 +190,7 @@ public class CartView extends Div implements ResponseHandler {
             session.changeProductQuantityInCart(SessionToIdMapper.getInstance().getCurrentSessionId(), serviceBasketProduct.getStoreId(), serviceBasketProduct.getProductId(),
                     newQuantity);
             // Update the quantity when the user changes the value in the TextField
-            updateGrid(cartItemsGrid, session.getCartContent(SessionToIdMapper.getInstance().getCurrentSessionId()));
+            updateGrid(cartItemsGrid, handleResponse(session.getCartContent(SessionToIdMapper.getInstance().getCurrentSessionId())));
         }
     }
 }

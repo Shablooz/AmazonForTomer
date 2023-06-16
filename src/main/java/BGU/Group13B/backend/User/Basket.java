@@ -91,7 +91,6 @@ public class Basket {
         getSuccessfulProducts();
         //double totalAmount = getTotalAmount(productsCoupons);//fixme
         //calculate the total price of the products by the store discount policy
-        var basketProducts = basketProductRepository.getBasketProducts(storeId, userId).orElseGet(LinkedList::new);
         if(successfulProducts.isEmpty()) return Pair.of(-1.0, new LinkedList<>());
         finalPrice = calculateStoreDiscount(userInfo, coupons);
         return Pair.of(finalPrice, new LinkedList<>(successfulProducts));
@@ -184,6 +183,11 @@ public class Basket {
                     failedProducts.add(basketProduct);
                 }
             }
+        }
+
+        //remove the failed products from the basket
+        for (BasketProduct basketProduct : failedProducts) {
+            basketProductRepository.removeBasketProduct(basketProduct.getProductId(), userId, storeId);
         }
     }
 

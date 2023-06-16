@@ -168,32 +168,33 @@ public class PaymentView extends Div implements BeforeLeaveObserver, ResponseHan
 
         ConfirmDialog dialog = new ConfirmDialog();
 
-        dialog.setHeader("Some of your items are out of stock");
-        dialog.setText("Do you want to proceed the purchase anyway?");
-        VerticalLayout dialogFailedProducts = new VerticalLayout();
+        dialog.setHeader(totalPriceAfterDiscount != 0.0 ? "Some of your items are out of stock"
+                : "All products are unavailable");
 
-        dialogFailedProducts.setSpacing(false);
-        dialogFailedProducts.add(new Text(totalPriceAfterDiscount != 0.0 ?
-                "Total price after discount: " + totalPriceAfterDiscount : "All products are unavailable"));
+        if(totalPriceAfterDiscount != 0.0){
+            dialog.setText("Do you want to proceed the purchase anyway?");
+            VerticalLayout dialogFailedProducts = new VerticalLayout();
 
-        for (ServiceProduct product : failedProducts) {
-            String productName = product.getName();
-            Span productNameSpan = new Span(productName);
-            productNameSpan.getElement().getStyle().set("list-style-type", "circle");
-            dialogFailedProducts.add(productNameSpan);
-        }
-        dialog.add(dialogFailedProducts);
-        dialog.setCancelable(true);
-        dialog.addCancelListener(event -> {
-            handleResponse(session.cancelPurchase(SessionToIdMapper.getInstance().getCurrentSessionId()), "");
-            UI.getCurrent().navigate("");
-        });
+            dialogFailedProducts.setSpacing(false);
+            dialogFailedProducts.add(new Text("Total price before discount: " + totalPriceAfterDiscount));
 
-        if (totalPriceAfterDiscount != 0) {
+            for (ServiceProduct product : failedProducts) {
+                String productName = product.getName();
+                Span productNameSpan = new Span(productName);
+                productNameSpan.getElement().getStyle().set("list-style-type", "circle");
+                dialogFailedProducts.add(productNameSpan);
+            }
+            dialog.add(dialogFailedProducts);
+            dialog.setCancelable(true);
+            dialog.addCancelListener(event -> {
+                handleResponse(session.cancelPurchase(SessionToIdMapper.getInstance().getCurrentSessionId()), "");
+                UI.getCurrent().navigate("");
+            });
+
             dialog.setConfirmText("Proceed anyway");
             dialog.addConfirmListener(event -> dialog.close());
-
-        } else {
+        }
+        else {
             dialog.setConfirmText("Go back");
             dialog.addConfirmListener(event -> {
                         handleResponse(session.cancelPurchase(SessionToIdMapper.getInstance().getCurrentSessionId()),
