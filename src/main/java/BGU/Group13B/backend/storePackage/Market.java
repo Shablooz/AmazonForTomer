@@ -1,6 +1,7 @@
 package BGU.Group13B.backend.storePackage;
 
 
+import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
 import BGU.Group13B.backend.System.Searcher;
 import BGU.Group13B.backend.User.*;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 
 public class Market {
     private final IStoreRepository storeRepository;
+    private final IPurchaseHistoryRepository purchaseHistoryRepository;
     private Searcher searcher; //inject in the loading of the system
 
     private final AddToUserCart addToUserCart;
@@ -39,6 +41,7 @@ public class Market {
         SingletonCollection.setCalculatePriceOfBasket(this::calculatePriceOfBasket);
 
         this.storeRepository = SingletonCollection.getStoreRepository();
+        this.purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
         this.searcher = SingletonCollection.getSearcher();
         this.addToUserCart = SingletonCollection.getAddToUserCart();
     }
@@ -568,6 +571,10 @@ public class Market {
 
     public double[] getStoreHistoryIncome(int storeId, int userId, LocalDate startDate, LocalDate endDate) throws NoPermissionException {
         return storeRepository.getStore(storeId).getStoreHistoryIncome(userId, startDate, endDate);
+    }
+
+    public double[] getSystemHistoryIncome(LocalDate startDate, LocalDate endDate) {
+        return purchaseHistoryRepository.getSystemHistoryIncome(startDate, endDate);
     }
 
 }

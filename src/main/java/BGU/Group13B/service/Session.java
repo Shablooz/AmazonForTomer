@@ -1557,6 +1557,23 @@ public class Session implements ISession {
         }
     }
 
+    @Override
+    public Response<double[]> getSystemHistoryIncome(int userId, LocalDate from, LocalDate to) {
+        try{
+            var isAdmin = isAdmin(userId);
+            if(isAdmin.didntSucceed())
+                return Response.failure("failed to check user permissions");
+
+            if(!isAdmin.getData())
+                return Response.failure("user is not an admin");
+
+            return Response.success(market.getSystemHistoryIncome(from, to));
+        }
+        catch (Exception e){
+            return Response.exception(e);
+        }
+    }
+
     public UserCard getUserInfo(int userId, int userInfoId){
         try {
             return market.getUserInfo(userId, userInfoId);
