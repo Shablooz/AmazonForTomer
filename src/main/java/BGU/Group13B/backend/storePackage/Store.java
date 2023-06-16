@@ -691,6 +691,8 @@ public class Store {
 
     private void deleteAllStorePermissions() {
         storePermissionsRepository.deleteStorePermissions(storeId);
+        for(WorkerCard workerCard : storePermission.getWorkersInfo())
+            userRepository.getUser(workerCard.userId()).clearUserStorePermissions(storeId);
     }
 
     public boolean isHidden() {
