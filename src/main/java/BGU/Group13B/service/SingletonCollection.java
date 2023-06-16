@@ -19,6 +19,7 @@ import BGU.Group13B.backend.Repositories.Implementations.PurchaseHistoryReposito
 import BGU.Group13B.backend.Repositories.Implementations.PurchasePolicyRootsRepositoryImpl.PurchasePolicyRootsRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepoSingle;
 import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepoSingleService;
+import BGU.Group13B.backend.Repositories.Implementations.StoreDiscountRootsRepositoryImpl.StoreDiscountRootRepositoryAsHashMapService;
 import BGU.Group13B.backend.Repositories.Implementations.StoreDiscountRootsRepositoryImpl.StoreDiscountRootsRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyImpl.StoreMessageSingle;
 import BGU.Group13B.backend.Repositories.Implementations.StorePermissionsRepositoryImpl.StorePermissionsRepositoryAsHashmap;
@@ -228,6 +229,17 @@ public class SingletonCollection {
         }
     }
 
+
+    public static void setStoreDiscountRootsRepository() {
+        StoreDiscountRootsRepositoryAsHashMap storeDiscountRootsRepositoryAsHashMap = SingletonCollection.getContext().getBean(StoreDiscountRootRepositoryAsHashMapService.class).getStoreDiscountRepository();
+        if(storeDiscountRootsRepositoryAsHashMap == null){
+            StoreDiscountRootsRepositoryAsHashMap repo=(StoreDiscountRootsRepositoryAsHashMap) SingletonCollection.getStoreDiscountRootsRepository();
+            SingletonCollection.getContext().getBean(StoreDiscountRootRepositoryAsHashMapService.class).save(repo);
+        }else{
+            SingletonCollection.storeDiscountRootsRepository = SingletonCollection.getContext().getBean(StoreDiscountRootRepositoryAsHashMapService.class).getStoreDiscountRepository();
+        }
+    }
+
     //lines below might need to be replaced with a field
     public static ProductRepositoryAsHashMapService getProductRepositoryAsHashMapService() {
         return SingletonCollection.getContext().getBean(ProductRepositoryAsHashMapService.class);
@@ -413,6 +425,7 @@ public class SingletonCollection {
         discountAccumulationRepository.setSaveMode(saveMode);
         conditionRepository.setSaveMode(saveMode);
         discountRepository.setSaveMode(saveMode);
+        storeDiscountRootsRepository.setSaveMode(saveMode);
     }
     public static void setPaymentFail() {
         paymentAdapter = null;

@@ -4,10 +4,7 @@ import BGU.Group13B.backend.User.BasketInfo;
 import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.ProductDiscountMap;
 import BGU.Group13B.service.info.DiscountAccumulationTreeInfo;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
+import jakarta.persistence.*;
 
 import java.util.List;
 @Entity
@@ -15,6 +12,7 @@ import java.util.List;
 public abstract class DiscountAccumulationNode {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int nodeId;
 
     public DiscountAccumulationNode() {

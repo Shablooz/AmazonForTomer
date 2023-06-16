@@ -23,7 +23,7 @@ public class DiscountAccumulationRepositoryAsHashMap implements IDiscountAccumul
 
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
     @JoinTable(name = "DiscountAccumulationRepositoryAsHashMap_DiscountAccumulationNode",
-            joinColumns = {@JoinColumn(name = "DiscountAccumulationRepositoryAsHashMap_id", referencedColumnName = "id")},
+            joinColumns = {@JoinColumn(name = "DiscountAccumulationRepositoryAsHashMap_tableid", referencedColumnName = "id")},
             inverseJoinColumns = {
                     @JoinColumn(name = "DiscountAccumulationNode_id", referencedColumnName = "nodeId")})
     @MapKeyJoinColumn(name = "discountNodeId")
@@ -132,9 +132,6 @@ public class DiscountAccumulationRepositoryAsHashMap implements IDiscountAccumul
         return noders;
     }
 
-    public void setNoders(Map<Integer, DiscountAccumulationNode> noders) {
-        this.noders = noders;
-    }
 
     public AtomicInteger getNextId() {
         return nextId;
@@ -142,5 +139,9 @@ public class DiscountAccumulationRepositoryAsHashMap implements IDiscountAccumul
 
     public void setNextId(AtomicInteger nextId) {
         this.nextId = nextId;
+    }
+
+    public void setNoders(Map<Integer, BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.productDisountTree.DiscountAccumulationNode> noders) {
+        this.noders = noders;
     }
 }

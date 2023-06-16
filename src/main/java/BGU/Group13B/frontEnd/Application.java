@@ -40,14 +40,7 @@ public class Application implements AppShellConfigurator {
         SingletonCollection.setConditionRepository();
         SingletonCollection.setDiscountaccuRepository();
         SingletonCollection.setDiscountRepository();
-        //remove those - examples
-        NoderSonService service = SingletonCollection.getContext().getBean(NoderSonService.class);
-        service.addPerson(new NoderSon("until when"));
-        service.addPerson(new NoderSon("and how much more"));
-        System.out.println(service.getNoder(1));
-
-
-
+        SingletonCollection.setStoreDiscountRootsRepository();
     }
 
     public void setup(){
