@@ -20,12 +20,12 @@ import java.util.*;
 //NO NEED TO PERSIST UWU
 public class DiscountPolicy {
 
-    private final int storeId;
+    private int storeId;
     private DiscountAccumulationNode discountAccumulationTree;
-    private final IStoreDiscountRootsRepository discountRootsRepository;
-    private final IDiscountAccumulationRepository discountAccumulationRepository;
-    private final IDiscountRepository discountRepository;
-    private final IConditionRepository conditionRepository;
+    private IStoreDiscountRootsRepository discountRootsRepository;
+    private IDiscountAccumulationRepository discountAccumulationRepository;
+    private IDiscountRepository discountRepository;
+    private IConditionRepository conditionRepository;
 
     public DiscountPolicy(int storeId) {
         this.storeId = storeId;
@@ -43,73 +43,76 @@ public class DiscountPolicy {
     }
 
 
+    public IDiscountRepository getDiscountRepository() {
+        return SingletonCollection.getDiscountRepository();
+    }
     /**
      * <h1>Discount crud</h1>
      */
     public int addStoreDiscount(int conditionId, double discountPercentage, LocalDate expirationDate, String coupon) {
         Condition condition = conditionRepository.getCondition(conditionId);
-        return discountRepository.addStoreDiscount(storeId, condition, discountPercentage, expirationDate, coupon);
+        return getDiscountRepository().addStoreDiscount(storeId, condition, discountPercentage, expirationDate, coupon);
     }
 
     public int addStoreDiscount(double discountPercentage, LocalDate expirationDate, String coupon) {
-        return discountRepository.addStoreDiscount(storeId, discountPercentage, expirationDate, coupon);
+        return getDiscountRepository().addStoreDiscount(storeId, discountPercentage, expirationDate, coupon);
     }
 
     public int addStoreDiscount(int conditionId, double discountPercentage, LocalDate expirationDate) {
         Condition condition = conditionRepository.getCondition(conditionId);
-        return discountRepository.addStoreDiscount(storeId, condition, discountPercentage, expirationDate);
+        return getDiscountRepository().addStoreDiscount(storeId, condition, discountPercentage, expirationDate);
     }
 
     public int addStoreDiscount(double discountPercentage, LocalDate expirationDate) {
-        return discountRepository.addStoreDiscount(storeId, discountPercentage, expirationDate);
+        return getDiscountRepository().addStoreDiscount(storeId, discountPercentage, expirationDate);
     }
 
     public int addCategoryDiscount(int conditionId, double discountPercentage, LocalDate expirationDate, String category, String coupon) {
         Condition condition = conditionRepository.getCondition(conditionId);
-        return discountRepository.addCategoryDiscount(storeId, condition, discountPercentage, expirationDate, category, coupon);
+        return getDiscountRepository().addCategoryDiscount(storeId, condition, discountPercentage, expirationDate, category, coupon);
     }
 
     public int addCategoryDiscount(double discountPercentage, LocalDate expirationDate, String category, String coupon) {
-        return discountRepository.addCategoryDiscount(storeId, discountPercentage, expirationDate, category, coupon);
+        return getDiscountRepository().addCategoryDiscount(storeId, discountPercentage, expirationDate, category, coupon);
     }
 
     public int addCategoryDiscount(int conditionId, double discountPercentage, LocalDate expirationDate, String category) {
         Condition condition = conditionRepository.getCondition(conditionId);
-        return discountRepository.addCategoryDiscount(storeId, condition, discountPercentage, expirationDate, category);
+        return getDiscountRepository().addCategoryDiscount(storeId, condition, discountPercentage, expirationDate, category);
     }
 
     public int addCategoryDiscount(double discountPercentage, LocalDate expirationDate, String category) {
-        return discountRepository.addCategoryDiscount(storeId, discountPercentage, expirationDate, category);
+        return getDiscountRepository().addCategoryDiscount(storeId, discountPercentage, expirationDate, category);
     }
 
     public int addProductDiscount(int conditionId, double discountPercentage, LocalDate expirationDate, int productId, String coupon) {
         Condition condition = conditionRepository.getCondition(conditionId);
-        return discountRepository.addProductDiscount(storeId, condition, discountPercentage, expirationDate, productId, coupon);
+        return getDiscountRepository().addProductDiscount(storeId, condition, discountPercentage, expirationDate, productId, coupon);
     }
 
     public int addProductDiscount(double discountPercentage, LocalDate expirationDate, int productId, String coupon) {
-        return discountRepository.addProductDiscount(storeId, discountPercentage, expirationDate, productId, coupon);
+        return getDiscountRepository().addProductDiscount(storeId, discountPercentage, expirationDate, productId, coupon);
     }
 
     public int addProductDiscount(int conditionId, double discountPercentage, LocalDate expirationDate, int productId) {
         Condition condition = conditionRepository.getCondition(conditionId);
-        return discountRepository.addProductDiscount(storeId, condition, discountPercentage, expirationDate, productId);
+        return getDiscountRepository().addProductDiscount(storeId, condition, discountPercentage, expirationDate, productId);
     }
 
     public int addProductDiscount(double discountPercentage, LocalDate expirationDate, int productId) {
-        return discountRepository.addProductDiscount(storeId, discountPercentage, expirationDate, productId);
+        return getDiscountRepository().addProductDiscount(storeId, discountPercentage, expirationDate, productId);
     }
 
     public List<StoreDiscount> getStoreDiscounts() {
-        return discountRepository.getStoreDiscounts(storeId);
+        return getDiscountRepository().getStoreDiscounts(storeId);
     }
 
     public StoreDiscount getDiscount(int discountId) {
-        return discountRepository.getDiscount(discountId, storeId);
+        return getDiscountRepository().getDiscount(discountId, storeId);
     }
 
     public void removeDiscount(int discountId) {
-        discountRepository.removeDiscount(discountId, storeId);
+        getDiscountRepository().removeDiscount(discountId, storeId);
     }
 
 
@@ -188,11 +191,11 @@ public class DiscountPolicy {
                 sum();
     }
     public void removeAllDiscounts() {
-        discountRepository.removeAllStoreDiscounts(storeId);
+        getDiscountRepository().removeAllStoreDiscounts(storeId);
     }
 
     public void removeProductDiscount(int productId){
-        discountRepository.removeStoreProductDiscounts(storeId, productId);
+        getDiscountRepository().removeStoreProductDiscounts(storeId, productId);
     }
 
     public DiscountAccumulationTreeInfo getDiscountAccumulationTree() {

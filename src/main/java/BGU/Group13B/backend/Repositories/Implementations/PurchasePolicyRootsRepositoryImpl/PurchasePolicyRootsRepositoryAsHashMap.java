@@ -7,7 +7,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PurchasePolicyRootsRepositoryAsHashMap implements IPurchasePolicyRootsRepository {
-    private final Map<Integer/*storeId*/, Integer/*conditionRootId*/> purchasePolicyRoots;
+
+    private Map<Integer/*storeId*/, Integer/*conditionRootId*/> purchasePolicyRoots;
 
     public PurchasePolicyRootsRepositoryAsHashMap() {
         this.purchasePolicyRoots = new ConcurrentHashMap<>();
@@ -24,5 +25,13 @@ public class PurchasePolicyRootsRepositoryAsHashMap implements IPurchasePolicyRo
 
     public void removePurchasePolicyRoot(int storeId) {
         purchasePolicyRoots.remove(storeId);
+    }
+
+    public Map<Integer, Integer> getPurchasePolicyRoots() {
+        return purchasePolicyRoots;
+    }
+
+    public void setPurchasePolicyRoots(Map<Integer, Integer> purchasePolicyRoots) {
+        this.purchasePolicyRoots = purchasePolicyRoots;
     }
 }

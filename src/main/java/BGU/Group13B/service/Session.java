@@ -1259,6 +1259,7 @@ public class Session implements ISession {
         try {
             return Response.success(market.addStoreDiscount(storeId, userId, discountPercentage, expirationDate));
         } catch (Exception e) {
+            e.printStackTrace();
             return Response.exception(e);
         }
     }

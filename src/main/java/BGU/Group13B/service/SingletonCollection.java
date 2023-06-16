@@ -9,6 +9,7 @@ import BGU.Group13B.backend.Repositories.Implementations.ConditionRepositoryImpl
 import BGU.Group13B.backend.Repositories.Implementations.DiscountAccumulationRepositoryImpl.DiscountAccumulationRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.DiscountAccumulationRepositoryImpl.DiscountAccumulationRepositoryAsHashMapService;
 import BGU.Group13B.backend.Repositories.Implementations.DiscountRepositoryImpl.DiscountRepositoryAsHashMap;
+import BGU.Group13B.backend.Repositories.Implementations.DiscountRepositoryImpl.DiscountRepositoryService;
 import BGU.Group13B.backend.Repositories.Implementations.IStoreScoreRepository.StoreScoreSingle;
 import BGU.Group13B.backend.Repositories.Implementations.MessageRepositoryImpl.MessageRepositorySingle;
 import BGU.Group13B.backend.Repositories.Implementations.ProductHistoryRepositoryImpl.ProductHistoryRepositoryAsList;
@@ -67,7 +68,6 @@ public class SingletonCollection {
     private static IStoreDiscountRootsRepository storeDiscountRootsRepository;
     private static IPurchasePolicyRootsRepository purchasePolicyRootsRepository;
     private static ConfigurableApplicationContext context;
-
     // set context
     public static void setContext(ConfigurableApplicationContext updated)
     {
@@ -208,13 +208,23 @@ public class SingletonCollection {
         }
     }
 
-    public static void setDiscountRepository() {
+    public static void setDiscountaccuRepository() {
         DiscountAccumulationRepositoryAsHashMap discountAccumulationRepositoryAsHashMap = SingletonCollection.getContext().getBean(DiscountAccumulationRepositoryAsHashMapService.class).getDiscountAccumulationAsHashMap();
         if(discountAccumulationRepositoryAsHashMap == null){
             DiscountAccumulationRepositoryAsHashMap repo=(DiscountAccumulationRepositoryAsHashMap) SingletonCollection.getDiscountAccumulationRepository();
             SingletonCollection.getContext().getBean(DiscountAccumulationRepositoryAsHashMapService.class).save(repo);
         }else{
-            SingletonCollection.conditionRepository = SingletonCollection.getContext().getBean(ConditionRepositoryAsHashMapService.class).getConditionRepositoryAsHashMap();
+            SingletonCollection.discountAccumulationRepository = SingletonCollection.getContext().getBean(DiscountAccumulationRepositoryAsHashMapService.class).getDiscountAccumulationAsHashMap();
+        }
+    }
+
+    public static void setDiscountRepository() {
+        DiscountRepositoryAsHashMap discountRepositoryAsHashMap = SingletonCollection.getContext().getBean(DiscountRepositoryService.class).getDiscountRepositoryAsHashmap();
+        if(discountRepositoryAsHashMap == null){
+            DiscountRepositoryAsHashMap repo=(DiscountRepositoryAsHashMap) SingletonCollection.getDiscountRepository();
+            SingletonCollection.getContext().getBean(DiscountRepositoryService.class).save(repo);
+        }else{
+            SingletonCollection.discountRepository = SingletonCollection.getContext().getBean(DiscountRepositoryService.class).getDiscountRepositoryAsHashmap();
         }
     }
 
@@ -402,9 +412,16 @@ public class SingletonCollection {
         productRepository.setSaveMode(saveMode);
         discountAccumulationRepository.setSaveMode(saveMode);
         conditionRepository.setSaveMode(saveMode);
+        discountRepository.setSaveMode(saveMode);
     }
     public static void setPaymentFail() {
         paymentAdapter = null;
     }
+
+    public static void setDiscountRepository(DiscountRepositoryAsHashMap discountRepositoryAsHashMap){
+        SingletonCollection.discountRepository = discountRepositoryAsHashMap;
+    }
+
+
 }
 

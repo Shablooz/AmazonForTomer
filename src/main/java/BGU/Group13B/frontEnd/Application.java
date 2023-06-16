@@ -1,5 +1,7 @@
 package BGU.Group13B.frontEnd;
 
+import BGU.Group13B.backend.Repositories.Implementations.DiscountRepositoryImpl.PairForDiscountService;
+import BGU.Group13B.backend.Repositories.Implementations.DiscountRepositoryImpl.PairForDiscounts;
 import BGU.Group13B.service.SingletonCollection;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.component.page.Push;
@@ -26,7 +28,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @Push
 @EntityScan(basePackages = {"BGU.Group13B.backend","BGU.Group13B.frontEnd","BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl"})
 public class Application implements AppShellConfigurator {
-
     public static void main(String[] args) {
         //timer for deleting idle sessions
         //running the ui
@@ -37,9 +38,8 @@ public class Application implements AppShellConfigurator {
         SingletonCollection.setReviewRepository();
         SingletonCollection.setProductRepository();
         SingletonCollection.setConditionRepository();
+        SingletonCollection.setDiscountaccuRepository();
         SingletonCollection.setDiscountRepository();
-        //need to access singleton collection here
-
         //remove those - examples
         NoderSonService service = SingletonCollection.getContext().getBean(NoderSonService.class);
         service.addPerson(new NoderSon("until when"));
