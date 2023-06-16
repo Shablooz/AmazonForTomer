@@ -621,4 +621,8 @@ public class User {
     public void removeBasketProducts(List<Pair<Integer, Integer>> productStoreList) {
         cart.removeBasketProducts(productStoreList);
     }
+
+    public void removeBasketProduct(int productId, int storeId) throws Exception {
+        cart.removeProduct(storeId, productId);
+    }
 }

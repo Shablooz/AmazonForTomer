@@ -84,11 +84,12 @@ public class PaymentView extends Div implements BeforeLeaveObserver, ResponseHan
     public PaymentView(Session session) {
         this.session = session;
         paymentSuccessful = false;
-        double totalPriceBeforeDiscount = session.getTotalPriceOfCart(SessionToIdMapper.getInstance().getCurrentSessionId());
+        double totalPriceBeforeDiscount = handleResponse(session.getTotalPriceOfCart(SessionToIdMapper.getInstance().getCurrentSessionId()), "");
         //coupon code in the future
         add(getPricesLayout(session, totalPriceBeforeDiscount));
 
-        List<ServiceProduct> failedProducts = session.getAllFailedProductsAfterPayment(SessionToIdMapper.getInstance().getCurrentSessionId());
+        List<ServiceProduct> failedProducts = handleResponse(
+                session.getAllFailedProductsAfterPayment(SessionToIdMapper.getInstance().getCurrentSessionId()), "");
         if (failedProducts.size() > 0) {
             add(paymentFailedView(failedProducts, totalPriceAfterDiscount));
         }
@@ -184,7 +185,7 @@ public class PaymentView extends Div implements BeforeLeaveObserver, ResponseHan
         dialog.add(dialogFailedProducts);
         dialog.setCancelable(true);
         dialog.addCancelListener(event -> {
-            session.cancelPurchase(SessionToIdMapper.getInstance().getCurrentSessionId());
+            handleResponse(session.cancelPurchase(SessionToIdMapper.getInstance().getCurrentSessionId()), "");
             UI.getCurrent().navigate("");
         });
 
@@ -195,7 +196,8 @@ public class PaymentView extends Div implements BeforeLeaveObserver, ResponseHan
         } else {
             dialog.setConfirmText("Go back");
             dialog.addConfirmListener(event -> {
-                        session.cancelPurchase(SessionToIdMapper.getInstance().getCurrentSessionId());
+                        handleResponse(session.cancelPurchase(SessionToIdMapper.getInstance().getCurrentSessionId()),
+                                "");
                         UI.getCurrent().navigate("");
                     }
             );
@@ -546,7 +548,7 @@ public class PaymentView extends Div implements BeforeLeaveObserver, ResponseHan
     @Override
     public void beforeLeave(BeforeLeaveEvent beforeLeaveEvent) {
         if (!paymentSuccessful) {
-            session.cancelPurchase(SessionToIdMapper.getInstance().getCurrentSessionId());
+            handleResponse(session.cancelPurchase(SessionToIdMapper.getInstance().getCurrentSessionId()));
             Notification.show("Payment cancelled");
         } else
             sendPurchaseMessageToStoreOwners();

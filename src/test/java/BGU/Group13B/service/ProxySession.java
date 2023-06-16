@@ -13,7 +13,6 @@ import BGU.Group13B.backend.storePackage.WorkerCard;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.newDiscoutns.DiscountInfo;
-import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.StoreDiscount;
 import BGU.Group13B.service.entity.ReviewService;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
 import BGU.Group13B.service.entity.ServiceProduct;
@@ -999,10 +998,10 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public List<ServiceProduct> getAllFailedProductsAfterPayment(int userId) {
+    public Response<List<ServiceProduct>> getAllFailedProductsAfterPayment(int userId) {
         if (realSession != null)
             return realSession.getAllFailedProductsAfterPayment(userId);
-        return new ArrayList<>();
+        return null;
     }
 
     @Override
@@ -1031,14 +1030,14 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public double getTotalPriceOfCart(int userId) {
+    public Response<Double> getTotalPriceOfCart(int userId) {
         if (realSession != null)
             return realSession.getTotalPriceOfCart(userId);
-        return -1;
+        return null;
     }
 
     @Override
-    public void cancelPurchase(int userId) {
+    public Response<VoidResponse> cancelPurchase(int userId) {
         if (realSession != null)
             realSession.cancelPurchase(userId);
     }
