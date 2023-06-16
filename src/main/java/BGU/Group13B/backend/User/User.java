@@ -391,7 +391,7 @@ public class User {
         return market.getStoreScore(storeId);
     }
 
-    public double purchaseCart(String creditCardNumber, String creditCardMonth,
+    public synchronized double purchaseCart(String creditCardNumber, String creditCardMonth,
                                String creditCardYear, String creditCardHolderFirstName,
                                String creditCardCcv, String id,
                                HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
@@ -466,16 +466,12 @@ public class User {
     }
 
     public void addProductToCart(int productId, int storeId) throws Exception {
-        if (isRegistered() && !isLoggedIn)
-            throw new NoPermissionException("Only logged in users can purchase cart");
         market.isProductAvailable(productId, storeId);
         cart.addProductToCart(productId, storeId);
     }
 
 
     public void removeProductFromCart(int storeId, int productId) throws Exception {
-        if (isRegistered() && !isLoggedIn)
-            throw new NoPermissionException("Only logged in users can purchase cart");
         cart.removeProduct(storeId, productId);
     }
 

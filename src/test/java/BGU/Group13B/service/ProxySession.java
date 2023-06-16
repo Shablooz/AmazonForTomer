@@ -520,6 +520,13 @@ public class ProxySession implements ISession {
         return null;
     }
 
+    @Override
+    public Response<Boolean> removeMember(int adminId, int userId) {
+        if (realSession != null)
+            return realSession.removeMember(adminId, userId);
+        return null;
+    }
+
 
     @Override
     public Response<VoidResponse> purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount) {

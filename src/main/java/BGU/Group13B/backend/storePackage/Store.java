@@ -1167,13 +1167,6 @@ public class Store {
     }
 
     public void removeAllProducts(int userId) {
-        Optional<Set<Product>> products = productRepository.getStoreProducts(storeId);
-        products.ifPresent(products1 -> products1.forEach(product -> {
-            try {
-                removeProduct(userId, product.getProductId());
-            } catch (NoPermissionException e) {
-                e.printStackTrace();
-            }
-        }));
+        productRepository.removeStoreProducts(storeId);
     }
 }

@@ -117,10 +117,15 @@ public class UserRepositoryAsHashmap implements IUserRepository {
     }
 
     @Override
-    public void removeMember(int userId) {
-        getUser(userId).deleteStores();
-        getUser(userId).clearCart();
-        removeUser(userId);
+    public void removeMember(int userId) throws Exception {
+        if(!integerUserHashMap.containsKey(userId))
+            throw new Exception("user " + userId + " does not exists");
+        User user = integerUserHashMap.get(userId);
+        synchronized (user) {
+            getUser(userId).deleteStores();
+            getUser(userId).clearCart();
+            removeUser(userId);
+        }
     }
 
 }

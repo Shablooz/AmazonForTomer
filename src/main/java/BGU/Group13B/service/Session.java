@@ -91,6 +91,7 @@ public class Session implements ISession {
             return Response.exception(e);
         }
     }
+
     @Override
     public Response<VoidResponse> addToCart(int userId, int storeId, int productId) {
         addToCart(userId, storeId, productId, 1, -1);
@@ -344,7 +345,7 @@ public class Session implements ISession {
     public Response<VoidResponse> addProductToCart(int userId, int productId, int storeId) {
         try {
             userRepositoryAsHashmap.getUser(userId).addProductToCart(productId, storeId);
-            return Response.success(new VoidResponse());
+            return Response.success();
         } catch (Exception e) {
             return Response.exception(e);
         }

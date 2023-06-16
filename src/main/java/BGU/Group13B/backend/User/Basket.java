@@ -271,5 +271,6 @@ public class Basket {
 
     public void clearBasket() {
         basketProductRepository.removeBasketProducts(storeId,userId);
+        basketProductRepository.dropBasket(storeId,userId);
     }
 }

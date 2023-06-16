@@ -160,4 +160,11 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
         storeProducts.get(storeId).add(new Product(productId, storeId, name, category, price, stockQuantity, description, true));
         return productId;
     }
+
+    @Override
+    public boolean isStoreProductsExists(int storeId) {
+        return storeProducts.containsKey(storeId);
+    }
+
+
 }
