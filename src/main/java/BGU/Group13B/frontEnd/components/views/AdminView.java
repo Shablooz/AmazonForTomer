@@ -25,6 +25,7 @@ import com.vaadin.flow.router.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @PageTitle("Admin Page")
 @Route(value = "admin", layout = MainLayout.class)
@@ -36,6 +37,7 @@ public class AdminView extends VerticalLayout implements BeforeEnterObserver, Af
     HorizontalLayout buttonsLayout = new HorizontalLayout();
     private final Button createStoreButton = new Button("Create Store"); //fixme remove?
     private final Button deleteUserButton = new Button("Delete User");
+    private final Button purchaseHistoryButton = new Button("Purchase History");
 
     private Grid<UserCard> grid;
 
@@ -69,11 +71,16 @@ public class AdminView extends VerticalLayout implements BeforeEnterObserver, Af
 
         deleteUserButton.setEnabled(false);
         deleteUserButton.getElement().getThemeList().add("primary");
+        purchaseHistoryButton.setEnabled(false);
+        purchaseHistoryButton.getElement().getThemeList().add("primary");
         add(new H2("All Users"));
         List<UserCard> userCards = handleResponse(session.getAllUserCards(userId));
+        List<UserCard> validUserCards = userCards.stream()
+                .filter(card -> card.userName() != null && !card.userName().isEmpty())
+                .toList();
 
         grid = new Grid<UserCard>();
-        grid.setItems(userCards);
+        grid.setItems(validUserCards);
         grid.addColumn(UserCard::userId).setHeader("User ID");
         grid.addColumn(UserCard::userName).setHeader("Username");
         grid.addColumn(UserCard::email).setHeader("Email");
@@ -99,11 +106,13 @@ public class AdminView extends VerticalLayout implements BeforeEnterObserver, Af
         grid.addItemClickListener(item -> {
             selectedUserId = item.getItem().userId();
             deleteUserButton.setEnabled(true);
+            purchaseHistoryButton.setEnabled(true);
         });
 
         grid.addItemDoubleClickListener(item -> {
             selectedUserId = item.getItem().userId();
             deleteUserButton.setEnabled(true);
+            purchaseHistoryButton.setEnabled(true);
 
 
             //enter store page
@@ -126,11 +135,13 @@ public class AdminView extends VerticalLayout implements BeforeEnterObserver, Af
     private void initButtons() {
         //buttons actions
         deleteUserButton.addClickListener(e -> deleteUser());
+        purchaseHistoryButton.addClickListener(e -> viewPurchase());
 
         add(grid);
 
         //add the buttons to the view in horizontal layout
         buttonsLayout.add(deleteUserButton);
+        buttonsLayout.add(purchaseHistoryButton);
         add(buttonsLayout);
     }
 
@@ -140,6 +151,14 @@ public class AdminView extends VerticalLayout implements BeforeEnterObserver, Af
             return;
         }
         deleteUserDialog();
+    }
+
+    private void viewPurchase(){
+        if(selectedUserId == -1){
+            Notification.show("Please select a user first");
+            return;
+        }
+        getUI().ifPresent(ui -> ui.navigate("userPurchaseHistory/" + selectedUserId));
     }
 
     private void deleteUserDialog() {
@@ -220,8 +239,11 @@ public class AdminView extends VerticalLayout implements BeforeEnterObserver, Af
     private void updateGrid() {
         this.removeAll();
         List<UserCard> userCards = handleResponse(session.getAllUserCards(userId));
+        List<UserCard> validUserCards = userCards.stream()
+                .filter(card -> card.userName() != null && !card.userName().isEmpty())
+                .toList();
         //grid.setItems((DataProvider<StoreInfo, Void>) storeInfoList);
-        grid.setItems(userCards);
+        grid.setItems(validUserCards);
         buttonsLayout.add(deleteUserButton);
         add(buttonsLayout);
     }
