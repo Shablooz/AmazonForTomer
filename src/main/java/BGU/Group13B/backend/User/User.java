@@ -2,6 +2,7 @@ package BGU.Group13B.backend.User;
 
 import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.storePackage.Product;
+import BGU.Group13B.backend.storePackage.permissions.ChangePermissionException;
 import BGU.Group13B.service.*;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
 import org.mindrot.jbcrypt.BCrypt;
@@ -633,8 +634,8 @@ public class User {
         userPermissions.clearUserStorePermissions(storeId);
     }
 
-    public void clearPermissions() {
-        userPermissionRepository.deletePermissions(userId);
+    public void clearPermissions(int adminId) throws NoPermissionException, ChangePermissionException {
+        userPermissionRepository.deletePermissions(adminId, userId);
     }
 
 

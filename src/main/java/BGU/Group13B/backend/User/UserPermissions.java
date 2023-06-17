@@ -2,6 +2,11 @@ package BGU.Group13B.backend.User;
 
 
 import BGU.Group13B.backend.Pair;
+import BGU.Group13B.backend.Repositories.Interfaces.IStorePermissionsRepository;
+import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
+import BGU.Group13B.backend.storePackage.permissions.ChangePermissionException;
+import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
+import BGU.Group13B.service.SingletonCollection;
 
 import java.util.*;
 
@@ -144,7 +149,16 @@ public class UserPermissions {
        return true;
     }
 
-    public void deletePermissions() {
+    public void deletePermissions(int adminId, int userId) throws NoPermissionException, ChangePermissionException {
+        IStoreRepository storeRepository = SingletonCollection.getStoreRepository();
+        for (Integer storeId : userStoreRole.keySet()) {
+            if (userStoreRole.get(storeId) == StoreRole.MANAGER) {
+                storeRepository.getStore(storeId).removeManager(adminId, userId);
+            }
+            else if (userStoreRole.get(storeId) == StoreRole.OWNER) {
+                storeRepository.getStore(storeId).removeOwner(adminId, userId);
+            }
+        }
         userStoreRole.clear();
         userIndividualPermission.clear();
     }
