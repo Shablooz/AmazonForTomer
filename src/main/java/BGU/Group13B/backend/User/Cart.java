@@ -74,11 +74,18 @@ public class Cart {
         if (userBaskets.isEmpty()) {
             throw new NoSuchElementException("No baskets in cart");
         }
+        boolean purchasedBasket = false;
         for (var basket : userBaskets) {
+            if(basket.isEmpty())
+                continue;
             basket.purchaseBasket(creditCardNumber, creditCardMonth, creditCardYear,
                     creditCardHolderFirstName, creditCardCVV, id,
                     address, city, country, zip);
+            purchasedBasket = true;
         }
+
+        if(!purchasedBasket)
+            throw new PurchaseFailedException("all products in cart are out of stock or not available anymore");
     }
 
     private boolean isContainsBasket(int storeId, Set<Basket> userBaskets) {

@@ -1,6 +1,7 @@
 package BGU.Group13B.service;
 
 import BGU.Group13B.backend.Pair;
+import BGU.Group13B.backend.User.UserPermissions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -68,10 +69,8 @@ public class ComplexAT{
     }
 
     private void reenterSystem(int... userIds){
-        for(int userId : userIds){
-            session.logout(userId);
-            login(userId);
-        }
+        logout(userIds);
+        login(userIds);
     }
 
     private void logout(int... userIds){
@@ -144,6 +143,16 @@ public class ComplexAT{
         return session.purchaseProductCart(userId, "1234234534564567", "11",
                 "2024", "noder", "123", "244545654",
                 "some address", "some city", "israel", "71000232");
+    }
+
+    private void changeProductQuantityInCart(int userId, int storeId, int productId, int quantity){
+        try{
+            session.changeProductQuantityInCart(userId, storeId, productId, quantity);
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+            fail();
+        }
     }
 
     @Test
@@ -230,13 +239,14 @@ public class ComplexAT{
         handleResponse(session.addProductToCart(ownerId, productId, storeId));
         handleResponse(session.addProductToCart(founderId, productId, storeId));
 
+        handleResponse(session.startPurchaseBasketTransaction(guestId, List.of()));
+        handleResponse(session.startPurchaseBasketTransaction(memberId, List.of()));
+        handleResponse(session.startPurchaseBasketTransaction(managerId, List.of()));
+        handleResponse(session.startPurchaseBasketTransaction(ownerId, List.of()));
+        handleResponse(session.startPurchaseBasketTransaction(founderId, List.of()));
+
         handleResponse(session.removeProduct(founderId, storeId, productId));
 
-        session.startPurchaseBasketTransaction(guestId, List.of());
-        session.startPurchaseBasketTransaction(memberId, List.of());
-        session.startPurchaseBasketTransaction(managerId, List.of());
-        session.startPurchaseBasketTransaction(ownerId, List.of());
-        session.startPurchaseBasketTransaction(founderId, List.of());
         assertTrue(purchase(guestId).didntSucceed());
         assertTrue(purchase(memberId).didntSucceed());
         assertTrue(purchase(managerId).didntSucceed());
@@ -248,6 +258,104 @@ public class ComplexAT{
         checkTraffic(0, 1, 1, 2, 0);
 
         checkSystemIncome(0);
+    }
+
+    @Test
+    public void purchaseDeletedStore() {
+        Pair<Integer, Integer> userAndStoreIds = registerAndLoginAsStoreFounder();
+        int founderId = userAndStoreIds.getFirst();
+        int storeId = userAndStoreIds.getSecond();
+        int productId = handleResponse(session.addProduct(founderId, storeId, "productName", "productCategory", 10.0, 10, "description"));
+
+        int guestId = enterAsGuest();
+        int memberId = registerAndLoginAsRegularMember();
+        int managerId = registerAndLoginAsStoreManager(founderId, storeId);
+        int ownerId = registerAndLoginAsStoreOwner(founderId, storeId);
+
+        handleResponse(session.addProductToCart(guestId, productId, storeId));
+        handleResponse(session.addProductToCart(memberId, productId, storeId));
+        handleResponse(session.addProductToCart(managerId, productId, storeId));
+        handleResponse(session.addProductToCart(ownerId, productId, storeId));
+        handleResponse(session.addProductToCart(founderId, productId, storeId));
+
+        handleResponse(session.deleteStore(adminId, storeId));
+
+        assertTrue(purchase(guestId).didntSucceed());
+        assertTrue(purchase(memberId).didntSucceed());
+        assertTrue(purchase(managerId).didntSucceed());
+        assertTrue(purchase(ownerId).didntSucceed());
+        assertTrue(purchase(founderId).didntSucceed());
+
+        checkTraffic(1, 4, 0, 0, 0);
+        reenterSystem(memberId, managerId, ownerId, founderId);
+        checkTraffic(0, 4, 0, 0, 0);
+
+        checkSystemIncome(0);
+
+    }
+
+    @Test
+    public void managingWorkersInDeletedStore(){
+        Pair<Integer, Integer> userAndStoreIds = registerAndLoginAsStoreFounder();
+        int founderId = userAndStoreIds.getFirst();
+        int storeId = userAndStoreIds.getSecond();
+        int managerId = registerAndLoginAsStoreManager(founderId, storeId);
+
+        int futureManagerId = registerAndLoginAsRegularMember();
+        int futureOwnerId = registerAndLoginAsRegularMember();
+        handleResponse(session.deleteStore(adminId, storeId));
+        assertTrue(session.addManager(founderId, futureManagerId, storeId).didntSucceed());
+        assertTrue(session.addOwner(founderId, futureOwnerId, storeId).didntSucceed());
+        assertTrue(session.removeManager(founderId, managerId, storeId).didntSucceed());
+        assertTrue(session.addIndividualPermission(founderId, managerId, storeId, UserPermissions.IndividualPermission.STOCK).didntSucceed());
+
+        checkTraffic(0, 4, 0, 0, 0);
+        reenterSystem(managerId, futureManagerId, futureOwnerId, founderId);
+        checkTraffic(0, 4, 0, 0, 0);
+
+        checkSystemIncome(0);
+    }
+
+    @Test
+    public void purchaseProductWithConditionalDiscountWithCoupon(){
+        Pair<Integer, Integer> userAndStoreIds = registerAndLoginAsStoreFounder();
+        int founderId = userAndStoreIds.getFirst();
+        int storeId = userAndStoreIds.getSecond();
+        int productId = handleResponse(session.addProduct(founderId, storeId, "productName", "productCategory", 123, 100, "description"));
+
+        int guestId = enterAsGuest();
+        int memberId = registerAndLoginAsRegularMember();
+
+        handleResponse(session.addProductToCart(guestId, productId, storeId));
+        handleResponse(session.addProductToCart(memberId, productId, storeId));
+        handleResponse(session.addProductToCart(founderId, productId, storeId));
+
+        changeProductQuantityInCart(guestId, storeId, productId, 2);
+        changeProductQuantityInCart(memberId, storeId, productId, 2);
+
+        int conditionId = handleResponse(session.addStoreQuantityCondition(storeId, founderId, 2,2));
+        int discountId = handleResponse(session.addStoreDiscount(storeId, founderId, conditionId, 0.3, today.plusYears(1), "noder"));
+        handleResponse(session.addDiscountAsRoot(storeId, founderId, discountId));
+
+        handleResponse(session.startPurchaseBasketTransaction(guestId, List.of("noder")));
+        handleResponse(session.startPurchaseBasketTransaction(memberId, List.of()));
+        handleResponse(session.startPurchaseBasketTransaction(founderId, List.of("noder")));
+
+        handleResponse(purchase(guestId));
+        handleResponse(purchase(memberId));
+        handleResponse(purchase(founderId));
+
+        assertTrue(handleResponse(session.getCartContent(guestId)).isEmpty());
+        assertTrue(handleResponse(session.getCartContent(memberId)).isEmpty());
+        assertTrue(handleResponse(session.getCartContent(founderId)).isEmpty());
+
+        checkTraffic(1, 2, 0, 0, 0);
+        reenterSystem(memberId, founderId);
+        checkTraffic(0, 1, 0, 1, 0);
+
+        checkSystemIncome(123*2*0.7 + 123*3);
+
+
     }
 
 
