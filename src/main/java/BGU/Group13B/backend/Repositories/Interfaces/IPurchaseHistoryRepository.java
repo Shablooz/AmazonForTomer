@@ -23,6 +23,5 @@ public interface IPurchaseHistoryRepository {
      void removePurchase(PurchaseHistory purchaseHistory);
 
      void setSaveMode(boolean saveMode);
-    double[] getSystemHistoryIncome(LocalDate startDate, LocalDate endDate);
-}
+     double[] getSystemHistoryIncome(LocalDate startDate, LocalDate endDate);
 

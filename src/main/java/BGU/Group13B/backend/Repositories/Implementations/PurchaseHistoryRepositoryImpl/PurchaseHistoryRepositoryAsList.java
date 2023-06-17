@@ -125,4 +125,16 @@ public class PurchaseHistoryRepositoryAsList implements IPurchaseHistoryReposito
 
         return historyIncome;
     }
+
+    @Override
+    public double[] getSystemHistoryIncome(LocalDate startDate, LocalDate endDate) {
+        double[] historyIncome = new double[(endDate.getYear() - startDate.getYear())*365 + (endDate.getDayOfYear() - startDate.getDayOfYear()) + 1];
+        for(PurchaseHistory purchase : purchaseHistories){
+            LocalDate purchaseDate = purchase.getLocalDate();
+            if(!(purchaseDate.isBefore(startDate) || purchaseDate.isAfter(endDate)))
+                historyIncome[(endDate.getYear() - purchaseDate.getYear())*365 + purchaseDate.getDayOfYear() - startDate.getDayOfYear()] += purchase.getPrice();
+        }
+
+        return historyIncome;
+    }
 }

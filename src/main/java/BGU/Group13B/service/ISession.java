@@ -94,9 +94,9 @@ public interface ISession {
     Response<VoidResponse> purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount);
 
 
-    void purchaseProposalApprove(int managerId, int storeId, int productId) throws NoPermissionException;
+    Response<VoidResponse> purchaseProposalApprove(int managerId, int storeId, int productId) throws NoPermissionException;
 
-    void purchaseProposalReject(int storeId, int managerId, int bidId) throws NoPermissionException;
+    Response<VoidResponse> purchaseProposalReject(int storeId, int managerId, int bidId) throws NoPermissionException;
 
     /**
      * #51
@@ -799,7 +799,7 @@ public interface ISession {
 
     Response<VoidResponse> fetchMessages(int userId);
 
-    int getStoreFounder(int storeId);
+    Response<Integer> getStoreFounder(int storeId);
 
     Response<Pair<Double, List<ServiceBasketProduct>>> startPurchaseBasketTransaction(int userId, List<String> coupons) throws PurchaseFailedException;
 
@@ -1013,6 +1013,20 @@ public interface ISession {
     Response<List<StoreInfo>> getAllStores();
 
     Response<UserTrafficRecord> getUserTrafficOfRange(int userId, LocalDate from, LocalDate to);
+
+    /**
+     * @param userId  the user id (only the founder can do this action)
+     * @param adminId admin id that want to remove the member
+     */
+
+    Response<Boolean> removeMember(int adminId, int userId);
+
+    Response<double[]> getStoreHistoryIncome(int storeId, int userId, LocalDate from, LocalDate to);
+
+    Response<double[]> getSystemHistoryIncome(int userId, LocalDate from, LocalDate to);
+
+
+    Response<String> getUserNameRes(int userId);
 
     Response<double[]> getStoreHistoryIncome(int storeId, int userId, LocalDate from, LocalDate to);
 

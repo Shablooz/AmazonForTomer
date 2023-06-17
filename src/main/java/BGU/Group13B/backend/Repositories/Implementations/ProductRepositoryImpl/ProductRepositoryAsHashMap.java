@@ -50,6 +50,8 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
         getStoreProducts(storeId).orElseThrow(
                 () -> new IllegalArgumentException("Store " + storeId + " not found")
         ).removeIf(product -> product.getProductId() == productId);
+        if(storeProducts.get(storeId).isEmpty())
+            storeProducts.remove(storeId);
         save();
     }
 
@@ -223,4 +225,11 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
     public void setProductIdCounter(AtomicInteger productIdCounter) {
         this.productIdCounter = productIdCounter;
     }
+
+    @Override
+    public boolean isStoreProductsExists(int storeId) {
+        return storeProducts.containsKey(storeId);
+    }
+
+
 }

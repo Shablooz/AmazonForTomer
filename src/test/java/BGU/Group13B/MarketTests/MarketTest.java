@@ -1,8 +1,6 @@
 package BGU.Group13B.MarketTests;
 
-import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
-import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
-import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
+import BGU.Group13B.backend.Repositories.Interfaces.*;
 import BGU.Group13B.backend.User.User;
 import BGU.Group13B.backend.storePackage.*;
 import BGU.Group13B.service.SingletonCollection;
@@ -10,6 +8,7 @@ import BGU.Group13B.service.info.ProductInfo;
 import org.junit.jupiter.api.*;
 
 import java.lang.reflect.Array;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,6 +29,8 @@ public class MarketTest {
     private static IProductRepository productRepository;
     private static IStoreRepository storeRepository;
     private static IUserRepository userRepository;
+    private static IBasketProductRepository basketProductRepository;
+    private static IUserPermissionRepository userPermissionRepository;
     private static int storeId1;
     private static int storeId2;
     private static int storeId3;
@@ -39,11 +40,15 @@ public class MarketTest {
     private static int productId4;
     private static int productId5;
     private static User user;
+    private String userName;
+    private String password;
 
 
     @BeforeEach
     void setUp() {
         SingletonCollection.setSaveMode(false);
+        userName = "Username";
+        password = "AbcrudelEater420";
         productName1 = "Dell computer";
         productName2 = "computer";
         productName3 = "Gaming laptop";
@@ -57,6 +62,8 @@ public class MarketTest {
         productRepository = SingletonCollection.getProductRepository();
         storeRepository = SingletonCollection.getStoreRepository();
         userRepository = SingletonCollection.getUserRepository();
+        basketProductRepository = SingletonCollection.getBasketProductRepository();
+        userPermissionRepository = SingletonCollection.getUserPermissionRepository();
 
         try {
             int userId = userRepository.getNewUserId();
@@ -94,7 +101,6 @@ public class MarketTest {
     void tearDown() {
         //deleteAllData();
         SingletonCollection.reset_system();
-        SingletonCollection.setSaveMode(false);
     }
 
     @Test
@@ -230,6 +236,37 @@ public class MarketTest {
             assertEquals(0, products.stream().filter(p -> checkRange(5, 5, p.score())).count());
         } catch (Exception e) {
             fail("Exception was thrown");
+        }
+    }
+
+    @Test
+    void removeMember_exists(){
+        //setup
+        user.register(userName, password, "e@gmail.com", "", "yak", "", LocalDate.MIN);
+        user.login(userName, password, "", "yak", "");
+        int storeId = SingletonCollection.getStoreRepository().addStore(user.getUserId(), "store", "media");
+        int productId = SingletonCollection.getProductRepository().addProduct(storeId, "product", "media", 10.0, 10, "very nice product").getProductId();
+        try {
+            user.addProductToCart(productId, storeId);
+            user.logout();
+
+            userRepository.removeMember(1, user.getUserId());
+        } catch (Exception e){
+            Assertions.fail(e.getMessage());
+        }
+        Assertions.assertFalse(storeRepository.getAllStoresId().contains(storeId));
+        Assertions.assertFalse(productRepository.isStoreProductsExists(storeId));
+        Assertions.assertFalse(basketProductRepository.isUserBasketsExists(user.getUserId()));
+        Assertions.assertFalse(userPermissionRepository.isUserPermissionsExists(user.getUserId()));
+        Assertions.assertEquals(null, userRepository.checkIfUserExists(userName));
+    }
+
+    @Test
+    void removeMember_notExists(){
+        try {
+            userRepository.removeMember(1,-1);
+        } catch (Exception e){
+            Assertions.assertEquals("user -1 does not exists",e.getMessage());
         }
     }
 

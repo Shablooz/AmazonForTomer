@@ -35,4 +35,6 @@ public interface IUserRepository {
 
 
     List<UserCard> getAllUserCards();
+
+    void removeMember(int adminId, int userId) throws Exception;
 }

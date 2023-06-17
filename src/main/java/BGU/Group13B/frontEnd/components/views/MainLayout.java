@@ -567,15 +567,12 @@ public class MainLayout extends AppLayout implements ResponseHandler {
         AppNav nav = new AppNav();
         //
         nav.addItem(new AppNavItem("Home View", HomeView.class, LineAwesomeIcon.HOME_SOLID.create()));
+        nav.addItem(new AppNavItem("All Stores", AllStoresView.class, LineAwesomeIcon.STORE_ALT_SOLID.create()));
 
         //my stores
         if (session.isUserLogged(SessionToIdMapper.getInstance().getCurrentSessionId())) {
             nav.addItem(new AppNavItem("My Stores", MyStoresView.class, LineAwesomeIcon.STORE_SOLID.create()));
-        }
-
-        if (session.isUserLogged(SessionToIdMapper.getInstance().getCurrentSessionId())) {
             nav.addItem(new AppNavItem("Purchase History", PurchaseHistoryView.class, LineAwesomeIcon.HISTORY_SOLID.create()));
-            nav.addItem(new AppNavItem("All Stores", AllStoresView.class, LineAwesomeIcon.STORE_ALT_SOLID.create()));
         }
 
         var isAdmin =  handleResponse(session.isAdmin(USERID));

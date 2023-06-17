@@ -2,6 +2,7 @@ package BGU.Group13B.backend.Repositories.Implementations.StoreRepositoryImpl;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
 import BGU.Group13B.backend.storePackage.Store;
+import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 
 import java.util.Comparator;
 import java.util.HashSet;
@@ -36,7 +37,8 @@ public class StoreRepositoryAsList implements IStoreRepository {
     @Override
     public synchronized int addStore(int founderId, String storeName, String category) {
         int storeId = storeIdCounter.getAndIncrement();
-        this.stores.add(new Store(storeId, founderId, storeName, category));
+        if (stores!=null)
+            this.stores.add(new Store(storeId, founderId, storeName, category));
         return storeId;
     }
 
@@ -50,5 +52,17 @@ public class StoreRepositoryAsList implements IStoreRepository {
     public void reset() {
         this.stores.clear();
         this.storeIdCounter.set(0);
+    }
+
+    @Override
+    public void removeMemberStores(int adminId, int userId) throws NoPermissionException {
+        //remove stores products
+
+        for (Store store : this.stores) {
+            if (store.getStorePermission().getFounderId() == userId) {
+                store.deleteStore(adminId);
+                removeStore(store.getStoreId());
+            }
+        }
     }
 }
