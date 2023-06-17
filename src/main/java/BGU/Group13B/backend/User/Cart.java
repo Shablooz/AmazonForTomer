@@ -193,6 +193,9 @@ public class Cart {
         }
     }
 
+    public void clearCart() {
+        basketRepository.clearUserBaskets(userId);
+    }
     public void removeBasketProducts(List<Pair<Integer, Integer>> productStoreList) {
         for(var productStore : productStoreList){
             int storeId = productStore.getFirst();

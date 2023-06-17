@@ -1014,6 +1014,13 @@ public interface ISession {
 
     Response<UserTrafficRecord> getUserTrafficOfRange(int userId, LocalDate from, LocalDate to);
 
+    /**
+     * @param userId  the user id (only the founder can do this action)
+     * @param adminId admin id that want to remove the member
+     */
+
+    Response<Boolean> removeMember(int adminId, int userId);
+  
     Response<double[]> getStoreHistoryIncome(int storeId, int userId, LocalDate from, LocalDate to);
 
     Response<double[]> getSystemHistoryIncome(int userId, LocalDate from, LocalDate to);

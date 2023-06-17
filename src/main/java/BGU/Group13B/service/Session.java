@@ -91,6 +91,7 @@ public class Session implements ISession {
             return Response.exception(e);
         }
     }
+
     @Override
     public Response<VoidResponse> addToCart(int userId, int storeId, int productId) {
         addToCart(userId, storeId, productId, 1, -1);
@@ -344,7 +345,7 @@ public class Session implements ISession {
     public Response<VoidResponse> addProductToCart(int userId, int productId, int storeId) {
         try {
             userRepositoryAsHashmap.getUser(userId).addProductToCart(productId, storeId);
-            return Response.success(new VoidResponse());
+            return Response.success();
         } catch (Exception e) {
             return Response.exception(e);
         }
@@ -1572,6 +1573,19 @@ public class Session implements ISession {
     }
 
     @Override
+    public Response<Boolean> removeMember(int adminId, int userId) {
+        try {
+            if (!getUserStatus(adminId).equals("ADMIN") || !isUserLogged(adminId))
+                throw new IllegalArgumentException("user is not an admin or not logged in");
+            LOGGER_INFO.info("admin is trying to remove member: " + userId);
+            userRepositoryAsHashmap.removeMember(adminId, userId);
+            return Response.success(true);
+        } catch (Exception e) {
+            LOGGER_INFO.info("member removal failed");
+            return Response.failure(e.getMessage());
+        }
+    }
+      
     public Response<double[]> getStoreHistoryIncome(int storeId, int userId, LocalDate from, LocalDate to) {
         try{
             return Response.success(market.getStoreHistoryIncome(storeId, userId, from, to));

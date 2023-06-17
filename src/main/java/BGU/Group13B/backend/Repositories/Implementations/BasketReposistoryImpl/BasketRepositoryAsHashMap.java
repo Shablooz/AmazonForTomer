@@ -47,4 +47,13 @@ public class BasketRepositoryAsHashMap implements IBasketRepository {
         return baskets.get(userId).stream().noneMatch(basket -> basket.getStoreId() == storeId);
     }
 
+    @Override
+    public void clearUserBaskets(int userId) {
+        Set<Basket> userBaskets= getUserBaskets(userId);
+        for(Basket b: userBaskets){
+            b.clearBasket();
+            removeUserBasket(userId,b.getStoreId());
+        }
+    }
+
 }
