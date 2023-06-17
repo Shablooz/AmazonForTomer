@@ -15,6 +15,8 @@ public class UserPermissions {
         return lst;
     }
 
+
+
     public enum UserPermissionStatus {
         ADMIN,
         MEMBER,
@@ -140,6 +142,11 @@ public class UserPermissions {
        if (userStoreRole.isEmpty())
            return false;
        return true;
+    }
+
+    public void deletePermissions() {
+        userStoreRole.clear();
+        userIndividualPermission.clear();
     }
 }
 

@@ -29,4 +29,10 @@ public class UserPermissionRepositoryAsHashmap implements IUserPermissionReposit
         return integerUserPermissionConcurrentHashMap.get(userId).isUserPermissionsExists();
     }
 
+    @Override
+    public void deletePermissions(int userId) {
+        integerUserPermissionConcurrentHashMap.get(userId).deletePermissions();
+        integerUserPermissionConcurrentHashMap.remove(userId);
+    }
+
 }

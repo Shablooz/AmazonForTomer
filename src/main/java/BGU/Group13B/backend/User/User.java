@@ -632,4 +632,11 @@ public class User {
     public void clearUserStorePermissions(int storeId){
         userPermissions.clearUserStorePermissions(storeId);
     }
+
+    public void clearPermissions() {
+        userPermissionRepository.deletePermissions(userId);
+    }
+
+
+
 }

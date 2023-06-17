@@ -8,4 +8,6 @@ public interface IUserPermissionRepository {
     void addUserPermission(int userId, UserPermissions userPermissions);
 
     boolean isUserPermissionsExists(int userId);
+
+    void deletePermissions(int userId);
 }

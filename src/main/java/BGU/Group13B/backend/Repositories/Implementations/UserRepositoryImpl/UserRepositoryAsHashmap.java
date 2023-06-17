@@ -124,6 +124,7 @@ public class UserRepositoryAsHashmap implements IUserRepository {
         synchronized (user) {
             getUser(userId).deleteStores(adminId);
             getUser(userId).clearCart();
+            user.clearPermissions();
             removeUser(userId);
         }
     }
