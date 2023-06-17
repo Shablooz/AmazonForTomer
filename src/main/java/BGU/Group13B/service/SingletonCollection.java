@@ -189,7 +189,6 @@ public class SingletonCollection {
         basketRepository = new BasketRepositoryAsHashMap();
         auctionRepository = new AuctionRepositoryAsHashMap();
         basketProductRepository = new BasketProductRepositoryAsHashMap();
-        productHistoryRepository = new ProductHistoryRepositoryAsList();
         storeMessagesRepository = new StoreMessageSingle();
         reviewRepository = new ReviewRepoSingle();
         messageRepository = new MessageRepositorySingle();

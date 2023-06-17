@@ -43,6 +43,10 @@ public class SkipListHolderClickbate {
         concurrentSkipListSet.remove(product);
     }
 
+    public boolean isEmpty() {
+        return concurrentSkipListSet.isEmpty();
+    }
+
     public Stream<Product> stream() {
         return concurrentSkipListSet.stream();
     }

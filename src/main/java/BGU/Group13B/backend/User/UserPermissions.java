@@ -95,7 +95,9 @@ public class UserPermissions {
     public void setUserPermissionStatus(UserPermissionStatus userPermissionStatus) {
         this.userPermissionStatus = userPermissionStatus;
     }
-
+    public Set<IndividualPermission> getIndividualPermissions(int storeId){
+        return userIndividualPermission.get(storeId).getIndividualPermissions();
+    }
 
     public void register(int id) {
         this.setUserPermissionStatus(UserPermissionStatus.MEMBER);

@@ -60,7 +60,7 @@ public class StorePermission {
     private  Map<Integer/*userId*/, SetEnum> userToIndividualPermissions;//THIS ONE EXPLAINS THE "ADDITIONAL ROLES" OF EACH MANAGER
     @Transient
     private  IUserPermissionRepository userPermissionRepository = SingletonCollection.getUserPermissionRepository();
-    private int founderId;
+
 
     public StorePermission(int founderId) {
         this.founderId= founderId;
@@ -129,7 +129,7 @@ public class StorePermission {
         SetString historyFunctions = new SetString();
         SetString staffFunctions = new SetString();
         SetString founderFunctions = new SetString();
-        HashSet<String> statsFunctions = new HashSet<>();
+        SetString statsFunctions = new SetString();
         var storeClass = Store.class;
         for (Method method : storeClass.getMethods()) {
             if (method.isAnnotationPresent(StockPermission.class))
