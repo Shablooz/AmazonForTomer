@@ -520,6 +520,12 @@ public class ProxySession implements ISession {
     }
 
     @Override
+    public Response<Boolean> removeMember(int adminId, int userId) {
+        if (realSession != null)
+            return realSession.removeMember(adminId, userId);
+        return null;
+    }
+  
     public Response<double[]> getStoreHistoryIncome(int storeId, int userId, LocalDate from, LocalDate to) {
         if(realSession != null)
             return realSession.getStoreHistoryIncome(storeId, userId, from, to);

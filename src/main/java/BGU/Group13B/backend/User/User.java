@@ -2,6 +2,7 @@ package BGU.Group13B.backend.User;
 
 import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.storePackage.Product;
+import BGU.Group13B.backend.storePackage.permissions.ChangePermissionException;
 import BGU.Group13B.service.*;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
 import org.mindrot.jbcrypt.BCrypt;
@@ -394,7 +395,7 @@ public class User {
         return market.getStoreScore(storeId);
     }
 
-    public double purchaseCart(String creditCardNumber, String creditCardMonth,
+    public synchronized double purchaseCart(String creditCardNumber, String creditCardMonth,
                                String creditCardYear, String creditCardHolderFirstName,
                                String creditCardCcv, String id,
                                HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
@@ -469,16 +470,12 @@ public class User {
     }
 
     public void addProductToCart(int productId, int storeId) throws Exception {
-        if (isRegistered() && !isLoggedIn)
-            throw new NoPermissionException("Only logged in users can purchase cart");
         market.isProductAvailable(productId, storeId);
         cart.addProductToCart(productId, storeId);
     }
 
 
     public void removeProductFromCart(int storeId, int productId) throws Exception {
-        if (isRegistered() && !isLoggedIn)
-            throw new NoPermissionException("Only logged in users can purchase cart");
         cart.removeProduct(storeId, productId);
     }
 
@@ -621,6 +618,13 @@ public class User {
         return userPermissions.getPopulationStatus();
     }
 
+    public void deleteStores(int adminId) throws NoPermissionException {
+        market.removeMemberStores(adminId, userId);
+    }
+
+    public void clearCart(){
+        cart.clearCart();
+    }
     public void removeBasketProducts(List<Pair<Integer, Integer>> productStoreList) {
         cart.removeBasketProducts(productStoreList);
     }
@@ -632,4 +636,11 @@ public class User {
     public void clearUserStorePermissions(int storeId){
         userPermissions.clearUserStorePermissions(storeId);
     }
+
+    public void clearPermissions(int adminId) throws NoPermissionException, ChangePermissionException {
+        userPermissionRepository.deletePermissions(adminId, userId);
+    }
+
+
+
 }
