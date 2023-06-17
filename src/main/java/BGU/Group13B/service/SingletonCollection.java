@@ -514,6 +514,7 @@ public class SingletonCollection {
     }
 
     public static void setSaveMode(boolean saveMode){
+        storeScoreRepository.setSaveMode(saveMode);
         productRepository.setSaveMode(saveMode);
         storeRepository.setSaveMode(saveMode);
         storePermissionRepository.setSaveMode(saveMode);

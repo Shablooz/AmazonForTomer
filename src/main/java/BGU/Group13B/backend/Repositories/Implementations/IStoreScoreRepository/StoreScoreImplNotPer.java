@@ -57,6 +57,9 @@ public class StoreScoreImplNotPer implements IStoreScore {
 
         return 0;
     }
+    public void setSaveMode(boolean saveMode) {
+
+    }
 
     @Override
     public int getNumberOfScores(int storeId) {

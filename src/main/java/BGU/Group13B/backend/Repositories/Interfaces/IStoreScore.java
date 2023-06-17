@@ -12,4 +12,6 @@ public interface IStoreScore {
     int getNumberOfScores(int storeId);
 
     void clearStoreScore(int storeId);
+
+    void setSaveMode(boolean saveMode);
 }
