@@ -389,7 +389,7 @@ public class Store {
         if (proposedPrice <= 0)
             throw new IllegalArgumentException("Price must be positive");
 
-        bidRepository.addBID(userId, productId, proposedPrice, amount);
+        SingletonCollection.getBidRepository().addBID(userId, productId, proposedPrice, amount);
 
         /*
          * Send alert to all the permitted Managers
@@ -417,7 +417,7 @@ public class Store {
          * */
         if (!this.storePermission.checkPermission(managerId, hidden))//the user should be loggedIn with permissions
             throw new NoPermissionException("User " + managerId + " has no permission to add product to store " + this.storeId);
-        BID currentBid = bidRepository.getBID(bidId).
+        BID currentBid = SingletonCollection.getBidRepository().getBID(bidId).
                 orElseThrow(() -> new IllegalArgumentException("There is no such bid for store " + this.storeId));
 
         if (currentBid.isRejected())//fixme, use BroadCaster.broadcast
@@ -446,14 +446,14 @@ public class Store {
          * */
         if (!this.storePermission.checkPermission(managerId, hidden))//the user should be loggedIn with permissions
             throw new NoPermissionException("User " + managerId + " has no permission to reject a purchase proposal in the store: " + this.storeId);
-        BID currentBid = bidRepository.getBID(bidId).orElseThrow(() -> new IllegalArgumentException("There is no such bid for store " + this.storeId));
+        BID currentBid = SingletonCollection.getBidRepository().getBID(bidId).orElseThrow(() -> new IllegalArgumentException("There is no such bid for store " + this.storeId));
         if (currentBid.isRejected())
             BroadCaster.broadcast(managerId,
                 "The bid for product " + productRepository.getProductById(currentBid.getProductId()).getName()
                         + " has been rejected already");
 
         currentBid.reject();//good for concurrency edge cases
-        bidRepository.removeBID(bidId);
+        SingletonCollection.getBidRepository().removeBID(bidId);
         //todo send alert to the user that his bid has been rejected
     }
 

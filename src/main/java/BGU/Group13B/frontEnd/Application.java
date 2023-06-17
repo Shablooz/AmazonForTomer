@@ -44,6 +44,7 @@ public class Application implements AppShellConfigurator {
         SingletonCollection.setDiscountRepository();
         SingletonCollection.setStoreDiscountRootsRepository();
         SingletonCollection.setPurchasePolicyRootsRepository();
+        SingletonCollection.setBidRepository();
         //ConfigurationFileParser.parse();
     }
 

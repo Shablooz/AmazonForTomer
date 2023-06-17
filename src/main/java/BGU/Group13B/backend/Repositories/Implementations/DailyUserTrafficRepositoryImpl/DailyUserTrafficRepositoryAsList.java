@@ -28,11 +28,12 @@ public class DailyUserTrafficRepositoryAsList implements IDailyUserTrafficReposi
     private List<DailyUserTraffic> dailyUserTrafficList;
 
     public DailyUserTrafficRepositoryAsList(){
-        this.saveMode = true;
         dailyUserTrafficList = new LinkedList<>();
+        this.saveMode = true;
     }
 
     private synchronized void fillUpToToday(){
+        dailyUserTrafficList.sort((o1, o2) -> o2.getDate().compareTo(o1.getDate()));
         if(dailyUserTrafficList.isEmpty())
             dailyUserTrafficList.add(new DailyUserTraffic(LocalDate.now()));
         LocalDate today = LocalDate.now();
