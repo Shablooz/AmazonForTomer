@@ -5,6 +5,9 @@ import BGU.Group13B.backend.User.UserPermissions;
 import BGU.Group13B.backend.User.UserPermissions.StoreRole;
 import BGU.Group13B.backend.storePackage.Store;
 import BGU.Group13B.backend.storePackage.WorkerCard;
+import BGU.Group13B.backend.storePackage.permissions.storehelper.SetEnum;
+import BGU.Group13B.backend.storePackage.permissions.storehelper.SetInteger;
+import BGU.Group13B.backend.storePackage.permissions.storehelper.SetString;
 import BGU.Group13B.service.SingletonCollection;
 import jakarta.persistence.*;
 
@@ -21,16 +24,40 @@ public class StorePermission {
 
     private int founderId;
 
-    @Transient
-    private HashMap<Integer/*permissionNumber*/, Set<String>> userStoreFunctionPermissions;//THIS ONE INCLUDE WHAT EACH ADDITIONAL ROLE INCLUDES
-    @Transient
-    private  HashMap<StoreRole, Set<String>> defaultStoreRoleFunctionalities;
-    @Transient
-    private  HashMap<Integer/*userId*/, StoreRole> userToStoreRole;
-    @Transient
-    private  HashMap<Integer/*got appointed by*/, Set<Integer>/*appointee*/> appointedOwnersMap;
-    @Transient
-    private  HashMap<Integer/*userId*/, Set<UserPermissions.IndividualPermission>> userToIndividualPermissions;//THIS ONE EXPLAINS THE "ADDITIONAL ROLES" OF EACH MANAGER
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
+    @JoinTable(name = "StorePermission_userStoreFunctionPermissions",
+            joinColumns = {@JoinColumn(name = "StorePermission_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "SetString_id", referencedColumnName = "id")})
+    @MapKeyColumn(name = "permissionNumber")
+    private Map<Integer/*permissionNumber*/, SetString> userStoreFunctionPermissions;//THIS ONE INCLUDE WHAT EACH ADDITIONAL ROLE INCLUDES
+
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
+    @JoinTable(name = "StorePermission_defaultStoreRoleFunctionalities",
+            joinColumns = {@JoinColumn(name = "StorePermission_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "SetString_id", referencedColumnName = "id")})
+    @MapKeyColumn(name = "storeRole_id")
+    private  Map<StoreRole, SetString> defaultStoreRoleFunctionalities;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "StorePermission_StoreRole",
+            joinColumns = {@JoinColumn(name = "StorePermission_id", referencedColumnName = "id")})
+    @MapKeyColumn(name = "userId")
+    @Column(name = "storeRole")
+    private  Map<Integer/*userId*/, StoreRole> userToStoreRole;
+
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
+    @JoinTable(name = "StorePermission_appointedOwnersMap",
+            joinColumns = {@JoinColumn(name = "StorePermission_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "SetInteger_id", referencedColumnName = "id")})
+    @MapKeyColumn(name = "appointed_by_id")
+    private  Map<Integer/*got appointed by*/, SetInteger/*appointee*/> appointedOwnersMap;
+
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
+    @JoinTable(name = "StorePermission_userToIndividualPermissions",
+            joinColumns = {@JoinColumn(name = "StorePermission_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "SetEnum_id", referencedColumnName = "id")})
+    @MapKeyColumn(name = "user_id")
+    private  Map<Integer/*userId*/, SetEnum> userToIndividualPermissions;//THIS ONE EXPLAINS THE "ADDITIONAL ROLES" OF EACH MANAGER
     @Transient
     private  IUserPermissionRepository userPermissionRepository = SingletonCollection.getUserPermissionRepository();
 
@@ -43,7 +70,7 @@ public class StorePermission {
         appointedOwnersMap = new HashMap<>();
         userToStoreRole.put(founderId, StoreRole.FOUNDER);
         userToIndividualPermissions = new HashMap<>();
-        Set<UserPermissions.IndividualPermission> founderPermissions = new HashSet<>();
+        SetEnum founderPermissions = new SetEnum();
         founderPermissions.add(UserPermissions.IndividualPermission.STOCK);
         founderPermissions.add(UserPermissions.IndividualPermission.MESSAGES);
         founderPermissions.add(UserPermissions.IndividualPermission.POLICIES);
@@ -71,9 +98,9 @@ public class StorePermission {
         /*
          * TODO: complete the default permissions for each role
          * */
-        HashSet<String> storeManagerFunctions = new HashSet<>();
-        HashSet<String> storeOwnerFunctions = new HashSet<>();
-        HashSet<String> storeFounderFunctions = new HashSet<>();
+        SetString storeManagerFunctions = new SetString();
+        SetString storeOwnerFunctions = new SetString();
+        SetString storeFounderFunctions =new SetString();
         var storeClass = Store.class;
         for (Method method : storeClass.getMethods()) {
             if (method.isAnnotationPresent(DefaultManagerFunctionality.class))
@@ -91,14 +118,14 @@ public class StorePermission {
     }
 
     private void initIndividualPermissionsFunctionalities() {
-        HashSet<String> stockFunctions = new HashSet<>();
-        HashSet<String> messagesFunctions = new HashSet<>();
-        HashSet<String> policiesFunctions = new HashSet<>();
-        HashSet<String> auctionFunctions = new HashSet<>();
-        HashSet<String> infoFunctions = new HashSet<>();
-        HashSet<String> historyFunctions = new HashSet<>();
-        HashSet<String> staffFunctions = new HashSet<>();
-        HashSet<String> founderFunctions = new HashSet<>();
+        SetString stockFunctions = new SetString();
+        SetString messagesFunctions = new SetString();
+        SetString policiesFunctions = new SetString();
+        SetString auctionFunctions = new SetString();
+        SetString infoFunctions = new SetString();
+        SetString historyFunctions = new SetString();
+        SetString staffFunctions = new SetString();
+        SetString founderFunctions = new SetString();
         var storeClass = Store.class;
         for (Method method : storeClass.getMethods()) {
             if (method.isAnnotationPresent(StockPermission.class))
@@ -161,8 +188,8 @@ public class StorePermission {
         //check for the user's permissions
         if (userToIndividualPermissions.containsKey(userId)) {
             boolean found = false;
-            Set<UserPermissions.IndividualPermission> individualPermissions = userToIndividualPermissions.get(userId);
-            for (UserPermissions.IndividualPermission ip: individualPermissions) {
+            SetEnum individualPermissions = userToIndividualPermissions.get(userId);
+            for (UserPermissions.IndividualPermission ip: individualPermissions.getSet()) {
                 if(userStoreFunctionPermissions.get(ip.ordinal()).contains(storeFunctionName))
                     found = true;
             }
@@ -236,7 +263,7 @@ public class StorePermission {
                 userToIndividualPermissions.get(newOwnerId).add(UserPermissions.IndividualPermission.STAFF);
             }
             else{
-                Set<UserPermissions.IndividualPermission> newSet = new HashSet<>();
+                SetEnum newSet = new SetEnum();
                 newSet.add(UserPermissions.IndividualPermission.STOCK);
                 newSet.add(UserPermissions.IndividualPermission.MESSAGES);
                 newSet.add(UserPermissions.IndividualPermission.HISTORY);
@@ -247,11 +274,11 @@ public class StorePermission {
                 userToIndividualPermissions.put(newOwnerId, newSet);
             }
             // Check if the appointerId is already present in the appointedOwnersMap
-            Set<Integer> appointees = appointedOwnersMap.get(appointerId);
+            SetInteger appointees = appointedOwnersMap.get(appointerId);
 
             // If appointerId is not present, create a new set and add it to the map
             if (appointees == null) {
-                appointees = new HashSet<>();
+                appointees = new SetInteger();
                 appointedOwnersMap.put(appointerId, appointees);
             }
 
@@ -266,10 +293,10 @@ public class StorePermission {
 
         if (!(removeOwnerRole == StoreRole.OWNER || (removeManager && removeOwnerRole == StoreRole.MANAGER))) {
             throw new ChangePermissionException("Cannot remove owner title from a user who is not an owner");
-        } else if (appointedOwnersMap.getOrDefault(removerId, Collections.emptySet()).contains(removeOwnerId)) {
-            Set<Integer> underlingsToRemove = appointedOwnersMap.get(removeOwnerId);
+        } else if (appointedOwnersMap.getOrDefault(removerId, new SetInteger()).contains(removeOwnerId)) {
+            SetInteger underlingsToRemove = appointedOwnersMap.get(removeOwnerId);
             if (underlingsToRemove != null) {
-                for (Integer underlingId : underlingsToRemove) {
+                for (Integer underlingId : underlingsToRemove.getSet()) {
                     removeUsersId.add(underlingId);
                     Set<Integer> recursiveFiringList = removeOwnerPermission(underlingId, removeOwnerId, true);
                     removeUsersId.addAll(recursiveFiringList);
@@ -298,16 +325,16 @@ public class StorePermission {
                 userToIndividualPermissions.get(newManagerId).add(UserPermissions.IndividualPermission.HISTORY);
             }
             else{
-                Set<UserPermissions.IndividualPermission> newSet = new HashSet<>();
+                SetEnum newSet = new SetEnum();
                 newSet.add(UserPermissions.IndividualPermission.HISTORY);
                 userToIndividualPermissions.put(newManagerId, newSet);
             }
             // Check if the appointerId is already present in the appointedOwnersMap
-            Set<Integer> appointees = appointedOwnersMap.get(appointerId);
+            SetInteger appointees = appointedOwnersMap.get(appointerId);
 
             // If appointerId is not present, create a new set and add it to the map
             if (appointees == null) {
-                appointees = new HashSet<>();
+                appointees = new SetInteger();
                 appointedOwnersMap.put(appointerId, appointees);
             }
 
@@ -321,7 +348,7 @@ public class StorePermission {
 
         if (removeManagerRole != StoreRole.MANAGER) {
             throw new ChangePermissionException("Cannot remove manager title from a user who is not a manager");
-        } else if (appointedOwnersMap.getOrDefault(removerId, Collections.emptySet()).contains(removeManagerId)) {
+        } else if (appointedOwnersMap.getOrDefault(removerId,new SetInteger()).contains(removeManagerId)) {
             appointedOwnersMap.get(removerId).remove(removeManagerId);
             userToStoreRole.remove(removeManagerId);
             if(userToIndividualPermissions.containsKey(removeManagerId))
@@ -338,7 +365,7 @@ public class StorePermission {
         if(userToIndividualPermissions.containsKey(userId))
             userToIndividualPermissions.get(userId).add(individualPermission);
         else{
-            Set<UserPermissions.IndividualPermission> newSet = new HashSet<>();
+            SetEnum newSet = new SetEnum();
             newSet.add(individualPermission);
             userToIndividualPermissions.put(userId, newSet);
         }
@@ -357,8 +384,8 @@ public class StorePermission {
         for (Map.Entry<Integer, StoreRole> entry : userToStoreRole.entrySet()) {
             Integer userId = entry.getKey();
             StoreRole role = entry.getValue();
-            Set<UserPermissions.IndividualPermission> userPermissions = userToIndividualPermissions.get(userId);
-            WorkerCard workerCard = new WorkerCard(userId, role, userPermissions);
+            SetEnum userPermissions = userToIndividualPermissions.get(userId);
+            WorkerCard workerCard = new WorkerCard(userId, role, userPermissions.getSet());
             workerCards.add(workerCard);
         }
         return workerCards;
@@ -390,12 +417,12 @@ public class StorePermission {
                 .collect(Collectors.toList());
     }
 
-    public HashMap<Integer/*userId*/, Set<UserPermissions.IndividualPermission>> getUserToIndividualPermissions(){
+    public Map<Integer/*userId*/, SetEnum> getUserToIndividualPermissions(){
         return userToIndividualPermissions;
     }
     public List<Integer> getAllUsersWithIndividualPermission(UserPermissions.IndividualPermission individualPermission){
         List<Integer> users = new ArrayList<>();
-        for(Map.Entry<Integer, Set<UserPermissions.IndividualPermission>> entry : userToIndividualPermissions.entrySet()){
+        for(Map.Entry<Integer, SetEnum> entry : userToIndividualPermissions.entrySet()){
             if(entry.getValue().contains(individualPermission))
                 users.add(entry.getKey());
         }
@@ -422,23 +449,8 @@ public class StorePermission {
         this.founderId = founderId;
     }
 
-    public HashMap<Integer, Set<String>> getUserStoreFunctionPermissions() {
-        return userStoreFunctionPermissions;
-    }
 
-    public void setUserStoreFunctionPermissions(HashMap<Integer, Set<String>> userStoreFunctionPermissions) {
-        this.userStoreFunctionPermissions = userStoreFunctionPermissions;
-    }
-
-    public HashMap<StoreRole, Set<String>> getDefaultStoreRoleFunctionalities() {
-        return defaultStoreRoleFunctionalities;
-    }
-
-    public void setDefaultStoreRoleFunctionalities(HashMap<StoreRole, Set<String>> defaultStoreRoleFunctionalities) {
-        this.defaultStoreRoleFunctionalities = defaultStoreRoleFunctionalities;
-    }
-
-    public HashMap<Integer, StoreRole> getUserToStoreRole() {
+    public Map<Integer, StoreRole> getUserToStoreRole() {
         return userToStoreRole;
     }
 
@@ -446,16 +458,39 @@ public class StorePermission {
         this.userToStoreRole = userToStoreRole;
     }
 
-    public HashMap<Integer, Set<Integer>> getAppointedOwnersMap() {
+    public Map<Integer, SetString> getUserStoreFunctionPermissions() {
+        return userStoreFunctionPermissions;
+    }
+
+    public void setUserStoreFunctionPermissions(Map<Integer, SetString> userStoreFunctionPermissions) {
+        this.userStoreFunctionPermissions = userStoreFunctionPermissions;
+    }
+
+    public Map<StoreRole, SetString> getDefaultStoreRoleFunctionalities() {
+        return defaultStoreRoleFunctionalities;
+    }
+
+    public void setDefaultStoreRoleFunctionalities(Map<StoreRole, SetString> defaultStoreRoleFunctionalities) {
+        this.defaultStoreRoleFunctionalities = defaultStoreRoleFunctionalities;
+    }
+
+    public void setUserToStoreRole(Map<Integer, StoreRole> userToStoreRole) {
+        this.userToStoreRole = userToStoreRole;
+    }
+
+
+
+    public void setUserToIndividualPermissions(Map<Integer, SetEnum> userToIndividualPermissions) {
+        this.userToIndividualPermissions = userToIndividualPermissions;
+    }
+
+
+    public Map<Integer, SetInteger> getAppointedOwnersMap() {
         return appointedOwnersMap;
     }
 
-    public void setAppointedOwnersMap(HashMap<Integer, Set<Integer>> appointedOwnersMap) {
+    public void setAppointedOwnersMap(Map<Integer, SetInteger> appointedOwnersMap) {
         this.appointedOwnersMap = appointedOwnersMap;
-    }
-
-    public void setUserToIndividualPermissions(HashMap<Integer, Set<UserPermissions.IndividualPermission>> userToIndividualPermissions) {
-        this.userToIndividualPermissions = userToIndividualPermissions;
     }
 
     public IUserPermissionRepository getUserPermissionRepository() {

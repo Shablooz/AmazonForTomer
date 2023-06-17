@@ -45,7 +45,7 @@ public class UserPermissions {
 
 
     private UserPermissionStatus userPermissionStatus;
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "UserPermissions_StoreRole",
             joinColumns = {@JoinColumn(name = "UserPermissions_id", referencedColumnName = "userId")})
     @MapKeyColumn(name = "storeId")
