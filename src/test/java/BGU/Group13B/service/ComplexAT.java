@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,6 +13,9 @@ public class ComplexAT{
 
     private Session session;
     private final int adminId = 1;
+    private final LocalDate today = LocalDate.now();
+
+    private int nextUserId = 2;
 
     @BeforeEach
     public void setup() {
@@ -27,7 +31,7 @@ public class ComplexAT{
     }
 
     private void checkTraffic(int addedGuests, int addedRegularMembers, int addedStoreManagersThatAreNotOwners, int addedStoreOwners, int addedAdmins){
-        var traffic = handleResponse(session.getUserTrafficOfRange(adminId, LocalDate.now(), LocalDate.now()));
+        var traffic = handleResponse(session.getUserTrafficOfRange(adminId, today, today));
         assertEquals(addedGuests, traffic.numOfGuests());
         assertEquals(addedRegularMembers, traffic.numOfRegularMembers());
         assertEquals(addedStoreManagersThatAreNotOwners, traffic.numOfStoreManagersThatAreNotOwners());
@@ -36,11 +40,15 @@ public class ComplexAT{
     }
 
     private void checkSystemIncome(double income){
-        //TODO
+        double[] historyIncome = handleResponse(session.getSystemHistoryIncome(adminId, today, today));
+        assertEquals(1, historyIncome.length);
+        assertEquals(income, historyIncome[0]);
     }
 
     private void checkStoreIncome(int storeId, double income){
-        //TODO
+        double[] historyIncome = handleResponse(session.getStoreHistoryIncome(adminId, storeId, today, today));
+        assertEquals(1, historyIncome.length);
+        assertEquals(income, historyIncome[0]);
     }
 
     private int enterAsGuest(){
@@ -54,10 +62,13 @@ public class ComplexAT{
         }
     }
 
-    private int registerAndLoginAsRegularMember(String username, String password){
+    private int registerAndLoginAsRegularMember(){
+        String username = "Username" + nextUserId;
+        String password = "Password" + nextUserId;
+        nextUserId++;
         try{
             int id = session.enterAsGuest();
-            session.register(id, username, password, username + "@gmail.com", "", "", "", LocalDate.now());
+            session.register(id, username, password, username + "@gmail.com", "", "", "", today);
             return session.login(id, username, password, "", "", "");
         }
         catch (Exception e){
@@ -67,36 +78,42 @@ public class ComplexAT{
         }
     }
 
-    private Pair<Integer /*userId*/, Integer /*storeId*/> registerAndLoginAsStoreFounder(String username, String password){
-        int userId = registerAndLoginAsRegularMember(username, password);
+    private Pair<Integer /*userId*/, Integer /*storeId*/> registerAndLoginAsStoreFounder(){
+        int userId = registerAndLoginAsRegularMember();
         int storeId = handleResponse(session.addStore(userId, "storeName", "storeCategory"));
         return Pair.of(userId, storeId);
     }
 
-    private int registerAndLoginAsStoreOwner(String username, String password, int founderId, int storeId){
-        int userId = registerAndLoginAsRegularMember(username, password);
+    private int registerAndLoginAsStoreOwner(int founderId, int storeId){
+        int userId = registerAndLoginAsRegularMember();
         handleResponse(session.addOwner(founderId, userId, storeId));
         return userId;
     }
 
-    private int registerAndLoginAsStoreManager(String username, String password, int founderId, int storeId){
-        int userId = registerAndLoginAsRegularMember(username, password);
+    private int registerAndLoginAsStoreManager(int founderId, int storeId){
+        int userId = registerAndLoginAsRegularMember();
         handleResponse(session.addManager(founderId, userId, storeId));
         return userId;
     }
 
+    private Response<VoidResponse> purchase(int userId){
+        return session.purchaseProductCart(userId, "1234234534564567", "11",
+                "2024", "noder", "123", "244545654",
+                "some address", "some city", "israel", "71000232");
+    }
+
     @Test
     public void AccessHiddenProduct(){
-        Pair<Integer, Integer> userAndStoreIds = registerAndLoginAsStoreFounder("Username1", "Password1");
+        Pair<Integer, Integer> userAndStoreIds = registerAndLoginAsStoreFounder();
         int founderId = userAndStoreIds.getFirst();
         int storeId = userAndStoreIds.getSecond();
         int productId = handleResponse(session.addProduct(founderId, storeId, "productName", "productCategory", 10.0, 10, "description"));
         handleResponse(session.hideStore(founderId, storeId));
 
         int guestId = enterAsGuest();
-        int memberId = registerAndLoginAsRegularMember("Username2", "Password2");
-        int managerId = registerAndLoginAsStoreManager("Username4", "Password4", founderId, storeId);
-        int ownerId = registerAndLoginAsStoreOwner("Username3", "Password3", founderId, storeId);
+        int memberId = registerAndLoginAsRegularMember();
+        int managerId = registerAndLoginAsStoreManager(founderId, storeId);
+        int ownerId = registerAndLoginAsStoreOwner(founderId, storeId);
 
         assertEquals(0, handleResponse(session.search("productName")).size());
         assertTrue(session.getStoreProductInfo(guestId, storeId, productId).didntSucceed());
@@ -109,6 +126,78 @@ public class ComplexAT{
         assertFalse(session.getStoreInfo(ownerId, storeId).didntSucceed());
         assertFalse(session.getStoreProductInfo(founderId, storeId, productId).didntSucceed());
         assertFalse(session.getStoreInfo(founderId, storeId).didntSucceed());
+
+        checkTraffic(1, 1, 1, 1, 0);
+        checkSystemIncome(0);
+    }
+
+    @Test
+    public void purchaseHiddenOrDeletedProduct(){
+        Pair<Integer, Integer> userAndStoreIds = registerAndLoginAsStoreFounder();
+        int founderId = userAndStoreIds.getFirst();
+        int storeId = userAndStoreIds.getSecond();
+        int productId = handleResponse(session.addProduct(founderId, storeId, "productName", "productCategory", 10.0, 10, "description"));
+
+        int guestId = enterAsGuest();
+        int memberId = registerAndLoginAsRegularMember();
+        int managerId = registerAndLoginAsStoreManager(founderId, storeId);
+        int ownerId = registerAndLoginAsStoreOwner(founderId, storeId);
+
+        handleResponse(session.hideStore(founderId, storeId));
+        assertTrue(session.addProductToCart(guestId, productId, storeId).didntSucceed());
+        assertTrue(session.addProductToCart(memberId, productId, storeId).didntSucceed());
+        assertTrue(session.addProductToCart(managerId, productId, storeId).didntSucceed());
+        assertTrue(session.addProductToCart(ownerId, productId, storeId).didntSucceed());
+        assertTrue(session.addProductToCart(founderId, productId, storeId).didntSucceed());
+
+        handleResponse(session.unhideStore(founderId, storeId));
+        handleResponse(session.addProductToCart(guestId, productId, storeId));
+        handleResponse(session.addProductToCart(memberId, productId, storeId));
+        handleResponse(session.addProductToCart(managerId, productId, storeId));
+        handleResponse(session.addProductToCart(ownerId, productId, storeId));
+        handleResponse(session.addProductToCart(founderId, productId, storeId));
+
+        handleResponse(session.hideStore(founderId, storeId));
+        session.startPurchaseBasketTransaction(guestId, List.of());
+        session.startPurchaseBasketTransaction(memberId, List.of());
+        session.startPurchaseBasketTransaction(managerId, List.of());
+        session.startPurchaseBasketTransaction(ownerId, List.of());
+        session.startPurchaseBasketTransaction(founderId, List.of());
+        assertTrue(purchase(guestId).didntSucceed());
+        assertTrue(purchase(memberId).didntSucceed());
+        assertTrue(purchase(managerId).didntSucceed());
+        assertTrue(purchase(ownerId).didntSucceed());
+        assertTrue(purchase(founderId).didntSucceed());
+
+        handleResponse(session.unhideStore(founderId, storeId));
+
+        assertEquals(0, handleResponse(session.getCartContent(guestId)).size());
+        assertEquals(0, handleResponse(session.getCartContent(memberId)).size());
+        assertEquals(0, handleResponse(session.getCartContent(managerId)).size());
+        assertEquals(0, handleResponse(session.getCartContent(ownerId)).size());
+        assertEquals(0, handleResponse(session.getCartContent(founderId)).size());
+
+        handleResponse(session.addProductToCart(guestId, productId, storeId));
+        handleResponse(session.addProductToCart(memberId, productId, storeId));
+        handleResponse(session.addProductToCart(managerId, productId, storeId));
+        handleResponse(session.addProductToCart(ownerId, productId, storeId));
+        handleResponse(session.addProductToCart(founderId, productId, storeId));
+
+        handleResponse(session.removeProduct(founderId, storeId, productId));
+
+        session.startPurchaseBasketTransaction(guestId, List.of());
+        session.startPurchaseBasketTransaction(memberId, List.of());
+        session.startPurchaseBasketTransaction(managerId, List.of());
+        session.startPurchaseBasketTransaction(ownerId, List.of());
+        session.startPurchaseBasketTransaction(founderId, List.of());
+        assertTrue(purchase(guestId).didntSucceed());
+        assertTrue(purchase(memberId).didntSucceed());
+        assertTrue(purchase(managerId).didntSucceed());
+        assertTrue(purchase(ownerId).didntSucceed());
+        assertTrue(purchase(founderId).didntSucceed());
+
+        checkTraffic(1, 1, 1, 1, 0);
+        checkSystemIncome(0);
     }
 
 

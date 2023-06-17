@@ -129,7 +129,7 @@ public class Session implements ISession {
                             creditCardCVV, id,
                             address, city, country, zip);
             return Response.success();
-        } catch (PurchaseFailedException | NoPermissionException e) {
+        } catch (Exception e) {
             return Response.exception(e);
         }
     }
