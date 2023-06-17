@@ -93,6 +93,7 @@ public class PaymentView extends Div implements BeforeLeaveObserver, ResponseHan
         paymentSuccessful = false;
         totalPriceBeforeDiscount = handleResponse(session.getTotalPriceOfCart(SessionToIdMapper.getInstance().getCurrentSessionId()), "");
         //coupon code in the future
+        pricesLayout = new HorizontalLayout();
         pricesLayout = getPricesLayout(session, totalPriceBeforeDiscount);
 
 
@@ -141,6 +142,8 @@ public class PaymentView extends Div implements BeforeLeaveObserver, ResponseHan
 
     private HorizontalLayout getPricesLayout(Session session, double totalPriceBeforeDiscount) {
         var priceAndSuccessful = handleResponse(session.startPurchaseBasketTransaction(SessionToIdMapper.getInstance().getCurrentSessionId(), couponsList.stream().map(Coupon::getCoupon).toList())); //mafhid
+        if(priceAndSuccessful == null)
+            return topLayout;
         totalPriceAfterDiscount = priceAndSuccessful.getFirst();
         successfulItems = priceAndSuccessful.getSecond();
         Span spanBeforeDiscountTitle = new Span(totalPriceBeforeDiscount != totalPriceAfterDiscount ?
@@ -510,8 +513,9 @@ public class PaymentView extends Div implements BeforeLeaveObserver, ResponseHan
         });
         Button applyCoupons = new Button("Apply coupons");
         applyCoupons.addClickListener(event -> {
-            handleResponse(session.cancelPurchase(SessionToIdMapper.getInstance().getCurrentSessionId()));
-            pricesLayout.removeAll();
+            if(handleResponse(session.cancelPurchase(SessionToIdMapper.getInstance().getCurrentSessionId())) == null)
+                return;
+            topLayout.removeAll();
             pricesLayout = getPricesLayout(session, totalPriceBeforeDiscount);
             topLayout.add(pricesLayout);
             couponsPanel.setOpened(false);
