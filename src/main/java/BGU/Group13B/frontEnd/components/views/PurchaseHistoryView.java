@@ -1,6 +1,9 @@
 package BGU.Group13B.frontEnd.components.views;
 
 import BGU.Group13B.backend.User.PurchaseHistory;
+import BGU.Group13B.backend.User.UserPermissions;
+import BGU.Group13B.backend.storePackage.WorkerCard;
+import BGU.Group13B.frontEnd.ResponseHandler;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.service.Response;
 import BGU.Group13B.service.Session;
@@ -20,7 +23,7 @@ import java.util.List;
 
 @PageTitle("purchaseHistory")
 @Route(value = "purchaseHistory", layout = MainLayout.class)
-public class PurchaseHistoryView extends VerticalLayout implements HasUrlParameter<String>, BeforeEnterObserver {
+public class PurchaseHistoryView extends VerticalLayout implements HasUrlParameter<String>, BeforeEnterObserver, ResponseHandler {
 
     private Session session;
     private int storeId;
@@ -53,15 +56,32 @@ public class PurchaseHistoryView extends VerticalLayout implements HasUrlParamet
 
     public void userCase(){
         add(new H1("My purchase history"));
-        Response<List<PurchaseHistory>> purchaseHistory = session.getUserPurchaseHistory(userId);
-        buildUserGrid(purchaseHistory.getData());
+        List<PurchaseHistory> purchaseHistory;
+        purchaseHistory = handleResponse(session.getUserPurchaseHistory(userId));
+        if(purchaseHistory != null) {
+            buildUserGrid(purchaseHistory);
+        }
+    }
+
+    public boolean hasAccessHistory(Session session, int storeId){
+        int userId = SessionToIdMapper.getInstance().getCurrentSessionId();
+        List<WorkerCard> res = handleResponse(session.getStoreWorkersInfo(1 , storeId));
+        if(res == null){
+            return false;
+        }
+        return res.stream().anyMatch(wc -> wc.userId() == userId && wc.userPermissions().contains(UserPermissions.IndividualPermission.HISTORY));
     }
 
     public void storeCase(){
+        hasAccessHistory(session,storeId);
         add(new H1("Store purchase history"));
-        Response<List<PurchaseHistory>> purchaseHistory = session.getStorePurchaseHistory(userId,storeId);
-        buildStoreGrid(purchaseHistory.getData());
+        List<PurchaseHistory> purchaseHistory;
+        purchaseHistory = handleResponse(session.getStorePurchaseHistory(userId,storeId));
+        if(purchaseHistory != null) {
+            buildStoreGrid(purchaseHistory);
+        }
     }
+
     public void buildUserGrid(List<PurchaseHistory> purchaseHistories){
         Grid<PurchaseHistory> historyGrid = new Grid<>();
         setAlignItems(Alignment.CENTER);
