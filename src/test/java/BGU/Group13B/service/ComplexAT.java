@@ -15,12 +15,23 @@ public class ComplexAT{
     private final int adminId = 1;
     private final LocalDate today = LocalDate.now();
 
-    private int nextUserId = 2;
+    private int guests;
+    private int regularMembers;
+    private int storeManagersThatAreNotOwners;
+    private int storeOwners;
+    private int admins;
 
     @BeforeEach
     public void setup() {
         SingletonCollection.reset_system();
         session = SingletonCollection.getSession();
+        session.enterAsGuest();
+        session.login(adminId, "kingOfTheSheep", "SheePLover420", "11", "11", "11");
+        guests = 0;
+        regularMembers = 0;
+        storeManagersThatAreNotOwners = 0;
+        storeOwners = 0;
+        admins = 1;
     }
 
     private <T> T handleResponse(Response<T> response) {
@@ -32,11 +43,16 @@ public class ComplexAT{
 
     private void checkTraffic(int addedGuests, int addedRegularMembers, int addedStoreManagersThatAreNotOwners, int addedStoreOwners, int addedAdmins){
         var traffic = handleResponse(session.getUserTrafficOfRange(adminId, today, today));
-        assertEquals(addedGuests, traffic.numOfGuests());
-        assertEquals(addedRegularMembers, traffic.numOfRegularMembers());
-        assertEquals(addedStoreManagersThatAreNotOwners, traffic.numOfStoreManagersThatAreNotOwners());
-        assertEquals(addedStoreOwners, traffic.numOfStoreOwners());
-        assertEquals(addedAdmins, traffic.numOfAdmins());
+        assertEquals(addedGuests, traffic.numOfGuests() - guests);
+        assertEquals(addedRegularMembers, traffic.numOfRegularMembers() - regularMembers);
+        assertEquals(addedStoreManagersThatAreNotOwners, traffic.numOfStoreManagersThatAreNotOwners() - storeManagersThatAreNotOwners);
+        assertEquals(addedStoreOwners, traffic.numOfStoreOwners() - storeOwners);
+        assertEquals(addedAdmins, traffic.numOfAdmins() - admins);
+        guests = traffic.numOfGuests();
+        regularMembers = traffic.numOfRegularMembers();
+        storeManagersThatAreNotOwners = traffic.numOfStoreManagersThatAreNotOwners();
+        storeOwners = traffic.numOfStoreOwners();
+        admins = traffic.numOfAdmins();
     }
 
     private void checkSystemIncome(double income){
@@ -51,6 +67,37 @@ public class ComplexAT{
         assertEquals(income, historyIncome[0]);
     }
 
+    private void reenterSystem(int... userIds){
+        for(int userId : userIds){
+            session.logout(userId);
+            login(userId);
+        }
+    }
+
+    private void logout(int... userIds){
+        try{
+            for(int userId : userIds)
+                session.logout(userId);
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+            fail();
+        }
+    }
+
+    private void login(int... userIds){
+        try{
+            for(int userId : userIds){
+                int id = session.enterAsGuest();
+                session.login(id, "Username" + userId, "Password" + userId, "", "", "");
+            }
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+            fail();
+        }
+    }
+
     private int enterAsGuest(){
         try{
             return session.enterAsGuest();
@@ -63,13 +110,10 @@ public class ComplexAT{
     }
 
     private int registerAndLoginAsRegularMember(){
-        String username = "Username" + nextUserId;
-        String password = "Password" + nextUserId;
-        nextUserId++;
         try{
             int id = session.enterAsGuest();
-            session.register(id, username, password, username + "@gmail.com", "", "", "", today);
-            return session.login(id, username, password, "", "", "");
+            session.register(id, "Username" + id, "Password" + id,  "Username" + id + "@gmail.com", "", "", "", today);
+            return session.login(id, "Username" + id, "Password" + id, "", "", "");
         }
         catch (Exception e){
             System.out.println(e.getMessage());
@@ -127,7 +171,10 @@ public class ComplexAT{
         assertFalse(session.getStoreProductInfo(founderId, storeId, productId).didntSucceed());
         assertFalse(session.getStoreInfo(founderId, storeId).didntSucceed());
 
-        checkTraffic(1, 1, 1, 1, 0);
+        checkTraffic(1, 4, 0, 0, 0);
+        reenterSystem(memberId, managerId, ownerId, founderId);
+        checkTraffic(0, 1, 1, 2, 0);
+
         checkSystemIncome(0);
     }
 
@@ -196,7 +243,10 @@ public class ComplexAT{
         assertTrue(purchase(ownerId).didntSucceed());
         assertTrue(purchase(founderId).didntSucceed());
 
-        checkTraffic(1, 1, 1, 1, 0);
+        checkTraffic(1, 4, 0, 0, 0);
+        reenterSystem(memberId, managerId, ownerId, founderId);
+        checkTraffic(0, 1, 1, 2, 0);
+
         checkSystemIncome(0);
     }
 
