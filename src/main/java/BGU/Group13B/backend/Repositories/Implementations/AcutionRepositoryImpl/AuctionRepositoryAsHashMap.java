@@ -12,7 +12,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.*;
-
+@Deprecated
 public class AuctionRepositoryAsHashMap implements IAuctionRepository {
     private final AbstractMap<Integer/*storeId*/, List<PublicAuction>> storeAuctions;
     private final AddToUserCart addToCart;
