@@ -49,7 +49,7 @@ public class Application implements AppShellConfigurator {
         SingletonCollection.setStoreDiscountRootsRepository();
         SingletonCollection.setPurchasePolicyRootsRepository();
         SingletonCollection.setBidRepository();
-        setPurchaseHistoryRepository();
+        SingletonCollection.setPurchaseHistoryRepository();
         ConfigurationFileParser.parse();
     }
 
