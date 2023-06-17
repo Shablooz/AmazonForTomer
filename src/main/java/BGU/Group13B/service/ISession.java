@@ -94,9 +94,9 @@ public interface ISession {
     Response<VoidResponse> purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount);
 
 
-    void purchaseProposalApprove(int managerId, int storeId, int productId) throws NoPermissionException;
+    Response<VoidResponse> purchaseProposalApprove(int managerId, int storeId, int productId) throws NoPermissionException;
 
-    void purchaseProposalReject(int storeId, int managerId, int bidId) throws NoPermissionException;
+    Response<VoidResponse> purchaseProposalReject(int storeId, int managerId, int bidId) throws NoPermissionException;
 
     /**
      * #51
@@ -799,7 +799,7 @@ public interface ISession {
 
     Response<VoidResponse> fetchMessages(int userId);
 
-    int getStoreFounder(int storeId);
+    Response<Integer> getStoreFounder(int storeId);
 
     Response<Pair<Double, List<ServiceBasketProduct>>> startPurchaseBasketTransaction(int userId, List<String> coupons) throws PurchaseFailedException;
 

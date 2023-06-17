@@ -618,11 +618,10 @@ public class PaymentView extends Div implements BeforeLeaveObserver, ResponseHan
     }
 
     private void sendPurchaseMessageToStoreOwners() {
-        int me = SessionToIdMapper.getInstance().getCurrentSessionId();
         Set<Integer> storesFounder =
                 successfulItems.stream().
                         map(ServiceBasketProduct::getStoreId).
-                        map(session::getStoreFounder).collect(Collectors.toSet());
+                        map(storeId -> handleResponse(session.getStoreFounder(storeId))).collect(Collectors.toSet());
 
         for (int storeFounder : storesFounder) {
             BroadCaster.broadcast(storeFounder,

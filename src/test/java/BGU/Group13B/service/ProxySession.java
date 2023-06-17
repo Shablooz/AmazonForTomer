@@ -548,15 +548,17 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void purchaseProposalApprove(int managerId, int storeId, int productId) throws NoPermissionException {
+    public Response<VoidResponse> purchaseProposalApprove(int managerId, int storeId, int productId) throws NoPermissionException {
         if (realSession != null)
             realSession.purchaseProposalApprove(managerId, storeId, productId);
+        return Response.success(new VoidResponse());
     }
 
     @Override
-    public void purchaseProposalReject(int storeId, int managerId, int bidId) throws NoPermissionException {
+    public Response<VoidResponse> purchaseProposalReject(int storeId, int managerId, int bidId) throws NoPermissionException {
         if (realSession != null)
             realSession.purchaseProposalReject(storeId, managerId, bidId);
+        return Response.success(new VoidResponse());
     }
 
     @Override
@@ -1093,10 +1095,10 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public int getStoreFounder(int storeId) {
+    public Response<Integer> getStoreFounder(int storeId) {
         if (realSession != null)
             return realSession.getStoreFounder(storeId);
-        return -1;
+        return null;
     }
 
     @Override
