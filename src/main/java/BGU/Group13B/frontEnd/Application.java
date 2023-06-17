@@ -15,6 +15,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+import static java.lang.Thread.sleep;
+
 /**
  * The entry point of the Spring Boot application.
  *
@@ -36,6 +38,7 @@ public class Application implements AppShellConfigurator {
 
         SingletonCollection.setContext(context);
         //TODO load all repositories from db to memory
+        SingletonCollection.setSession();
         SingletonCollection.setDailyUserTrafficRepository();
         SingletonCollection.setReviewRepository();
         SingletonCollection.setProductRepository();
@@ -45,7 +48,12 @@ public class Application implements AppShellConfigurator {
         SingletonCollection.setStoreDiscountRootsRepository();
         SingletonCollection.setPurchasePolicyRootsRepository();
         SingletonCollection.setBidRepository();
-        //ConfigurationFileParser.parse();
+        try {
+            sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        ConfigurationFileParser.parse();
     }
 
     public void setup(){

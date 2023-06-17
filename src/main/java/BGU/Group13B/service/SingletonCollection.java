@@ -144,7 +144,6 @@ public class SingletonCollection {
         alertManager = new AlertManager(userRepository);
         searcher = new Searcher(productRepository, storeRepository);
         market = new Market();
-        //session = new Session(market);//super bug sad shaun at 3:38 am
 
     }
 
@@ -482,5 +481,8 @@ public class SingletonCollection {
     }
 
 
+    public static void setSession() {
+        SingletonCollection.session = SingletonCollection.getContext().getBean(Session.class);
+    }
 }
 
