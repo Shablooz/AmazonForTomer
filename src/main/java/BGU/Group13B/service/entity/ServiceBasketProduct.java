@@ -2,6 +2,7 @@ package BGU.Group13B.service.entity;
 
 import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.storePackage.Product;
+import BGU.Group13B.service.Session;
 
 public class ServiceBasketProduct extends AbstractEntity {
 
@@ -68,6 +69,13 @@ public class ServiceBasketProduct extends AbstractEntity {
         this.quantity = quantity;
     }
 
+    public String getStoreName(Session session) {
+        var responseStoreName = session.getStoreName(getStoreId());
+        if(responseStoreName.didntSucceed())
+            return "store does not exists";
+        return responseStoreName.getData();
+    }
+
     @Override
     public String toString() {
         return String.format(
@@ -94,4 +102,7 @@ public class ServiceBasketProduct extends AbstractEntity {
                 """, name, quantity, price, subtotal);
     }
 
+    public boolean storeExists(Session session) {
+        return !session.getStoreName(getStoreId()).didntSucceed();
+    }
 }

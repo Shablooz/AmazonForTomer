@@ -29,11 +29,11 @@ public class BasketProductRepositoryAsHashMap implements IBasketProductRepositor
 
     @Override
     public void removeBasketProducts(int storeId, int userId) {
-       getBasketProducts(storeId, userId).ifPresent(List::clear);
+        getBasketProducts(storeId, userId).ifPresent(List::clear);
         /* basketProducts.remove(Pair.of(storeId, userId)).orElseThrow(
                 () -> new IllegalArgumentException("There is not basket for store with id: " + storeId + " and user with id: " + userId));
-    */}
-
+    */
+    }
 
 
     //1 - get the products of the store
@@ -42,15 +42,15 @@ public class BasketProductRepositoryAsHashMap implements IBasketProductRepositor
     public void addNewProductToBasket(int productId, int storeId, int userId) {
         Product product = productRepository.getStoreProductById(productId, storeId);
 
-        if(!basketProducts.containsKey(Pair.of(storeId, userId))) {
+        if (!basketProducts.containsKey(Pair.of(storeId, userId))) {
             List<BasketProduct> newBasketProducts = new LinkedList<>();
             newBasketProducts.add(new BasketProduct(product));
             basketProducts.put(Pair.of(storeId, userId), Optional.of(newBasketProducts));
-        }else{
+        } else {
             List<BasketProduct> basketProductsList = basketProducts.get(Pair.of(storeId, userId)).get();
             var basketProductOptional = basketProductsList.stream().filter(basketProduct -> basketProduct.getProductId() == productId).findFirst();
-            if(basketProductOptional.isPresent()) {
-               throw new IllegalArgumentException("Product with id: " + productId + " already exists in the basket");
+            if (basketProductOptional.isPresent()) {
+                throw new IllegalArgumentException("Product with id: " + productId + " already exists in the basket");
             }
             basketProductsList.add(new BasketProduct(product));
         }
@@ -70,7 +70,7 @@ public class BasketProductRepositoryAsHashMap implements IBasketProductRepositor
     }
 
     @Override
-    public BasketProduct getBasketProduct(int productId, int storeId, int userId) throws IllegalArgumentException{
+    public BasketProduct getBasketProduct(int productId, int storeId, int userId) throws IllegalArgumentException {
         for (BasketProduct basketProduct : getBasketProducts(storeId, userId).orElseGet(LinkedList::new)) {
             if (basketProduct.getProductId() == productId) {
                 return basketProduct;
@@ -78,14 +78,23 @@ public class BasketProductRepositoryAsHashMap implements IBasketProductRepositor
         }
         return null;
     }
+
     @Override
     public void removeBasketProduct(int productId, int userId, int storeId) {
         BasketProduct basketProduct = getBasketProduct(productId, storeId, userId);
-        if(basketProduct!=null)
+        if (basketProduct != null)
             getBasketProducts(storeId, userId).get().remove(basketProduct);
+    }
 
+    @Override
+    public boolean isUserBasketsExists(int userId) {
+        //if basketProducts contain pair keys with userId return true else return false
+        return basketProducts.keySet().stream().anyMatch(pair -> pair.getSecond() == userId);
+    }
 
-
+    @Override
+    public void dropBasket(int storeId, int userId) {
+        basketProducts.remove(Pair.of(storeId, userId));
     }
 
 }

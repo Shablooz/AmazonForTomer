@@ -12,9 +12,7 @@ import BGU.Group13B.backend.storePackage.PublicAuctionInfo;
 import BGU.Group13B.backend.storePackage.WorkerCard;
 import BGU.Group13B.backend.storePackage.newDiscoutns.DiscountInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
-import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.StoreDiscount;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
-import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
 import BGU.Group13B.service.entity.ReviewService;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
 import BGU.Group13B.service.entity.ServiceProduct;
@@ -96,9 +94,9 @@ public interface ISession {
     Response<VoidResponse> purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount);
 
 
-    void purchaseProposalApprove(int managerId, int storeId, int productId) throws NoPermissionException;
+    Response<VoidResponse> purchaseProposalApprove(int managerId, int storeId, int productId) throws NoPermissionException;
 
-    void purchaseProposalReject(int storeId, int managerId, int bidId) throws NoPermissionException;
+    Response<VoidResponse> purchaseProposalReject(int storeId, int managerId, int bidId) throws NoPermissionException;
 
     /**
      * #51
@@ -716,7 +714,7 @@ public interface ISession {
     boolean checkIfQuestionsExist(int userId);
 
 
-    List<ServiceProduct> getAllFailedProductsAfterPayment(int userId);
+    Response<List<ServiceProduct>> getAllFailedProductsAfterPayment(int userId);
 
     /**
      * #13
@@ -744,9 +742,9 @@ public interface ISession {
     List<Integer> getFailedProducts(int userId, int storeId);
 
 
-    double getTotalPriceOfCart(int userId);
+    Response<Double> getTotalPriceOfCart(int userId);
 
-    void cancelPurchase(int userId);
+    Response<VoidResponse> cancelPurchase(int userId);
 
     boolean isUserLogged(int userId);
 
@@ -801,9 +799,9 @@ public interface ISession {
 
     Response<VoidResponse> fetchMessages(int userId);
 
-    int getStoreFounder(int storeId);
+    Response<Integer> getStoreFounder(int storeId);
 
-    Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, List<String> coupons) throws PurchaseFailedException;
+    Response<Pair<Double, List<ServiceBasketProduct>>> startPurchaseBasketTransaction(int userId, List<String> coupons) throws PurchaseFailedException;
 
     /**
      * #43
@@ -1015,4 +1013,18 @@ public interface ISession {
     Response<List<StoreInfo>> getAllStores();
 
     Response<UserTrafficRecord> getUserTrafficOfRange(int userId, LocalDate from, LocalDate to);
+
+    /**
+     * @param userId  the user id (only the founder can do this action)
+     * @param adminId admin id that want to remove the member
+     */
+
+    Response<Boolean> removeMember(int adminId, int userId);
+  
+    Response<double[]> getStoreHistoryIncome(int storeId, int userId, LocalDate from, LocalDate to);
+
+    Response<double[]> getSystemHistoryIncome(int userId, LocalDate from, LocalDate to);
+
+
+    Response<String> getUserNameRes(int userId);
 }

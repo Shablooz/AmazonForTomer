@@ -7,6 +7,7 @@ import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
+import BGU.Group13B.service.BroadCaster;
 import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
 import BGU.Group13B.service.SingletonCollection;
 
@@ -45,8 +46,8 @@ public class Basket {
     }
 
     //used for testing
-    public Basket(int userId, int storeId, IBasketProductRepository productRepository,IPurchaseHistoryRepository purchaseHistoryRepository,
-                  PaymentAdapter paymentAdapter,CalculatePriceOfBasket calculatePriceOfBasket, DeliveryAdapter deliveryAdapter) {
+    public Basket(int userId, int storeId, IBasketProductRepository productRepository, IPurchaseHistoryRepository purchaseHistoryRepository,
+                  PaymentAdapter paymentAdapter, CalculatePriceOfBasket calculatePriceOfBasket, DeliveryAdapter deliveryAdapter) {
         this.userId = userId;
         this.storeId = storeId;
         this.basketProductRepository = productRepository;
@@ -90,9 +91,10 @@ public class Basket {
         getSuccessfulProducts();
         //double totalAmount = getTotalAmount(productsCoupons);//fixme
         //calculate the total price of the products by the store discount policy
-        var basketProducts= basketProductRepository.getBasketProducts(storeId, userId).orElseGet(LinkedList::new);
+        if(successfulProducts.isEmpty()) return Pair.of(-1.0, new LinkedList<>());
         finalPrice = calculateStoreDiscount(userInfo, coupons);
         return Pair.of(finalPrice, new LinkedList<>(successfulProducts));
+
     }
 
     public void purchaseBasket(String creditCardNumber,
@@ -115,6 +117,9 @@ public class Basket {
         purchaseHistoryRepository.addPurchase(userId, storeId, successfulProducts, finalPrice);
         basketProductRepository.removeBasketProducts(storeId, userId);
         successfulProducts.clear();
+
+        //refresh income view
+        BroadCaster.broadcastIncome();
 
     }
 
@@ -179,6 +184,11 @@ public class Basket {
                 }
             }
         }
+
+        //remove the failed products from the basket
+        for (BasketProduct basketProduct : failedProducts) {
+            basketProductRepository.removeBasketProduct(basketProduct.getProductId(), userId, storeId);
+        }
     }
 
     public void addProduct(int productId, int amount, double newPrice) throws IllegalArgumentException {
@@ -192,7 +202,7 @@ public class Basket {
 
         } else {
             basketProductRepository.addNewProductToBasket(productId, storeId, userId);
-            if(newPrice != -1)
+            if (newPrice != -1)
                 basketProductRepository.getBasketProduct(productId, storeId, userId).setPrice(newPrice);
             basketProductRepository.getBasketProduct(productId, storeId, userId).setQuantity(amount);
         }
@@ -207,12 +217,8 @@ public class Basket {
         return basketContent.toString();
     }
 
-    public void removeProduct(int productId) throws Exception {
-        try {
-            basketProductRepository.removeBasketProduct(productId, userId, storeId);
-        } catch (Exception e) {
-            throw e;
-        }
+    public void removeProduct(int productId){
+        basketProductRepository.removeBasketProduct(productId, userId, storeId);
     }
 
     public void changeProductQuantity(int productId, int quantity) throws Exception {
@@ -267,5 +273,10 @@ public class Basket {
     @Override
     public int hashCode() {
         return Objects.hash(userId, storeId);
+    }
+
+    public void clearBasket() {
+        basketProductRepository.removeBasketProducts(storeId,userId);
+        basketProductRepository.dropBasket(storeId,userId);
     }
 }

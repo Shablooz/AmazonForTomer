@@ -71,6 +71,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
     private Button storeMessagesButton;
     private StoreProductsLayout storeProductsLayout;
     private StoreWorkersLayout storeWorkersLayout;
+    private Button storeIncomeButton;
 
 
 
@@ -122,6 +123,9 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
             deleteStoreButton.setVisible(false);
         }
 
+        if(!currentWorker.userPermissions().contains(UserPermissions.IndividualPermission.STATS)){
+            storeIncomeButton.setVisible(false);
+        }
 
     }
 
@@ -141,6 +145,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
         storePurchaseHistoryButton = new Button("Store Purchase History");
         manageDiscountsButton = new Button("Manage Discounts");
         managePurchasePolicyButton = new Button("Manage Purchase Policy");
+        storeIncomeButton = new Button("Store Income");
         storeMessagesButton = messageStoreDialog();
         hiddenStoreIcon = new Icon(VaadinIcon.EYE_SLASH);
     }
@@ -208,6 +213,15 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
 
     private void init_bottomButtons() {
 
+        storeIncomeButton.addClickListener(e -> {
+            if(currentWorker.userPermissions().contains(UserPermissions.IndividualPermission.HISTORY)){
+                navigate("storeIncome/" + storeId);
+            }
+            else{
+                notifyWarning("You don't have permission to view store income");
+            }
+        });
+
         manageDiscountsButton.addClickListener(e -> {
             if(currentWorker.userPermissions().contains(UserPermissions.IndividualPermission.POLICIES)){
                 navigate("manageDiscounts/" + storeId);
@@ -273,7 +287,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
         });
         deleteStoreButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
 
-        bottomButtonsLayout.add(manageDiscountsButton, managePurchasePolicyButton, storePurchaseHistoryButton, hideStoreButton, unhideStoreButton, deleteStoreButton);
+        bottomButtonsLayout.add(storeIncomeButton, manageDiscountsButton, managePurchasePolicyButton, storePurchaseHistoryButton, hideStoreButton, unhideStoreButton, deleteStoreButton);
         bottomButtonsLayout.getStyle().set("margin-top", "auto");
         add(bottomButtonsLayout);
     }
