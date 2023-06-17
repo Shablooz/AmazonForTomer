@@ -48,11 +48,6 @@ public class Application implements AppShellConfigurator {
         SingletonCollection.setStoreDiscountRootsRepository();
         SingletonCollection.setPurchasePolicyRootsRepository();
         SingletonCollection.setBidRepository();
-        try {
-            sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         ConfigurationFileParser.parse();
     }
 
