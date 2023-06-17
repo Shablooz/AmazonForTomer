@@ -4,9 +4,12 @@ import BGU.Group13B.backend.User.PurchaseHistory;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.service.Response;
 import BGU.Group13B.service.Session;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -37,32 +40,18 @@ public class UserPurchaseHistoryView extends VerticalLayout implements HasUrlPar
     public void start() {
         if (selectedUserId != -1) {
             selectedUserCase();
-        } else if (storeId != -1) {
-            storeCase();
-        } else {
-            userCase();
         }
     }
 
     public void selectedUserCase() {
-        String username = session.getUserName(selectedUserId);
+        String username = handleResponse(session.getUserNameRes(selectedUserId));
         username += "'s purchase history";
         add(new H1(username));
-        Response<List<PurchaseHistory>> purchaseHistory = session.getUserPurchaseHistory(selectedUserId);
-        buildUserGrid(purchaseHistory.getData());
+        List<PurchaseHistory> purchaseHistory = handleResponse(session.getUserPurchaseHistory(selectedUserId));
+        buildUserGrid(purchaseHistory);
     }
 
-    public void userCase(){
-        add(new H1("My purchase history"));
-        Response<List<PurchaseHistory>> purchaseHistory = session.getUserPurchaseHistory(userId);
-        buildUserGrid(purchaseHistory.getData());
-    }
 
-    public void storeCase(){
-        add(new H1("Store purchase history"));
-        Response<List<PurchaseHistory>> purchaseHistory = session.getStorePurchaseHistory(userId,storeId);
-        buildStoreGrid(purchaseHistory.getData());
-    }
     public void buildUserGrid(List<PurchaseHistory> purchaseHistories){
         Grid<PurchaseHistory> historyGrid = new Grid<>();
         setAlignItems(Alignment.CENTER);
@@ -105,6 +94,19 @@ public class UserPurchaseHistoryView extends VerticalLayout implements HasUrlPar
             selectedUserId = -1;
         }
         start();
+    }
+
+    private <T> T handleResponse(Response<T> response) {
+        if (response.didntSucceed()) {
+            Notification errorNotification = Notification.show("Error: " + response.getMessage());
+            errorNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+            navigate("");
+        }
+        return response.getData();
+    }
+
+    private void navigate(String nav) {
+        UI.getCurrent().navigate(nav);
     }
 
 }
