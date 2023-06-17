@@ -10,6 +10,10 @@ import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
 import BGU.Group13B.service.SingletonCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.Transient;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -18,26 +22,55 @@ import java.util.LinkedList;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
+@Entity
+@IdClass(BasketId.class)
 public class Basket {
-    private final int userId;
-    private final int storeId;
-    private final IBasketProductRepository basketProductRepository;
-    private final IPurchaseHistoryRepository purchaseHistoryRepository;
-    private final PaymentAdapter paymentAdapter;
-    private final DeliveryAdapter deliveryAdapter;
-    private final ConcurrentLinkedQueue<BasketProduct> successfulProducts;
-    private final ConcurrentLinkedQueue<BasketProduct> failedProducts;
-    private final IProductHistoryRepository productHistoryRepository;
-    private final CalculatePriceOfBasket calculatePriceOfBasket;
+    @Id
+    private  int userId;
+    @Id
+    private  int storeId;
+
+    @Transient
+    private  IBasketProductRepository basketProductRepository;
+    @Transient
+    private  IPurchaseHistoryRepository purchaseHistoryRepository;
+    @Transient
+    private  PaymentAdapter paymentAdapter;
+    @Transient
+    private  DeliveryAdapter deliveryAdapter;
+    @Transient
+    private  ConcurrentLinkedQueue<BasketProduct> successfulProducts;
+    @Transient
+    private  ConcurrentLinkedQueue<BasketProduct> failedProducts;
+    @Transient
+    private  IProductHistoryRepository productHistoryRepository;
+    @Transient
+    private  CalculatePriceOfBasket calculatePriceOfBasket;
+    @Transient
     private ScheduledFuture<?> scheduledFuture;
     private int idealTime = 5;
+    @Transient
     private TimeUnit unitsToRestore = TimeUnit.MINUTES;
+    @Transient
     private ScheduledExecutorService scheduler;
     private double finalPrice;
+
 
     public Basket(int userId, int storeId) {
         this.userId = userId;
         this.storeId = storeId;
+        this.basketProductRepository = SingletonCollection.getBasketProductRepository();
+        this.paymentAdapter = SingletonCollection.getPaymentAdapter();
+        this.productHistoryRepository = SingletonCollection.getProductHistoryRepository();
+        this.calculatePriceOfBasket = SingletonCollection.getCalculatePriceOfBasket();
+        this.successfulProducts = new ConcurrentLinkedQueue<>();
+        this.failedProducts = new ConcurrentLinkedQueue<>();
+        this.purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
+        deliveryAdapter = SingletonCollection.getDeliveryAdapter();
+    }
+    public Basket() {
+        this.userId = 0;
+        this.storeId = 0;
         this.basketProductRepository = SingletonCollection.getBasketProductRepository();
         this.paymentAdapter = SingletonCollection.getPaymentAdapter();
         this.productHistoryRepository = SingletonCollection.getProductHistoryRepository();
@@ -96,7 +129,7 @@ public class Basket {
         getSuccessfulProducts();
         //double totalAmount = getTotalAmount(productsCoupons);//fixme
         //calculate the total price of the products by the store discount policy
-        var basketProducts= basketProductRepository.getBasketProducts(storeId, userId).orElseGet(LinkedList::new);
+        var basketProducts= getBasketProductRepository().getBasketProducts(storeId, userId).orElseGet(LinkedList::new);
         finalPrice = calculateStoreDiscount(userInfo, coupons);
         return Pair.of(finalPrice, new LinkedList<>(successfulProducts));
     }
@@ -118,12 +151,13 @@ public class Basket {
         scheduledFuture.cancel(true);
         scheduledFuture = null;
         scheduler.shutdown();
+
         //if succeeded, add the successful products to the purchase history
         for (BasketProduct basketProduct : successfulProducts) {
-            productHistoryRepository.addProductToHistory(basketProduct, userId);
+            getProductHistoryRepository().addProductToHistory(basketProduct, userId);
         }
-        purchaseHistoryRepository.addPurchase(userId, storeId, successfulProducts, finalPrice);
-        basketProductRepository.removeBasketProducts(storeId, userId);
+        getPurchaseHistoryRepository().addPurchase(userId, storeId, successfulProducts, finalPrice);
+        getBasketProductRepository().removeBasketProducts(storeId, userId);
         successfulProducts.clear();
 
     }
@@ -174,7 +208,7 @@ public class Basket {
 
         //for every product in the basket
 
-        for (BasketProduct basketProduct : basketProductRepository.getBasketProducts(storeId, userId).orElseGet(LinkedList::new)) {
+        for (BasketProduct basketProduct : getBasketProductRepository().getBasketProducts(storeId, userId).orElseGet(LinkedList::new)) {
             //synchronize product
             synchronized (basketProduct.getProduct()) {
                 //try to decrease the quantity of the product in the store
@@ -192,26 +226,26 @@ public class Basket {
     }
 
     public void addProduct(int productId, int amount, double newPrice) throws IllegalArgumentException {
-        BasketProduct basketProduct = basketProductRepository.getBasketProduct(productId, storeId, userId);
+        BasketProduct basketProduct = getBasketProductRepository().getBasketProduct(productId, storeId, userId);
 
         if (basketProduct != null) {
-            basketProductRepository.changeProductQuantity(productId, storeId, userId, 1);
+            getBasketProductRepository().changeProductQuantity(productId, storeId, userId, 1);
             basketProduct.setQuantity(amount);
             if (newPrice != -1)
                 basketProduct.setPrice(newPrice);
 
         } else {
-            basketProductRepository.addNewProductToBasket(productId, storeId, userId);
+            getBasketProductRepository().addNewProductToBasket(productId, storeId, userId);
             if(newPrice != -1)
-                basketProductRepository.getBasketProduct(productId, storeId, userId).setPrice(newPrice);
-            basketProductRepository.getBasketProduct(productId, storeId, userId).setQuantity(amount);
+                getBasketProductRepository().getBasketProduct(productId, storeId, userId).setPrice(newPrice);
+            getBasketProductRepository().getBasketProduct(productId, storeId, userId).setQuantity(amount);
         }
     }
 
     public String getBasketDescription() {
         StringBuilder basketContent = new StringBuilder();
-        basketProductRepository.getBasketProducts(storeId, userId);
-        for (BasketProduct basketProduct : basketProductRepository.getBasketProducts(storeId, userId).get()) {
+        getBasketProductRepository().getBasketProducts(storeId, userId);
+        for (BasketProduct basketProduct : getBasketProductRepository().getBasketProducts(storeId, userId).get()) {
             basketContent.append(basketProduct.toString());
         }
         return basketContent.toString();
@@ -219,16 +253,16 @@ public class Basket {
 
     public void removeProduct(int productId) throws Exception {
         try {
-            basketProductRepository.removeBasketProduct(productId, userId, storeId);
+            getBasketProductRepository().removeBasketProduct(productId, userId, storeId);
         } catch (Exception e) {
             throw e;
         }
     }
 
     public void changeProductQuantity(int productId, int quantity) throws Exception {
-        BasketProduct basketProduct = basketProductRepository.getBasketProduct(productId, storeId, userId);
+        BasketProduct basketProduct = getBasketProductRepository().getBasketProduct(productId, storeId, userId);
         if (basketProduct != null) {
-            basketProductRepository.changeProductQuantity(productId, storeId, userId, quantity);
+            getBasketProductRepository().changeProductQuantity(productId, storeId, userId, quantity);
         } else
             throw new Exception("Product not in basket");
     }
@@ -242,7 +276,7 @@ public class Basket {
     }
 
     public BasketProduct getBasketProduct(int productId) {
-        return basketProductRepository.getBasketProduct(productId, storeId, userId);
+        return getBasketProductRepository().getBasketProduct(productId, storeId, userId);
     }
 
     /*used for testing*/
@@ -255,15 +289,15 @@ public class Basket {
     }
 
     public List<Product> getBasketContent() {
-        return basketProductRepository.getBasketProducts(storeId, userId).orElseGet(LinkedList::new).stream().map(BasketProduct::getProduct).collect(Collectors.toList());
+        return getBasketProductRepository().getBasketProducts(storeId, userId).orElseGet(LinkedList::new).stream().map(BasketProduct::getProduct).collect(Collectors.toList());
     }
 
     public List<BasketProduct> getBasketProducts() {
-        return basketProductRepository.getBasketProducts(storeId, userId).orElseGet(LinkedList::new);
+        return getBasketProductRepository().getBasketProducts(storeId, userId).orElseGet(LinkedList::new);
     }
 
     public double getTotalPriceOfBasketBeforeDiscount() {
-        return basketProductRepository.getBasketProducts(storeId, userId).orElseGet(LinkedList::new).stream().mapToDouble(BasketProduct::getSubtotal).sum();
+        return getBasketProductRepository().getBasketProducts(storeId, userId).orElseGet(LinkedList::new).stream().mapToDouble(BasketProduct::getSubtotal).sum();
     }
 
     @Override
@@ -277,5 +311,108 @@ public class Basket {
     @Override
     public int hashCode() {
         return Objects.hash(userId, storeId);
+    }
+
+
+    //getters and setters
+
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public void setStoreId(int storeId) {
+        this.storeId = storeId;
+    }
+
+    public IBasketProductRepository getBasketProductRepository() {
+        basketProductRepository =SingletonCollection.getBasketProductRepository();
+        return basketProductRepository;
+    }
+
+    public void setBasketProductRepository(IBasketProductRepository basketProductRepository) {
+        this.basketProductRepository = basketProductRepository;
+    }
+
+    public IPurchaseHistoryRepository getPurchaseHistoryRepository() {
+        purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
+        return purchaseHistoryRepository;
+    }
+
+    public void setPurchaseHistoryRepository(IPurchaseHistoryRepository purchaseHistoryRepository) {
+        this.purchaseHistoryRepository = purchaseHistoryRepository;
+    }
+
+    public PaymentAdapter getPaymentAdapter() {
+        return paymentAdapter;
+    }
+
+    public void setPaymentAdapter(PaymentAdapter paymentAdapter) {
+        this.paymentAdapter = paymentAdapter;
+    }
+
+    public DeliveryAdapter getDeliveryAdapter() {
+        return deliveryAdapter;
+    }
+
+    public void setDeliveryAdapter(DeliveryAdapter deliveryAdapter) {
+        this.deliveryAdapter = deliveryAdapter;
+    }
+
+    public void setSuccessfulProducts(ConcurrentLinkedQueue<BasketProduct> successfulProducts) {
+        this.successfulProducts = successfulProducts;
+    }
+
+    public void setFailedProducts(ConcurrentLinkedQueue<BasketProduct> failedProducts) {
+        this.failedProducts = failedProducts;
+    }
+
+    public IProductHistoryRepository getProductHistoryRepository() {
+        productHistoryRepository = SingletonCollection.getProductHistoryRepository();
+        return productHistoryRepository;
+    }
+
+    public void setProductHistoryRepository(IProductHistoryRepository productHistoryRepository) {
+        this.productHistoryRepository = productHistoryRepository;
+    }
+
+    public CalculatePriceOfBasket getCalculatePriceOfBasket() {
+        return calculatePriceOfBasket;
+    }
+
+    public void setCalculatePriceOfBasket(CalculatePriceOfBasket calculatePriceOfBasket) {
+        this.calculatePriceOfBasket = calculatePriceOfBasket;
+    }
+
+    public ScheduledFuture<?> getScheduledFuture() {
+        return scheduledFuture;
+    }
+
+    public void setScheduledFuture(ScheduledFuture<?> scheduledFuture) {
+        this.scheduledFuture = scheduledFuture;
+    }
+
+    public int getIdealTime() {
+        return idealTime;
+    }
+
+    public TimeUnit getUnitsToRestore() {
+        return unitsToRestore;
+    }
+
+    public ScheduledExecutorService getScheduler() {
+        return scheduler;
+    }
+
+    public void setScheduler(ScheduledExecutorService scheduler) {
+        this.scheduler = scheduler;
+    }
+
+    public double getFinalPrice() {
+        return finalPrice;
+    }
+
+    public void setFinalPrice(double finalPrice) {
+        this.finalPrice = finalPrice;
     }
 }

@@ -14,7 +14,7 @@ import java.util.*;
 
 public class Cart {
 
-    private final IBasketRepository basketRepository;
+    private  IBasketRepository basketRepository;
     private final int userId;
     private final CalculatePriceOfBasket calculatePriceOfBasket;
 
@@ -30,7 +30,7 @@ public class Cart {
                                String creditCardCcv, String id,
                                HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
                                String/*store coupons*/ storeCoupon) throws PurchaseFailedException {
-        var userBaskets = basketRepository.getUserBaskets(userId);
+        var userBaskets = getBasketRepository().getUserBaskets(userId);
         if (userBaskets.isEmpty()) {
             throw new NoSuchElementException("No baskets in cart");
         }
@@ -45,7 +45,7 @@ public class Cart {
 
     /*returns price after discounts*/
     public Pair<Double, List<BasketProduct>> startPurchaseBasketTransaction(UserInfo userInfo, List<String> coupons) throws PurchaseFailedException {
-        var userBaskets = basketRepository.getUserBaskets(userId);
+        var userBaskets = getBasketRepository().getUserBaskets(userId);
         List<BasketProduct> successfulProducts = new LinkedList<>();
         if (userBaskets.isEmpty()) {
             throw new NoSuchElementException("No baskets in cart");
@@ -66,7 +66,7 @@ public class Cart {
                              String address, String city, String country,
                              String zip
     ) throws PurchaseFailedException {
-        var userBaskets = basketRepository.getUserBaskets(userId);
+        var userBaskets = getBasketRepository().getUserBaskets(userId);
         if (userBaskets.isEmpty()) {
             throw new NoSuchElementException("No baskets in cart");
         }
@@ -89,7 +89,7 @@ public class Cart {
     public void addProductToCart(int productId, int storeId, int amount, double price) {
         //if user has basket with storeID, add product to it. else, create new basket and add product to it.
         boolean added = false;
-        Set<Basket> userBaskets = basketRepository.getUserBaskets(userId);
+        Set<Basket> userBaskets = getBasketRepository().getUserBaskets(userId);
         for (var basket : userBaskets) {
             if (basket.getStoreId() == storeId) {
                 basket.addProduct(productId, amount, price);
@@ -97,7 +97,7 @@ public class Cart {
             }
         }
         if (!added) {
-            basketRepository.addUserBasket(userId, storeId).addProduct(productId, amount, price);
+            getBasketRepository().addUserBasket(userId, storeId).addProduct(productId, amount, price);
         }
     }
     public void addProductToCart(int productId, int storeId){
@@ -106,7 +106,7 @@ public class Cart {
 
     public String getCartDescription() {
         String cartContent = "";
-        var userBaskets = basketRepository.getUserBaskets(userId);
+        var userBaskets = getBasketRepository().getUserBaskets(userId);
         for (var basket : userBaskets) {
             cartContent += "Store id " + basket.getStoreId() + " : " + basket.getBasketDescription();
         }
@@ -115,7 +115,7 @@ public class Cart {
 
     public List<Product> getCartContent() {
         List<Product> cartContent = new LinkedList<>();
-        var userBaskets = basketRepository.getUserBaskets(userId);
+        var userBaskets = getBasketRepository().getUserBaskets(userId);
         for (var basket : userBaskets) {
             cartContent.addAll(basket.getBasketContent());
         }
@@ -124,7 +124,7 @@ public class Cart {
 
     public List<BasketProduct> getCartBasketProducts() {
         List<BasketProduct> cartContent = new LinkedList<>();
-        var userBaskets = basketRepository.getUserBaskets(userId);
+        var userBaskets = getBasketRepository().getUserBaskets(userId);
         for (var basket : userBaskets) {
             cartContent.addAll(basket.getBasketProducts());
         }
@@ -133,7 +133,7 @@ public class Cart {
 
 
     public void removeProduct(int storeId, int productId) throws Exception {
-        var userBaskets = basketRepository.getUserBaskets(userId);
+        var userBaskets = getBasketRepository().getUserBaskets(userId);
         for (var basket : userBaskets) {
             if (basket.getStoreId() == storeId) {
                 basket.removeProduct(productId);
@@ -142,7 +142,7 @@ public class Cart {
     }
 
     public void changeProductQuantity(int storeId, int productId, int quantity) throws Exception {
-        var userBaskets = basketRepository.getUserBaskets(userId);
+        var userBaskets = getBasketRepository().getUserBaskets(userId);
         for (var basket : userBaskets) {
             if (basket.getStoreId() == storeId) {
                 basket.changeProductQuantity(productId, quantity);
@@ -151,18 +151,18 @@ public class Cart {
     }
 
     public void removeBasket(int userId, int storeId) {
-        basketRepository.removeUserBasket(userId, storeId);
+        getBasketRepository().removeUserBasket(userId, storeId);
     }
 
     public List<Integer> getFailedProducts(int storeId, int userId) {
-        return basketRepository.getUserBaskets(userId).stream().
+        return getBasketRepository().getUserBaskets(userId).stream().
                 filter(basket -> basket.getStoreId() == storeId).findFirst().get().
                 getFailedProducts().stream().map(BasketProduct::getProductId).toList();
     }
 
     public List<Product> getAllFailedProductsAfterPayment() {
         List<Product> failedProducts = new LinkedList<>();
-        for (var basket : basketRepository.getUserBaskets(userId)) {
+        for (var basket : getBasketRepository().getUserBaskets(userId)) {
             failedProducts.addAll(basket.getFailedProducts().stream().map(BasketProduct::getProduct).toList());
         }
         return failedProducts;
@@ -170,15 +170,19 @@ public class Cart {
 
     public double getTotalPriceOfCartBeforeDiscount() {
         double totalPrice = 0;
-        for (var basket : basketRepository.getUserBaskets(userId)) {
+        for (var basket : getBasketRepository().getUserBaskets(userId)) {
             totalPrice += basket.getTotalPriceOfBasketBeforeDiscount();
         }
         return totalPrice;
     }
 
     public void cancelPurchase() {
-        for (var basket : basketRepository.getUserBaskets(userId)) {
+        for (var basket : getBasketRepository().getUserBaskets(userId)) {
             basket.cancelPurchase();
         }
+    }
+    public IBasketRepository getBasketRepository() {
+        basketRepository= SingletonCollection.getBasketRepository();
+        return basketRepository;
     }
 }

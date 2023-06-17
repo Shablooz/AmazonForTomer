@@ -4,6 +4,7 @@ import BGU.Group13B.backend.Repositories.Implementations.AcutionRepositoryImpl.A
 import BGU.Group13B.backend.Repositories.Implementations.BIDRepositoryImpl.BIDRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.BasketProductRepositoryImpl.BasketProductRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.BasketReposistoryImpl.BasketRepositoryAsHashMap;
+import BGU.Group13B.backend.Repositories.Implementations.BasketReposistoryImpl.BasketRepositoryService;
 import BGU.Group13B.backend.Repositories.Implementations.ConditionRepositoryImpl.ConditionRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.DiscountAccumulationRepositoryImpl.DiscountAccumulationRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.DiscountRepositoryImpl.DiscountRepositoryAsHashMap;
@@ -281,6 +282,20 @@ public class SingletonCollection {
         }
         SingletonCollection.getUserPermissionRepository().setSaveMode(true);
     }
+    public static void setBasketRepository() {
+        BasketRepositoryAsHashMap basketRepositoryAsHashMap  = SingletonCollection.getContext().getBean(BasketRepositoryService.class).getBasketRepository();
+        if(basketRepositoryAsHashMap == null){
+            BasketRepositoryAsHashMap repo=(BasketRepositoryAsHashMap) SingletonCollection.getBasketRepository();
+            SingletonCollection.getContext().getBean(BasketRepositoryService.class).save(repo);
+        }else {
+            SingletonCollection.basketRepository = SingletonCollection.getContext().getBean(BasketRepositoryService.class).getBasketRepository();
+        }
+
+    }
+    public static void setBasketRepository(BasketRepositoryAsHashMap basketRepositoryAsHashMap) {
+        SingletonCollection.basketRepository = basketRepositoryAsHashMap;
+    }
+
     public static void setUserPermissionRepository(UserPermissionRepositoryAsHashmap userPermissionRepositoryAsHashmap) {
         SingletonCollection.userPermissionRepository = userPermissionRepositoryAsHashmap;
     }
@@ -487,6 +502,7 @@ public class SingletonCollection {
         storePermissionRepository.setSaveMode(saveMode);
         userRepository.setSaveMode(saveMode);
         userPermissionRepository.setSaveMode(saveMode);
+        basketRepository.setSaveMode(saveMode);
 
     }
     public static void setPaymentFail() {
