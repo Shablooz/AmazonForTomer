@@ -2,6 +2,11 @@ package BGU.Group13B.backend.User;
 
 
 import BGU.Group13B.backend.Pair;
+import BGU.Group13B.backend.Repositories.Interfaces.IStorePermissionsRepository;
+import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
+import BGU.Group13B.backend.storePackage.permissions.ChangePermissionException;
+import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
+import BGU.Group13B.service.SingletonCollection;
 import jakarta.persistence.*;
 
 import java.util.*;
@@ -19,6 +24,8 @@ public class UserPermissions {
         }
         return lst;
     }
+
+
 
     public enum UserPermissionStatus {
         ADMIN,
@@ -39,7 +46,16 @@ public class UserPermissions {
         WORKERS_INFO,
         HISTORY,
         STAFF,
-        FONLY
+        FONLY,
+        STATS
+    }
+
+    public enum PopulationStatus{
+        ADMIN,
+        OWNER,
+        MANAGER_NOT_OWNER,
+        REGULAR_MEMBER, //if the user is a member but not a manager or an owner
+        GUEST
     }
 
 
@@ -122,6 +138,49 @@ public class UserPermissions {
     }
 
     public void clearForTest(){
+        userStoreRole.clear();
+        userIndividualPermission.clear();
+    }
+
+
+    public PopulationStatus getPopulationStatus(){
+        if (userPermissionStatus == UserPermissionStatus.ADMIN)
+            return PopulationStatus.ADMIN;
+
+        if (userPermissionStatus == UserPermissionStatus.GUEST)
+            return PopulationStatus.GUEST;
+
+        if(userStoreRole.containsValue(StoreRole.FOUNDER) || userStoreRole.containsValue(StoreRole.OWNER))
+            return PopulationStatus.OWNER;
+
+        if(userStoreRole.containsValue(StoreRole.MANAGER))
+            return PopulationStatus.MANAGER_NOT_OWNER;
+
+        return PopulationStatus.REGULAR_MEMBER;
+    }
+
+
+    public void clearUserStorePermissions(int storeId) {
+        userStoreRole.remove(storeId);
+        userIndividualPermission.remove(storeId);
+    }
+
+    public boolean isUserPermissionsExists(){
+       if (userStoreRole.isEmpty())
+           return false;
+       return true;
+    }
+
+    public void deletePermissions(int adminId, int userId) throws NoPermissionException, ChangePermissionException {
+        IStoreRepository storeRepository = SingletonCollection.getStoreRepository();
+        for (Integer storeId : userStoreRole.keySet()) {
+            if (userStoreRole.get(storeId) == StoreRole.MANAGER) {
+                storeRepository.getStore(storeId).removeManager(adminId, userId);
+            }
+            else if (userStoreRole.get(storeId) == StoreRole.OWNER) {
+                storeRepository.getStore(storeId).removeOwner(adminId, userId);
+            }
+        }
         userStoreRole.clear();
         userIndividualPermission.clear();
     }

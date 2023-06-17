@@ -60,6 +60,7 @@ public class StorePermission {
     private  Map<Integer/*userId*/, SetEnum> userToIndividualPermissions;//THIS ONE EXPLAINS THE "ADDITIONAL ROLES" OF EACH MANAGER
     @Transient
     private  IUserPermissionRepository userPermissionRepository = SingletonCollection.getUserPermissionRepository();
+    private int founderId;
 
     public StorePermission(int founderId) {
         this.founderId= founderId;
@@ -79,8 +80,10 @@ public class StorePermission {
         founderPermissions.add(UserPermissions.IndividualPermission.HISTORY);
         founderPermissions.add(UserPermissions.IndividualPermission.STAFF);
         founderPermissions.add(UserPermissions.IndividualPermission.FONLY);
+        founderPermissions.add(UserPermissions.IndividualPermission.STATS);
         userToIndividualPermissions.put(founderId, founderPermissions);
         initIndividualPermissionsFunctionalities();
+        this.founderId=founderId;
     }
 
     public StorePermission() {
@@ -126,6 +129,7 @@ public class StorePermission {
         SetString historyFunctions = new SetString();
         SetString staffFunctions = new SetString();
         SetString founderFunctions = new SetString();
+        HashSet<String> statsFunctions = new HashSet<>();
         var storeClass = Store.class;
         for (Method method : storeClass.getMethods()) {
             if (method.isAnnotationPresent(StockPermission.class))
@@ -151,15 +155,19 @@ public class StorePermission {
 
             if (method.isAnnotationPresent(DefaultFounderFunctionality.class))
                 founderFunctions.add(method.getName());
+
+            if(method.isAnnotationPresent(StatsPermission.class))
+                statsFunctions.add(getFunctionName(method));
         }
-        userStoreFunctionPermissions.put(0, stockFunctions);
-        userStoreFunctionPermissions.put(1, messagesFunctions);
-        userStoreFunctionPermissions.put(2, policiesFunctions);
-        userStoreFunctionPermissions.put(3, auctionFunctions);
-        userStoreFunctionPermissions.put(4, infoFunctions);
-        userStoreFunctionPermissions.put(5, historyFunctions);
-        userStoreFunctionPermissions.put(6, staffFunctions);
-        userStoreFunctionPermissions.put(7, founderFunctions);
+        userStoreFunctionPermissions.put(UserPermissions.IndividualPermission.STOCK.ordinal(), stockFunctions);
+        userStoreFunctionPermissions.put(UserPermissions.IndividualPermission.MESSAGES.ordinal(), messagesFunctions);
+        userStoreFunctionPermissions.put(UserPermissions.IndividualPermission.POLICIES.ordinal(), policiesFunctions);
+        userStoreFunctionPermissions.put(UserPermissions.IndividualPermission.AUCTION.ordinal(), auctionFunctions);
+        userStoreFunctionPermissions.put(UserPermissions.IndividualPermission.WORKERS_INFO.ordinal(), infoFunctions);
+        userStoreFunctionPermissions.put(UserPermissions.IndividualPermission.HISTORY.ordinal(), historyFunctions);
+        userStoreFunctionPermissions.put(UserPermissions.IndividualPermission.STAFF.ordinal(), staffFunctions);
+        userStoreFunctionPermissions.put(UserPermissions.IndividualPermission.FONLY.ordinal(), founderFunctions);
+        userStoreFunctionPermissions.put(UserPermissions.IndividualPermission.STATS.ordinal(), statsFunctions);
     }
 
     private static String getFunctionName(Method method) {
@@ -248,43 +256,32 @@ public class StorePermission {
     public void addOwnerPermission(int newOwnerId, int appointerId) throws ChangePermissionException {
         //check if not already in that role
         StoreRole userRole = userToStoreRole.get(newOwnerId);
-        if (userRole == StoreRole.FOUNDER || userRole == StoreRole.OWNER) {
+        if (userRole == StoreRole.FOUNDER || userRole == StoreRole.OWNER)
             throw new ChangePermissionException("Cannot grant owner title to a user who is already an owner");
-        } else {
-            userToStoreRole.put(newOwnerId, StoreRole.OWNER);
-            if(userToIndividualPermissions.containsKey(newOwnerId)){
-                userToIndividualPermissions.get(newOwnerId).clear();
-                userToIndividualPermissions.get(newOwnerId).add(UserPermissions.IndividualPermission.STOCK);
-                userToIndividualPermissions.get(newOwnerId).add(UserPermissions.IndividualPermission.MESSAGES);
-                userToIndividualPermissions.get(newOwnerId).add(UserPermissions.IndividualPermission.HISTORY);
-                userToIndividualPermissions.get(newOwnerId).add(UserPermissions.IndividualPermission.AUCTION);
-                userToIndividualPermissions.get(newOwnerId).add(UserPermissions.IndividualPermission.WORKERS_INFO);
-                userToIndividualPermissions.get(newOwnerId).add(UserPermissions.IndividualPermission.POLICIES);
-                userToIndividualPermissions.get(newOwnerId).add(UserPermissions.IndividualPermission.STAFF);
-            }
-            else{
-                SetEnum newSet = new SetEnum();
-                newSet.add(UserPermissions.IndividualPermission.STOCK);
-                newSet.add(UserPermissions.IndividualPermission.MESSAGES);
-                newSet.add(UserPermissions.IndividualPermission.HISTORY);
-                newSet.add(UserPermissions.IndividualPermission.AUCTION);
-                newSet.add(UserPermissions.IndividualPermission.WORKERS_INFO);
-                newSet.add(UserPermissions.IndividualPermission.POLICIES);
-                newSet.add(UserPermissions.IndividualPermission.STAFF);
-                userToIndividualPermissions.put(newOwnerId, newSet);
-            }
-            // Check if the appointerId is already present in the appointedOwnersMap
-            SetInteger appointees = appointedOwnersMap.get(appointerId);
 
-            // If appointerId is not present, create a new set and add it to the map
-            if (appointees == null) {
-                appointees = new SetInteger();
-                appointedOwnersMap.put(appointerId, appointees);
-            }
+        userToStoreRole.put(newOwnerId, StoreRole.OWNER);
+        SetEnum newSet = new SetEnum();
+        newSet.add(UserPermissions.IndividualPermission.STOCK);
+        newSet.add(UserPermissions.IndividualPermission.MESSAGES);
+        newSet.add(UserPermissions.IndividualPermission.HISTORY);
+        newSet.add(UserPermissions.IndividualPermission.AUCTION);
+        newSet.add(UserPermissions.IndividualPermission.WORKERS_INFO);
+        newSet.add(UserPermissions.IndividualPermission.POLICIES);
+        newSet.add(UserPermissions.IndividualPermission.STAFF);
+        newSet.add(UserPermissions.IndividualPermission.STATS);
+        userToIndividualPermissions.put(newOwnerId, newSet);
 
-            // Add the newOwnerId to the set of appointees
-            appointees.add(newOwnerId);
+        // Check if the appointerId is already present in the appointedOwnersMap
+        SetInteger appointees = appointedOwnersMap.get(appointerId);
+
+        // If appointerId is not present, create a new set and add it to the map
+        if (appointees == null) {
+            appointees = new SetInteger();
+            appointedOwnersMap.put(appointerId, appointees);
         }
+
+        // Add the newOwnerId to the set of appointees
+        appointees.add(newOwnerId);
     }
 
     public Set<Integer> removeOwnerPermission(int removeOwnerId, int removerId, boolean removeManager) throws ChangePermissionException {
@@ -429,6 +426,15 @@ public class StorePermission {
         return users;
     }
 
+    public void emptyMaps(){
+        userToStoreRole.clear();
+        appointedOwnersMap.clear();
+        userStoreFunctionPermissions.clear();
+        defaultStoreRoleFunctionalities.clear();
+    }
+    public int getFounderId() {
+        return this.founderId;
+    }
 
     //getters and setters
 
@@ -441,9 +447,7 @@ public class StorePermission {
         this.id = id;
     }
 
-    public int getFounderId() {
-        return founderId;
-    }
+
 
     public void setFounderId(int founderId) {
         this.founderId = founderId;

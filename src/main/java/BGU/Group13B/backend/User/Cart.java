@@ -53,6 +53,7 @@ public class Cart {
         double totalPrice = 0;
         for (var basket : userBaskets) {
             var transaction = basket.startPurchaseBasketTransactionWithSuccessful(userInfo, coupons);
+            if(transaction.getFirst() == -1) continue;//in case the store has been deleted
             totalPrice += transaction.getFirst();
             successfulProducts.addAll(transaction.getSecond());
         }
@@ -184,5 +185,20 @@ public class Cart {
     public IBasketRepository getBasketRepository() {
         basketRepository= SingletonCollection.getBasketRepository();
         return basketRepository;
+    }
+
+    public void clearCart() {
+        getBasketRepository().clearUserBaskets(userId);
+    }
+    public void removeBasketProducts(List<Pair<Integer, Integer>> productStoreList) {
+        for(var productStore : productStoreList){
+            int storeId = productStore.getFirst();
+            int productId = productStore.getSecond();
+            for(var basket : getBasketRepository().getUserBaskets(userId)){
+                if(basket.getStoreId() == storeId){
+                    basket.removeProduct(productId);
+                }
+            }
+        }
     }
 }

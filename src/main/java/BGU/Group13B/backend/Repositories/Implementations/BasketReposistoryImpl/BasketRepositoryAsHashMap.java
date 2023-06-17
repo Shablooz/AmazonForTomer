@@ -80,6 +80,15 @@ public class BasketRepositoryAsHashMap implements IBasketRepository {
         this.saveMode = saved;
     }
 
+    @Override
+    public void clearUserBaskets(int userId) {
+        Set<Basket> userBaskets= getUserBaskets(userId);
+        for(Basket b: userBaskets){
+            b.clearBasket();
+            removeUserBasket(userId,b.getStoreId());
+        }
+    }
+
 
     //getter and setters
 

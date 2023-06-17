@@ -177,4 +177,17 @@ public class UserRepositoryAsHashmap implements IUserRepository {
     public void setSaveMode(boolean saveMode) {
         this.saveMode = saveMode;
     }
+    @Override
+    public void removeMember(int adminId, int userId) throws Exception {
+        if(!integerUserHashMap.containsKey(userId))
+            throw new Exception("user " + userId + " does not exists");
+        User user = integerUserHashMap.get(userId);
+        synchronized (user) {
+            getUser(userId).deleteStores(adminId);
+            getUser(userId).clearCart();
+            user.clearPermissions(adminId);
+            removeUser(userId);
+        }
+    }
+
 }

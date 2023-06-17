@@ -14,4 +14,6 @@ public interface IBasketRepository {
     void addUserBasket(Basket basket);
 
     public void setSaveMode(boolean saved);
+
+    void clearUserBaskets(int userId);
 }

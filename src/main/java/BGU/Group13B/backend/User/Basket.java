@@ -8,6 +8,7 @@ import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.backend.storePackage.delivery.DeliveryAdapter;
 import BGU.Group13B.backend.storePackage.payment.PaymentAdapter;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
+import BGU.Group13B.service.BroadCaster;
 import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
 import BGU.Group13B.service.SingletonCollection;
 import jakarta.persistence.Entity;
@@ -42,8 +43,7 @@ public class Basket {
     private  ConcurrentLinkedQueue<BasketProduct> successfulProducts;
     @Transient
     private  ConcurrentLinkedQueue<BasketProduct> failedProducts;
-    @Transient
-    private  IProductHistoryRepository productHistoryRepository;
+
     @Transient
     private  CalculatePriceOfBasket calculatePriceOfBasket;
     @Transient
@@ -55,13 +55,11 @@ public class Basket {
     private ScheduledExecutorService scheduler;
     private double finalPrice;
 
-
     public Basket(int userId, int storeId) {
         this.userId = userId;
         this.storeId = storeId;
         this.basketProductRepository = SingletonCollection.getBasketProductRepository();
         this.paymentAdapter = SingletonCollection.getPaymentAdapter();
-        this.productHistoryRepository = SingletonCollection.getProductHistoryRepository();
         this.calculatePriceOfBasket = SingletonCollection.getCalculatePriceOfBasket();
         this.successfulProducts = new ConcurrentLinkedQueue<>();
         this.failedProducts = new ConcurrentLinkedQueue<>();
@@ -73,7 +71,6 @@ public class Basket {
         this.storeId = 0;
         this.basketProductRepository = SingletonCollection.getBasketProductRepository();
         this.paymentAdapter = SingletonCollection.getPaymentAdapter();
-        this.productHistoryRepository = SingletonCollection.getProductHistoryRepository();
         this.calculatePriceOfBasket = SingletonCollection.getCalculatePriceOfBasket();
         this.successfulProducts = new ConcurrentLinkedQueue<>();
         this.failedProducts = new ConcurrentLinkedQueue<>();
@@ -82,15 +79,14 @@ public class Basket {
     }
 
     //used for testing
-    public Basket(int userId, int storeId, IBasketProductRepository productRepository,
-                  PaymentAdapter paymentAdapter, IProductHistoryRepository productHistoryRepository,
-                  CalculatePriceOfBasket calculatePriceOfBasket, DeliveryAdapter deliveryAdapter) {
+    public Basket(int userId, int storeId, IBasketProductRepository productRepository, IPurchaseHistoryRepository purchaseHistoryRepository,
+                  PaymentAdapter paymentAdapter, CalculatePriceOfBasket calculatePriceOfBasket, DeliveryAdapter deliveryAdapter) {
         this.userId = userId;
         this.storeId = storeId;
         this.basketProductRepository = productRepository;
-        this.purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
+        this.purchaseHistoryRepository = purchaseHistoryRepository;
         this.paymentAdapter = paymentAdapter;
-        this.productHistoryRepository = productHistoryRepository;
+
         this.calculatePriceOfBasket = calculatePriceOfBasket;
         this.successfulProducts = new ConcurrentLinkedQueue<>();
         this.failedProducts = new ConcurrentLinkedQueue<>();
@@ -129,7 +125,7 @@ public class Basket {
         getSuccessfulProducts();
         //double totalAmount = getTotalAmount(productsCoupons);//fixme
         //calculate the total price of the products by the store discount policy
-        var basketProducts= getBasketProductRepository().getBasketProducts(storeId, userId).orElseGet(LinkedList::new);
+        if(successfulProducts.isEmpty()) return Pair.of(-1.0, new LinkedList<>());
         finalPrice = calculateStoreDiscount(userInfo, coupons);
         return Pair.of(finalPrice, new LinkedList<>(successfulProducts));
     }
@@ -151,14 +147,12 @@ public class Basket {
         scheduledFuture.cancel(true);
         scheduledFuture = null;
         scheduler.shutdown();
-
-        //if succeeded, add the successful products to the purchase history
-        for (BasketProduct basketProduct : successfulProducts) {
-            getProductHistoryRepository().addProductToHistory(basketProduct, userId);
-        }
         getPurchaseHistoryRepository().addPurchase(userId, storeId, successfulProducts, finalPrice);
         getBasketProductRepository().removeBasketProducts(storeId, userId);
         successfulProducts.clear();
+
+        //refresh income view
+        BroadCaster.broadcastIncome();
 
     }
 
@@ -223,6 +217,11 @@ public class Basket {
                 }
             }
         }
+
+        //remove the failed products from the basket
+        for (BasketProduct basketProduct : failedProducts) {
+            getBasketProductRepository().removeBasketProduct(basketProduct.getProductId(), userId, storeId);
+        }
     }
 
     public void addProduct(int productId, int amount, double newPrice) throws IllegalArgumentException {
@@ -251,12 +250,8 @@ public class Basket {
         return basketContent.toString();
     }
 
-    public void removeProduct(int productId) throws Exception {
-        try {
-            getBasketProductRepository().removeBasketProduct(productId, userId, storeId);
-        } catch (Exception e) {
-            throw e;
-        }
+    public void removeProduct(int productId){
+        getBasketProductRepository().removeBasketProduct(productId, userId, storeId);
     }
 
     public void changeProductQuantity(int productId, int quantity) throws Exception {
@@ -313,6 +308,11 @@ public class Basket {
         return Objects.hash(userId, storeId);
     }
 
+    public void clearBasket() {
+        getBasketProductRepository().removeBasketProducts(storeId,userId);
+        getBasketProductRepository().dropBasket(storeId,userId);
+    }
+
 
     //getters and setters
 
@@ -367,14 +367,7 @@ public class Basket {
         this.failedProducts = failedProducts;
     }
 
-    public IProductHistoryRepository getProductHistoryRepository() {
-        productHistoryRepository = SingletonCollection.getProductHistoryRepository();
-        return productHistoryRepository;
-    }
 
-    public void setProductHistoryRepository(IProductHistoryRepository productHistoryRepository) {
-        this.productHistoryRepository = productHistoryRepository;
-    }
 
     public CalculatePriceOfBasket getCalculatePriceOfBasket() {
         return calculatePriceOfBasket;

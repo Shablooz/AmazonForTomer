@@ -34,6 +34,9 @@ public abstract class ProjectTest {
         PRODUCT_ID, STORE_ID, STORE_FOUNDER_ID, NAME, CATEGORY, PRICE, QUANTITY, DESCRIPTION
     }
 
+    enum StoreIndexes{
+        STORE_ID, STORE_FOUNDER_ID, NAME, CATEGORY
+    }
 
     //String productName, String category, double price, int stockQuantity, String description
     protected final Object[][] products = {

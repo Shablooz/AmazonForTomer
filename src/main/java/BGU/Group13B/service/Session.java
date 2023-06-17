@@ -1,8 +1,10 @@
 package BGU.Group13B.service;
 
 import BGU.Group13B.backend.Pair;
+import BGU.Group13B.backend.Repositories.Interfaces.IDailyUserTrafficRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
 import BGU.Group13B.backend.System.SystemInfo;
+import BGU.Group13B.backend.System.UserTrafficRecord;
 import BGU.Group13B.backend.User.*;
 import BGU.Group13B.backend.storePackage.Market;
 import BGU.Group13B.backend.storePackage.Review;
@@ -38,6 +40,8 @@ public class Session implements ISession {
     private static final Logger LOGGER_INFO = Logger.getLogger(Session.class.getName());
     private static final Logger LOGGER_ERROR = Logger.getLogger(Session.class.getName());
 
+    private final IDailyUserTrafficRepository dailyUserTrafficRepository = SingletonCollection.getDailyUserTrafficRepository();
+
     static {
         SingletonCollection.setFileHandler(LOGGER_INFO, true);
         SingletonCollection.setFileHandler(LOGGER_ERROR, false);
@@ -67,7 +71,7 @@ public class Session implements ISession {
         int id = 1;
         userRepositoryAsHashmap.addUser(id, new User(id));
         register(id, "kingOfTheSheep", "SheePLover420",
-                "mrsheep@gmail.com", "11", "11", "11",LocalDate.MIN);
+                "mrsheep@gmail.com", "11", "11", "11", LocalDate.MIN);
 
     }
 
@@ -94,6 +98,7 @@ public class Session implements ISession {
             return Response.exception(e);
         }
     }
+
     @Override
     public Response<VoidResponse> addToCart(int userId, int storeId, int productId) {
         addToCart(userId, storeId, productId, 1, -1);
@@ -131,28 +136,35 @@ public class Session implements ISession {
                             creditCardYear, creditCardHolderFirstName,
                             creditCardCVV, id,
                             address, city, country, zip);
+            LOGGER_INFO.info("User " + userId + " purchased cart successfully");
             return Response.success();
         } catch (PurchaseFailedException | NoPermissionException e) {
+            LOGGER_ERROR.severe("User " + userId + " failed to purchase cart");
             return Response.exception(e);
         }
     }
 
     @Override
-    public Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, List<String> coupons) {
+    public Response<Pair<Double, List<ServiceBasketProduct>>> startPurchaseBasketTransaction(int userId, List<String> coupons) {
         try {
             var priceSuccessfulItems = getUserRepository().getUser(userId).startPurchaseBasketTransaction(coupons);
-            return new Pair<>(priceSuccessfulItems.getFirst(),
-                    priceSuccessfulItems.getSecond().stream().map(ServiceBasketProduct::new).collect(Collectors.toList()));
+            LOGGER_INFO.info("User " + userId + " started purchase basket transaction successfully");
+            return Response.success(new Pair<>(priceSuccessfulItems.getFirst(),
+                    priceSuccessfulItems.getSecond().stream().map(ServiceBasketProduct::new).collect(Collectors.toList())));
         } catch (PurchaseFailedException | NoPermissionException e) {
-            throw new RuntimeException(e);
+            LOGGER_ERROR.severe("User " + userId + " failed to start purchase basket transaction");
+            return Response.failure(e.getMessage());
         }
     }
 
     @Override
     public Response<List<PurchaseHistory>> getStorePurchaseHistory(int userId, int storeId) {
         try {
-            return Response.success(market.getStorePurchaseHistory(userId, storeId));
+            var result = market.getStorePurchaseHistory(userId, storeId);
+            LOGGER_INFO.info("User " + userId + " got store " + storeId + " purchase history successfully");
+            return Response.success(result);
         } catch (NoPermissionException e) {
+            LOGGER_ERROR.severe("User " + userId + " failed to get store " + storeId + " purchase history");
             return Response.exception(e);
         }
     }
@@ -161,26 +173,34 @@ public class Session implements ISession {
     public Response<VoidResponse> purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount) {
         try {
             market.purchaseProposalSubmit(userId, storeId, productId, proposedPrice, amount);
+            LOGGER_INFO.info("User " + userId + " submitted purchase proposal successfully");
+            return Response.success();
+        } catch (NoPermissionException e) {
+            LOGGER_ERROR.severe("User " + userId + " failed to submit purchase proposal");
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<VoidResponse> purchaseProposalApprove(int managerId, int storeId, int productId) {
+        try {
+            market.purchaseProposalApprove(managerId, storeId, productId);
+            LOGGER_INFO.info("Manager " + managerId + " approved purchase proposal successfully");
             return Response.success();
         } catch (NoPermissionException e) {
             return Response.exception(e);
         }
     }
-    @Override
-    public void purchaseProposalApprove(int managerId, int storeId, int productId){
-        try {
-            market.purchaseProposalApprove(managerId, storeId, productId);
-        } catch (NoPermissionException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @Override
-    public void purchaseProposalReject(int storeId, int managerId, int bidId){
+    public Response<VoidResponse> purchaseProposalReject(int storeId, int managerId, int bidId) {
         try {
-            market.purchaseProposalReject(managerId,storeId, bidId);
+            market.purchaseProposalReject(managerId, storeId, bidId);
+            LOGGER_INFO.info("Manager " + managerId + " rejected purchase proposal successfully");
+            return Response.success();
         } catch (NoPermissionException e) {
-            throw new RuntimeException(e);
+            LOGGER_ERROR.severe("Manager " + managerId + " failed to reject purchase proposal");
+            return Response.exception(e);
         }
     }
 
@@ -223,7 +243,7 @@ public class Session implements ISession {
 
     @Override
     public synchronized void register(int userId, String username, String password,
-                                      String email, String answer1, String answer2, String answer3,LocalDate birthDate){
+                                      String email, String answer1, String answer2, String answer3, LocalDate birthDate) {
         User user = getUserRepositoryAsHashmap().getUser(userId);
 
         //the first "if" might not be necessary when we will connect to web
@@ -232,7 +252,7 @@ public class Session implements ISession {
         }
         if (!user.isRegistered()) {
             if (getUserRepositoryAsHashmap().checkIfUserExists(username) == null) {
-                user.register(username, password, email, answer1, answer2, answer3,birthDate);
+                user.register(username, password, email, answer1, answer2, answer3, birthDate);
                 getUserRepositoryAsHashmap().save();
             } else {
                 throw new IllegalArgumentException("user with this username already exists!");
@@ -245,9 +265,11 @@ public class Session implements ISession {
     @Override
     public Response<List<ProductInfo>> search(String searchWords) {
         try {
-            return Response.success(market.search(searchWords));
-        }
-        catch (Exception e){
+            var result = market.search(searchWords);
+            LOGGER_INFO.info("Search for " + searchWords + " was successful");
+            return Response.success(result);
+        } catch (Exception e) {
+            LOGGER_ERROR.severe("Search for " + searchWords + " failed");
             return Response.exception(e);
         }
     }
@@ -298,8 +320,20 @@ public class Session implements ISession {
                 /*example of use*/
                 LOGGER_INFO.info("user " + username + " logged in");
                 //gets the new id - of the user we're logging into
-                return getUserRepositoryAsHashmap().getUserId(user);
+                int id = getUserRepositoryAsHashmap().getUserId(user);
+
+                //update daily visitors
+                switch (user.getPopulationStatus()) {
+                    case ADMIN -> dailyUserTrafficRepository.addAdmin();
+                    case OWNER -> dailyUserTrafficRepository.addStoreOwner();
+                    case MANAGER_NOT_OWNER -> dailyUserTrafficRepository.addStoreManagerThatIsNotOwner();
+                    case REGULAR_MEMBER -> dailyUserTrafficRepository.addRegularMember();
+                    case GUEST -> dailyUserTrafficRepository.addGuest();
+                }
+                BroadCaster.broadcastUserTraffic();
+                return id;
             }
+
         } catch (Exception e) {
             //line below temporary
             throw new IllegalArgumentException(e.getMessage());
@@ -323,9 +357,10 @@ public class Session implements ISession {
                 try {
                     int storeId = market.addStore(userId, storeName, category);
                     user.addPermission(storeId, UserPermissions.StoreRole.FOUNDER);
+                    LOGGER_INFO.info("store " + storeName + " was added successfully");
                     return Response.success(storeId);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    LOGGER_ERROR.severe("store " + storeName + " was not added successfully");
                     return Response.exception(e);
                 }
             }
@@ -337,8 +372,10 @@ public class Session implements ISession {
     public Response<VoidResponse> addProductToCart(int userId, int productId, int storeId) {
         try {
             getUserRepositoryAsHashmap().getUser(userId).addProductToCart(productId, storeId);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("product " + productId + " was added to cart successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("product " + productId + " was not added to cart successfully");
             return Response.exception(e);
         }
     }
@@ -347,8 +384,10 @@ public class Session implements ISession {
     public Response<VoidResponse> clearMessageToReply(int userId) {
         try {
             getUserRepositoryAsHashmap().getUser(userId).clearMessageToReply();
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("message to reply was cleared successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("message to reply was not cleared successfully");
             return Response.exception(e);
         }
     }
@@ -356,8 +395,10 @@ public class Session implements ISession {
     public Response<VoidResponse> openComplaint(int userId, String header, String complaint) {
         try {
             getUserRepositoryAsHashmap().getUser(userId).openComplaint(header, complaint);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("complaint was opened successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("complaint was not opened successfully");
             return Response.exception(e);
         }
     }
@@ -365,8 +406,11 @@ public class Session implements ISession {
 
     public Response<Message> getComplaint(int userId) {
         try {
-            return Response.success(getUserRepositoryAsHashmap().getUser(userId).getComplaint());
+            var result = getUserRepositoryAsHashmap().getUser(userId).getComplaint();
+            LOGGER_INFO.info("complaint was retrieved successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("complaint was not retrieved successfully");
             return Response.exception(e);
         }
     }
@@ -375,8 +419,10 @@ public class Session implements ISession {
     public Response<VoidResponse> markMessageAsReadAdmin(int userId, String receiverId, String senderId, int messageId) {
         try {
             getUserRepositoryAsHashmap().getUser(userId).markMessageAsReadAdmin(receiverId, senderId, messageId);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("message was marked as read successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("message was not marked as read successfully");
             return Response.exception(e);
         }
     }
@@ -387,8 +433,10 @@ public class Session implements ISession {
             if (getUserRepository().checkIfUserExists(receiverId) == null)
                 throw new RuntimeException("receiver Id not found");
             getUserRepositoryAsHashmap().getUser(userId).sendMassageAdmin(receiverId, header, massage);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("message was sent successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("message was not sent successfully");
             return Response.exception(e);
         }
     }
@@ -397,8 +445,10 @@ public class Session implements ISession {
     public Response<VoidResponse> answerComplaint(int userId, String answer) {
         try {
             getUserRepositoryAsHashmap().getUser(userId).answerComplaint(answer);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("complaint was answered successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("complaint was not answered successfully");
             return Response.exception(e);
         }
     }
@@ -406,8 +456,11 @@ public class Session implements ISession {
     @Override
     public Response<Message> readMessage(int userId) {
         try {
-            return Response.success(getUserRepositoryAsHashmap().getUser(userId).readMassage());
+            var result = getUserRepositoryAsHashmap().getUser(userId).readMassage();
+            LOGGER_INFO.info("message was read successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("message was not read successfully");
             return Response.exception(e);
         }
     }
@@ -416,8 +469,10 @@ public class Session implements ISession {
     public Response<VoidResponse> replayMessage(int userId, String message) {
         try {
             getUserRepositoryAsHashmap().getUser(userId).replayMessage(message);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("message was replayed successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("message was not replayed successfully");
             return Response.exception(e);
         }
     }
@@ -425,8 +480,11 @@ public class Session implements ISession {
     @Override
     public Response<Message> readOldMessage(int userId) {
         try {
-            return Response.success(getUserRepositoryAsHashmap().getUser(userId).readOldMessage());
+            var result = getUserRepositoryAsHashmap().getUser(userId).readOldMessage();
+            LOGGER_INFO.info("old message was read successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("old message was not read successfully");
             return Response.exception(e);
         }
     }
@@ -435,8 +493,10 @@ public class Session implements ISession {
     public Response<VoidResponse> refreshOldMessages(int userId) {
         try {
             getUserRepositoryAsHashmap().getUser(userId).refreshOldMessage();
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("old messages were refreshed successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("old messages were not refreshed successfully");
             return Response.exception(e);
         }
     }
@@ -445,8 +505,10 @@ public class Session implements ISession {
     public Response<VoidResponse> sendMassageStore(int userId, String header, String massage, int storeId) {
         try {
             getUserRepositoryAsHashmap().getUser(userId).sendMassageStore(header, massage, storeId);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("message was sent successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("message was not sent successfully");
             return Response.exception(e);
         }
     }
@@ -454,8 +516,11 @@ public class Session implements ISession {
     @Override
     public Response<Message> readUnreadMassageStore(int userId, int storeId) {
         try {
-            return Response.success(getUserRepositoryAsHashmap().getUser(userId).readUnreadMassageStore(storeId));
+            var result = getUserRepositoryAsHashmap().getUser(userId).readUnreadMassageStore(storeId);
+            LOGGER_INFO.info("unread message was read successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("unread message was not read successfully");
             return Response.exception(e);
         }
     }
@@ -463,8 +528,11 @@ public class Session implements ISession {
     @Override
     public Response<Message> readReadMassageStore(int userId, int storeId) {
         try {
-            return Response.success(getUserRepositoryAsHashmap().getUser(userId).readReadMassageStore(storeId));
+            var result = getUserRepositoryAsHashmap().getUser(userId).readReadMassageStore(storeId);
+            LOGGER_INFO.info("read message was read successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("read message was not read successfully");
             return Response.exception(e);
         }
     }
@@ -473,8 +541,10 @@ public class Session implements ISession {
     public Response<VoidResponse> answerQuestionStore(int userId, String answer) {
         try {
             getUserRepositoryAsHashmap().getUser(userId).answerQuestionStore(answer);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("question was answered successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("question was not answered successfully");
             return Response.exception(e);
         }
     }
@@ -483,8 +553,10 @@ public class Session implements ISession {
     public Response<VoidResponse> refreshOldMessageStore(int userId, int storeId) {
         try {
             getUserRepositoryAsHashmap().getUser(userId).refreshOldMessageStore(storeId);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("old messages were refreshed successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("old messages were not refreshed successfully");
             return Response.exception(e);
         }
     }
@@ -493,8 +565,10 @@ public class Session implements ISession {
     public Response<VoidResponse> addReview(int userId, String review, int storeId, int productId) {
         try {
             getUserRepositoryAsHashmap().getUser(userId).addReview(review, storeId, productId);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("review was added successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("review was not added successfully");
             return Response.exception(e);
         }
     }
@@ -503,8 +577,10 @@ public class Session implements ISession {
     public Response<VoidResponse> removeReview(int userId, int storeId, int productId) {
         try {
             getUserRepositoryAsHashmap().getUser(userId).removeReview(storeId, productId);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("review was removed successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("review was not removed successfully");
             return Response.exception(e);
         }
     }
@@ -512,8 +588,11 @@ public class Session implements ISession {
     @Override
     public Response<Review> getReview(int userId, int storeId, int productId) {
         try {
-            return Response.success(getUserRepositoryAsHashmap().getUser(userId).getReview(storeId, productId));
+            var result = getUserRepositoryAsHashmap().getUser(userId).getReview(storeId, productId);
+            LOGGER_INFO.info("review was got successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("review was not got successfully");
             return Response.exception(e);
         }
     }
@@ -521,21 +600,23 @@ public class Session implements ISession {
     @Override
     public Response<List<ReviewService>> getAllReviews(int userId, int storeId, int productId) {
         try {
-            List<Review> reviews=getUserRepositoryAsHashmap().getUser(userId).getAllReviews(storeId, productId,userId);
-            List<ReviewService> reviewServices=new ArrayList<>();
-            int i=0;
-            for (Review review:reviews) {
+            List<Review> reviews = getUserRepositoryAsHashmap().getUser(userId).getAllReviews(storeId, productId, userId);
+            List<ReviewService> reviewServices = new ArrayList<>();
+            int i = 0;
+            for (Review review : reviews) {
                 Response<Float> scoreResponse = getProductScoreUser(userId, review.getStoreId(), review.getProductId(), review.getUserId());
                 String scoreString;
-                if(scoreResponse.didntSucceed()){
-                    scoreString="non";
-                }else{
-                    scoreString=scoreResponse.getData().toString();
+                if (scoreResponse.didntSucceed()) {
+                    scoreString = "non";
+                } else {
+                    scoreString = scoreResponse.getData().toString();
                 }
-                reviewServices.add(new ReviewService(getUserRepositoryAsHashmap().getUser(review.getUserId()).getUserName(),review.getReview(),scoreString));
+                reviewServices.add(new ReviewService(getUserRepositoryAsHashmap().getUser(review.getUserId()).getUserName(), review.getReview(), scoreString));
             }
+            LOGGER_INFO.info("all reviews were got successfully");
             return Response.success(reviewServices);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("all reviews were not got successfully");
             return Response.exception(e);
         }
     }
@@ -543,16 +624,23 @@ public class Session implements ISession {
     @Override
     public Response<Float> getProductScore(int userId, int storeId, int productId) {
         try {
-            return Response.success(getUserRepositoryAsHashmap().getUser(userId).getProductScore(storeId, productId));
+            var result = getUserRepositoryAsHashmap().getUser(userId).getProductScore(storeId, productId);
+            LOGGER_INFO.info("product score was got successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("product score was not got successfully");
             return Response.exception(e);
         }
     }
+
     @Override
-    public Response<Float> getProductScoreUser(int userId, int storeId, int productId,int userIdTarget) {
+    public Response<Float> getProductScoreUser(int userId, int storeId, int productId, int userIdTarget) {
         try {
-            return Response.success(getUserRepositoryAsHashmap().getUser(userId).getProductScoreUser(userIdTarget,storeId, productId));
+            var result = getUserRepositoryAsHashmap().getUser(userId).getProductScoreUser(userIdTarget, storeId, productId);
+            LOGGER_INFO.info("product score was got successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("product score was not got successfully");
             return Response.exception(e);
         }
     }
@@ -561,8 +649,10 @@ public class Session implements ISession {
     public Response<VoidResponse> addAndSetProductScore(int userId, int storeId, int productId, int score) {
         try {
             getUserRepositoryAsHashmap().getUser(userId).addAndSetProductScore(storeId, productId, score);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("product score was added and set successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("product score was not added and set successfully");
             return Response.exception(e);
         }
     }
@@ -571,8 +661,10 @@ public class Session implements ISession {
     public Response<VoidResponse> removeProductScore(int userId, int storeId, int productId) {
         try {
             getUserRepositoryAsHashmap().getUser(userId).removeProductScore(storeId, productId);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("product score was removed successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("product score was not removed successfully");
             return Response.exception(e);
         }
     }
@@ -581,8 +673,10 @@ public class Session implements ISession {
     public Response<VoidResponse> addStoreScore(int userId, int storeId, int score) {
         try {
             getUserRepositoryAsHashmap().getUser(userId).addStoreScore(storeId, score);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("store score was added successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("store score was not added successfully");
             return Response.exception(e);
         }
     }
@@ -591,8 +685,10 @@ public class Session implements ISession {
     public Response<VoidResponse> removeStoreScore(int userId, int storeId) {
         try {
             getUserRepositoryAsHashmap().getUser(userId).removeStoreScore(storeId);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("store score was removed successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("store score was not removed successfully");
             return Response.exception(e);
         }
     }
@@ -601,8 +697,10 @@ public class Session implements ISession {
     public Response<VoidResponse> modifyStoreScore(int userId, int storeId, int score) {
         try {
             getUserRepositoryAsHashmap().getUser(userId).modifyStoreScore(storeId, score);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("store score was modified successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("store score was not modified successfully");
             return Response.exception(e);
         }
     }
@@ -610,8 +708,11 @@ public class Session implements ISession {
     @Override
     public Response<Float> getStoreScore(int userId, int storeId) {
         try {
-            return Response.success(getUserRepositoryAsHashmap().getUser(userId).getStoreScore(storeId));
+            var result = getUserRepositoryAsHashmap().getUser(userId).getStoreScore(storeId);
+            LOGGER_INFO.info("store score was got successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("store score was not got successfully");
             return Response.exception(e);
         }
     }
@@ -627,13 +728,14 @@ public class Session implements ISession {
 
     @Override
     public Response<List<ServiceBasketProduct>> getCartContent(int userId) {
-        List<BasketProduct> cartContent;
         try {
-            cartContent = getUserRepositoryAsHashmap().getUser(userId).getCartBasketProducts();
+            var cartContent = getUserRepositoryAsHashmap().getUser(userId).getCartBasketProducts();
+            LOGGER_INFO.info("cart content was got successfully");
+            return Response.success(cartContent.stream().map(ServiceBasketProduct::new).collect(Collectors.toList()));
         } catch (Exception e) {
+            LOGGER_ERROR.severe("cart content was not got successfully");
             return Response.exception(e);
         }
-        return Response.success(cartContent.stream().map(ServiceBasketProduct::new).collect(Collectors.toList()));
     }
 
     @Override
@@ -649,8 +751,10 @@ public class Session implements ISession {
         try {
             market.setProductName(userId, storeId, productId, name);
 
-            return Response.success(new VoidResponse());
+LOGGER_INFO.info("product name was set successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("product name was not set successfully");
             return Response.exception(e);
         }
     }
@@ -659,8 +763,10 @@ public class Session implements ISession {
     public Response<VoidResponse> setProductCategory(int userId, int storeId, int productId, String category) {
         try {
             market.setProductCategory(userId, storeId, productId, category);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("product category was set successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("product category was not set successfully");
             return Response.exception(e);
         }
     }
@@ -669,8 +775,10 @@ public class Session implements ISession {
     public Response<VoidResponse> setProductPrice(int userId, int storeId, int productId, double price) {
         try {
             market.setProductPrice(userId, storeId, productId, price);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("product price was set successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("product price was not set successfully");
             return Response.exception(e);
         }
     }
@@ -679,8 +787,10 @@ public class Session implements ISession {
     public Response<VoidResponse> setProductStockQuantity(int userId, int storeId, int productId, int stockQuantity) {
         try {
             market.setProductStockQuantity(userId, storeId, productId, stockQuantity);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("product stock quantity was set successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("product stock quantity was not set successfully");
             return Response.exception(e);
         }
     }
@@ -690,8 +800,10 @@ public class Session implements ISession {
         try {
             market.setProductDescription(userId, storeId, productId, description);
 
-            return Response.success(new VoidResponse());
+LOGGER_INFO.info("product description was set successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("product description was not set successfully");
             return Response.exception(e);
         }
     }
@@ -700,6 +812,8 @@ public class Session implements ISession {
     public int enterAsGuest() {
         int id = getUserRepositoryAsHashmap().getNewUserId();
         getUserRepositoryAsHashmap().addUser(id, new User(id));
+        dailyUserTrafficRepository.addGuest();
+        BroadCaster.broadcastUserTraffic();
         return id;
     }
 
@@ -708,9 +822,9 @@ public class Session implements ISession {
     public Response<VoidResponse> removeProduct(int userId, int storeId, int productId) {
         try {
             market.removeProduct(userId, storeId, productId);
-
             return Response.success(new VoidResponse());
         } catch (Exception e) {
+            LOGGER_ERROR.severe("product was not removed successfully");
             return Response.exception(e);
         }
     }
@@ -718,6 +832,18 @@ public class Session implements ISession {
     @Override
     public String getUserName(int userId) {
         return getUserRepositoryAsHashmap().getUser(userId).getUserName();
+    }
+
+    @Override
+    public Response<String> getUserNameRes(int userId) {
+        try {
+            var result = getUserRepositoryAsHashmap().getUser(userId).getUserName();
+            LOGGER_INFO.info("user name was got successfully");
+            return Response.success(result);
+        } catch (Exception e) {
+            LOGGER_ERROR.severe("user name was not got successfully");
+            return Response.exception(e);
+        }
     }
 
     @Override
@@ -729,7 +855,7 @@ public class Session implements ISession {
     public void setUserStatus(int admin_id, int userId, int newStatus) {
         if (!getUserStatus(admin_id).equals("Admin")) {
             //should throw an exception
-            throw new IllegalArgumentException("isnt an admin");
+            throw new IllegalArgumentException("isn't an admin");
         }
         if (newStatus == 1 && getUserRepositoryAsHashmap().getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.MEMBER)
             getUserRepositoryAsHashmap().getUser(userId).setPermissions(UserPermissions.UserPermissionStatus.ADMIN);
@@ -758,10 +884,14 @@ public class Session implements ISession {
         return getUserRepositoryAsHashmap().getUser(userId).getStoresAndRoles();
     }
 
+    //with logs info and error
     public Response<StoreInfo> getStoreInfo(int userId, int storeId) {
         try {
-            return Response.success(market.getStoreInfo(userId, storeId));
+            var result = market.getStoreInfo(userId, storeId);
+            LOGGER_INFO.info("store info was got successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("store info was not got successfully");
             return Response.exception(e);
         }
     }
@@ -769,8 +899,11 @@ public class Session implements ISession {
     @Override
     public Response<ProductInfo> getStoreProductInfo(int userId, int storeId, int productId) {
         try {
-            return Response.success(market.getStoreProductInfo(userId, storeId, productId));
+            var result = market.getStoreProductInfo(userId, storeId, productId);
+            LOGGER_INFO.info("store product info was got successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("store product info was not got successfully");
             return Response.exception(e);
         }
     }
@@ -787,8 +920,11 @@ public class Session implements ISession {
     @Override
     public Response<Set<ProductInfo>> getAllStoreProductsInfo(int userId, int storeId) {
         try {
-            return Response.success(market.getAllStoreProductsInfo(userId, storeId));
+            var result = market.getAllStoreProductsInfo(userId, storeId);
+            LOGGER_INFO.info("all store products info was got successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("all store products info was not got successfully");
             return Response.exception(e);
         }
     }
@@ -830,19 +966,40 @@ public class Session implements ISession {
     }
 
     @Override
-    public double getTotalPriceOfCart(int userId) {
-        return getUserRepository().getUser(userId).getTotalPriceOfCart();
+    public Response<Double> getTotalPriceOfCart(int userId) {
+        try {
+            double total = getUserRepository().getUser(userId).getTotalPriceOfCart();
+            LOGGER_INFO.info("total price of cart was got successfully");
+            return Response.success(total);
+        } catch (Exception e) {
+            LOGGER_ERROR.severe("total price of cart was not got successfully");
+            return Response.failure(e.getMessage());
+        }
     }
 
     @Override
-    public void cancelPurchase(int userId) {
-        getUserRepository().getUser(userId).cancelPurchase();
+    public Response<VoidResponse> cancelPurchase(int userId) {
+        try {
+            getUserRepository().getUser(userId).cancelPurchase();
+            LOGGER_INFO.info("purchase was canceled successfully");
+            return Response.success();
+        } catch (Exception e) {
+            LOGGER_ERROR.severe("purchase was not canceled successfully");
+            return Response.exception(e);
+        }
     }
 
     @Override
-    public List<ServiceProduct> getAllFailedProductsAfterPayment(int userId) {
-        return getUserRepository().getUser(userId).getAllFailedProductsAfterPayment().
-                stream().map(ServiceProduct::new).collect(Collectors.toList());
+    public Response<List<ServiceProduct>> getAllFailedProductsAfterPayment(int userId) {
+        try {
+            var result = getUserRepository().getUser(userId).getAllFailedProductsAfterPayment().
+                    stream().map(ServiceProduct::new).collect(Collectors.toList());
+            LOGGER_INFO.info("all failed products after payment was got successfully");
+            return Response.success(result);
+        } catch (Exception e) {
+            LOGGER_ERROR.severe("all failed products after payment was not got successfully");
+            return Response.exception(e);
+        }
     }
 
 
@@ -855,8 +1012,11 @@ public class Session implements ISession {
     public Response<List<PurchaseHistory>> getUserPurchaseHistory(int userId) {
         try {
             isUserLogged(userId);
-            return Response.success(getUserRepositoryAsHashmap().getUser(userId).getPurchaseHistory());
+            var result = getUserRepositoryAsHashmap().getUser(userId).getPurchaseHistory();
+            LOGGER_INFO.info("user purchase history was got successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("user purchase history was not got successfully");
             return Response.exception(e);
         }
     }
@@ -868,6 +1028,7 @@ public class Session implements ISession {
         try {
             storeIdsAndRoles = getStoresOfUser(userId);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("all user associated stores was not got successfully");
             return Response.exception(e);
         }
 
@@ -880,6 +1041,7 @@ public class Session implements ISession {
                 ignored.printStackTrace();
             }
         }
+        LOGGER_INFO.info("all user associated stores was got successfully");
         return Response.success(storeInfosAndRoles);
     }
 
@@ -887,8 +1049,10 @@ public class Session implements ISession {
     public Response<VoidResponse> hideStore(int userId, int storeId) {
         try {
             market.hideStore(userId, storeId);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("store was hidden successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("store was not hidden successfully");
             return Response.exception(e);
         }
     }
@@ -897,8 +1061,10 @@ public class Session implements ISession {
     public Response<VoidResponse> unhideStore(int userId, int storeId) {
         try {
             market.unhideStore(userId, storeId);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("store was unhidden successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("store was not unhidden successfully");
             return Response.exception(e);
         }
     }
@@ -909,11 +1075,14 @@ public class Session implements ISession {
     }
 
     @Override
-    public int getStoreFounder(int storeId) {
+    public Response<Integer> getStoreFounder(int storeId) {
         try {
-            return market.getStoreFounder(storeId);
+            var result = market.getStoreFounder(storeId);
+            LOGGER_INFO.info("store founder was got successfully");
+            return Response.success(result);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            LOGGER_ERROR.severe("store founder was not got successfully");
+            return Response.exception(e);
         }
     }
 
@@ -921,8 +1090,10 @@ public class Session implements ISession {
     public Response<VoidResponse> deleteStore(int userId, int storeId) {
         try {
             market.deleteStore(userId, storeId);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("store was deleted successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("store was not deleted successfully");
             return Response.exception(e);
         }
     }
@@ -932,8 +1103,10 @@ public class Session implements ISession {
     public Response<VoidResponse> fetchMessages(int userId) {
         try {
             getUserRepositoryAsHashmap().getUser(userId).fetchMessages();
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("messages was fetched successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("messages was not fetched successfully");
             return Response.exception(e);
         }
     }
@@ -945,8 +1118,11 @@ public class Session implements ISession {
                 throw new NoPermissionException("The user is not an admin or is not logged in");
             }
             User user = getUserRepositoryAsHashmap().getUser(userId);
-            return Response.success(user.getPurchaseHistory());
+            var result = user.getPurchaseHistory();
+            LOGGER_INFO.info("user purchase history as admin was got successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("user purchase history as admin was not got successfully");
             return Response.exception(e);
         }
     }
@@ -967,8 +1143,10 @@ public class Session implements ISession {
     public Response<VoidResponse> addOwner(int userId, int newOwnerId, int storeId) {
         try {
             market.addOwner(userId, newOwnerId, storeId);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("owner was added successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("owner was not added successfully");
             return Response.exception(e);
         }
     }
@@ -977,8 +1155,10 @@ public class Session implements ISession {
     public Response<VoidResponse> removeOwner(int userId, int removeOwnerId, int storeId) {
         try {
             market.removeOwner(userId, removeOwnerId, storeId);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("owner was removed successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("owner was not removed successfully");
             return Response.exception(e);
         }
     }
@@ -987,8 +1167,10 @@ public class Session implements ISession {
     public Response<VoidResponse> addManager(int userId, int newManagerId, int storeId) {
         try {
             market.addManager(userId, newManagerId, storeId);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("manager was added successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("manager was not added successfully");
             return Response.exception(e);
         }
     }
@@ -997,8 +1179,10 @@ public class Session implements ISession {
     public Response<VoidResponse> removeManager(int userId, int removeManagerId, int storeId) {
         try {
             market.removeManager(userId, removeManagerId, storeId);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("manager was removed successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("manager was not removed successfully");
             return Response.exception(e);
         }
     }
@@ -1006,8 +1190,11 @@ public class Session implements ISession {
     @Override
     public Response<List<WorkerCard>> getStoreWorkersInfo(int userId, int storeId) {
         try {
-            return Response.success(market.getStoreWorkersInfo(userId, storeId));
+            var result = market.getStoreWorkersInfo(userId, storeId);
+            LOGGER_INFO.info("store workers info was got successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("store workers info was not got successfully");
             return Response.exception(e);
         }
     }
@@ -1016,8 +1203,10 @@ public class Session implements ISession {
     public Response<VoidResponse> setPurchasePolicyCondition(int storeId, int userId, int conditionId) {
         try {
             market.setPurchasePolicyCondition(storeId, userId, conditionId);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("purchase policy condition was set successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("purchase policy condition was not set successfully");
             return Response.exception(e);
         }
     }
@@ -1025,8 +1214,11 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addORCondition(int storeId, int userId, int condition1, int condition2) {
         try {
-            return Response.success(market.addORCondition(storeId, userId, condition1, condition2));
+            var result = market.addORCondition(storeId, userId, condition1, condition2);
+            LOGGER_INFO.info("OR condition was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("OR condition was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1034,8 +1226,11 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addANDCondition(int storeId, int userId, int condition1, int condition2) {
         try {
-            return Response.success(market.addANDCondition(storeId, userId, condition1, condition2));
+            var result = market.addANDCondition(storeId, userId, condition1, condition2);
+            LOGGER_INFO.info("AND condition was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("AND condition was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1043,8 +1238,11 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addXORCondition(int storeId, int userId, int condition1, int condition2) {
         try {
-            return Response.success(market.addXORCondition(storeId, userId, condition1, condition2));
+            var result = market.addXORCondition(storeId, userId, condition1, condition2);
+            LOGGER_INFO.info("XOR condition was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("XOR condition was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1052,8 +1250,11 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addIMPLYCondition(int storeId, int userId, int condition1, int condition2) {
         try {
-            return Response.success(market.addIMPLYCondition(storeId, userId, condition1, condition2));
+            var result = market.addIMPLYCondition(storeId, userId, condition1, condition2);
+            LOGGER_INFO.info("IMPLY condition was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("IMPLY condition was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1061,8 +1262,11 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addStorePriceCondition(int storeId, int userId, double lowerBound, double upperBound) {
         try {
-            return Response.success(market.addStorePriceCondition(storeId, userId, lowerBound, upperBound));
+            var result = market.addStorePriceCondition(storeId, userId, lowerBound, upperBound);
+            LOGGER_INFO.info("store price condition was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("store price condition was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1070,17 +1274,23 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addStorePriceCondition(int storeId, int userId, double lowerBound) {
         try {
-            return Response.success(market.addStorePriceCondition(storeId, userId, lowerBound));
+            var result = market.addStorePriceCondition(storeId, userId, lowerBound);
+            LOGGER_INFO.info("store price condition was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("store price condition was not added successfully");
             return Response.exception(e);
         }
     }
 
     @Override
     public Response<Integer> addStoreQuantityCondition(int storeId, int userId, int lowerBound, int upperBound) {
-        try{
-            return Response.success(market.addStoreQuantityCondition(storeId, userId, lowerBound, upperBound));
+        try {
+            var result = market.addStoreQuantityCondition(storeId, userId, lowerBound, upperBound);
+            LOGGER_INFO.info("store quantity condition was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("store quantity condition was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1088,8 +1298,11 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addStoreQuantityCondition(int storeId, int userId, int lowerBound) {
         try {
-            return Response.success(market.addStoreQuantityCondition(storeId, userId, lowerBound));
+            var result = market.addStoreQuantityCondition(storeId, userId, lowerBound);
+            LOGGER_INFO.info("store quantity condition was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("store quantity condition was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1097,8 +1310,11 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addCategoryPriceCondition(int storeId, int userId, String category, double lowerBound, double upperBound) {
         try {
-            return Response.success(market.addCategoryPriceCondition(storeId, userId, category, lowerBound, upperBound));
+            var result = market.addCategoryPriceCondition(storeId, userId, category, lowerBound, upperBound);
+            LOGGER_INFO.info("category price condition was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("category price condition was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1106,8 +1322,11 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addCategoryPriceCondition(int storeId, int userId, String category, double lowerBound) {
         try {
-            return Response.success(market.addCategoryPriceCondition(storeId, userId, category, lowerBound));
+            var result = market.addCategoryPriceCondition(storeId, userId, category, lowerBound);
+            LOGGER_INFO.info("category price condition was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("category price condition was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1115,8 +1334,11 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addCategoryQuantityCondition(int storeId, int userId, String category, int lowerBound, int upperBound) {
         try {
-            return Response.success(market.addCategoryQuantityCondition(storeId, userId, category, lowerBound, upperBound));
+            var result = market.addCategoryQuantityCondition(storeId, userId, category, lowerBound, upperBound);
+            LOGGER_INFO.info("category quantity condition was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("category quantity condition was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1124,8 +1346,11 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addCategoryQuantityCondition(int storeId, int userId, String category, int lowerBound) {
         try {
-            return Response.success(market.addCategoryQuantityCondition(storeId, userId, category, lowerBound));
+            var result = market.addCategoryQuantityCondition(storeId, userId, category, lowerBound);
+            LOGGER_INFO.info("category quantity condition was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("category quantity condition was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1133,8 +1358,11 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addDateCondition(int storeId, int userId, LocalDateTime lowerBound, LocalDateTime upperBound) {
         try {
-            return Response.success(market.addDateCondition(storeId, userId, lowerBound, upperBound));
+            var result = market.addDateCondition(storeId, userId, lowerBound, upperBound);
+            LOGGER_INFO.info("date condition was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("date condition was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1142,8 +1370,11 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addDateCondition(int storeId, int userId, LocalDateTime lowerBound) {
         try {
-            return Response.success(market.addDateCondition(storeId, userId, lowerBound));
+            var result = market.addDateCondition(storeId, userId, lowerBound);
+            LOGGER_INFO.info("date condition was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("date condition was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1151,8 +1382,11 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addProductPriceCondition(int storeId, int userId, int productId, double lowerBound, double upperBound) {
         try {
-            return Response.success(market.addProductPriceCondition(storeId, userId, productId, lowerBound, upperBound));
+            var result = market.addProductPriceCondition(storeId, userId, productId, lowerBound, upperBound);
+            LOGGER_INFO.info("product price condition was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("product price condition was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1160,8 +1394,11 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addProductPriceCondition(int storeId, int userId, int productId, double lowerBound) {
         try {
-            return Response.success(market.addProductPriceCondition(storeId, userId, productId, lowerBound));
+            var result = market.addProductPriceCondition(storeId, userId, productId, lowerBound);
+            LOGGER_INFO.info("product price condition was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("product price condition was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1169,8 +1406,11 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addProductQuantityCondition(int storeId, int userId, int productId, int lowerBound, int upperBound) {
         try {
-            return Response.success(market.addProductQuantityCondition(storeId, userId, productId, lowerBound, upperBound));
+            var result = market.addProductQuantityCondition(storeId, userId, productId, lowerBound, upperBound);
+            LOGGER_INFO.info("product quantity condition was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("product quantity condition was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1178,8 +1418,11 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addProductQuantityCondition(int storeId, int userId, int productId, int lowerBound) {
         try {
-            return Response.success(market.addProductQuantityCondition(storeId, userId, productId, lowerBound));
+            var result = market.addProductQuantityCondition(storeId, userId, productId, lowerBound);
+            LOGGER_INFO.info("product quantity condition was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("product quantity condition was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1187,8 +1430,11 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addTimeCondition(int storeId, int userId, LocalDateTime lowerBound, LocalDateTime upperBound) {
         try {
-            return Response.success(market.addTimeCondition(storeId, userId, lowerBound, upperBound));
+            var result = market.addTimeCondition(storeId, userId, lowerBound, upperBound);
+            LOGGER_INFO.info("time condition was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("time condition was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1196,8 +1442,11 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addTimeCondition(int storeId, int userId, LocalDateTime lowerBound) {
         try {
-            return Response.success(market.addTimeCondition(storeId, userId, lowerBound));
+            var result = market.addTimeCondition(storeId, userId, lowerBound);
+            LOGGER_INFO.info("time condition was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("time condition was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1205,8 +1454,11 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addUserAgeCondition(int storeId, int userId, int lowerBound, int upperBound) {
         try {
-            return Response.success(market.addUserAgeCondition(storeId, userId, lowerBound, upperBound));
+            var result = market.addUserAgeCondition(storeId, userId, lowerBound, upperBound);
+            LOGGER_INFO.info("user age condition was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("user age condition was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1214,8 +1466,11 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addUserAgeCondition(int storeId, int userId, int lowerBound) {
         try {
-            return Response.success(market.addUserAgeCondition(storeId, userId, lowerBound));
+            var result = market.addUserAgeCondition(storeId, userId, lowerBound);
+            LOGGER_INFO.info("user age condition was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("user age condition was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1223,8 +1478,11 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addStoreDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, String coupon) {
         try {
-            return Response.success(market.addStoreDiscount(storeId, userId, conditionId, discountPercentage, expirationDate, coupon));
+            var result = market.addStoreDiscount(storeId, userId, conditionId, discountPercentage, expirationDate, coupon);
+            LOGGER_INFO.info("store discount was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("store discount was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1232,8 +1490,11 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addStoreDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, String coupon) {
         try {
-            return Response.success(market.addStoreDiscount(storeId, userId, discountPercentage, expirationDate, coupon));
+            var result = market.addStoreDiscount(storeId, userId, discountPercentage, expirationDate, coupon);
+            LOGGER_INFO.info("store discount was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("store discount was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1241,8 +1502,11 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addStoreDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate) {
         try {
-            return Response.success(market.addStoreDiscount(storeId, userId, conditionId, discountPercentage, expirationDate));
+            var result = market.addStoreDiscount(storeId, userId, conditionId, discountPercentage, expirationDate);
+            LOGGER_INFO.info("store discount was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("store discount was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1250,8 +1514,11 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addStoreDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate) {
         try {
-            return Response.success(market.addStoreDiscount(storeId, userId, discountPercentage, expirationDate));
+            var result = market.addStoreDiscount(storeId, userId, discountPercentage, expirationDate);
+            LOGGER_INFO.info("store discount was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("store discount was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1259,8 +1526,11 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addCategoryDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, String category, String coupon) {
         try {
-            return Response.success(market.addCategoryDiscount(storeId, userId, conditionId, discountPercentage, expirationDate, category, coupon));
+            var result = market.addCategoryDiscount(storeId, userId, conditionId, discountPercentage, expirationDate, category, coupon);
+            LOGGER_INFO.info("category discount was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("category discount was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1268,8 +1538,11 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addCategoryDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, String category, String coupon) {
         try {
-            return Response.success(market.addCategoryDiscount(storeId, userId, discountPercentage, expirationDate, category, coupon));
+            var result = market.addCategoryDiscount(storeId, userId, discountPercentage, expirationDate, category, coupon);
+            LOGGER_INFO.info("category discount was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("category discount was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1277,8 +1550,11 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addCategoryDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, String category) {
         try {
-            return Response.success(market.addCategoryDiscount(storeId, userId, conditionId, discountPercentage, expirationDate, category));
+            var result = market.addCategoryDiscount(storeId, userId, conditionId, discountPercentage, expirationDate, category);
+            LOGGER_INFO.info("category discount was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("category discount was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1286,8 +1562,11 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addCategoryDiscount(int storeId, int userId, double discountPercentage, LocalDate expirationDate, String category) {
         try {
-            return Response.success(market.addCategoryDiscount(storeId, userId, discountPercentage, expirationDate, category));
+            var result = market.addCategoryDiscount(storeId, userId, discountPercentage, expirationDate, category);
+            LOGGER_INFO.info("category discount was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("category discount was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1295,8 +1574,11 @@ public class Session implements ISession {
     @Override
     public Response<Integer> addProductDiscount(int storeId, int userId, int conditionId, double discountPercentage, LocalDate expirationDate, int productId, String coupon) {
         try {
-            return Response.success(market.addProductDiscount(storeId, userId, conditionId, discountPercentage, expirationDate, productId, coupon));
+            var result = market.addProductDiscount(storeId, userId, conditionId, discountPercentage, expirationDate, productId, coupon);
+            LOGGER_INFO.info("product discount was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("product discount was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1305,8 +1587,11 @@ public class Session implements ISession {
     public Response<Integer> addProductDiscount(int storeId, int userId, double discountPercentage, LocalDate
             expirationDate, int productId, String coupon) {
         try {
-            return Response.success(market.addProductDiscount(storeId, userId, discountPercentage, expirationDate, productId, coupon));
+            var result = market.addProductDiscount(storeId, userId, discountPercentage, expirationDate, productId, coupon);
+            LOGGER_INFO.info("product discount was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("product discount was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1315,8 +1600,11 @@ public class Session implements ISession {
     public Response<Integer> addProductDiscount(int storeId, int userId, int conditionId,
                                                 double discountPercentage, LocalDate expirationDate, int productId) {
         try {
-            return Response.success(market.addProductDiscount(storeId, userId, conditionId, discountPercentage, expirationDate, productId));
+            var result = market.addProductDiscount(storeId, userId, conditionId, discountPercentage, expirationDate, productId);
+            LOGGER_INFO.info("product discount was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("product discount was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1325,8 +1613,11 @@ public class Session implements ISession {
     public Response<Integer> addProductDiscount(int storeId, int userId, double discountPercentage, LocalDate
             expirationDate, int productId) {
         try {
-            return Response.success(market.addProductDiscount(storeId, userId, discountPercentage, expirationDate, productId));
+            var result = market.addProductDiscount(storeId, userId, discountPercentage, expirationDate, productId);
+            LOGGER_INFO.info("product discount was added successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("product discount was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1334,8 +1625,11 @@ public class Session implements ISession {
     @Override
     public Response<List<DiscountInfo>> getStoreDiscounts(int storeId, int userId) {
         try {
-            return Response.success(market.getStoreDiscounts(storeId, userId).stream().map(d -> new DiscountInfo(d.getDiscountId(), d.toString())).collect(Collectors.toList()));
+            var result = market.getStoreDiscounts(storeId, userId).stream().map(d -> new DiscountInfo(d.getDiscountId(), d.toString())).collect(Collectors.toList());
+            LOGGER_INFO.info("store discounts were retrieved successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("store discounts were not retrieved successfully");
             return Response.exception(e);
         }
     }
@@ -1344,8 +1638,10 @@ public class Session implements ISession {
     public Response<DiscountInfo> getDiscount(int storeId, int userId, int discountId) {
         try {
             var discount = market.getDiscount(storeId, userId, discountId);
+            LOGGER_INFO.info("discount was retrieved successfully");
             return Response.success(new DiscountInfo(discountId, discount.toString()));
         } catch (Exception e) {
+            LOGGER_ERROR.severe("discount was not retrieved successfully");
             return Response.exception(e);
         }
     }
@@ -1354,8 +1650,10 @@ public class Session implements ISession {
     public Response<VoidResponse> removeDiscount(int storeId, int userId, int discountId) {
         try {
             market.removeDiscount(storeId, userId, discountId);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("discount was removed successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("discount was not removed successfully");
             return Response.exception(e);
         }
     }
@@ -1364,8 +1662,10 @@ public class Session implements ISession {
     public Response<VoidResponse> addDiscountAsRoot(int storeId, int userId, int discountId) {
         try {
             market.addDiscountAsRoot(storeId, userId, discountId);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("discount was added as root successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("discount was not added as root successfully");
             return Response.exception(e);
         }
     }
@@ -1374,8 +1674,10 @@ public class Session implements ISession {
     public Response<VoidResponse> addDiscountToXORRoot(int storeId, int userId, int discountId) {
         try {
             market.addDiscountToXORRoot(storeId, userId, discountId);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("discount was added to xor root successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("discount was not added to xor root successfully");
             return Response.exception(e);
         }
     }
@@ -1384,8 +1686,10 @@ public class Session implements ISession {
     public Response<VoidResponse> addDiscountToMAXRoot(int storeId, int userId, int discountId) {
         try {
             market.addDiscountToMAXRoot(storeId, userId, discountId);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("discount was added to max root successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("discount was not added to max root successfully");
             return Response.exception(e);
         }
     }
@@ -1394,17 +1698,22 @@ public class Session implements ISession {
     public Response<VoidResponse> addDiscountToADDRoot(int storeId, int userId, int discountId) {
         try {
             market.addDiscountToADDRoot(storeId, userId, discountId);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("discount was added to add root successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("discount was not added to add root successfully");
             return Response.exception(e);
         }
     }
 
     @Override
     public Response<DiscountAccumulationTreeInfo> getDiscountAccumulationTree(int storeId, int userId) {
-        try{
-            return Response.success(market.getDiscountAccumulationTree(storeId, userId));
+        try {
+            var result = market.getDiscountAccumulationTree(storeId, userId);
+            LOGGER_INFO.info("discount accumulation tree was retrieved successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("discount accumulation tree was not retrieved successfully");
             return Response.exception(e);
         }
     }
@@ -1413,8 +1722,10 @@ public class Session implements ISession {
     public Response<VoidResponse> deleteStoreAccumulationTree(int storeId, int userId) {
         try {
             market.deleteStoreAccumulationTree(storeId, userId);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("discount accumulation tree was deleted successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("discount accumulation tree was not deleted successfully");
             return Response.exception(e);
         }
     }
@@ -1433,8 +1744,10 @@ public class Session implements ISession {
     public Response<VoidResponse> addIndividualPermission(int userId, int managerId, int storeId, UserPermissions.IndividualPermission individualPermission) {
         try {
             market.addIndividualPermission(userId, managerId, storeId, individualPermission);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("individual permission was added successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("individual permission was not added successfully");
             return Response.exception(e);
         }
     }
@@ -1443,71 +1756,93 @@ public class Session implements ISession {
     public Response<VoidResponse> removeIndividualPermission(int userId, int managerId, int storeId, UserPermissions.IndividualPermission individualPermission) {
         try {
             market.removeIndividualPermission(userId, managerId, storeId, individualPermission);
-            return Response.success(new VoidResponse());
+            LOGGER_INFO.info("individual permission was removed successfully");
+            return Response.success();
         } catch (Exception e) {
+            LOGGER_ERROR.severe("individual permission was not removed successfully");
             return Response.exception(e);
         }
     }
 
     @Override
     public Response<Integer> getUserIdByUsername(String username) {
-        try{
-            return Response.success(getUserRepository().getUserIdByUsername(username));
-        } catch (Exception e){
+        try {
+            var result = getUserRepository().getUserIdByUsername(username);
+            LOGGER_INFO.info("user id was retrieved successfully");
+            return Response.success(result);
+        } catch (Exception e) {
+            LOGGER_ERROR.severe("user id was not retrieved successfully");
             return Response.exception(e);
         }
     }
 
     @Override
     public Response<HashMap<Integer, String>> getUserIdsToUsernamesMapper(List<Integer> userIds) {
-        try{
-            return Response.success(getUserRepository().getUserIdsToUsernamesMapper(userIds));
-        } catch (Exception e){
+        try {
+            var result = getUserRepository().getUserIdsToUsernamesMapper(userIds);
+            LOGGER_INFO.info("user ids to usernames mapper was retrieved successfully");
+            return Response.success(result);
+        } catch (Exception e) {
+            LOGGER_ERROR.severe("user ids to usernames mapper was not retrieved successfully");
             return Response.exception(e);
         }
     }
 
     @Override
     public Response<Boolean> isStoreHidden(int storeId) {
-        try{
-            return Response.success(market.isStoreHidden(storeId));
-        } catch (Exception e){
+        try {
+            var result = market.isStoreHidden(storeId);
+            LOGGER_INFO.info("store hidden status was retrieved successfully");
+            return Response.success(result);
+        } catch (Exception e) {
+            LOGGER_ERROR.severe("store hidden status was not retrieved successfully");
             return Response.exception(e);
         }
     }
 
     @Override
     public Response<Boolean> isAdmin(int userId) {
-        try{
-            return Response.success(getUserStatus(userId).equals("Admin"));
-        } catch (Exception e){
+        try {
+            var result = getUserStatus(userId).equals("Admin");
+            LOGGER_INFO.info("user admin status was retrieved successfully");
+            return Response.success(result);
+        } catch (Exception e) {
+            LOGGER_ERROR.severe("user admin status was not retrieved successfully");
             return Response.exception(e);
         }
     }
 
     @Override
     public Response<Condition> getStorePurchasePolicy(int storeId, int userId) {
-        try{
-            return Response.success(market.getStorePurchasePolicy(storeId, userId));
-        } catch (Exception e){
+        try {
+            var result = market.getStorePurchasePolicy(storeId, userId);
+            LOGGER_INFO.info("store purchase policy was retrieved successfully");
+            return Response.success(result);
+        } catch (Exception e) {
+            LOGGER_ERROR.severe("store purchase policy was not retrieved successfully");
             return Response.exception(e);
         }
     }
 
     @Override
     public Response<VoidResponse> resetStorePurchasePolicy(int storeId, int userId) {
-        try{
+        try {
             market.resetStorePurchasePolicy(storeId, userId);
-            return Response.success(new VoidResponse());
-        } catch (Exception e){
+            LOGGER_INFO.info("store purchase policy was reset successfully");
+            return Response.success();
+        } catch (Exception e) {
+            LOGGER_ERROR.severe("store purchase policy was not reset successfully");
             return Response.exception(e);
         }
     }
 
     public Response<StoreInfo> getGeneralStoreInfo(int storeId) {
         try {
-            return Response.success(market.getGeneralStoreInfo(storeId));
+            var result = market.getGeneralStoreInfo(storeId);
+            LOGGER_INFO.info("general store info was retrieved successfully");
+            return Response.success(result);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("general store info was not retrieved successfully");
             return Response.exception(e);
         }
     }
@@ -1517,14 +1852,83 @@ public class Session implements ISession {
         try {
             Set<StoreInfo> storesInfos = market.getAllGeneralStoreInfo();
             List<StoreInfo> asList = storesInfos.stream().toList();
+            LOGGER_INFO.info("all stores info was retrieved successfully");
             return Response.success(asList);
         } catch (Exception e) {
-        return Response.exception(e);
-    }
+            LOGGER_ERROR.severe("all stores info was not retrieved successfully");
+            return Response.exception(e);
+        }
 
     }
 
-    public UserCard getUserInfo(int userId, int userInfoId){
+    @Override
+    public Response<UserTrafficRecord> getUserTrafficOfRange(int userId, LocalDate from, LocalDate to) {
+        try {
+            var isAdmin = isAdmin(userId);
+            if (isAdmin.didntSucceed()) {
+                LOGGER_ERROR.severe("failed to check user permissions");
+                return Response.failure("failed to check user permissions");
+            }
+            if (!isAdmin.getData()){
+                LOGGER_ERROR.severe("user is not an admin");
+                return Response.failure("user is not an admin");
+            }
+            var result = dailyUserTrafficRepository.getUserTrafficOfRage(from, to);
+            LOGGER_INFO.info("user traffic of range was retrieved successfully");
+            return Response.success(result);
+
+        } catch (Exception e) {
+            LOGGER_ERROR.severe("user traffic of range was not retrieved successfully");
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<Boolean> removeMember(int adminId, int userId) {
+        try {
+            if (!getUserStatus(adminId).equals("ADMIN") || !isUserLogged(adminId))
+                throw new IllegalArgumentException("user is not an admin or not logged in");
+            LOGGER_INFO.info("admin is trying to remove member: " + userId);
+            getUserRepositoryAsHashmap().removeMember(adminId, userId);
+            return Response.success(true);
+        } catch (Exception e) {
+            LOGGER_INFO.info("member removal failed");
+            return Response.failure(e.getMessage());
+        }
+    }
+
+    public Response<double[]> getStoreHistoryIncome(int storeId, int userId, LocalDate from, LocalDate to) {
+        try {
+            var result = market.getStoreHistoryIncome(storeId, userId, from, to);
+            LOGGER_INFO.info("store history income was retrieved successfully");
+            return Response.success(result);
+        } catch (Exception e) {
+            LOGGER_ERROR.severe("store history income was not retrieved successfully");
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<double[]> getSystemHistoryIncome(int userId, LocalDate from, LocalDate to) {
+        try {
+            var isAdmin = isAdmin(userId);
+            if (isAdmin.didntSucceed()) {
+                return Response.failure("failed to check user permissions");
+            }
+
+            if (!isAdmin.getData()) {
+                return Response.failure("user is not an admin");
+            }
+            var result = market.getSystemHistoryIncome(from, to);
+            LOGGER_INFO.info("system history income was retrieved successfully");
+            return Response.success(result);
+        } catch (Exception e) {
+            LOGGER_ERROR.severe("system history income was not retrieved successfully");
+            return Response.exception(e);
+        }
+    }
+
+    public UserCard getUserInfo(int userId, int userInfoId) {
         try {
             return market.getUserInfo(userId, userInfoId);
         } catch (Exception e) {
@@ -1532,22 +1936,57 @@ public class Session implements ISession {
         }
     }
 
-    public Response<List<UserCard>> getAllUserCards(int userId){
+    public Response<List<UserCard>> getAllUserCards(int userId) {
         try {
-            return Response.success(market.getAllUserCards(userId));
+            var result = market.getAllUserCards(userId);
+            LOGGER_INFO.info("all user cards were retrieved successfully");
+            return Response.success(result);
+        } catch (Exception e) {
+            LOGGER_ERROR.severe("all user cards were not retrieved successfully");
+            return Response.exception(e);
+        }
+    }
+
+    public Response<Integer> removeUser(int userId, int removeUserId) {
+        try {
+            return Response.success(1);//placeholder for the feature in the branch
         } catch (Exception e) {
             return Response.exception(e);
         }
     }
 
-    public Response<Integer> removeUser(int userId, int removeUserId){
+    public Response<String> getStoreName(int storeId) {
         try {
-            return Response.success(1);//placeholder for the feature in the branch
-        } catch (Exception e){
-            return Response.exception(e);
+            var result = market.getStoreName(storeId);
+            LOGGER_INFO.info("store name was retrieved successfully");
+            return Response.success(result);
+        } catch (Exception e) {
+            LOGGER_ERROR.severe("store name was not retrieved successfully");
+            return Response.failure(e.getMessage());
         }
     }
 
+    public Response<VoidResponse> removeBasketProducts(List<ServiceBasketProduct> serviceBasketProductsToRemove, int userId) {
+        try {
+            getUserRepository().getUser(userId).removeBasketProducts(serviceBasketProductsToRemove.stream().map(serviceBasketProduct -> Pair.of(serviceBasketProduct.getProductId(), serviceBasketProduct.getStoreId())).toList());
+            LOGGER_INFO.info("basket products were removed successfully");
+            return Response.success();
+        } catch (Exception e) {
+            LOGGER_ERROR.severe("basket products were not removed successfully");
+            return Response.failure(e.getMessage());
+        }
+    }
+
+    public Response<VoidResponse> removeBasketProduct(int userId, int productId, int storeId) {
+        try {
+            getUserRepository().getUser(userId).removeBasketProduct(productId, storeId);
+            LOGGER_INFO.info("basket product was removed successfully");
+            return Response.success();
+        } catch (Exception e) {
+            LOGGER_ERROR.severe("basket product was not removed successfully");
+            return Response.failure(e.getMessage());
+        }
+    }
     public IUserRepository getUserRepository() {
         userRepository = SingletonCollection.getUserRepository();
         return userRepository;

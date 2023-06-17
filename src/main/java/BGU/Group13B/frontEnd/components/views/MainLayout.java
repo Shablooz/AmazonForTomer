@@ -1,5 +1,6 @@
 package BGU.Group13B.frontEnd.components.views;
 
+import BGU.Group13B.frontEnd.ResponseHandler;
 import BGU.Group13B.frontEnd.components.views.Searcher.Searcher;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
@@ -35,7 +36,7 @@ import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY_INLIN
 /**
  * The main view is a top-level placeholder for other views.
  */
-public class MainLayout extends AppLayout {
+public class MainLayout extends AppLayout implements ResponseHandler {
 
     private H2 viewTitle;
     private final Session session;
@@ -566,20 +567,21 @@ public class MainLayout extends AppLayout {
         AppNav nav = new AppNav();
         //
         nav.addItem(new AppNavItem("Home View", HomeView.class, LineAwesomeIcon.HOME_SOLID.create()));
+        nav.addItem(new AppNavItem("All Stores", AllStoresView.class, LineAwesomeIcon.STORE_ALT_SOLID.create()));
 
         //my stores
         if (session.isUserLogged(SessionToIdMapper.getInstance().getCurrentSessionId())) {
             nav.addItem(new AppNavItem("My Stores", MyStoresView.class, LineAwesomeIcon.STORE_SOLID.create()));
-        }
-
-        if (session.isUserLogged(SessionToIdMapper.getInstance().getCurrentSessionId())) {
             nav.addItem(new AppNavItem("Purchase History", PurchaseHistoryView.class, LineAwesomeIcon.HISTORY_SOLID.create()));
-            nav.addItem(new AppNavItem("All Stores", AllStoresView.class, LineAwesomeIcon.STORE_ALT_SOLID.create()));
         }
 
-        if (session.getUserStatus(USERID).equals(ADMIN)){
+        var isAdmin =  handleResponse(session.isAdmin(USERID));
+        if (isAdmin != null && isAdmin){
             nav.addItem(new AppNavItem("Admin Page", AdminView.class, LineAwesomeIcon.APPLE_PAY.create()));
+            nav.addItem(new AppNavItem("System Info", SystemInfoView.class, LineAwesomeIcon.CHART_PIE_SOLID.create()));
         }
+
+
 
 
         return nav;

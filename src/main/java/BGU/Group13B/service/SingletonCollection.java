@@ -7,12 +7,12 @@ import BGU.Group13B.backend.Repositories.Implementations.BasketProductRepository
 import BGU.Group13B.backend.Repositories.Implementations.BasketReposistoryImpl.BasketRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.BasketReposistoryImpl.BasketRepositoryService;
 import BGU.Group13B.backend.Repositories.Implementations.ConditionRepositoryImpl.ConditionRepositoryAsHashMap;
+import BGU.Group13B.backend.Repositories.Implementations.DailyUserTrafficRepositoryImpl.DailyUserTrafficRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.DiscountAccumulationRepositoryImpl.DiscountAccumulationRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.DiscountRepositoryImpl.DiscountRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.IStoreScoreRepository.StoreScoreRepoService;
 import BGU.Group13B.backend.Repositories.Implementations.IStoreScoreRepository.StoreScoreSingle;
 import BGU.Group13B.backend.Repositories.Implementations.MessageRepositoryImpl.MessageRepositorySingle;
-import BGU.Group13B.backend.Repositories.Implementations.ProductHistoryRepositoryImpl.ProductHistoryRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl.ProductRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl.ProductRepositoryAsHashMapService;
 import BGU.Group13B.backend.Repositories.Implementations.PurchaseHistoryRepositoryImpl.PurchaseHistoryRepositoryAsList;
@@ -62,7 +62,6 @@ public class SingletonCollection {
     private static IBasketRepository basketRepository;
     private static IBasketProductRepository basketProductRepository;
     private static IAuctionRepository auctionRepository;
-    private static IProductHistoryRepository productHistoryRepository;
     private static IStoreScore storeScoreRepository;
     private static IUserPermissionRepository userPermissionRepository;
     private static IStorePermissionsRepository storePermissionRepository;
@@ -72,6 +71,7 @@ public class SingletonCollection {
     private static IStoreDiscountRootsRepository storeDiscountRootsRepository;
     private static IPurchasePolicyRootsRepository purchasePolicyRootsRepository;
     private static ConfigurableApplicationContext context;
+    private static IDailyUserTrafficRepository dailyUserTrafficRepository;
 
     // set context
     public static void setContext(ConfigurableApplicationContext updated)
@@ -120,7 +120,6 @@ public class SingletonCollection {
         basketRepository = new BasketRepositoryAsHashMap();
         auctionRepository = new AuctionRepositoryAsHashMap();
         basketProductRepository = new BasketProductRepositoryAsHashMap();
-        productHistoryRepository = new ProductHistoryRepositoryAsList();
         storeMessagesRepository = new StoreMessageSingle();
         reviewRepository = new ReviewRepoSingle();
         messageRepository = new MessageRepositorySingle();
@@ -132,6 +131,7 @@ public class SingletonCollection {
         conditionRepository = new ConditionRepositoryAsHashMap();
         storeDiscountRootsRepository = new StoreDiscountRootsRepositoryAsHashMap();
         purchasePolicyRootsRepository = new PurchasePolicyRootsRepositoryAsHashMap();
+        dailyUserTrafficRepository = new DailyUserTrafficRepositoryAsList();
 
 
         //adapters
@@ -157,7 +157,6 @@ public class SingletonCollection {
         basketRepository = new BasketRepositoryAsHashMap();
         auctionRepository = new AuctionRepositoryAsHashMap();
         basketProductRepository = new BasketProductRepositoryAsHashMap();
-        productHistoryRepository = new ProductHistoryRepositoryAsList();
         storeMessagesRepository = new StoreMessageSingle();
         reviewRepository = new ReviewRepoSingle();
         messageRepository = new MessageRepositorySingle();
@@ -169,6 +168,7 @@ public class SingletonCollection {
         conditionRepository = new ConditionRepositoryAsHashMap();
         storeDiscountRootsRepository = new StoreDiscountRootsRepositoryAsHashMap();
         purchasePolicyRootsRepository = new PurchasePolicyRootsRepositoryAsHashMap();
+        dailyUserTrafficRepository = new DailyUserTrafficRepositoryAsList();
         //adapters
 
 
@@ -420,10 +420,6 @@ public class SingletonCollection {
         return basketProductRepository;
     }
 
-    public static IProductHistoryRepository getProductHistoryRepository() {
-        return productHistoryRepository;
-    }
-
     public static IStoreScore getStoreScoreRepository() {
         return storeScoreRepository;
     }
@@ -452,6 +448,10 @@ public class SingletonCollection {
 
     public static IStoreDiscountRootsRepository getStoreDiscountRootsRepository() {
         return storeDiscountRootsRepository;
+    }
+
+    public static IDailyUserTrafficRepository getDailyUserTrafficRepository() {
+        return dailyUserTrafficRepository;
     }
 
     public static Session getSession() {
