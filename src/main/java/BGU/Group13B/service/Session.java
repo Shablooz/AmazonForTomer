@@ -1872,7 +1872,7 @@ LOGGER_INFO.info("product description was set successfully");
                 LOGGER_ERROR.severe("user is not an admin");
                 return Response.failure("user is not an admin");
             }
-            var result = dailyUserTrafficRepository.getUserTrafficOfRage(from, to);
+            var result = SingletonCollection.getDailyUserTrafficRepository().getUserTrafficOfRage(from, to);
             LOGGER_INFO.info("user traffic of range was retrieved successfully");
             return Response.success(result);
 
