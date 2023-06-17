@@ -1132,4 +1132,11 @@ public class ProxySession implements ISession {
         return realSession.fetchMessages(userId);
     }
 
+    @Override
+    public Response<String> getUserNameRes(int userId){
+        if (realSession != null)
+            return realSession.getUserNameRes(userId);
+        return null;
+    }
+
 }
