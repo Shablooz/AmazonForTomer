@@ -2,6 +2,7 @@ package BGU.Group13B.service;
 
 import BGU.Group13B.backend.Repositories.Implementations.AcutionRepositoryImpl.AuctionRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.BIDRepositoryImpl.BIDRepositoryAsList;
+import BGU.Group13B.backend.Repositories.Implementations.BasketProductRepositoryImpl.BasketProductRepoService;
 import BGU.Group13B.backend.Repositories.Implementations.BasketProductRepositoryImpl.BasketProductRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.BasketReposistoryImpl.BasketRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.BasketReposistoryImpl.BasketRepositoryService;
@@ -215,7 +216,6 @@ public class SingletonCollection {
     }
 
     public static void setProductRepository() {
-        System.out.println("\n\nsetProductRepository!!!!!!!!!!!!!!\n\n");
         ProductRepositoryAsHashMap productRepositoryAsHashMap = SingletonCollection.getContext().getBean(ProductRepositoryAsHashMapService.class).getProductRepositoryAsHashMapJPA();
         if(productRepositoryAsHashMap == null){
             ProductRepositoryAsHashMap repo=(ProductRepositoryAsHashMap) SingletonCollection.getProductRepository();
@@ -292,6 +292,21 @@ public class SingletonCollection {
         }
 
     }
+    public static void setBasketProductRepository() {
+        BasketProductRepositoryAsHashMap basketProductRepositoryAsHashMap  = SingletonCollection.getContext().getBean(BasketProductRepoService.class).getBasketProductRepository();
+        if(basketProductRepositoryAsHashMap == null){
+            BasketProductRepositoryAsHashMap repo=(BasketProductRepositoryAsHashMap) SingletonCollection.getBasketProductRepository();
+            SingletonCollection.getContext().getBean(BasketProductRepoService.class).save(repo);
+        }else {
+            SingletonCollection.basketProductRepository = SingletonCollection.getContext().getBean(BasketProductRepoService.class).getBasketProductRepository();
+        }
+
+    }
+
+    public static void setBasketProductRepository(BasketProductRepositoryAsHashMap basketProductRepositoryAsHashMap) {
+        SingletonCollection.basketProductRepository = basketProductRepositoryAsHashMap;
+    }
+
     public static void setBasketRepository(BasketRepositoryAsHashMap basketRepositoryAsHashMap) {
         SingletonCollection.basketRepository = basketRepositoryAsHashMap;
     }
@@ -314,6 +329,9 @@ public class SingletonCollection {
     }
     public static void setStoreScoreRepository(StoreScoreSingle storeScoreSingle) {
         SingletonCollection.storeScoreRepository = storeScoreSingle;
+    }
+    public static void setProductRepository(ProductRepositoryAsHashMap productRepository) {
+        SingletonCollection.productRepository = productRepository;
     }
 
     //lines below might need to be replaced with a field
@@ -503,6 +521,7 @@ public class SingletonCollection {
         userRepository.setSaveMode(saveMode);
         userPermissionRepository.setSaveMode(saveMode);
         basketRepository.setSaveMode(saveMode);
+        basketProductRepository.setSaveMode(saveMode);
 
     }
     public static void setPaymentFail() {

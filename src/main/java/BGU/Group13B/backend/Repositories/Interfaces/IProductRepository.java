@@ -35,4 +35,6 @@ public interface IProductRepository {//deeded because it contains the product qu
     int addHiddenProduct(int storeId, String name, String category, double price, int stockQuantity, String description);
 
     void setSaveMode(boolean saveMode);
+
+    boolean getSaveMode();
 }

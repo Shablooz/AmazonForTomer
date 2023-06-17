@@ -1,5 +1,6 @@
 package BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl;
 
+import BGU.Group13B.service.SingletonCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +19,7 @@ public class ProductRepositoryAsHashMapService {
         }
 
         public void save(ProductRepositoryAsHashMap productRepositoryAsHashMap){
-            productRepositoryAsHashMapJPA.save(productRepositoryAsHashMap);
+             SingletonCollection.setProductRepository(productRepositoryAsHashMapJPA.save(productRepositoryAsHashMap));
         }
 
         public void delete(ProductRepositoryAsHashMap productRepositoryAsHashMap){

@@ -14,8 +14,8 @@ public class SetBasket {
     @OneToMany(cascade = jakarta.persistence.CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
     @JoinTable(name = "SetBasket_Basket",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "userId")},
-            inverseJoinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "userId"),
-                    @JoinColumn(name = "store_id", referencedColumnName = "storeId")})
+            inverseJoinColumns = {@JoinColumn(name = "basket_user_id", referencedColumnName = "userId"),
+                    @JoinColumn(name = "basket_store_id", referencedColumnName = "storeId")})
     private Set<Basket> baskets;
 
     public SetBasket(int userId) {

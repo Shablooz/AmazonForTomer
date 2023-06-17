@@ -288,7 +288,7 @@ public class Store {
         this.getStorePermission().validateStoreVisibility(userId, hidden);
         if (!purchaseHistoryRepository.isPurchase(userId, this.storeId, productId))
             throw new IllegalArgumentException("User with id: " + userId + " did not purchase product with id: " + productId + " from store: " + this.storeId);
-        Product product = productRepository.getStoreProductById(productId, this.storeId);
+        Product product = getProductRepository().getStoreProductById(productId, this.storeId);
         if (product == null)
             throw new IllegalArgumentException("Product with id: " + productId + " does not exist in store: " + this.storeId);
         product.addReview(review, userId);
@@ -307,7 +307,7 @@ public class Store {
 
     public void removeReview(int userId, int productId) throws NoPermissionException {
         this.getStorePermission().validateStoreVisibility(userId, hidden);
-        Product product = productRepository.getStoreProductById(productId, this.storeId);
+        Product product = getProductRepository().getStoreProductById(productId, this.storeId);
         if (product == null)
             throw new IllegalArgumentException("Product with id: " + productId + " does not exist in store: " + this.storeId);
         product.removeReview(userId);
@@ -315,14 +315,14 @@ public class Store {
 
     public Review getReview(int userId, int productId) throws NoPermissionException {
         this.getStorePermission().validateStoreVisibility(userId, hidden);
-        Product product = productRepository.getStoreProductById(productId, this.storeId);
+        Product product = getProductRepository().getStoreProductById(productId, this.storeId);
         if (product == null)
             throw new IllegalArgumentException("Product with id: " + productId + " does not exist in store: " + this.storeId);
         return product.getReview(userId);
     }
 
     public List<Review> getAllReviews(int productId) {//TODO:maybe need to add validateStoreVisibility
-        Product product = productRepository.getStoreProductById(productId, this.storeId);
+        Product product = getProductRepository().getStoreProductById(productId, this.storeId);
         if (product == null)
             throw new IllegalArgumentException("Product with id: " + productId + " does not exist in store: " + this.storeId);
         return product.getAllReviews();
@@ -330,14 +330,14 @@ public class Store {
 
     public float getProductScore(int productId, int userId) throws NoPermissionException {
         this.getStorePermission().validateStoreVisibility(userId, hidden);
-        Product product = productRepository.getStoreProductById(productId, this.storeId);
+        Product product = getProductRepository().getStoreProductById(productId, this.storeId);
         if (product == null)
             throw new IllegalArgumentException("Product with id: " + productId + " does not exist in store: " + this.storeId);
         return product.getProductScore();
     }
     public float getProductScoreUser(int productId,int userId) throws NoPermissionException {
         this.getStorePermission().validateStoreVisibility(userId, hidden);
-        Product product = productRepository.getStoreProductById(productId, this.storeId);
+        Product product = getProductRepository().getStoreProductById(productId, this.storeId);
         if (product == null)
             throw new IllegalArgumentException("Product with id: " + productId + " does not exist in store: " + this.storeId);
         return product.getProductScoreUser(userId);
@@ -345,7 +345,7 @@ public class Store {
 
     public void addAndSetProductScore(int productId, int userId, int score) throws NoPermissionException {
         this.getStorePermission().validateStoreVisibility(userId, hidden);
-        Product product = productRepository.getStoreProductById(productId, this.storeId);
+        Product product = getProductRepository().getStoreProductById(productId, this.storeId);
         if (product == null)
             throw new IllegalArgumentException("Product with id: " + productId + " does not exist in store: " + this.storeName);
         if (!purchaseHistoryRepository.isPurchase(userId, this.storeId, productId))
@@ -356,7 +356,7 @@ public class Store {
 
     public void removeProductScore(int productId, int userId) throws NoPermissionException {
         this.getStorePermission().validateStoreVisibility(userId, hidden);
-        Product product = productRepository.getStoreProductById(productId, this.storeId);
+        Product product = getProductRepository().getStoreProductById(productId, this.storeId);
         if (product == null)
             throw new IllegalArgumentException("Product with id: " + productId + " does not exist in store: " + this.storeId);
         product.removeProductScore(userId);
@@ -396,9 +396,9 @@ public class Store {
             throw new NoPermissionException("User " + userId + " has no permission to add product to store " + this.storeId);
 
         if (hidden)
-            return this.productRepository.addHiddenProduct(storeId, productName, category, price, stockQuantity, description);
+            return this.getProductRepository().addHiddenProduct(storeId, productName, category, price, stockQuantity, description);
 
-        return this.productRepository.addProduct(storeId, productName, category, price, stockQuantity, description).getProductId();
+        return this.getProductRepository().addProduct(storeId, productName, category, price, stockQuantity, description).getProductId();
     }
 
     public double calculatePriceOfBasket(BasketInfo basketInfo, UserInfo userInfo, List<String> coupons) throws PurchaseExceedsPolicyException {
@@ -442,7 +442,7 @@ public class Store {
         List<Integer> userIds = this.getStorePermission().getAllUsersWithIndividualPermission(UserPermissions.IndividualPermission.AUCTION);
         for (Integer id : userIds) {//wait for the interface in AlertManager.java to finish
             //alertManager.sendAlert(id, "User " + userId + " has submitted a purchase proposal for product " + productId + " in store " + this.storeId);
-            double originalPrice = productRepository.getProductById(productId).getPrice();
+            double originalPrice = getProductRepository().getProductById(productId).getPrice();
             BroadCaster.broadcast(id,
                     "BID["+storeId+","+productId+"]User has submitted a purchase proposal for product " + productId +
                     "\n In store " + this.storeName +
@@ -466,7 +466,7 @@ public class Store {
 
         if (currentBid.isRejected())//fixme, use BroadCaster.broadcast
             BroadCaster.broadcast(managerId,
-                    "The bid for product " + productRepository.getProductById(currentBid.getProductId()).getName()
+                    "The bid for product " + getProductRepository().getProductById(currentBid.getProductId()).getName()
                             + " has been rejected already");
             //alertManager.sendAlert(managerId, "The bid for product " + currentBid.getProductId() + " in store " + this.storeId + " has been rejected already");
         currentBid.approve(managerId);
@@ -474,7 +474,7 @@ public class Store {
 
         if (currentBid.approvedByAll(managers)) {
             BroadCaster.broadcast(currentBid.getUserId(),
-                    "Your bid for product " + productRepository.getProductById(currentBid.getProductId()).getName()
+                    "Your bid for product " + getProductRepository().getProductById(currentBid.getProductId()).getName()
                             + " in store " + this.storeName + " approved!, the item added to your cart");
             addToUserCart.apply(currentBid.getUserId(), storeId, currentBid.getProductId(), currentBid.getAmount(), currentBid.getNewProductPrice());
             //todo send alert to the user that his bid has been approved
@@ -493,7 +493,7 @@ public class Store {
         BID currentBid = bidRepository.getBID(bidId).orElseThrow(() -> new IllegalArgumentException("There is no such bid for store " + this.storeId));
         if (currentBid.isRejected())
             BroadCaster.broadcast(managerId,
-                "The bid for product " + productRepository.getProductById(currentBid.getProductId()).getName()
+                "The bid for product " + getProductRepository().getProductById(currentBid.getProductId()).getName()
                         + " has been rejected already");
 
         currentBid.reject();//good for concurrency edge cases
@@ -540,7 +540,7 @@ public class Store {
     }
 
     public synchronized void isProductAvailable(int productId) throws Exception {
-        Product product = productRepository.getStoreProductById(productId, storeId);
+        Product product = getProductRepository().getStoreProductById(productId, storeId);
         if (product.isHidden())
             throw new Exception("The product is hidden");
         if (product.isOutOfStock())
@@ -558,7 +558,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to set product name in the store: " + this.storeId);
 
-        Product product = this.productRepository.getStoreProductById(productId, storeId);
+        Product product = this.getProductRepository().getStoreProductById(productId, storeId);
         synchronized (product) {
             product.setName(name);
         }
@@ -571,7 +571,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to set product category in the store: " + this.storeId);
 
-        Product product = this.productRepository.getStoreProductById(productId, storeId);
+        Product product = this.getProductRepository().getStoreProductById(productId, storeId);
         synchronized (product) {
             product.setCategory(category);
         }
@@ -584,7 +584,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to set product price in the store: " + this.storeId);
 
-        Product product = this.productRepository.getStoreProductById(productId, storeId);
+        Product product = this.getProductRepository().getStoreProductById(productId, storeId);
         synchronized (product) {
             product.setPrice(price);
         }
@@ -597,7 +597,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to set product stock quantity in the store: " + this.storeId);
 
-        Product product = this.productRepository.getStoreProductById(productId, storeId);
+        Product product = this.getProductRepository().getStoreProductById(productId, storeId);
         synchronized (product) {
             product.setStockQuantity(quantity);
         }
@@ -610,7 +610,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to set product description in the store: " + this.storeId);
 
-        Product product = this.productRepository.getStoreProductById(productId, storeId);
+        Product product = this.getProductRepository().getStoreProductById(productId, storeId);
         synchronized (product) {
             product.setDescription(description);
         }
@@ -623,9 +623,9 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to remove product in the store: " + this.storeId);
 
-        Product product = this.productRepository.getStoreProductById(productId, storeId);
+        Product product = this.getProductRepository().getStoreProductById(productId, storeId);
         synchronized (product) {
-            this.productRepository.removeStoreProduct(productId, storeId);
+            this.getProductRepository().removeStoreProduct(productId, storeId);
             product.delete();
             discountPolicy.removeProductDiscount(productId);
         }
@@ -646,12 +646,12 @@ public class Store {
     //TODO check
     public Product getStoreProduct(int userId, int productId) throws NoPermissionException {
         this.getStorePermission().validateStoreVisibility(userId, hidden);
-        return productRepository.getStoreProductById(productId, storeId);
+        return getProductRepository().getStoreProductById(productId, storeId);
     }
 
     public Set<Product> getAllStoreProducts(int userId) throws NoPermissionException {
         this.getStorePermission().validateStoreVisibility(userId, hidden);
-        return productRepository.getStoreProducts(storeId).orElse(new ConcurrentSkipListSet<>(Comparator.comparingInt(Product::getProductId)));
+        return getProductRepository().getStoreProducts(storeId).orElse(new ConcurrentSkipListSet<>(Comparator.comparingInt(Product::getProductId)));
     }
 
     @DefaultFounderFunctionality
@@ -664,7 +664,7 @@ public class Store {
             throw new RuntimeException("The store " + this.storeName + " is already hidden");
 
         this.hidden = true;
-        productRepository.hideAllStoreProducts(this.storeId);
+        getProductRepository().hideAllStoreProducts(this.storeId);
 
         //notify all store owners and managers
         notifyAllWorkers(userId, "Store Closed", "The store " + this.storeName + " has been hidden");
@@ -692,7 +692,7 @@ public class Store {
             throw new RuntimeException("The store " + this.storeName + " isn't hidden");
 
         this.hidden = false;
-        productRepository.unhideAllStoreProducts(this.storeId);
+        getProductRepository().unhideAllStoreProducts(this.storeId);
 
         //notify all store owners and managers
         notifyAllWorkers(userId, "Store Closed", "The store " + this.storeName + " has been hidden");
@@ -1221,6 +1221,8 @@ public class Store {
     }
 
     public IProductRepository getProductRepository() {
+        if(productRepository == null || productRepository.getSaveMode()) //tomer check
+            productRepository = SingletonCollection.getProductRepository();
         return productRepository;
     }
 

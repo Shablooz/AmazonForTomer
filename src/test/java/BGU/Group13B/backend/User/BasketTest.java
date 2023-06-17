@@ -121,6 +121,7 @@ class BasketTest {
         productId2 = productRepository.addProduct(storeId, "product2", "category2", 15.0, 1, "eyal was here").getProductId();
         productId3 = productRepository.addProduct(storeId, "product3", "category3", 1.0, 1000, "description3").getProductId();
         productId4 = productRepository.addProduct(storeId, "product4", "category4", 15, 1000, "description4").getProductId();
+
         basketProductRepository.addNewProductToBasket(productId1, storeId, userId);//adding product 0 to basket
         basketProductRepository.addNewProductToBasket(productId2, storeId, userId);//adding product 1 to basket
     }
