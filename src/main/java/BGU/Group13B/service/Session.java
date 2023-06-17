@@ -1896,16 +1896,6 @@ LOGGER_INFO.info("product description was set successfully");
         }
     }
 
-    public Response<double[]> getStoreHistoryIncome(int storeId, int userId, LocalDate from, LocalDate to) {
-        try {
-            var result = market.getStoreHistoryIncome(storeId, userId, from, to);
-            LOGGER_INFO.info("store history income was retrieved successfully");
-            return Response.success(result);
-        } catch (Exception e) {
-            LOGGER_ERROR.severe("store history income was not retrieved successfully");
-            return Response.exception(e);
-        }
-    }
 
     @Override
     public Response<double[]> getSystemHistoryIncome(int userId, LocalDate from, LocalDate to) {
@@ -1937,22 +1927,7 @@ LOGGER_INFO.info("product description was set successfully");
         }
     }
 
-    @Override
-    public Response<double[]> getSystemHistoryIncome(int userId, LocalDate from, LocalDate to) {
-        try{
-            var isAdmin = isAdmin(userId);
-            if(isAdmin.didntSucceed())
-                return Response.failure("failed to check user permissions");
 
-            if(!isAdmin.getData())
-                return Response.failure("user is not an admin");
-
-            return Response.success(market.getSystemHistoryIncome(from, to));
-        }
-        catch (Exception e){
-            return Response.exception(e);
-        }
-    }
 
     public UserCard getUserInfo(int userId, int userInfoId) {
         try {

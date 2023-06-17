@@ -34,10 +34,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Market {
-    private final IStoreRepository storeRepository;
-    private final IUserRepository userRepository;
-    private final IPurchaseHistoryRepository purchaseHistoryRepository;
-    private final IPurchaseHistoryRepository purchaseHistoryRepository;
+    private IStoreRepository storeRepository;
+    private IUserRepository userRepository;
+    private IPurchaseHistoryRepository purchaseHistoryRepository;
     private Searcher searcher; //inject in the loading of the system
 
     private final AddToUserCart addToUserCart;

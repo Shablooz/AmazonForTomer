@@ -1025,10 +1025,6 @@ public interface ISession {
 
     Response<double[]> getSystemHistoryIncome(int userId, LocalDate from, LocalDate to);
 
-
     Response<String> getUserNameRes(int userId);
 
-    Response<double[]> getStoreHistoryIncome(int storeId, int userId, LocalDate from, LocalDate to);
-
-    Response<double[]> getSystemHistoryIncome(int userId, LocalDate from, LocalDate to);
 }
