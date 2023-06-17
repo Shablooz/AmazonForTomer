@@ -274,4 +274,9 @@ public class Basket {
     public int hashCode() {
         return Objects.hash(userId, storeId);
     }
+
+    public void clearBasket() {
+        basketProductRepository.removeBasketProducts(storeId,userId);
+        basketProductRepository.dropBasket(storeId,userId);
+    }
 }
