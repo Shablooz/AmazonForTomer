@@ -2,10 +2,7 @@ package BGU.Group13B.frontEnd.components.views;
 
 import BGU.Group13B.frontEnd.ResponseHandler;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
-import BGU.Group13B.frontEnd.components.views.viewEntity.Address;
-import BGU.Group13B.frontEnd.components.views.viewEntity.Card;
-import BGU.Group13B.frontEnd.components.views.viewEntity.Country;
-import BGU.Group13B.frontEnd.components.views.viewEntity.Person;
+import BGU.Group13B.frontEnd.components.views.viewEntity.*;
 import BGU.Group13B.service.BroadCaster;
 import BGU.Group13B.service.Response;
 import BGU.Group13B.service.Session;
@@ -20,6 +17,8 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
@@ -55,6 +54,8 @@ public class PaymentView extends Div implements BeforeLeaveObserver, ResponseHan
     private static final String PAYMENT = "Payment";
     private static final String BILLING_ADDRESS = "Billing address";
     private static final String CUSTOMER_DETAILS = "Customer details";
+    private HorizontalLayout pricesLayout;
+    private final double totalPriceBeforeDiscount;
     private double totalPriceAfterDiscount;
     private ComboBox<Month> monthComboBox;
     private ComboBox<Integer> yearComboBox;
@@ -70,6 +71,7 @@ public class PaymentView extends Div implements BeforeLeaveObserver, ResponseHan
     private Binder<Person> personBinder;
     private Binder<Card> cardBinder;
     private final Accordion accordion;
+    private AccordionPanel couponsPanel;
     private FormLayout customerDetailsFormLayout;
     private AccordionPanel customDetailsPanel;
     private FormLayout billingAddressFormLayout;
@@ -81,13 +83,22 @@ public class PaymentView extends Div implements BeforeLeaveObserver, ResponseHan
     private boolean paymentSuccessful;
     private List<ServiceBasketProduct> successfulItems;
 
+    private Grid<Coupon> couponGrid;
+    List<Coupon> couponsList = new LinkedList<>();
+    private VerticalLayout couponComponent;
+    private final String COUPONS = "Coupons";
+    private HorizontalLayout topLayout = new HorizontalLayout();
     public PaymentView(Session session) {
         this.session = session;
         paymentSuccessful = false;
-        double totalPriceBeforeDiscount = handleResponse(session.getTotalPriceOfCart(SessionToIdMapper.getInstance().getCurrentSessionId()), "");
+        totalPriceBeforeDiscount = handleResponse(session.getTotalPriceOfCart(SessionToIdMapper.getInstance().getCurrentSessionId()), "");
         //coupon code in the future
-        add(getPricesLayout(session, totalPriceBeforeDiscount));
+        pricesLayout = new HorizontalLayout();
+        pricesLayout = getPricesLayout(session, totalPriceBeforeDiscount);
 
+
+        topLayout.add(pricesLayout);
+        add(topLayout);
         List<ServiceProduct> failedProducts = handleResponse(
                 session.getAllFailedProductsAfterPayment(SessionToIdMapper.getInstance().getCurrentSessionId()), "");
         if (failedProducts.size() > 0) {
@@ -130,7 +141,9 @@ public class PaymentView extends Div implements BeforeLeaveObserver, ResponseHan
     }
 
     private HorizontalLayout getPricesLayout(Session session, double totalPriceBeforeDiscount) {
-        var priceAndSuccessful = handleResponse(session.startPurchaseBasketTransaction(SessionToIdMapper.getInstance().getCurrentSessionId(), new LinkedList<>())); //mafhid
+        var priceAndSuccessful = handleResponse(session.startPurchaseBasketTransaction(SessionToIdMapper.getInstance().getCurrentSessionId(), couponsList.stream().map(Coupon::getCoupon).toList())); //mafhid
+        if(priceAndSuccessful == null)
+            return topLayout;
         totalPriceAfterDiscount = priceAndSuccessful.getFirst();
         successfulItems = priceAndSuccessful.getSecond();
         Span spanBeforeDiscountTitle = new Span(totalPriceBeforeDiscount != totalPriceAfterDiscount ?
@@ -464,12 +477,61 @@ public class PaymentView extends Div implements BeforeLeaveObserver, ResponseHan
 
     private void initForLayoutsForAccordionPanels() {
         //Creating form layouts for each accordion panel
+        couponComponent = initCouponsView();
+        couponsPanel = accordion.add(COUPONS, couponComponent);
         customerDetailsFormLayout = createFormLayout();
         customDetailsPanel = accordion.add(CUSTOMER_DETAILS, customerDetailsFormLayout);
         billingAddressFormLayout = createFormLayout();
         billingAddressPanel = accordion.add(BILLING_ADDRESS, billingAddressFormLayout);
         paymentFormLayout = createFormLayout();
         paymentPanel = accordion.add(PAYMENT, paymentFormLayout);
+    }
+
+    private VerticalLayout initCouponsView() {
+        VerticalLayout couponView = new VerticalLayout();
+        couponGrid = new Grid<>();
+        couponGrid.setAllRowsVisible(true);
+        couponGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
+        couponGrid.addColumn(Coupon::getCoupon).setHeader(COUPONS);
+        couponView.add(couponGrid);
+        HorizontalLayout horizontalLayout = new HorizontalLayout();
+        TextField couponValue = new TextField();
+        couponValue.setPlaceholder("Enter coupon");
+        couponValue.setRequired(true);
+        Button addCoupon = new Button("Add");
+        addCoupon.addClickListener(event -> {
+            if(!couponValue.isEmpty()){
+                Coupon newCoupon = new Coupon(couponValue.getValue());
+                if(couponsList.contains(newCoupon)){
+                    Notification.show("The coupon was already added");
+                    return;
+                }
+                couponsList.add(newCoupon);
+                couponGrid.setItems(couponsList);
+                couponValue.setValue("");
+            }
+        });
+        Button applyCoupons = new Button("Apply coupons");
+        applyCoupons.addClickListener(event -> {
+            if(handleResponse(session.cancelPurchase(SessionToIdMapper.getInstance().getCurrentSessionId())) == null)
+                return;
+            topLayout.removeAll();
+            pricesLayout = getPricesLayout(session, totalPriceBeforeDiscount);
+            topLayout.add(pricesLayout);
+            couponsPanel.setOpened(false);
+            customDetailsPanel.setOpened(true);
+        });
+        Button resetButton = new Button("Reset");
+        resetButton.addClickListener(event -> couponGrid.setItems(new LinkedList<>()));
+        Button continueWithoutApplying = new Button("Continue");
+        continueWithoutApplying.addClickListener(event -> {
+            couponsPanel.setOpened(false);
+            customDetailsPanel.setOpened(true);
+        });
+        horizontalLayout.add(continueWithoutApplying, resetButton, couponValue, addCoupon, applyCoupons);
+        horizontalLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+        couponView.add(horizontalLayout);
+        return couponView;
     }
 
     private FormLayout createFormLayout() {
