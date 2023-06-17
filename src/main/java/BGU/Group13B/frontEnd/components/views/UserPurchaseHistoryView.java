@@ -50,8 +50,6 @@ public class UserPurchaseHistoryView extends VerticalLayout implements BeforeEnt
             return;
         }
         start();
-
-
     }
 
     public void selectedUserCase() {
@@ -68,34 +66,20 @@ public class UserPurchaseHistoryView extends VerticalLayout implements BeforeEnt
         setAlignItems(Alignment.CENTER);
         VerticalLayout verticalLayout = new VerticalLayout();
         this.addClassName("centered-grid");
-        historyGrid.setItems(purchaseHistories); // products is a List<Product> containing the products to be displayed
-        historyGrid.addColumn(PurchaseHistory::getDate).setHeader("Date");
-        historyGrid.addColumn(PurchaseHistory::getStoreName).setHeader("Store Name");
-        historyGrid.addColumn(PurchaseHistory::getPrice).setHeader("Price");
-        historyGrid.addColumn(PurchaseHistory::productsToString).setHeader("Products description");
-        historyGrid.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT);
-        historyGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
-        verticalLayout.add(historyGrid);
-        verticalLayout.setWidth("80%");
-        add(verticalLayout);
+        if (purchaseHistories != null) {
+            historyGrid.setItems(purchaseHistories); // products is a List<Product> containing the products to be displayed
+            historyGrid.addColumn(PurchaseHistory::getDate).setHeader("Date");
+            historyGrid.addColumn(PurchaseHistory::getStoreName).setHeader("Store Name");
+            historyGrid.addColumn(PurchaseHistory::getPrice).setHeader("Price");
+            historyGrid.addColumn(PurchaseHistory::productsToString).setHeader("Products description");
+            historyGrid.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT);
+            historyGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
+            verticalLayout.add(historyGrid);
+            verticalLayout.setWidth("80%");
+            add(verticalLayout);
+        }
     }
 
-    public void buildStoreGrid(List<PurchaseHistory> purchaseHistories){
-        Grid<PurchaseHistory> historyGrid = new Grid<>();
-        setAlignItems(Alignment.CENTER);
-        VerticalLayout verticalLayout = new VerticalLayout();
-        this.addClassName("centered-grid");
-        historyGrid.setItems(purchaseHistories); // products is a List<Product> containing the products to be displayed
-        historyGrid.addColumn(PurchaseHistory::getDate).setHeader("Date");
-        historyGrid.addColumn(PurchaseHistory::getUserId).setHeader("User ID");
-        historyGrid.addColumn(PurchaseHistory::getPrice).setHeader("Price");
-        historyGrid.addColumn(PurchaseHistory::productsToString).setHeader("Products description");
-        historyGrid.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT);
-        historyGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
-        verticalLayout.add(historyGrid);
-        verticalLayout.setWidth("80%");
-        add(verticalLayout);
-    }
 
     @Override
     public void setParameter(BeforeEvent event, @OptionalParameter String param) {
@@ -104,7 +88,6 @@ public class UserPurchaseHistoryView extends VerticalLayout implements BeforeEnt
         } else {
             selectedUserId = -1;
         }
-        start();
     }
 
     private <T> T handleResponse(Response<T> response) {
