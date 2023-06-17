@@ -135,5 +135,11 @@ public class UserPermissions {
         userStoreRole.remove(storeId);
         userIndividualPermission.remove(storeId);
     }
+
+    public boolean isUserPermissionsExists(){
+       if (userStoreRole.isEmpty())
+           return false;
+       return true;
+    }
 }
 

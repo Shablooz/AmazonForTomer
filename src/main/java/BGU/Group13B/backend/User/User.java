@@ -614,8 +614,8 @@ public class User {
         return userPermissions.getPopulationStatus();
     }
 
-    public void deleteStores() {
-        market.removeMemberStores(userId);
+    public void deleteStores(int adminId) throws NoPermissionException {
+        market.removeMemberStores(adminId, userId);
     }
 
     public void clearCart(){

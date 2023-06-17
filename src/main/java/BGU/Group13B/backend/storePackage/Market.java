@@ -574,8 +574,8 @@ public class Market {
         storeRepository.getStore(storeId).resetPurchasePolicy(userId);
     }
 
-    public void removeMemberStores(int userId) {
-        storeRepository.removeMemberStores(userId);
+    public void removeMemberStores(int adminId, int userId) throws NoPermissionException {
+        storeRepository.removeMemberStores(adminId, userId);
     }
 
     public double[] getStoreHistoryIncome(int storeId, int userId, LocalDate startDate, LocalDate endDate) throws NoPermissionException {

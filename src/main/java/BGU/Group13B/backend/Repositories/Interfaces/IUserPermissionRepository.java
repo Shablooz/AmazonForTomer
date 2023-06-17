@@ -6,4 +6,6 @@ public interface IUserPermissionRepository {
     UserPermissions getUserPermission(int userId);
 
     void addUserPermission(int userId, UserPermissions userPermissions);
+
+    boolean isUserPermissionsExists(int userId);
 }

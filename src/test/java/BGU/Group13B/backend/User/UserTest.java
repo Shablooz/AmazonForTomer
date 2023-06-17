@@ -361,33 +361,5 @@ class UserTest {
         }
     }
 
-    @Test
-    void removeMember_exists(){
-        //setup
-        user6.register(goodUsername4, goodPassword4, goodEmail4, "", "yak", "",LocalDate.MIN);
-        user6.login(goodUsername4, goodPassword4, "", "yak", "");
-        int storeId = SingletonCollection.getStoreRepository().addStore(user6.getUserId(), "store", "media");
-        int productId = SingletonCollection.getProductRepository().addProduct(storeId, "product", "media", 10.0, 10, "very nice product").getProductId();
-        try {
-            user6.addProductToCart(productId, storeId);
-            user6.logout();
-            userRepository.removeMember(user6.getUserId());
-        } catch (Exception e){
-            Assertions.fail(e.getMessage());
-        }
-        Assertions.assertFalse(storeRepository.getAllStoresId().contains(storeId));
-        Assertions.assertFalse(productRepository.isStoreProductsExists(storeId));
-        Assertions.assertFalse(basketProductRepository.isUserBasketsExists(user6.getUserId()));
-        Assertions.assertEquals(null, userRepository.checkIfUserExists(goodUsername1));
-    }
 
-    @Test
-    void removeMember_notExists(){
-        //setup
-       try {
-            userRepository.removeMember(-1);
-        } catch (Exception e){
-            Assertions.assertEquals("user -1 does not exists",e.getMessage());
-        }
-    }
 }

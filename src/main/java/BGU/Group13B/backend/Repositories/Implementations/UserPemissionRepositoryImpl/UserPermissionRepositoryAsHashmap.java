@@ -22,4 +22,11 @@ public class UserPermissionRepositoryAsHashmap implements IUserPermissionReposit
     public void addUserPermission(int userId, UserPermissions userPermissions){
         integerUserPermissionConcurrentHashMap.put(userId, userPermissions);
     }
+    @Override
+    public boolean isUserPermissionsExists(int userId){
+        if(!integerUserPermissionConcurrentHashMap.containsKey(userId))
+            return false;
+        return integerUserPermissionConcurrentHashMap.get(userId).isUserPermissionsExists();
+    }
+
 }
