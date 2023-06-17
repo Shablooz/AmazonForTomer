@@ -140,13 +140,13 @@ public class Session implements ISession {
     }
 
     @Override
-    public Pair<Double, List<ServiceBasketProduct>> startPurchaseBasketTransaction(int userId, List<String> coupons) {
+    public Response<Pair<Double, List<ServiceBasketProduct>>> startPurchaseBasketTransaction(int userId, List<String> coupons) {
         try {
             var priceSuccessfulItems = userRepository.getUser(userId).startPurchaseBasketTransaction(coupons);
-            return new Pair<>(priceSuccessfulItems.getFirst(),
-                    priceSuccessfulItems.getSecond().stream().map(ServiceBasketProduct::new).collect(Collectors.toList()));
+            return Response.success(new Pair<>(priceSuccessfulItems.getFirst(),
+                    priceSuccessfulItems.getSecond().stream().map(ServiceBasketProduct::new).collect(Collectors.toList())));
         } catch (PurchaseFailedException | NoPermissionException e) {
-            throw new RuntimeException(e);
+            return Response.failure(e.getMessage());
         }
     }
 
@@ -844,19 +844,34 @@ public class Session implements ISession {
     }
 
     @Override
-    public double getTotalPriceOfCart(int userId) {
-        return userRepository.getUser(userId).getTotalPriceOfCart();
+    public Response<Double> getTotalPriceOfCart(int userId) {
+        try{
+            double total =  userRepository.getUser(userId).getTotalPriceOfCart();
+            return Response.success(total);
+        }catch (Exception e){
+            return Response.failure(e.getMessage());
+        }
     }
 
     @Override
-    public void cancelPurchase(int userId) {
-        userRepository.getUser(userId).cancelPurchase();
+    public Response<VoidResponse> cancelPurchase(int userId) {
+        try{
+            userRepository.getUser(userId).cancelPurchase();
+            return Response.success();
+        }catch (Exception e){
+            return Response.exception(e);
+        }
     }
 
     @Override
-    public List<ServiceProduct> getAllFailedProductsAfterPayment(int userId) {
-        return userRepository.getUser(userId).getAllFailedProductsAfterPayment().
-                stream().map(ServiceProduct::new).collect(Collectors.toList());
+    public Response<List<ServiceProduct>> getAllFailedProductsAfterPayment(int userId) {
+        try {
+            var result = userRepository.getUser(userId).getAllFailedProductsAfterPayment().
+                    stream().map(ServiceProduct::new).collect(Collectors.toList());
+            return Response.success(result);
+        }catch (Exception e){
+            return Response.exception(e);
+        }
     }
 
 
@@ -1568,6 +1583,33 @@ public class Session implements ISession {
         }
     }
 
+    @Override
+    public Response<double[]> getStoreHistoryIncome(int storeId, int userId, LocalDate from, LocalDate to) {
+        try{
+            return Response.success(market.getStoreHistoryIncome(storeId, userId, from, to));
+        }
+        catch (Exception e){
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<double[]> getSystemHistoryIncome(int userId, LocalDate from, LocalDate to) {
+        try{
+            var isAdmin = isAdmin(userId);
+            if(isAdmin.didntSucceed())
+                return Response.failure("failed to check user permissions");
+
+            if(!isAdmin.getData())
+                return Response.failure("user is not an admin");
+
+            return Response.success(market.getSystemHistoryIncome(from, to));
+        }
+        catch (Exception e){
+            return Response.exception(e);
+        }
+    }
+
     public UserCard getUserInfo(int userId, int userInfoId){
         try {
             return market.getUserInfo(userId, userInfoId);
@@ -1592,6 +1634,31 @@ public class Session implements ISession {
         }
     }
 
+    public Response<String> getStoreName(int storeId) {
+        try{
+            return Response.success(market.getStoreName(storeId));
+        }catch (Exception e){
+            return Response.failure(e.getMessage());
+        }
+    }
+
+    public Response<VoidResponse> removeBasketProducts(List<ServiceBasketProduct> serviceBasketProductsToRemove, int userId) {
+        try{
+            userRepository.getUser(userId).removeBasketProducts(serviceBasketProductsToRemove.stream().map(serviceBasketProduct -> Pair.of(serviceBasketProduct.getProductId(), serviceBasketProduct.getStoreId())).toList());
+            return Response.success();
+        }catch (Exception e){
+            return Response.failure(e.getMessage());
+        }
+    }
+
+    public Response<VoidResponse> removeBasketProduct(int userId, int productId, int storeId) {
+        try{
+            userRepository.getUser(userId).removeBasketProduct(productId, storeId);
+            return Response.success();
+        }catch (Exception e){
+            return Response.failure(e.getMessage());
+        }
+    }
 
 
 }

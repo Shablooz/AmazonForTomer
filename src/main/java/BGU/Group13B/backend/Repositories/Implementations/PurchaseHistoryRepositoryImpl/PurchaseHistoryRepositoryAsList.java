@@ -1,22 +1,40 @@
 package BGU.Group13B.backend.Repositories.Implementations.PurchaseHistoryRepositoryImpl;
 
+import BGU.Group13B.backend.Repositories.Implementations.DailyUserTrafficRepositoryImpl.DailyUserTrafficRepositoryAsListService;
 import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
 import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.PurchaseHistory;
 import BGU.Group13B.service.Response;
+import BGU.Group13B.service.SingletonCollection;
+import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
+@Entity
 public class PurchaseHistoryRepositoryAsList implements IPurchaseHistoryRepository {
 
-    private final List<PurchaseHistory> purchaseHistories;
+
+    @Transient
+    private boolean saveMode;
+
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+
+    @OneToMany(cascade = jakarta.persistence.CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
+    @JoinTable(name = "PurchaseHistoryRepositoryAsList_PurchaseHistory",
+            joinColumns = {@JoinColumn(name = "PurchaseHistoryRepositoryAsList_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "PurchaseHistory_id", referencedColumnName = "id")})
+    private List<PurchaseHistory> purchaseHistories;
 
     public PurchaseHistoryRepositoryAsList() {
         this.purchaseHistories = new LinkedList<>();
+        this.saveMode = true;
     }
 
     @Override
@@ -47,6 +65,7 @@ public class PurchaseHistoryRepositoryAsList implements IPurchaseHistoryReposito
         }
         PurchaseHistory purchaseHistory = new PurchaseHistory(userId, storeId, productsAmounts, price);
         purchaseHistories.add(purchaseHistory);
+        save();
         return purchaseHistory;
     }
 
@@ -54,6 +73,7 @@ public class PurchaseHistoryRepositoryAsList implements IPurchaseHistoryReposito
     @Override
     public void reset() {
         purchaseHistories.clear();
+        save();
     }
 
     @Override
@@ -69,5 +89,40 @@ public class PurchaseHistoryRepositoryAsList implements IPurchaseHistoryReposito
     @Override
     public void removePurchase(PurchaseHistory purchaseHistory) {
         purchaseHistories.remove(purchaseHistory);
+        save();
+    }
+
+    @Override
+    public void setSaveMode(boolean saveMode) {
+        this.saveMode = saveMode;
+    }
+
+    public List<PurchaseHistory> getPurchaseHistories() {
+        return purchaseHistories;
+    }
+
+    public void setPurchaseHistories(List<PurchaseHistory> purchaseHistories) {
+        this.purchaseHistories = purchaseHistories;
+    }
+
+    public boolean isSaveMode() {
+        return saveMode;
+    }
+
+    private void save(){
+        if(saveMode)
+            SingletonCollection.getContext().getBean(PurchaseHistoryRepositoryAsListService.class).save(this);
+    }
+
+    @Override
+    public double[] getSystemHistoryIncome(LocalDate startDate, LocalDate endDate) {
+        double[] historyIncome = new double[(endDate.getYear() - startDate.getYear())*365 + (endDate.getDayOfYear() - startDate.getDayOfYear()) + 1];
+        for(PurchaseHistory purchase : purchaseHistories){
+            LocalDate purchaseDate = purchase.getLocalDate();
+            if(!(purchaseDate.isBefore(startDate) || purchaseDate.isAfter(endDate)))
+                historyIncome[(endDate.getYear() - purchaseDate.getYear())*365 + purchaseDate.getDayOfYear() - startDate.getDayOfYear()] += purchase.getPrice();
+        }
+
+        return historyIncome;
     }
 }

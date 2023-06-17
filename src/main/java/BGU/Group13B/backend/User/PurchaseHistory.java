@@ -1,18 +1,30 @@
 package BGU.Group13B.backend.User;
 
 import BGU.Group13B.service.SingletonCollection;
+import jakarta.persistence.*;
 import org.springframework.scheduling.support.SimpleTriggerContext;
 
 import javax.xml.crypto.Data;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+@Entity
 public class PurchaseHistory {
+    @Id
+    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
+    private int id;
     private int userId;
     private int storeId;
+
+    @ElementCollection
+    @CollectionTable(name = "product_id_to_quantity",
+            joinColumns = {@JoinColumn(name = "PurchaseHistory_id", referencedColumnName = "id")})
+    @MapKeyColumn(name = "product_id")
+    @Column(name = "quantity")
     private HashMap<Integer /*product id*/,Integer /*quantity*/> products;
     private double price;
     private Date date;
@@ -22,6 +34,15 @@ public class PurchaseHistory {
         this.storeId = storeId;
         this.products = products;
         this.price = price;
+        this.date = new Date();
+    }
+
+    public PurchaseHistory() {
+        this.id = 420;
+        this.userId = 420;
+        this.storeId = 420;
+        this.products = new HashMap<>();
+        this.price = 420;
         this.date = new Date();
     }
 
@@ -74,5 +95,43 @@ public class PurchaseHistory {
         }
        // sb.append("Price: ").append(price).append("\n");
         return sb.toString();
+    }
+
+    public LocalDate getLocalDate(){
+        return date.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public void setStoreId(int storeId) {
+        this.storeId = storeId;
+    }
+
+    public HashMap<Integer, Integer> getProducts() {
+        return products;
+    }
+
+    public void setProducts(HashMap<Integer, Integer> products) {
+        this.products = products;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 }

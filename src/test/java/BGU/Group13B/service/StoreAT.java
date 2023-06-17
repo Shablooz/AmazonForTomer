@@ -129,5 +129,32 @@ public class StoreAT extends ProjectTest{
         assertTrue(session.setProductCategory(userIds[UsersIndex.GUEST.ordinal()], (int) products[0][1], (int) products[0][0], "new category").didntSucceed());
     }
 
+    @Test
+    void hideStore_storeFounder_success(){
+        handleResponse(session.hideStore((int) stores[0][StoreIndexes.STORE_FOUNDER_ID.ordinal()], (int) stores[0][StoreIndexes.STORE_ID.ordinal()]));
+        assertTrue(session.getStoreInfo(userIds[UsersIndex.GUEST.ordinal()], (int) stores[0][StoreIndexes.STORE_ID.ordinal()]).didntSucceed());
+    }
+
+    @Test
+    void hideStore_guest_fail(){
+        assertTrue(session.hideStore(userIds[UsersIndex.GUEST.ordinal()], (int) stores[0][StoreIndexes.STORE_ID.ordinal()]).didntSucceed());
+    }
+
+    @Test
+    void deleteStore_admin_success(){
+        handleResponse(session.deleteStore(userIds[UsersIndex.ADMIN.ordinal()], (int) stores[0][StoreIndexes.STORE_ID.ordinal()]));
+        assertTrue(session.getStoreInfo((int) stores[0][StoreIndexes.STORE_FOUNDER_ID.ordinal()], (int) stores[0][StoreIndexes.STORE_ID.ordinal()]).didntSucceed());
+    }
+
+    @Test
+    void deleteStore_guest_fail(){
+        assertTrue(session.deleteStore(userIds[UsersIndex.GUEST.ordinal()], (int) stores[0][StoreIndexes.STORE_ID.ordinal()]).didntSucceed());
+    }
+
+    @Test
+    void deleteStore_storeFounder_fail(){
+        assertTrue(session.deleteStore((int) stores[0][StoreIndexes.STORE_FOUNDER_ID.ordinal()], (int) stores[0][StoreIndexes.STORE_ID.ordinal()]).didntSucceed());
+    }
+
 
 }

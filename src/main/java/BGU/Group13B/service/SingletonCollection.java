@@ -18,6 +18,7 @@ import BGU.Group13B.backend.Repositories.Implementations.MessageRepositoryImpl.M
 import BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl.ProductRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl.ProductRepositoryAsHashMapService;
 import BGU.Group13B.backend.Repositories.Implementations.PurchaseHistoryRepositoryImpl.PurchaseHistoryRepositoryAsList;
+import BGU.Group13B.backend.Repositories.Implementations.PurchaseHistoryRepositoryImpl.PurchaseHistoryRepositoryAsListService;
 import BGU.Group13B.backend.Repositories.Implementations.PurchasePolicyRootsRepositoryImpl.PurchasePolicyRootsRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.PurchasePolicyRootsRepositoryImpl.PurchasePolicyRootsRepositoryAsHashMapService;
 import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepoSingle;
@@ -274,6 +275,16 @@ public class SingletonCollection {
         }
     }
 
+    public static void setPurchaseHistoryRepository() {
+        PurchaseHistoryRepositoryAsList purchaseHistoryRepositoryAsList = SingletonCollection.getContext().getBean(PurchaseHistoryRepositoryAsListService.class).getPurchaseHistoryRepository();
+        if(purchaseHistoryRepositoryAsList == null){
+            PurchaseHistoryRepositoryAsList repo=(PurchaseHistoryRepositoryAsList) SingletonCollection.getPurchaseHistoryRepository();
+            SingletonCollection.getContext().getBean(PurchaseHistoryRepositoryAsListService.class).save(repo);
+        }else{
+            SingletonCollection.purchaseHistoryRepository = SingletonCollection.getContext().getBean(PurchaseHistoryRepositoryAsListService.class).getPurchaseHistoryRepository();
+        }
+    }
+
     public static void setDailyUserTrafficRepository(DailyUserTrafficRepositoryAsList dailyUserTrafficRepositoryAsList) {
         SingletonCollection.dailyUserTrafficRepository = dailyUserTrafficRepositoryAsList;
     }
@@ -471,6 +482,7 @@ public class SingletonCollection {
         purchasePolicyRootsRepository.setSaveMode(saveMode);
         dailyUserTrafficRepository.setSaveMode(saveMode);
         bidRepository.setSaveMode(saveMode);
+        purchaseHistoryRepository.setSaveMode(saveMode);
     }
     public static void setPaymentFail() {
         paymentAdapter = null;

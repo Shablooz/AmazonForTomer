@@ -3,6 +3,7 @@ package BGU.Group13B.backend.Repositories.Interfaces;
 import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.PurchaseHistory;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -20,5 +21,8 @@ public interface IPurchaseHistoryRepository {
 
     List<PurchaseHistory> getStorePurchaseHistory(int storeId);
      void removePurchase(PurchaseHistory purchaseHistory);
+
+     void setSaveMode(boolean saveMode);
+    double[] getSystemHistoryIncome(LocalDate startDate, LocalDate endDate);
 }
 

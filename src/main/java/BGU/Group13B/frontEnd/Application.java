@@ -15,6 +15,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+import static BGU.Group13B.service.SingletonCollection.setPurchaseHistoryRepository;
 import static java.lang.Thread.sleep;
 
 /**
@@ -48,6 +49,7 @@ public class Application implements AppShellConfigurator {
         SingletonCollection.setStoreDiscountRootsRepository();
         SingletonCollection.setPurchasePolicyRootsRepository();
         SingletonCollection.setBidRepository();
+        setPurchaseHistoryRepository();
         ConfigurationFileParser.parse();
     }
 

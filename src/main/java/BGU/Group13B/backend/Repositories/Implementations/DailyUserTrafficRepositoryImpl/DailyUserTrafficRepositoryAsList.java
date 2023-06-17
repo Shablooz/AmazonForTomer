@@ -134,7 +134,6 @@ public class DailyUserTrafficRepositoryAsList implements IDailyUserTrafficReposi
     private void save(){
         if(saveMode)
             SingletonCollection.getContext().getBean(DailyUserTrafficRepositoryAsListService.class).save(this);
-
     }
 
     public boolean isSaveMode() {
