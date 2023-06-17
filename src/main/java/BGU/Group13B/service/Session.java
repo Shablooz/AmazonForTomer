@@ -728,7 +728,6 @@ public class Session implements ISession {
     }
 
     @Override
-
     public Response<String> getUserNameRes(int userId) {
         try {
             return Response.success(userRepositoryAsHashmap.getUser(userId).getUserName());

@@ -168,13 +168,15 @@ public class AdminView extends VerticalLayout implements BeforeEnterObserver, Af
         dialog.setCloseOnEsc(true);
         dialog.setCloseOnOutsideClick(true);
         H2 dialogTitle = new H2("Are you sure you want to delete this user?");
-        Label label = new Label(Integer. toString(selectedUserId));
+        String username = handleResponse(session.getUserNameRes(selectedUserId));
+        Label label = new Label(username);
 
         Button confirmButton = new Button("Confirm");
         confirmButton.addClickListener(e2 -> {
 
             handleResponseAndRefresh(session.removeUser(userId, selectedUserId));
             dialog.close();
+            Notification.show(username + "'s user got deleted");
         });
 
 
@@ -237,15 +239,14 @@ public class AdminView extends VerticalLayout implements BeforeEnterObserver, Af
     }
 
     private void updateGrid() {
-        this.removeAll();
         List<UserCard> userCards = handleResponse(session.getAllUserCards(userId));
         List<UserCard> validUserCards = userCards.stream()
                 .filter(card -> card.userName() != null && !card.userName().isEmpty())
                 .toList();
         //grid.setItems((DataProvider<StoreInfo, Void>) storeInfoList);
         grid.setItems(validUserCards);
-        buttonsLayout.add(deleteUserButton);
-        add(buttonsLayout);
+        //buttonsLayout.add(deleteUserButton);
+        //add(buttonsLayout);
     }
 
 

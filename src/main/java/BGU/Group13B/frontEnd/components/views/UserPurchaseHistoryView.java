@@ -21,7 +21,7 @@ import java.util.List;
 
 @PageTitle("userPurchaseHistory")
 @Route(value = "userPurchaseHistory", layout = MainLayout.class)
-public class UserPurchaseHistoryView extends VerticalLayout implements HasUrlParameter<String> {
+public class UserPurchaseHistoryView extends VerticalLayout implements BeforeEnterObserver, HasUrlParameter<String> {
 
     private Session session;
     private int storeId;
@@ -41,6 +41,17 @@ public class UserPurchaseHistoryView extends VerticalLayout implements HasUrlPar
         if (selectedUserId != -1) {
             selectedUserCase();
         }
+    }
+
+    @Override
+    public void beforeEnter(BeforeEnterEvent event) {
+        if(!handleResponse(session.isAdmin(userId))){
+            event.rerouteTo("");
+            return;
+        }
+        start();
+
+
     }
 
     public void selectedUserCase() {
