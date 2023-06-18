@@ -19,6 +19,7 @@ public class MessageRepositorySingle implements IMessageRepository {
     @Id
     private int id;
 
+    private int messageId;
     @Transient
     private boolean saveMode;
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
@@ -43,17 +44,21 @@ public class MessageRepositorySingle implements IMessageRepository {
         readMessages = new ConcurrentHashMap<>();
         readMessagesIterator = new ConcurrentHashMap<>();
         this.saveMode= true;
+        this.messageId= 0;
     }
     public MessageRepositorySingle(boolean saveMode) {
         unreadMessages = new ConcurrentHashMap<>();
         readMessages = new ConcurrentHashMap<>();
         readMessagesIterator = new ConcurrentHashMap<>();
         this.saveMode= saveMode;
+        this.messageId= 0;
     }
 
     @Override
     public void sendMassage(Message message) {
+        int id = getAndIncrementMessageId();
         addEntryIfNotExist(message.getReceiverId());
+        message.setMassageId(id);
         unreadMessages.get(message.getReceiverId()).add(message);
         save();
     }
@@ -118,6 +123,9 @@ public class MessageRepositorySingle implements IMessageRepository {
     }
     public void setSaveMode(boolean saved) {
         this.saveMode = saved;
+    }
+    private synchronized int getAndIncrementMessageId() {
+        return messageId++;
     }
 
     //getters and setters
