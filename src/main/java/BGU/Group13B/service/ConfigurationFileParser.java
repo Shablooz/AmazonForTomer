@@ -3,6 +3,7 @@ package BGU.Group13B.service;
 import BGU.Group13B.backend.User.UserPermissions;
 import com.nimbusds.jose.shaded.gson.*;
 
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
@@ -17,6 +18,8 @@ public class ConfigurationFileParser {
     private static final HashMap<String/*functionName*/, List<Object>> results = new HashMap<>();
 
     private static String CONFIGURATION_FILE_NAME = null;
+    private static boolean load_configuration;
+
     public static void main(String[] args) {
         // Read the configuration file
         //parse();
@@ -27,17 +30,19 @@ public class ConfigurationFileParser {
 
         JsonObject config = loadJsonObject();
         if (config == null) return;
-
+        if (!load_configuration) {
+            return;
+        }
         // Get the "functions" array from the configuration
         JsonArray functions = config.getAsJsonArray("functions");
-        boolean persist = config.get("persist").getAsBoolean();
+        /*boolean persist = config.get("persist").getAsBoolean();
         boolean reset = config.get("reset").getAsBoolean();
         if(reset){
             SingletonCollection.reset_system();//ask tomer or zloof
         }
         if(!persist){
             return;
-        }
+        }*/
         for (int i = 0; i < functions.size(); i++) {
             parseFunction(functions.get(i).getAsJsonObject());
         }
@@ -45,22 +50,29 @@ public class ConfigurationFileParser {
 
     private static String getConfigurationFileName() {
         Properties properties = new Properties();
-
+        String filePath = "src/main/resources/application.properties";
         try {
-            FileInputStream fileInputStream = new FileInputStream("src/main/resources/application.properties");
+            FileInputStream fileInputStream = new FileInputStream(filePath);
             properties.load(fileInputStream);
             fileInputStream.close();
+
+            load_configuration = Boolean.parseBoolean(properties.getProperty("load_configuration"));
+            if (load_configuration) {
+                properties.setProperty("load_configuration", "false");
+                FileOutputStream fileOutputStream = new FileOutputStream(filePath);
+                properties.store(fileOutputStream, null);
+                fileOutputStream.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return properties.getProperty("configurationFile");
     }
 
     private static JsonObject loadJsonObject() {
         String configFile = CONFIGURATION_FILE_NAME == null ? getConfigurationFileName() : CONFIGURATION_FILE_NAME;
         JsonObject config;
-        try (FileReader reader = new FileReader("src/main/resources/configurationFiles/"+configFile)) {
+        try (FileReader reader = new FileReader("src/main/resources/configurationFiles/" + configFile)) {
             Gson gson = new Gson();
             JsonElement element = gson.fromJson(reader, JsonElement.class);
             config = element.getAsJsonObject();
@@ -182,6 +194,7 @@ public class ConfigurationFileParser {
             return value;
         }
     }
+
     public static void setConfigurationFileName(String configurationFileName) {
         CONFIGURATION_FILE_NAME = configurationFileName;
     }
