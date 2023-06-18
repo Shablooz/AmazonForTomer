@@ -14,6 +14,6 @@ public interface IMessageRepository {
     void markAsRead(String receiver,String senderId, int massageId);
     void refreshOldMessages(String receiverId);
 
-
+    void setSaveMode(boolean saved);
 
 }

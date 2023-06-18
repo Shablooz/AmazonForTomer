@@ -1,26 +1,54 @@
 package BGU.Group13B.backend.Repositories.Implementations.MessageRepositoryImpl;
 
+import BGU.Group13B.backend.Repositories.Implementations.BasketReposistoryImpl.BasketRepositoryService;
 import BGU.Group13B.backend.Repositories.Interfaces.IMessageRepository;
 import BGU.Group13B.backend.User.Message;
+import BGU.Group13B.service.SingletonCollection;
+import jakarta.persistence.*;
 
 import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+@Entity
 public class MessageRepositorySingle implements IMessageRepository {
 
-    ConcurrentHashMap<String, ConcurrentLinkedDeque<Message>> unreadMessages;
-    ConcurrentHashMap<String, ConcurrentLinkedQueue<Message>> readMessages;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    private int id;
 
+    @Transient
+    private boolean saveMode;
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
+    @JoinTable(name = "MessageRepositorySingle_unreadMessages",
+            joinColumns = {@JoinColumn(name = "MessageRepositorySingle_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "DequeMessage_id", referencedColumnName = "id")})
+    @MapKeyColumn(name = "userName")
+    Map<String, DequeMessage> unreadMessages;
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
+    @JoinTable(name = "MessageRepositorySingle_readMessages",
+            joinColumns = {@JoinColumn(name = "MessageRepositorySingle_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "DequeMessage_id", referencedColumnName = "id")})
+    @MapKeyColumn(name = "userName")
+    Map<String, DequeMessage> readMessages;
 
-    ConcurrentHashMap<String, Iterator<Message>> readMessagesIterator;
+    @Transient
+    Map<String, Iterator<Message>> readMessagesIterator;
 
 
     public MessageRepositorySingle() {
         unreadMessages = new ConcurrentHashMap<>();
         readMessages = new ConcurrentHashMap<>();
         readMessagesIterator = new ConcurrentHashMap<>();
+        this.saveMode= true;
+    }
+    public MessageRepositorySingle(boolean saveMode) {
+        unreadMessages = new ConcurrentHashMap<>();
+        readMessages = new ConcurrentHashMap<>();
+        readMessagesIterator = new ConcurrentHashMap<>();
+        this.saveMode= saveMode;
     }
 
     @Override
@@ -74,7 +102,52 @@ public class MessageRepositorySingle implements IMessageRepository {
     }
     private void addEntryIfNotExist(String receiverId)
     {
-            unreadMessages.putIfAbsent(receiverId, new ConcurrentLinkedDeque<>());
-            readMessages.putIfAbsent(receiverId, new ConcurrentLinkedQueue<>());
+            unreadMessages.putIfAbsent(receiverId, new DequeMessage());
+            readMessages.putIfAbsent(receiverId, new DequeMessage());
+    }
+    public void save(){
+        if(saveMode)
+            SingletonCollection.getContext().getBean(MessageRepositorySingleService.class).save(this);
+    }
+    public void setSaveMode(boolean saved) {
+        this.saveMode = saved;
+    }
+
+    //getters and setters
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Map<String, DequeMessage> getUnreadMessages() {
+        return unreadMessages;
+    }
+
+    public void setUnreadMessages(Map<String, DequeMessage> unreadMessages) {
+        this.unreadMessages = unreadMessages;
+    }
+
+    public Map<String, DequeMessage> getReadMessages() {
+        return readMessages;
+    }
+
+    public void setReadMessages(Map<String, DequeMessage> readMessages) {
+        this.readMessages = readMessages;
+    }
+
+    public void setReadMessagesIterator(Map<String, Iterator<Message>> readMessagesIterator) {
+        this.readMessagesIterator = readMessagesIterator;
+    }
+
+    public Map<String, Iterator<Message>> getReadMessagesIterator() {
+        return readMessagesIterator;
+    }
+
+    public void setReadMessagesIterator(ConcurrentHashMap<String, Iterator<Message>> readMessagesIterator) {
+        this.readMessagesIterator = readMessagesIterator;
     }
 }

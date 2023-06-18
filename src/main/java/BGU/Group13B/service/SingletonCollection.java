@@ -18,6 +18,7 @@ import BGU.Group13B.backend.Repositories.Implementations.DiscountRepositoryServi
 import BGU.Group13B.backend.Repositories.Implementations.IStoreScoreRepository.StoreScoreRepoService;
 import BGU.Group13B.backend.Repositories.Implementations.IStoreScoreRepository.StoreScoreSingle;
 import BGU.Group13B.backend.Repositories.Implementations.MessageRepositoryImpl.MessageRepositorySingle;
+import BGU.Group13B.backend.Repositories.Implementations.MessageRepositoryImpl.MessageRepositorySingleService;
 import BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl.ProductRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl.ProductRepositoryAsHashMapService;
 import BGU.Group13B.backend.Repositories.Implementations.PurchaseHistoryRepositoryImpl.PurchaseHistoryRepositoryAsList;
@@ -307,6 +308,21 @@ public class SingletonCollection {
             SingletonCollection.basketProductRepository = SingletonCollection.getContext().getBean(BasketProductRepoService.class).getBasketProductRepository();
         }
 
+    }
+    public static void setMessageRepository() {
+        MessageRepositorySingle messageRepositorySingle  = SingletonCollection.getContext().getBean(MessageRepositorySingleService.class).getMessageRepository();
+        if(messageRepositorySingle == null){
+            MessageRepositorySingle repo=(MessageRepositorySingle) SingletonCollection.getMessageRepository();
+            SingletonCollection.getContext().getBean(MessageRepositorySingleService.class).save(repo);
+        }else {
+            SingletonCollection.messageRepository = SingletonCollection.getContext().getBean(MessageRepositorySingleService.class).getMessageRepository();
+        }
+
+    }
+
+
+    public static void setMessageRepository(IMessageRepository messageRepository) {
+        SingletonCollection.messageRepository = messageRepository;
     }
 
     public static void setBasketProductRepository(BasketProductRepositoryAsHashMap basketProductRepositoryAsHashMap) {
@@ -618,6 +634,7 @@ public class SingletonCollection {
         userPermissionRepository.setSaveMode(saveMode);
         basketRepository.setSaveMode(saveMode);
         basketProductRepository.setSaveMode(saveMode);
+        messageRepository.setSaveMode(saveMode);
 
         discountAccumulationRepository.setSaveMode(saveMode);
         conditionRepository.setSaveMode(saveMode);

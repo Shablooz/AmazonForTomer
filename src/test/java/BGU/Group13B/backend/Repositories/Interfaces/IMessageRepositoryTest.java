@@ -43,7 +43,7 @@ class IMessageRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        messageRepository = new MessageRepositorySingle();
+        messageRepository = new MessageRepositorySingle(false);
     }
 
     @AfterEach

@@ -53,7 +53,8 @@ public class Application implements AppShellConfigurator {
         SingletonCollection.setUserRepository();
         SingletonCollection.setUserPermissionRepository();
         SingletonCollection.setBasketRepository();
-
+        SingletonCollection.setBasketProductRepository();
+        SingletonCollection.setMessageRepository();
 
 
         if(SingletonCollection.getUserRepository().getUser(1)==null)
