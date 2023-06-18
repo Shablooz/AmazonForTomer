@@ -658,7 +658,7 @@ public class User {
     }
 
     public UserPermissions.PopulationStatus getPopulationStatus(){
-        return userPermissions.getPopulationStatus();
+        return getUserPermissions().getPopulationStatus();
     }
 
     public void deleteStores(int adminId) throws NoPermissionException {
@@ -677,11 +677,11 @@ public class User {
     }
 
     public void clearUserStorePermissions(int storeId){
-        userPermissions.clearUserStorePermissions(storeId);
+        getUserPermissions().clearUserStorePermissions(storeId);
     }
 
     public void clearPermissions(int adminId) throws NoPermissionException, ChangePermissionException {
-        userPermissionRepository.deletePermissions(adminId, userId);
+        getUserPermissionRepository().deletePermissions(adminId, userId);
     }
 
 
