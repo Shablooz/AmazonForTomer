@@ -1998,14 +1998,4 @@ public class Session implements ISession {
         }
     }
 
-    public Response<String> getUserNameRes(int userId) {//duplicate from master, delete when merge
-        try {
-            var result = userRepositoryAsHashmap.getUser(userId).getUserName();
-            LOGGER_INFO.info("user name was got successfully");
-            return Response.success(result);
-        } catch (Exception e) {
-            LOGGER_ERROR.severe("user name was not got successfully");
-            return Response.exception(e);
-        }
-    }
 }
