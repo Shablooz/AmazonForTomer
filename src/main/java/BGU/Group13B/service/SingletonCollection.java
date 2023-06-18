@@ -13,8 +13,8 @@ import BGU.Group13B.backend.Repositories.Implementations.DailyUserTrafficReposit
 import BGU.Group13B.backend.Repositories.Implementations.DailyUserTrafficRepositoryImpl.DailyUserTrafficRepositoryAsListService;
 import BGU.Group13B.backend.Repositories.Implementations.DiscountAccumulationRepositoryImpl.DiscountAccumulationRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.DiscountAccumulationRepositoryImpl.DiscountAccumulationRepositoryAsHashMapService;
-import BGU.Group13B.backend.Repositories.Implementations.DiscountRepositoryImpl.DiscountRepositoryAsHashMap;
-import BGU.Group13B.backend.Repositories.Implementations.DiscountRepositoryImpl.DiscountRepositoryService;
+import BGU.Group13B.backend.Repositories.Implementations.DiscountRepositoryAsHashMap;
+import BGU.Group13B.backend.Repositories.Implementations.DiscountRepositoryService;
 import BGU.Group13B.backend.Repositories.Implementations.IStoreScoreRepository.StoreScoreRepoService;
 import BGU.Group13B.backend.Repositories.Implementations.IStoreScoreRepository.StoreScoreSingle;
 import BGU.Group13B.backend.Repositories.Implementations.MessageRepositoryImpl.MessageRepositorySingle;
@@ -38,7 +38,6 @@ import BGU.Group13B.backend.Repositories.Implementations.UserPemissionRepository
 import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepoService;
 import BGU.Group13B.backend.Repositories.Implementations.UserRepositoryImpl.UserRepositoryAsHashmap;
 import BGU.Group13B.backend.Repositories.Interfaces.*;
-import BGU.Group13B.backend.System.DailyUserTraffic;
 import BGU.Group13B.backend.System.Searcher;
 import BGU.Group13B.backend.storePackage.AlertManager;
 import BGU.Group13B.backend.storePackage.Market;

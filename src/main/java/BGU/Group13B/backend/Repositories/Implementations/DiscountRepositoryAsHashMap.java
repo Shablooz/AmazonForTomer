@@ -1,4 +1,4 @@
-package BGU.Group13B.backend.Repositories.Implementations.DiscountRepositoryImpl;
+package BGU.Group13B.backend.Repositories.Implementations;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IDiscountRepository;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.CategoryDiscount;

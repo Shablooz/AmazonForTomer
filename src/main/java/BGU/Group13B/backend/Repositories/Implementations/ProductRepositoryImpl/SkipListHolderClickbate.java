@@ -67,7 +67,5 @@ public class SkipListHolderClickbate {
         this.concurrentSkipListSet = concurrentSkipListSet;
     }
 
-    public boolean isEmpty() {
-        return this.concurrentSkipListSet.isEmpty();
-    }
+
 }

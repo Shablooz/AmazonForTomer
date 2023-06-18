@@ -1,7 +1,5 @@
-package BGU.Group13B.backend.Repositories.Implementations.DiscountRepositoryImpl;
+package BGU.Group13B.backend.Repositories.Implementations;
 
-import BGU.Group13B.backend.Repositories.Implementations.ConditionRepositoryImpl.ConditionRepositoryAsHashMap;
-import BGU.Group13B.backend.Repositories.Implementations.ConditionRepositoryImpl.ConditionRepositoryAsHashMapJPA;
 import BGU.Group13B.service.SingletonCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
