@@ -247,7 +247,8 @@ public class User {
         if (!isAdmin())
             throw new NoPermissionException("Only admin can mark as read complaints");
 
-        getMessageRepository().markAsRead(receiverId, senderId, messageId);
+        Message message = getMessageRepository().markAsRead(receiverId, senderId, messageId);
+        getMessageRepository().markAsReadHelper(receiverId,message);
     }
 
     //#47
@@ -270,7 +271,8 @@ public class User {
             throw new NoPermissionException("Only admin can answer complaints");
         if (regularMessageToReply == null)
             throw new IllegalArgumentException("no complaint to answer");
-        getMessageRepository().markAsRead(regularMessageToReply.getReceiverId(), regularMessageToReply.getSenderId(), regularMessageToReply.getMessageId());
+        Message message = getMessageRepository().markAsRead(regularMessageToReply.getReceiverId(), regularMessageToReply.getSenderId(), regularMessageToReply.getMessageId());
+        getMessageRepository().markAsReadHelper(regularMessageToReply.getReceiverId(),message);
         getMessageRepository().sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), "RE: " + regularMessageToReply.getHeader(), answer, regularMessageToReply.getSenderId()));
         User receiverNext = SingletonCollection.getUserRepository().getUserByUsername(regularMessageToReply.getSenderId());
         if (!receiverNext.isLoggedIn() || !BroadCaster.broadcast(receiverNext.userId, "New Message"))
@@ -287,7 +289,8 @@ public class User {
             throw new NoPermissionException("Only registered users can read massages");
 
         Message message = getMessageRepository().readUnreadMassage(this.userName);
-        getMessageRepository().markAsRead(message.getReceiverId(), message.getSenderId(), message.getMessageId());
+        Message message1= getMessageRepository().markAsRead(message.getReceiverId(), message.getSenderId(), message.getMessageId());
+        getMessageRepository().markAsReadHelper(message.getReceiverId(),message1);
         regularMessageToReply = message;
         return message;
     }

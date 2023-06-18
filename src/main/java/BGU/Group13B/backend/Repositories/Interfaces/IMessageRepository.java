@@ -11,7 +11,8 @@ public interface IMessageRepository {
     Message readUnreadMassage(String receiverId);
     Message readReadMassage(String receiverId);
 
-    void markAsRead(String receiver,String senderId, int massageId);
+    Message markAsRead(String receiver,String senderId, int massageId);
+    void markAsReadHelper(String receiverId,Message message);
     void refreshOldMessages(String receiverId);
 
     void setSaveMode(boolean saved);

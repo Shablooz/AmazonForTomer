@@ -197,5 +197,6 @@ public class ConfigurationFileParser {
 
     public static void setConfigurationFileName(String configurationFileName) {
         CONFIGURATION_FILE_NAME = configurationFileName;
+        load_configuration = true;
     }
 }

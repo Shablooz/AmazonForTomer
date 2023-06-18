@@ -55,7 +55,7 @@ public class MessageRepositorySingle implements IMessageRepository {
     public void sendMassage(Message message) {
         addEntryIfNotExist(message.getReceiverId());
         unreadMessages.get(message.getReceiverId()).add(message);
-
+        save();
     }
 
     @Override
@@ -76,7 +76,7 @@ public class MessageRepositorySingle implements IMessageRepository {
     }
 
     @Override
-    public void markAsRead(String receiverId,String senderId, int messageId) {
+    public Message markAsRead(String receiverId,String senderId, int messageId) {
       addEntryIfNotExist(receiverId);
 
         Message first = unreadMessages.get(receiverId).peek();
@@ -85,9 +85,16 @@ public class MessageRepositorySingle implements IMessageRepository {
             throw new IllegalArgumentException("fail to mark message as read");
         if(!unreadMessages.get(receiverId).remove(first))
             throw new IllegalArgumentException("fail to mark message as read");
+        save();
+        return first;
 
-        readMessages.get(receiverId).add(first);
     }
+    public void markAsReadHelper(String receiverId,Message message){
+
+        readMessages.get(receiverId).add(message);
+        save();
+    }
+
 
     @Override
     public void refreshOldMessages(String  receiverId) {
