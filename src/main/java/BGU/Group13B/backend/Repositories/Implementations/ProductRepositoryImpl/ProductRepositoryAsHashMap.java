@@ -27,6 +27,8 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
         getStoreProducts(storeId).orElseThrow(
                 () -> new IllegalArgumentException("Store " + storeId + " not found")
         ).removeIf(product -> product.getProductId() == productId);
+        if(storeProducts.get(storeId).isEmpty())
+            storeProducts.remove(storeId);
     }
 
   
@@ -160,4 +162,11 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
         storeProducts.get(storeId).add(new Product(productId, storeId, name, category, price, stockQuantity, description, true));
         return productId;
     }
+
+    @Override
+    public boolean isStoreProductsExists(int storeId) {
+        return storeProducts.containsKey(storeId);
+    }
+
+
 }

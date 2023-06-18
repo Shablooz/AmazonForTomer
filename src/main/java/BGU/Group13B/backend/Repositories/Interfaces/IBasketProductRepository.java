@@ -13,4 +13,8 @@ public interface IBasketProductRepository {
     BasketProduct getBasketProduct(int productId, int storeId, int userId) throws IllegalArgumentException;
 
     void removeBasketProduct(int productId, int userId, int storeId);
+
+    boolean isUserBasketsExists(int userId);
+
+    void dropBasket(int storeId, int userId);
 }

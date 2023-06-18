@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -716,6 +717,7 @@ public class Store {
         storePermissionsRepository.deleteStorePermissions(storeId);
         for(WorkerCard workerCard : storePermission.getWorkersInfo())
             userRepository.getUser(workerCard.userId()).clearUserStorePermissions(storeId);
+       storePermission.emptyMaps();
     }
 
     public boolean isHidden() {
@@ -1191,6 +1193,10 @@ public class Store {
         purchasePolicy.resetPurchasePolicy();
     }
 
+    public void removeAllProducts(int userId) {
+        productRepository.removeStoreProducts(storeId);
+    }
+  
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
     @StatsPermission

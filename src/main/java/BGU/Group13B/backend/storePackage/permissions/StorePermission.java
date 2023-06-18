@@ -21,6 +21,7 @@ public class StorePermission {
     private final HashMap<Integer/*userId*/, Set<UserPermissions.IndividualPermission>> userToIndividualPermissions;//THIS ONE EXPLAINS THE "ADDITIONAL ROLES" OF EACH MANAGER
 
     private final IUserPermissionRepository userPermissionRepository = SingletonCollection.getUserPermissionRepository();
+    private int founderId;
     private HashMap<Pair<Integer,Integer>, List<Integer>> votes;
 
     public StorePermission(int founderId) {
@@ -44,6 +45,7 @@ public class StorePermission {
         founderPermissions.add(UserPermissions.IndividualPermission.STATS);
         userToIndividualPermissions.put(founderId, founderPermissions);
         initIndividualPermissionsFunctionalities();
+        this.founderId=founderId;
     }
 
     private void initDefaultStoreRoleFunctionalities() {
@@ -454,4 +456,13 @@ public class StorePermission {
         }
     }
 
+    public void emptyMaps(){
+        userToStoreRole.clear();
+        appointedOwnersMap.clear();
+        userStoreFunctionPermissions.clear();
+        defaultStoreRoleFunctionalities.clear();
+    }
+    public int getFounderId() {
+        return this.founderId;
+    }
 }

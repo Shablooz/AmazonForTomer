@@ -86,4 +86,15 @@ public class BasketProductRepositoryAsHashMap implements IBasketProductRepositor
             getBasketProducts(storeId, userId).get().remove(basketProduct);
     }
 
+    @Override
+    public boolean isUserBasketsExists(int userId) {
+        //if basketProducts contain pair keys with userId return true else return false
+        return basketProducts.keySet().stream().anyMatch(pair -> pair.getSecond() == userId);
+    }
+
+    @Override
+    public void dropBasket(int storeId, int userId) {
+        basketProducts.remove(Pair.of(storeId, userId));
+    }
+
 }

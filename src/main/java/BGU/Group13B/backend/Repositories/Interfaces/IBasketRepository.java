@@ -12,4 +12,6 @@ public interface IBasketRepository {
     Basket addUserBasket(int userId, int storeId);
 
     void addUserBasket(Basket basket);
+
+    void clearUserBaskets(int userId);
 }
