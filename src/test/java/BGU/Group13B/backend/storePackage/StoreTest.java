@@ -322,6 +322,20 @@ class StoreTest {
     }
 
 
+
+    @Test
+    void addOwnerSuccessNEW() {
+        customSetUp();
+        try {
+            omTestStore.addOwner(tUserOwnerId, tUserId);
+            Assertions.assertEquals(omTestStore.getStorePermission().getUserRole(tUserId), UserPermissions.StoreRole.OWNER);
+            Assertions.assertEquals(tUser.getUserPermissions().getStoreRole(omTestStore.getStoreId()), UserPermissions.StoreRole.OWNER);
+        } catch (NoPermissionException | ChangePermissionException e) {
+            fail(e);
+        } finally {
+            customTearDown();
+        }
+    }
     @Test
     void addOwnerSuccess() {
         customSetUp();

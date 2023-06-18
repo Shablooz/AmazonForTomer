@@ -48,7 +48,7 @@ public class AddWorkerDialog extends Dialog implements ResponseHandler {
                     if(handleResponse(session.addOwner(userId, newUserId, storeId)) == null){
                         return;
                     }
-                    notifySuccess("Worker added successfully");
+                    notifySuccess("Vote for worker created successfully");
                     storeWorkersLayout.updateWorkers();
                     close();
                 }

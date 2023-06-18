@@ -825,6 +825,13 @@ public interface ISession {
     Response<VoidResponse> addOwner(int userId, int newOwnerId, int storeId);
 
     /**
+     *
+     */
+    Response<VoidResponse> voteForOwner(Pair<Integer, Integer> newAndAppointerIds, int voterId, boolean accept, int storeId);
+
+
+    Response<List<Pair<Integer, Integer>>> getMyOpenVotes(int userId, int storeId);
+    /**
      * #XX
      * require XXX?
      *

@@ -1132,4 +1132,18 @@ public class ProxySession implements ISession {
         return realSession.fetchMessages(userId);
     }
 
+    @Override
+    public Response<VoidResponse> voteForOwner(Pair<Integer, Integer> newAndAppointerIds, int voterId, boolean accept, int storeId) {
+        if (realSession != null)
+            return realSession.voteForOwner(newAndAppointerIds, voterId, accept, storeId);
+        return null;
+    }
+
+    @Override
+    public Response<List<Pair<Integer, Integer>>> getMyOpenVotes(int userId, int storeId){
+        if (realSession != null)
+            return realSession.getMyOpenVotes(userId, storeId);
+        return null;
+    }
+
 }

@@ -995,6 +995,25 @@ public class Session implements ISession {
     }
 
     @Override
+    public Response<VoidResponse> voteForOwner(Pair<Integer, Integer> newAndAppointerIds, int voterId, boolean accept, int storeId){
+        try {
+            market.voteForOwner(newAndAppointerIds, voterId, accept, storeId);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<List<Pair<Integer, Integer>>> getMyOpenVotes(int userId, int storeId){
+        try {
+            return Response.success(market.getMyOpenVotes(userId, storeId));
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
     public Response<VoidResponse> removeOwner(int userId, int removeOwnerId, int storeId) {
         try {
             market.removeOwner(userId, removeOwnerId, storeId);
@@ -1636,6 +1655,17 @@ public class Session implements ISession {
             return Response.success();
         }catch (Exception e){
             return Response.failure(e.getMessage());
+        }
+    }
+
+    public Response<String> getUserNameRes(int userId) {//duplicate from master, delete when merge
+        try {
+            var result = userRepositoryAsHashmap.getUser(userId).getUserName();
+            LOGGER_INFO.info("user name was got successfully");
+            return Response.success(result);
+        } catch (Exception e) {
+            LOGGER_ERROR.severe("user name was not got successfully");
+            return Response.exception(e);
         }
     }
 }

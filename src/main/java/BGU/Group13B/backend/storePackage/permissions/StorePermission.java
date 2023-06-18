@@ -1,5 +1,6 @@
 package BGU.Group13B.backend.storePackage.permissions;
 
+import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.Repositories.Interfaces.IUserPermissionRepository;
 import BGU.Group13B.backend.User.UserPermissions;
 import BGU.Group13B.backend.User.UserPermissions.StoreRole;
@@ -20,6 +21,7 @@ public class StorePermission {
     private final HashMap<Integer/*userId*/, Set<UserPermissions.IndividualPermission>> userToIndividualPermissions;//THIS ONE EXPLAINS THE "ADDITIONAL ROLES" OF EACH MANAGER
 
     private final IUserPermissionRepository userPermissionRepository = SingletonCollection.getUserPermissionRepository();
+    private HashMap<Pair<Integer,Integer>, List<Integer>> votes;
 
     public StorePermission(int founderId) {
         userStoreFunctionPermissions = new HashMap<>();
@@ -29,6 +31,7 @@ public class StorePermission {
         appointedOwnersMap = new HashMap<>();
         userToStoreRole.put(founderId, StoreRole.FOUNDER);
         userToIndividualPermissions = new HashMap<>();
+        votes = new HashMap<>();
         Set<UserPermissions.IndividualPermission> founderPermissions = new HashSet<>();
         founderPermissions.add(UserPermissions.IndividualPermission.STOCK);
         founderPermissions.add(UserPermissions.IndividualPermission.MESSAGES);
@@ -237,6 +240,7 @@ public class StorePermission {
         if (!(removeOwnerRole == StoreRole.OWNER || (removeManager && removeOwnerRole == StoreRole.MANAGER))) {
             throw new ChangePermissionException("Cannot remove owner title from a user who is not an owner");
         } else if (appointedOwnersMap.getOrDefault(removerId, Collections.emptySet()).contains(removeOwnerId)) {
+            goodByeAll(removeOwnerId);
             Set<Integer> underlingsToRemove = appointedOwnersMap.get(removeOwnerId);
             if (underlingsToRemove != null) {
                 for (Integer underlingId : underlingsToRemove) {
@@ -370,6 +374,84 @@ public class StorePermission {
                 users.add(entry.getKey());
         }
         return users;
+    }
+
+    public void newVoteOwnerPermission(int newOwnerId, int appointerId) throws ChangePermissionException {
+        //check if not already in that role
+        StoreRole userRole = userToStoreRole.get(newOwnerId);
+        if (userRole == StoreRole.FOUNDER || userRole == StoreRole.OWNER)
+            throw new ChangePermissionException("Cannot grant owner title to a user who is already an owner");
+        Pair<Integer, Integer> newAndAppointerIds = new Pair<>(newOwnerId, appointerId);
+        List<Integer> idOfOwnersAndFounder = new ArrayList<>();
+        for (Map.Entry<Integer, UserPermissions.StoreRole> entry : userToStoreRole.entrySet()) {
+            UserPermissions.StoreRole role = entry.getValue();
+            if (role == UserPermissions.StoreRole.FOUNDER || role == UserPermissions.StoreRole.OWNER) {
+                idOfOwnersAndFounder.add(entry.getKey());
+            }
+        }
+        votes.put(newAndAppointerIds, idOfOwnersAndFounder);
+    }
+
+    public boolean updateVote(Pair<Integer, Integer> newAndAppointerIds, int voterId, boolean accept) throws ChangePermissionException {
+        if(accept){
+           return removeMeFromVote(newAndAppointerIds, voterId);
+        }
+        else {
+            cancelVote(newAndAppointerIds, voterId);
+        }
+        return false;
+    }
+
+    public List<Pair<Integer, Integer>> getMyOpenVotes(int userId){
+        List<Pair<Integer,Integer>> myVotes = new ArrayList<>();
+        for (Map.Entry<Pair<Integer,Integer>, List<Integer>> entry : votes.entrySet()) {
+            List<Integer> userList = entry.getValue();
+            if (userList.contains(userId)) {
+                myVotes.add(entry.getKey());
+            }
+        }
+        return myVotes;
+    }
+
+    public boolean removeMeFromVote(Pair<Integer, Integer> newAndAppointerIds, int voterId){
+        Integer xVoterId = voterId;
+        for (Map.Entry<Pair<Integer,Integer>, List<Integer>> entry : votes.entrySet()) {
+            if(Objects.equals(entry.getKey().getFirst(), newAndAppointerIds.getFirst()) && Objects.equals(entry.getKey().getSecond(), newAndAppointerIds.getSecond())){
+                if(entry.getValue().contains(voterId))
+                    entry.getValue().remove(xVoterId);
+                if(entry.getValue().isEmpty())
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    public void cancelVote(Pair<Integer, Integer> newAndAppointerIds, int voterId){
+        Pair<Integer, Integer> deleteMe = null;
+        for (Map.Entry<Pair<Integer,Integer>, List<Integer>> entry : votes.entrySet()) {
+            if(Objects.equals(entry.getKey().getFirst(), newAndAppointerIds.getFirst()) && Objects.equals(entry.getKey().getSecond(), newAndAppointerIds.getSecond())){
+                if(entry.getValue().contains(voterId))
+                    deleteMe = entry.getKey();
+            }
+        }
+        votes.remove(deleteMe);
+    }
+
+    public void goodByeAll(int firedId) throws ChangePermissionException {
+        Integer xFiredId = firedId;
+        List<Pair<Integer, Integer>> deleteUs = new LinkedList<>();
+        for (Map.Entry<Pair<Integer,Integer>, List<Integer>> entry : votes.entrySet()) {
+            if(entry.getValue().contains(firedId)){
+                entry.getValue().remove(xFiredId);
+                if(entry.getValue().isEmpty())
+                    addOwnerPermission(entry.getKey().getFirst(), entry.getKey().getSecond());
+            }
+            if(entry.getKey().getSecond().equals(xFiredId))
+                deleteUs.add(entry.getKey());
+        }
+        for(Pair<Integer, Integer> pair : deleteUs){
+            votes.remove(pair);
+        }
     }
 
 }
