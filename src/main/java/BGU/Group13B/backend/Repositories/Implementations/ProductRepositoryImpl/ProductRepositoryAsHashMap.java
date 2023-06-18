@@ -211,7 +211,6 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
     private void save(){
         if(saveMode)
             SingletonCollection.getContext().getBean(ProductRepositoryAsHashMapService.class).save(this);
-
     }
 
     public int getId() {
@@ -237,6 +236,8 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
     public void setProductIdCounter(AtomicInteger productIdCounter) {
         this.productIdCounter = productIdCounter;
     }
+
+
 
 
 }

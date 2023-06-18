@@ -1,21 +1,46 @@
 package BGU.Group13B.backend.Repositories.Implementations.DiscountAccumulationRepositoryImpl;
 
+import BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl.ProductRepositoryAsHashMapService;
 import BGU.Group13B.backend.Repositories.Interfaces.IDiscountAccumulationRepository;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.StoreDiscount;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.productDisountTree.*;
+import BGU.Group13B.service.SingletonCollection;
+import jakarta.persistence.*;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-
+@Entity
 public class DiscountAccumulationRepositoryAsHashMap implements IDiscountAccumulationRepository {
-    private final ConcurrentHashMap<Integer/*discountNodeId*/, DiscountAccumulationNode> noders;
 
-    private final AtomicInteger nextId;
+    @Transient
+    private boolean saveMode;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
+    @JoinTable(name = "DiscountAccumulationRepositoryAsHashMap_DiscountAccumulationNode",
+            joinColumns = {@JoinColumn(name = "DiscountAccumulationRepositoryAsHashMap_tableid", referencedColumnName = "id")},
+            inverseJoinColumns = {
+                    @JoinColumn(name = "DiscountAccumulationNode_id", referencedColumnName = "nodeId")})
+    @MapKeyJoinColumn(name = "discountNodeId")
+    private Map<Integer/*discountNodeId*/, DiscountAccumulationNode> noders;
+
+    private AtomicInteger nextId;
 
     public DiscountAccumulationRepositoryAsHashMap() {
         noders = new ConcurrentHashMap<>();
         nextId = new AtomicInteger(0);
+        this.saveMode = true;
+    }
+
+    public DiscountAccumulationRepositoryAsHashMap(boolean saveMode) {
+        noders = new ConcurrentHashMap<>();
+        nextId = new AtomicInteger(0);
+        this.saveMode = saveMode;
     }
 
 
@@ -24,6 +49,7 @@ public class DiscountAccumulationRepositoryAsHashMap implements IDiscountAccumul
         int rootId = nextId.getAndIncrement();
         DiscountAccumulationNode discountNode = new DiscountNode(rootId, discount);
         noders.put(rootId, discountNode);
+        save();
         return discountNode;
     }
 
@@ -34,6 +60,7 @@ public class DiscountAccumulationRepositoryAsHashMap implements IDiscountAccumul
         DiscountAccumulationNode root = getDiscountAccumulationNode(rootId);
         DiscountAccumulationTree newRoot = new MaxDiscount(newRootId, root, discountNode);
         noders.put(newRootId, newRoot);
+        save();
         return newRoot;
     }
 
@@ -45,6 +72,7 @@ public class DiscountAccumulationRepositoryAsHashMap implements IDiscountAccumul
         DiscountAccumulationNode root = getDiscountAccumulationNode(rootId);
         DiscountAccumulationTree newRoot = new XorDiscount(newRootId, root, discountNode);
         noders.put(newRootId, newRoot);
+        save();
         return newRoot;
     }
 
@@ -55,6 +83,7 @@ public class DiscountAccumulationRepositoryAsHashMap implements IDiscountAccumul
         DiscountAccumulationNode root = getDiscountAccumulationNode(rootId);
         DiscountAccumulationTree newRoot = new AddDiscount(newRootId, root, discountNode);
         noders.put(newRootId, newRoot);
+        save();
         return newRoot;
     }
 
@@ -75,5 +104,46 @@ public class DiscountAccumulationRepositoryAsHashMap implements IDiscountAccumul
     public void reset() {
         noders.clear();
         nextId.set(0);
+        save();
     }
+
+    @Override
+    public void setSaveMode(boolean saveMode) {
+        this.saveMode = saveMode;
+    }
+
+    private void save(){
+        if(saveMode)
+            SingletonCollection.getContext().getBean(DiscountAccumulationRepositoryAsHashMapService.class).save(this);
+    }
+
+    public boolean isSaveMode() {
+        return saveMode;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Map<Integer, DiscountAccumulationNode> getNoders() {
+        return noders;
+    }
+
+
+    public AtomicInteger getNextId() {
+        return nextId;
+    }
+
+    public void setNextId(AtomicInteger nextId) {
+        this.nextId = nextId;
+    }
+
+    public void setNoders(Map<Integer, BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.productDisountTree.DiscountAccumulationNode> noders) {
+        this.noders = noders;
+    }
+
 }

@@ -63,4 +63,8 @@ public class ProductDiscount extends StoreDiscount {
         String productName = SingletonCollection.getProductRepository().getProductById(productId).getName();
         return super.toString() + " for product " + productName;
     }
+
+    public void setProductId(int productId) {
+        this.productId = productId;
+    }
 }

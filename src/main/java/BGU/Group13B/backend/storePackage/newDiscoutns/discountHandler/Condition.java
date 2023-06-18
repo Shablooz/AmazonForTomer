@@ -12,7 +12,7 @@ import jakarta.persistence.*;
 public abstract class Condition {
     @Id
     @GeneratedValue(strategy =  GenerationType.IDENTITY)
-    private final int conditionId;
+    private int conditionId;
 
     protected Condition(int conditionId){
         this.conditionId = conditionId;
@@ -26,5 +26,14 @@ public abstract class Condition {
     public abstract void satisfied(BasketInfo basketInfo, UserInfo user) throws PurchaseExceedsPolicyException;
 
     public abstract ConditionEntity convertToUiEntity(LogicalConditionEntity parent);
+
+    public void setConditionId(int conditionId) {
+        this.conditionId = conditionId;
+    }
+
+    public int getConditionId() {
+        return conditionId;
+    }
+
 
 }

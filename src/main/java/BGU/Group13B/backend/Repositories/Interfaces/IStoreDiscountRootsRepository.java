@@ -5,4 +5,5 @@ public interface IStoreDiscountRootsRepository {
     int getStoreDiscountRoot(int storeId);
     void removeStoreDiscountRoot(int storeId);
     void reset();
+    void setSaveMode(boolean saveMode);
 }

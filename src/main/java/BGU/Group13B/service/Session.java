@@ -40,7 +40,7 @@ public class Session implements ISession {
     private static final Logger LOGGER_INFO = Logger.getLogger(Session.class.getName());
     private static final Logger LOGGER_ERROR = Logger.getLogger(Session.class.getName());
 
-    private final IDailyUserTrafficRepository dailyUserTrafficRepository = SingletonCollection.getDailyUserTrafficRepository();
+    private IDailyUserTrafficRepository dailyUserTrafficRepository = SingletonCollection.getDailyUserTrafficRepository();
 
     static {
         SingletonCollection.setFileHandler(LOGGER_INFO, true);
@@ -324,11 +324,11 @@ public class Session implements ISession {
 
                 //update daily visitors
                 switch (user.getPopulationStatus()) {
-                    case ADMIN -> dailyUserTrafficRepository.addAdmin();
-                    case OWNER -> dailyUserTrafficRepository.addStoreOwner();
-                    case MANAGER_NOT_OWNER -> dailyUserTrafficRepository.addStoreManagerThatIsNotOwner();
-                    case REGULAR_MEMBER -> dailyUserTrafficRepository.addRegularMember();
-                    case GUEST -> dailyUserTrafficRepository.addGuest();
+                    case ADMIN ->  SingletonCollection.getDailyUserTrafficRepository().addAdmin();
+                    case OWNER -> SingletonCollection.getDailyUserTrafficRepository().addStoreOwner();
+                    case MANAGER_NOT_OWNER -> SingletonCollection.getDailyUserTrafficRepository().addStoreManagerThatIsNotOwner();
+                    case REGULAR_MEMBER -> SingletonCollection.getDailyUserTrafficRepository().addRegularMember();
+                    case GUEST -> SingletonCollection.getDailyUserTrafficRepository().addGuest();
                 }
                 BroadCaster.broadcastUserTraffic();
                 return id;
@@ -812,7 +812,7 @@ LOGGER_INFO.info("product description was set successfully");
     public int enterAsGuest() {
         int id = getUserRepositoryAsHashmap().getNewUserId();
         getUserRepositoryAsHashmap().addUser(id, new User(id));
-        dailyUserTrafficRepository.addGuest();
+        SingletonCollection.getDailyUserTrafficRepository().addGuest();
         BroadCaster.broadcastUserTraffic();
         return id;
     }
@@ -822,6 +822,8 @@ LOGGER_INFO.info("product description was set successfully");
     public Response<VoidResponse> removeProduct(int userId, int storeId, int productId) {
         try {
             market.removeProduct(userId, storeId, productId);
+            LOGGER_INFO.info("product was removed successfully");
+
             return Response.success(new VoidResponse());
         } catch (Exception e) {
             LOGGER_ERROR.severe("product was not removed successfully");
@@ -1370,6 +1372,7 @@ LOGGER_INFO.info("product description was set successfully");
     @Override
     public Response<Integer> addDateCondition(int storeId, int userId, LocalDateTime lowerBound) {
         try {
+
             var result = market.addDateCondition(storeId, userId, lowerBound);
             LOGGER_INFO.info("date condition was added successfully");
             return Response.success(result);
@@ -1873,7 +1876,7 @@ LOGGER_INFO.info("product description was set successfully");
                 LOGGER_ERROR.severe("user is not an admin");
                 return Response.failure("user is not an admin");
             }
-            var result = dailyUserTrafficRepository.getUserTrafficOfRage(from, to);
+            var result = SingletonCollection.getDailyUserTrafficRepository().getUserTrafficOfRage(from, to);
             LOGGER_INFO.info("user traffic of range was retrieved successfully");
             return Response.success(result);
 
@@ -1897,16 +1900,6 @@ LOGGER_INFO.info("product description was set successfully");
         }
     }
 
-    public Response<double[]> getStoreHistoryIncome(int storeId, int userId, LocalDate from, LocalDate to) {
-        try {
-            var result = market.getStoreHistoryIncome(storeId, userId, from, to);
-            LOGGER_INFO.info("store history income was retrieved successfully");
-            return Response.success(result);
-        } catch (Exception e) {
-            LOGGER_ERROR.severe("store history income was not retrieved successfully");
-            return Response.exception(e);
-        }
-    }
 
     @Override
     public Response<double[]> getSystemHistoryIncome(int userId, LocalDate from, LocalDate to) {
@@ -1927,6 +1920,18 @@ LOGGER_INFO.info("product description was set successfully");
             return Response.exception(e);
         }
     }
+
+    @Override
+    public Response<double[]> getStoreHistoryIncome(int storeId, int userId, LocalDate from, LocalDate to) {
+        try{
+            return Response.success(market.getStoreHistoryIncome(storeId, userId, from, to));
+        }
+        catch (Exception e){
+            return Response.exception(e);
+        }
+    }
+
+
 
     public UserCard getUserInfo(int userId, int userInfoId) {
         try {

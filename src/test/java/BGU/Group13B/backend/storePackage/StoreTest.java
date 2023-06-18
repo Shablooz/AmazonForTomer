@@ -51,7 +51,7 @@ class StoreTest {
     @BeforeEach
     void setUp() throws NoPermissionException {
         /*initializing data*/
-
+        SingletonCollection.setSaveMode(false);
         var storePermission = Mockito.mock(StorePermission.class);
         //broadCaster = Mockito.mock(BroadCaster.class);
         bidRepository = new BIDRepositoryAsList();
@@ -80,11 +80,15 @@ class StoreTest {
         store = new Store(storeId, "store name", "category",productRepository , null, null,
                 null, storePermission, addToUserCart, bidRepository, null,
                 null, null, null);
-
+        SingletonCollection.setSaveMode(false);
+        bidRepository = (BIDRepositoryAsList) SingletonCollection.getBidRepository();
     }
 
     @AfterEach
     void tearDown() {
+        SingletonCollection.setSaveMode(false);
+        SingletonCollection.reset_system();
+        bidRepository = (BIDRepositoryAsList) SingletonCollection.getBidRepository();
     }
 
     @Test
@@ -136,6 +140,7 @@ class StoreTest {
 
     @RepeatedTest(25)
     void purchaseProposalSubmitOneRejectOneAccept() {
+        SingletonCollection.setSaveMode(false);
         //with threads, where ane thread tries to accept and the other to reject
         AtomicInteger firstThreadToFinish = new AtomicInteger(-1);
         setupForTheConcurrentTest();
@@ -223,6 +228,7 @@ class StoreTest {
 
     @Test
     void purchaseProposalReject() {
+        SingletonCollection.setSaveMode(false);
         try {
             store.purchaseProposalSubmit(managerWithPermission, productId, proposedPrice, amount);
 

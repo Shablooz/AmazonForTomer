@@ -70,4 +70,8 @@ public class CategoryDiscount extends StoreDiscount {
     public String toString() {
         return super.toString() + " for category " + category;
     }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
 }

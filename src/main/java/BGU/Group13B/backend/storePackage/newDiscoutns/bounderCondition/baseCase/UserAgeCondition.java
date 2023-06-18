@@ -6,6 +6,7 @@ import BGU.Group13B.backend.storePackage.newDiscoutns.Bounder;
 import BGU.Group13B.backend.storePackage.newDiscoutns.bounders.IntBounder;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToOne;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
@@ -15,8 +16,8 @@ import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.leaves
 import java.time.LocalDate;
 @Entity
 public class UserAgeCondition extends Condition {
-    @OneToOne
-    private final IntBounder ageBounder;
+    @OneToOne(cascade = CascadeType.ALL)
+    private IntBounder ageBounder;
 
     public UserAgeCondition(int conditionId, int lowerBound, int upperBound) {
         super(conditionId);
@@ -54,5 +55,13 @@ public class UserAgeCondition extends Condition {
     @Override
     public String toString() {
         return "user age: " + ageBounder;
+    }
+
+    public IntBounder getAgeBounder() {
+        return ageBounder;
+    }
+
+    public void setAgeBounder(IntBounder ageBounder) {
+        this.ageBounder = ageBounder;
     }
 }

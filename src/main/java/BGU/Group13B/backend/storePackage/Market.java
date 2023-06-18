@@ -35,8 +35,8 @@ import java.util.stream.Stream;
 
 public class Market {
     private  IStoreRepository storeRepository;
-    private final IUserRepository userRepository;
-    private final IPurchaseHistoryRepository purchaseHistoryRepository;
+    private IUserRepository userRepository;
+    private IPurchaseHistoryRepository purchaseHistoryRepository;
     private Searcher searcher; //inject in the loading of the system
 
     private  AddToUserCart addToUserCart;

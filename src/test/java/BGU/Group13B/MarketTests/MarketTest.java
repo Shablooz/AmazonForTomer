@@ -102,7 +102,7 @@ public class MarketTest {
         //deleteAllData();
         SingletonCollection.reset_system(false);
         SingletonCollection.setSaveMode(false);
-        userRepository.removeUser(user.getUserId());
+        userRepository.removeUser(user.getUserId()); //TODO: check
     }
 
     @Test

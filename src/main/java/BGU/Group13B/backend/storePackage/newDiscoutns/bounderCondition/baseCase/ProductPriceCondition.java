@@ -11,14 +11,15 @@ import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.Condit
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.LogicalConditions.LogicalConditionEntity;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.leaves.ProductPriceConditionEntity;
 import BGU.Group13B.service.SingletonCollection;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToOne;
 
 @Entity
 public class ProductPriceCondition extends Condition {
 
-    private final int productId;
-    @OneToOne
+    private int productId;
+    @OneToOne(cascade = CascadeType.ALL)
     private final DoubleBounder priceBounder;
 
 
@@ -69,5 +70,17 @@ public class ProductPriceCondition extends Condition {
     public String toString(){
         //mafhhhhhheeeeid
         return "product: " + SingletonCollection.getProductRepository().getProductById(productId).getName() + ", price: " + priceBounder.toString();
+    }
+
+    public int getProductId() {
+        return productId;
+    }
+
+    public void setProductId(int productId) {
+        this.productId = productId;
+    }
+
+    public DoubleBounder getPriceBounder() {
+        return priceBounder;
     }
 }

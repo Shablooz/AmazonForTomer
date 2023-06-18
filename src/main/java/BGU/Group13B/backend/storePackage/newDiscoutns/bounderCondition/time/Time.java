@@ -12,7 +12,7 @@ public class Time implements Comparable<Time> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private final LocalDateTime time;
+    private LocalDateTime time;
 
     private Time(LocalDateTime time) {
         this.time = time;
@@ -34,6 +34,18 @@ public class Time implements Comparable<Time> {
     @Override
     public int compareTo(Time o) {
         return time.getHour() * 60 + time.getMinute() - o.getTime().getHour() * 60 - o.getTime().getMinute();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setTime(LocalDateTime time) {
+        this.time = time;
     }
 
     @Override

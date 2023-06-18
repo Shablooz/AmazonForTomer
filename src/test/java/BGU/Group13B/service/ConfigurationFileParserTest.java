@@ -10,6 +10,7 @@ class ConfigurationFileParserTest {
     @BeforeEach
     void setUp() {
         SingletonCollection.reset_system();
+        SingletonCollection.setSaveMode(false);
     }
 
     @Test

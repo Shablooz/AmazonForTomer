@@ -2,19 +2,17 @@ package BGU.Group13B.backend.storePackage.newDiscoutns.bounders;
 
 import BGU.Group13B.backend.storePackage.newDiscoutns.Bounder;
 import BGU.Group13B.backend.storePackage.newDiscoutns.bounderCondition.time.Time;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
+
 @Entity
 public class TimeBounder {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private int id;
-    @OneToOne
-    private final Time upperBound; //if upperBound == null then there is no upper bound
-    @OneToOne
-    private final Time lowerBound;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Time upperBound; //if upperBound == null then there is no upper bound
+    @OneToOne(cascade = CascadeType.ALL)
+    private Time lowerBound;
 
 
     public TimeBounder(Time lowerBound, Time upperBound) {
@@ -72,5 +70,21 @@ public class TimeBounder {
 
     public boolean hasUpperBound(){
         return upperBound != null;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setUpperBound(Time upperBound) {
+        this.upperBound = upperBound;
+    }
+
+    public void setLowerBound(Time lowerBound) {
+        this.lowerBound = lowerBound;
     }
 }

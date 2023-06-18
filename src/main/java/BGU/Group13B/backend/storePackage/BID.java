@@ -1,15 +1,24 @@
 package BGU.Group13B.backend.storePackage;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
-
+@Entity
 public class BID implements Comparable<BID>{
-    private final int bidId;
-    private final int userId;
-    private final int productId;
-    private final double newProductPrice;
-    private final int amount;
-    private final Set<Integer/*managerIds*/> approvedBy;
+    @Id
+    private int bidId;
+    private int userId;
+    private int productId;
+    private double newProductPrice;
+    private int amount;
+
+    @ElementCollection
+    @CollectionTable(name ="managerIds_collection")
+        private Set<Integer/*managerIds*/> approvedBy;
     private volatile boolean rejected = false;
 
     public BID(int bidId, int userId, int productId, double newProductPrice, int amount) {
@@ -19,6 +28,15 @@ public class BID implements Comparable<BID>{
         this.newProductPrice = newProductPrice;
         this.amount = amount;
         approvedBy = new ConcurrentSkipListSet<>();
+    }
+
+    public BID() {
+        this.bidId = 420;
+        this.userId = 420;
+        this.productId = 420;
+        this.newProductPrice = 420;
+        this.amount = 420;
+        approvedBy = null;
     }
 
     public int getUserId() {
@@ -71,5 +89,37 @@ public class BID implements Comparable<BID>{
     @Override
     public int compareTo(BID o) {
         return Integer.compare(this.bidId, o.bidId);
+    }
+
+    public Set<Integer> getApprovedBy() {
+        return approvedBy;
+    }
+
+    public void setRejected(boolean rejected) {
+        this.rejected = rejected;
+    }
+
+    public void setBidId(int bidId) {
+        this.bidId = bidId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public void setProductId(int productId) {
+        this.productId = productId;
+    }
+
+    public void setNewProductPrice(double newProductPrice) {
+        this.newProductPrice = newProductPrice;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    public void setApprovedBy(Set<Integer> approvedBy) {
+        this.approvedBy = approvedBy;
     }
 }
