@@ -17,4 +17,6 @@ public interface IStoreMessagesRepository {
 
     int getUnreadMessagesSize(int storeId,int userId);
     int getReadMessagesSize(int storeId,int userId);
+
+    void setSaveMode(boolean saveMode);
 }

@@ -43,7 +43,7 @@ class IStoreMessagesRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        storeMessagesRepository = new StoreMessageSingle();
+        storeMessagesRepository = new StoreMessageSingle(false);
 
     }
 

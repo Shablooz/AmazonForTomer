@@ -245,7 +245,7 @@ public class Store {
 
     public void sendMassage(Message message, int userId) throws NoPermissionException {
         this.getStorePermission().validateStoreVisibility(userId, hidden);
-        storeMessagesRepository.sendMassage(message, this.storeId, userId);
+        getStoreMessagesRepository().sendMassage(message, this.storeId, userId);
     }
 
     @DefaultFounderFunctionality
@@ -255,7 +255,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to read message of store " + this.storeId);
 
-        return storeMessagesRepository.readUnreadMassage(this.storeId, userId);
+        return getStoreMessagesRepository().readUnreadMassage(this.storeId, userId);
     }
 
     @DefaultFounderFunctionality
@@ -264,7 +264,7 @@ public class Store {
     public Message getReadMessages(int userId) throws NoPermissionException {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to read message of store " + this.storeId);
-        return storeMessagesRepository.readReadMassage(this.storeId, userId);
+        return getStoreMessagesRepository().readReadMassage(this.storeId, userId);
     }
 
     @DefaultFounderFunctionality
@@ -273,7 +273,7 @@ public class Store {
     public void markAsCompleted(String senderId, int messageId, int userId) throws NoPermissionException {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to mark message as complete of store: " + this.storeId);
-        storeMessagesRepository.markAsRead(this.storeId, senderId, messageId, userId);
+        getStoreMessagesRepository().markAsRead(this.storeId, senderId, messageId, userId);
     }
 
     @DefaultFounderFunctionality
@@ -282,8 +282,9 @@ public class Store {
     public void refreshMessages(int userId) throws NoPermissionException {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to handle message of store " + this.storeId);
-        storeMessagesRepository.refreshOldMassage(this.storeId, userId);
+        getStoreMessagesRepository().refreshOldMassage(this.storeId, userId);
     }
+
 
 
     public void addReview(String review, int userId, int productId) throws NoPermissionException {
@@ -1265,6 +1266,7 @@ public class Store {
     }
 
     public IStoreMessagesRepository getStoreMessagesRepository() {
+        storeMessagesRepository = SingletonCollection.getStoreMessagesRepository();
         return storeMessagesRepository;
     }
 
