@@ -24,6 +24,8 @@ public class StorePermission {
     private int id;
 
     private int founderId;
+
+    @Transient //tomer please help
     private HashMap<Pair<Integer,Integer>, List<Integer>> votes;
 
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
@@ -488,6 +490,7 @@ public class StorePermission {
                     return true;
             }
         }
+        save();
         return false;
     }
 
@@ -499,6 +502,7 @@ public class StorePermission {
                     deleteMe = entry.getKey();
             }
         }
+        save();
         votes.remove(deleteMe);
     }
 

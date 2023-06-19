@@ -19,6 +19,8 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +31,7 @@ import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY_INLIN
 
 @PageTitle("All Stores")
 @Route(value = "allstores", layout = MainLayout.class)
-public class AllStoresView extends VerticalLayout implements BeforeEnterObserver{
+public class AllStoresView extends VerticalLayout implements BeforeEnterObserver {
 
     private final int userId = SessionToIdMapper.getInstance().getCurrentSessionId();
     private int selectedStoreId = -1;

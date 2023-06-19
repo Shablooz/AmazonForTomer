@@ -2,6 +2,7 @@ package BGU.Group13B.service;
 
 import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.User.UserPermissions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +25,8 @@ public class ComplexAT{
 
     @BeforeEach
     public void setup() {
-        SingletonCollection.reset_system();
+        SingletonCollection.reset_system(false);
+        SingletonCollection.setSaveMode(false);
         session = SingletonCollection.getSession();
         session.enterAsGuest();
         session.login(adminId, "kingOfTheSheep", "SheePLover420", "11", "11", "11");
@@ -33,6 +35,12 @@ public class ComplexAT{
         storeManagersThatAreNotOwners = 0;
         storeOwners = 0;
         admins = 1;
+    }
+
+    @AfterEach
+    public void tearDown() {
+        SingletonCollection.reset_system(false);
+        SingletonCollection.setSaveMode(false);
     }
 
     private <T> T handleResponse(Response<T> response) {

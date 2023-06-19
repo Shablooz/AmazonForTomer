@@ -1,6 +1,7 @@
 package BGU.Group13B.backend.storePackage;
 
 
+import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
