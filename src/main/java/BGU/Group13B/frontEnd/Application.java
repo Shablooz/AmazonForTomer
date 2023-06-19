@@ -36,6 +36,13 @@ import java.util.Timer;
 @EntityScan(basePackages = {"BGU.Group13B.backend", "BGU.Group13B.frontEnd", "BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl"})
 public class Application implements AppShellConfigurator {
     public static void main(String[] args) {
+
+        //logging out all users on shutdown
+
+
+
+
+
         //timer for deleting idle sessions
         //running the ui
         ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);
@@ -79,7 +86,16 @@ public class Application implements AppShellConfigurator {
         SingletonCollection.setPurchasePolicyRootsRepository();
         SingletonCollection.setBidRepository();
         SingletonCollection.setPurchaseHistoryRepository();
+
+        SingletonCollection.getUserRepository().logoutAllUsers();
         ConfigurationFileParser.parse();
+        SingletonCollection.getUserRepository().logoutAllUsers();
+
+
+
+
+
+
     }
 
 
