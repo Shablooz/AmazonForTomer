@@ -228,7 +228,7 @@ public class User {
     public void openComplaint(String header, String complaint) throws NoPermissionException {
         if (!isRegistered())
             throw new NoPermissionException("Only registered users can open complaints");
-        messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), header, complaint, adminIdentifier));
+        getMessageRepository().sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), header, complaint, adminIdentifier));
 
     }
 
@@ -236,7 +236,7 @@ public class User {
     public synchronized Message getComplaint() throws NoPermissionException {
         if (!isAdmin())
             throw new NoPermissionException("Only admin can read complaints");
-        Message message = messageRepository.readUnreadMassage(adminIdentifier);
+        Message message = getMessageRepository().readUnreadMassage(adminIdentifier);
         regularMessageToReply = message;
         return message;
     }
@@ -246,14 +246,15 @@ public class User {
         if (!isAdmin())
             throw new NoPermissionException("Only admin can mark as read complaints");
 
-        messageRepository.markAsRead(receiverId, senderId, messageId);
+        Message message = getMessageRepository().markAsRead(receiverId, senderId, messageId);
+        getMessageRepository().markAsReadHelper(receiverId,message);
     }
 
     //#47
     public void sendMassageAdmin(String receiverId, String header, String massage) throws NoPermissionException {
         if (!isAdmin())
             throw new NoPermissionException("Only admin can send massages");
-        messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), header, massage, receiverId));
+        getMessageRepository().sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), header, massage, receiverId));
         User receiverNext = SingletonCollection.getUserRepository().getUserByUsername(receiverId);
         //if(!PushNotification.pushNotification("New Message",receiverNext.getUserId()))
         if (!receiverNext.isLoggedIn() || !BroadCaster.broadcast(receiverNext.userId, "New Message"))
@@ -269,8 +270,9 @@ public class User {
             throw new NoPermissionException("Only admin can answer complaints");
         if (regularMessageToReply == null)
             throw new IllegalArgumentException("no complaint to answer");
-        messageRepository.markAsRead(regularMessageToReply.getReceiverId(), regularMessageToReply.getSenderId(), regularMessageToReply.getMessageId());
-        messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), "RE: " + regularMessageToReply.getHeader(), answer, regularMessageToReply.getSenderId()));
+        Message message = getMessageRepository().markAsRead(regularMessageToReply.getReceiverId(), regularMessageToReply.getSenderId(), regularMessageToReply.getMessageId());
+        getMessageRepository().markAsReadHelper(regularMessageToReply.getReceiverId(),message);
+        getMessageRepository().sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), "RE: " + regularMessageToReply.getHeader(), answer, regularMessageToReply.getSenderId()));
         User receiverNext = SingletonCollection.getUserRepository().getUserByUsername(regularMessageToReply.getSenderId());
         if (!receiverNext.isLoggedIn() || !BroadCaster.broadcast(receiverNext.userId, "New Message"))
             receiverNext.setMessageNotification(true);
@@ -285,8 +287,9 @@ public class User {
         if (!isRegistered())
             throw new NoPermissionException("Only registered users can read massages");
 
-        Message message = messageRepository.readUnreadMassage(this.userName);
-        messageRepository.markAsRead(message.getReceiverId(), message.getSenderId(), message.getMessageId());
+        Message message = getMessageRepository().readUnreadMassage(this.userName);
+        Message message1= getMessageRepository().markAsRead(message.getReceiverId(), message.getSenderId(), message.getMessageId());
+        getMessageRepository().markAsReadHelper(message.getReceiverId(),message1);
         regularMessageToReply = message;
         return message;
     }
@@ -296,7 +299,7 @@ public class User {
             throw new NoPermissionException("Only registered users can read massages");
         if (regularMessageToReply == null)
             throw new IllegalArgumentException("no message to answer");
-        messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), "RE: " + regularMessageToReply.getHeader(), answer, regularMessageToReply.getSenderId()));
+        getMessageRepository().sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), "RE: " + regularMessageToReply.getHeader(), answer, regularMessageToReply.getSenderId()));
         User receiverNext = SingletonCollection.getUserRepository().getUserByUsername(regularMessageToReply.getSenderId());
 
         if (!receiverNext.isLoggedIn() || !BroadCaster.broadcast(receiverNext.userId, "New Message"))
@@ -305,7 +308,7 @@ public class User {
     }
 
     public void sendMassageBroad(String receiverName, String header, String massage) throws NoPermissionException {
-        messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), header, massage, receiverName));
+        getMessageRepository().sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), header, massage, receiverName));
         User receiverNext = SingletonCollection.getUserRepository().getUserByUsername(receiverName);
         if (!BroadCaster.broadcast(receiverNext.userId, "New Message"))
             receiverNext.setMessageNotification(true);
@@ -316,14 +319,14 @@ public class User {
         if (!isRegistered())
             throw new NoPermissionException("Only registered users can read massages");
 
-        return messageRepository.readReadMassage(this.userName);
+        return getMessageRepository().readReadMassage(this.userName);
     }
 
     public void refreshOldMessage() throws NoPermissionException {
         if (!isRegistered())
             throw new NoPermissionException("Only registered users can read massages");
 
-        messageRepository.refreshOldMessages(this.userName);
+        getMessageRepository().refreshOldMessages(this.userName);
     }
 
     //27
@@ -356,7 +359,7 @@ public class User {
             throw new IllegalArgumentException("no message to reply to");
         assert regularMessageToReply.getReceiverId().matches("-?\\d+");
         market.markAsCompleted(regularMessageToReply.getSenderId(), regularMessageToReply.getMessageId(), this.userId, Integer.parseInt(regularMessageToReply.getReceiverId()));
-        messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), "RE: " + regularMessageToReply.getHeader(), answer, regularMessageToReply.getSenderId()));
+        getMessageRepository().sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), "RE: " + regularMessageToReply.getHeader(), answer, regularMessageToReply.getSenderId()));
         User receiverNext = SingletonCollection.getUserRepository().getUserByUsername(regularMessageToReply.getSenderId());
         if (!BroadCaster.broadcast(receiverNext.userId, "New Message"))
             receiverNext.setMessageNotification(true);
@@ -704,6 +707,7 @@ public class User {
     }
 
     public IMessageRepository getMessageRepository() {
+        messageRepository= SingletonCollection.getMessageRepository();
         return messageRepository;
     }
 

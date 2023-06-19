@@ -18,6 +18,7 @@ import BGU.Group13B.backend.Repositories.Implementations.DiscountRepositoryServi
 import BGU.Group13B.backend.Repositories.Implementations.IStoreScoreRepository.StoreScoreRepoService;
 import BGU.Group13B.backend.Repositories.Implementations.IStoreScoreRepository.StoreScoreSingle;
 import BGU.Group13B.backend.Repositories.Implementations.MessageRepositoryImpl.MessageRepositorySingle;
+import BGU.Group13B.backend.Repositories.Implementations.MessageRepositoryImpl.MessageRepositorySingleService;
 import BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl.ProductRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl.ProductRepositoryAsHashMapService;
 import BGU.Group13B.backend.Repositories.Implementations.PurchaseHistoryRepositoryImpl.PurchaseHistoryRepositoryAsList;
@@ -29,6 +30,7 @@ import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.Re
 import BGU.Group13B.backend.Repositories.Implementations.StoreDiscountRootsRepositoryImpl.StoreDiscountRootRepositoryAsHashMapService;
 import BGU.Group13B.backend.Repositories.Implementations.StoreDiscountRootsRepositoryImpl.StoreDiscountRootsRepositoryAsHashMap;
 import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyImpl.StoreMessageSingle;
+import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyImpl.StoreMessageSingleService;
 import BGU.Group13B.backend.Repositories.Implementations.StorePermissionsRepositoryImpl.StorePermissionsRepositoryAsHashmapService;
 import BGU.Group13B.backend.Repositories.Implementations.StorePermissionsRepositoryImpl.StorePermissionsRepositoryAsHashmap;
 import BGU.Group13B.backend.Repositories.Implementations.StoreRepositoryImpl.StoreRepoService;
@@ -307,6 +309,35 @@ public class SingletonCollection {
             SingletonCollection.basketProductRepository = SingletonCollection.getContext().getBean(BasketProductRepoService.class).getBasketProductRepository();
         }
 
+    }
+    public static void setMessageRepository() {
+        MessageRepositorySingle messageRepositorySingle  = SingletonCollection.getContext().getBean(MessageRepositorySingleService.class).getMessageRepository();
+        if(messageRepositorySingle == null){
+            MessageRepositorySingle repo=(MessageRepositorySingle) SingletonCollection.getMessageRepository();
+            SingletonCollection.getContext().getBean(MessageRepositorySingleService.class).save(repo);
+        }else {
+            SingletonCollection.messageRepository = SingletonCollection.getContext().getBean(MessageRepositorySingleService.class).getMessageRepository();
+        }
+
+    }
+
+    public static void setStoreMessagesRepository() {
+        StoreMessageSingle storeMessageSingle  = SingletonCollection.getContext().getBean(StoreMessageSingleService.class).getStoreMessageSingle();
+        if(storeMessageSingle == null){
+            StoreMessageSingle repo=(StoreMessageSingle) SingletonCollection.getStoreMessagesRepository();
+            SingletonCollection.getContext().getBean(StoreMessageSingleService.class).save(repo);
+        }else {
+            SingletonCollection.storeMessagesRepository = SingletonCollection.getContext().getBean(StoreMessageSingleService.class).getStoreMessageSingle();
+        }
+
+
+    }
+    public static void setStoreMessagesRepository(StoreMessageSingle storeMessageSingle) {
+        SingletonCollection.storeMessagesRepository = storeMessageSingle;
+    }
+
+    public static void setMessageRepository(IMessageRepository messageRepository) {
+        SingletonCollection.messageRepository = messageRepository;
     }
 
     public static void setBasketProductRepository(BasketProductRepositoryAsHashMap basketProductRepositoryAsHashMap) {
@@ -618,6 +649,8 @@ public class SingletonCollection {
         userPermissionRepository.setSaveMode(saveMode);
         basketRepository.setSaveMode(saveMode);
         basketProductRepository.setSaveMode(saveMode);
+        messageRepository.setSaveMode(saveMode);
+        storeMessagesRepository.setSaveMode(saveMode);
 
         discountAccumulationRepository.setSaveMode(saveMode);
         conditionRepository.setSaveMode(saveMode);

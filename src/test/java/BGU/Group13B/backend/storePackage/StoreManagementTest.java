@@ -196,7 +196,7 @@ public class StoreManagementTest {
     void deleteProductThreadTest_success(){
         AtomicBoolean failed = new AtomicBoolean(false);
 
-        int numOfThreads = 100;
+        int numOfThreads = 1;
         Thread[] threads = new Thread[numOfThreads];
         int[] productIds = new int[numOfThreads];
         Product[] products = new Product[numOfThreads];

@@ -43,7 +43,7 @@ class IMessageRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        messageRepository = new MessageRepositorySingle();
+        messageRepository = new MessageRepositorySingle(false);
     }
 
     @AfterEach
@@ -95,7 +95,8 @@ class IMessageRepositoryTest {
             Message message = messageRepository.readUnreadMassage("1");
             assertFalse(messagesSet.contains(message));
             messagesSet.add(message);
-            messageRepository.markAsRead(message.getReceiverId(), message.getSenderId(), message.getMessageId());
+            Message message1= messageRepository.markAsRead(message.getReceiverId(), message.getSenderId(), message.getMessageId());
+            messageRepository.markAsReadHelper(message.getReceiverId(),message1);
         }
         assertEquals(10, messagesSet.size());
     }
@@ -112,7 +113,8 @@ class IMessageRepositoryTest {
             for (int i = 0; i < messages.length; i++) {
                 try {
                     Message message = messageRepository.readUnreadMassage(strings[0]);
-                    messageRepository.markAsRead(message.getReceiverId(), message.getSenderId(), message.getMessageId());
+                    Message message1 = messageRepository.markAsRead(message.getReceiverId(), message.getSenderId(), message.getMessageId());
+                    messageRepository.markAsReadHelper(message.getReceiverId(),message1);
                 } catch (Exception ignored) {
                 }
             }
@@ -132,7 +134,8 @@ class IMessageRepositoryTest {
         for (int i = 0; i < 10; i++) {
             messageRepository.sendMassage(messages[i]);
             Message message = messageRepository.readUnreadMassage("1");
-            messageRepository.markAsRead(message.getReceiverId(), message.getSenderId(), message.getMessageId());
+            Message message1 = messageRepository.markAsRead(message.getReceiverId(), message.getSenderId(), message.getMessageId());
+            messageRepository.markAsReadHelper(message.getReceiverId(),message1);
         }
         for (int i = 0; i < messages.length; i++) {
             messageRepository.readReadMassage("1");
@@ -148,7 +151,8 @@ class IMessageRepositoryTest {
         for (int i = 0; i < 10; i++) {
             messageRepository.sendMassage(messages[i]);
             Message message = messageRepository.readUnreadMassage("1");
-            messageRepository.markAsRead(message.getReceiverId(), message.getSenderId(), message.getMessageId());
+            Message message1= messageRepository.markAsRead(message.getReceiverId(), message.getSenderId(), message.getMessageId());
+            messageRepository.markAsReadHelper(message.getReceiverId(),message1);
         }
         for (int i = 0; i < messages.length; i++) {
             messageRepository.readReadMassage("1");
@@ -163,7 +167,8 @@ class IMessageRepositoryTest {
         for (int i = 0; i < 10; i++) {
             messageRepository.sendMassage(messages[i]);
             Message message = messageRepository.readUnreadMassage("1");
-            messageRepository.markAsRead(message.getReceiverId(), message.getSenderId(), message.getMessageId());
+            Message message1 = messageRepository.markAsRead(message.getReceiverId(), message.getSenderId(), message.getMessageId());
+            messageRepository.markAsReadHelper(message.getReceiverId(),message1);
         }
         for (int i = 0; i < messages.length; i++) {
             messageRepository.readReadMassage("1");
