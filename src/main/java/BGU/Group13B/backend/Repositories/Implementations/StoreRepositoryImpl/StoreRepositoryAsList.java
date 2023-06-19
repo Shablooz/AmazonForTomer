@@ -1,6 +1,5 @@
 package BGU.Group13B.backend.Repositories.Implementations.StoreRepositoryImpl;
 
-import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepoSingleService;
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
 import BGU.Group13B.backend.storePackage.Store;
 import BGU.Group13B.service.SingletonCollection;
@@ -8,7 +7,7 @@ import jakarta.persistence.*;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 
 import java.util.Comparator;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -48,14 +47,6 @@ public class StoreRepositoryAsList implements IStoreRepository {
                 .orElseThrow(() -> new IllegalArgumentException("there is not store with the id " + storeId));
     }
 
-    public Set<Integer> getAllStoresId(){
-        Set<Integer> idSet = new HashSet<>();
-        for(Store store: stores){
-            idSet.add(store.getStoreId());
-        }
-        return idSet;
-    }
-
     //(#24) open store - requirement 3.2
     @Override
     public synchronized int addStore(int founderId, String storeName, String category) {
@@ -79,6 +70,22 @@ public class StoreRepositoryAsList implements IStoreRepository {
         this.storeIdCounter.set(0);
         save();
     }
+
+    @Override
+    public List<Store> getAllStoresTheUserCanView(int userId) {
+        return this.stores.stream().filter(store -> store.canViewStore(userId)).toList();
+    }
+
+    @Override
+    public Set<Integer> getAllStoresId() {
+        Set<Integer> storesId = new ConcurrentSkipListSet<>();
+        for (Store store : stores) {
+            storesId.add(store.getStoreId());
+        }
+        return storesId;
+    }
+
+
     public void save(){
         if(saveMode)
             SingletonCollection.getContext().getBean(StoreRepoService.class).save(this);

@@ -104,14 +104,17 @@ public class UserPermissions {
         if(id == 1) {
             this.setUserPermissionStatus(UserPermissionStatus.ADMIN);
         }
+        save(); //TODO: check if this is needed
     }
 
     public void updateRoleInStore(int storeId, StoreRole storeRole){
         userStoreRole.put(storeId, storeRole);
+        save();
     }
 
     public void deletePermission(int storeId){
         userStoreRole.remove(storeId);
+        save();
     }
 
     public StoreRole getStoreRole(int storeId){
@@ -127,16 +130,19 @@ public class UserPermissions {
             ns.add(individualPermission);
             userIndividualPermission.put(storeId, ns);
         }
+        save();
     }
 
     public void deleteIndividualPermission(int storeId, IndividualPermission individualPermission){
         userIndividualPermission.get(storeId).remove(individualPermission);
+        save();
     }
 
 
 
     public void removeAllIndividualPermissions(int storeId){
         userIndividualPermission.get(storeId).clear();
+        save();
     }
 
     public void clearForTest(){
@@ -165,6 +171,7 @@ public class UserPermissions {
     public void clearUserStorePermissions(int storeId) {
         userStoreRole.remove(storeId);
         userIndividualPermission.remove(storeId);
+        save();
     }
 
     public boolean isUserPermissionsExists(){
@@ -185,6 +192,7 @@ public class UserPermissions {
         }
         userStoreRole.clear();
         userIndividualPermission.clear();
+        save();
     }
     //getters and setters
 
@@ -212,6 +220,10 @@ public class UserPermissions {
 
     public void setUserIndividualPermission(Map<Integer, IndividualPermissionSet> userIndividualPermission) {
         this.userIndividualPermission = userIndividualPermission;
+    }
+
+    public void save(){
+        SingletonCollection.getUserPermissionRepository().save();
     }
 
 }

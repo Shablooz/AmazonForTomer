@@ -13,4 +13,6 @@ public interface IStorePermissionsRepository {
 
     public void setSaveMode(boolean saved);
     public boolean getSaveMode();
+
+    void save();
 }

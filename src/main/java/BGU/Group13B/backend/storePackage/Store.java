@@ -234,10 +234,6 @@ public class Store {
         return getStorePermission().getStoreOwners();
     }
 
-    public StoreInfo getGemeralStoreInfo() {
-        return new StoreInfo(this);
-    }
-
     public StorePermission getStorePermission() {
         if (getStorePermissionsRepository().getSaveMode())
             storePermission = getStorePermissionsRepository().getStorePermission(storeId);
@@ -673,6 +669,7 @@ public class Store {
 
         //notify all store owners and managers
         notifyAllWorkers(userId, "Store Closed", "The store " + this.storeName + " has been hidden");
+        save();
     }
 
     //will send a message to all the store's workers except the user with the given id
@@ -700,7 +697,8 @@ public class Store {
         getProductRepository().unhideAllStoreProducts(this.storeId);
 
         //notify all store owners and managers
-        notifyAllWorkers(userId, "Store Closed", "The store " + this.storeName + " has been hidden");
+        notifyAllWorkers(userId, "Store Reopened", "The store " + this.storeName + " has been reopened");
+        save();
     }
 
     public synchronized void deleteStore(int userId) throws NoPermissionException {
@@ -1241,6 +1239,10 @@ public class Store {
         return historyIncome;
     }
 
+    public boolean canViewStore(int userId) {
+        return !hidden || getStorePermission().hasAccessWhileHidden(userId);
+    }
+
 
     public IConditionRepository getConditionRepository() {
         return conditionRepository;
@@ -1393,4 +1395,10 @@ public class Store {
     public void setPurchasePolicy(PurchasePolicy purchasePolicy) {
         this.purchasePolicy = purchasePolicy;
     }
+
+    private void save(){
+        SingletonCollection.getStoreRepository().save();
+    }
+
+
 }

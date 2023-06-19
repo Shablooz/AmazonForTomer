@@ -1010,7 +1010,7 @@ public interface ISession {
 
     Response<VoidResponse> resetStorePurchasePolicy(int storeId, int userId);
 
-    Response<List<StoreInfo>> getAllStores();
+    Response<List<StoreInfo>> getAllStoresTheUserCanView(int userId);
 
     Response<UserTrafficRecord> getUserTrafficOfRange(int userId, LocalDate from, LocalDate to);
 

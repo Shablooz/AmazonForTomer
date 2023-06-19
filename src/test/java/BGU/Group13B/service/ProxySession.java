@@ -505,9 +505,9 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public Response<List<StoreInfo>> getAllStores() {
+    public Response<List<StoreInfo>> getAllStoresTheUserCanView(int userId) {
         if (realSession != null)
-            return realSession.getAllStores();
+            return realSession.getAllStoresTheUserCanView(userId);
 
         return null;
     }
