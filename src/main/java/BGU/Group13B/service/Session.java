@@ -845,7 +845,7 @@ public class Session implements ISession {
 
     @Override
     public void setUserStatus(int admin_id, int userId, int newStatus) {
-        if (!getUserStatus(admin_id).equals("Admin")) {
+        if (!getUserStatus(admin_id).equals("ADMIN")) {
             //should throw an exception
             throw new IllegalArgumentException("isn't an admin");
         }
@@ -858,12 +858,14 @@ public class Session implements ISession {
 
     @Override
     public String getUserStatus(int userId) {
-        if (userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.MEMBER)
-            return "Member";
+        if (userRepositoryAsHashmap.getUser(userId) == null)
+            return "";
+        else if (userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.MEMBER)
+            return "MEMBER";
         else if (userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.ADMIN)
-            return "Admin";
+            return "ADMIN";
         else
-            return "Guest";
+            return "GUEST";
     }
 
     @Override
@@ -1105,7 +1107,7 @@ public class Session implements ISession {
     @Override
     public Response<List<PurchaseHistory>> getUserPurchaseHistoryAsAdmin(int userId, int adminId) {
         try {
-            if (!getUserStatus(adminId).equals("Admin") || !isUserLogged(adminId)) {
+            if (!getUserStatus(adminId).equals("ADMIN") || !isUserLogged(adminId)) {
                 throw new NoPermissionException("The user is not an admin or is not logged in");
             }
             User user = userRepositoryAsHashmap.getUser(userId);
@@ -1121,7 +1123,7 @@ public class Session implements ISession {
     @Override
     public Response<List<PurchaseHistory>> getStorePurchaseHistoryAsAdmin(int storeId, int adminId) {
         try {
-            if (!getUserStatus(adminId).equals("Admin") || !isUserLogged(adminId)) {
+            if (!getUserStatus(adminId).equals("ADMIN") || !isUserLogged(adminId)) {
                 throw new NoPermissionException("The user is not an admin or is not logged in");
             }
             return Response.success(market.getStorePurchaseHistoryAsAdmin(storeId, adminId));
@@ -1813,7 +1815,7 @@ public class Session implements ISession {
     @Override
     public Response<Boolean> isAdmin(int userId) {
         try {
-            var result = getUserStatus(userId).equals("Admin");
+            var result = getUserStatus(userId).equals("ADMIN");
             LOGGER_INFO.info("user admin status was retrieved successfully");
             return Response.success(result);
         } catch (Exception e) {
@@ -1994,6 +1996,61 @@ public class Session implements ISession {
             return Response.success();
         } catch (Exception e) {
             LOGGER_ERROR.severe("basket product was not removed successfully");
+            return Response.failure(e.getMessage());
+        }
+    }
+
+    public Response<Boolean> isUserLoggedRES(int userId) {
+        try {
+            if(userRepositoryAsHashmap.getUser(userId) == null){
+                //boolean res = false;
+                return Response.partialSuccess(false, "User does not exist");
+            }
+            var result = userRepositoryAsHashmap.getUser(userId).isLoggedIn();
+            return Response.success(result);
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+
+    }
+
+    public Response<Boolean> setUserStatusRES(int admin_id, int userId, int newStatus) {
+        try {
+            if (!getUserStatus(admin_id).equals("ADMIN")) {
+                //should throw an exception
+                throw new IllegalArgumentException("isn't an admin");
+            }
+            if(admin_id == userId){
+                throw new IllegalArgumentException("can't change your own status");
+            }
+            if (newStatus == 1 && userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.MEMBER)
+                userRepositoryAsHashmap.getUser(userId).setPermissions(UserPermissions.UserPermissionStatus.ADMIN);
+
+            if (newStatus == 2 && userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.ADMIN)
+                userRepositoryAsHashmap.getUser(userId).setPermissions(UserPermissions.UserPermissionStatus.MEMBER);
+            return Response.success(true);
+        } catch (Exception e) {
+            return Response.failure(e.getMessage());
+        }
+    }
+
+    public Response<String> getUserStatusRES(int userId) {
+        try {
+            String result;
+            if (userRepositoryAsHashmap.getUser(userId) == null){
+                result = "";
+            }
+            else if (userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.MEMBER){
+                result = "MEMBER";
+            }
+            else if (userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.ADMIN){
+                result = "ADMIN";
+            }
+            else{
+                result = "ADMIN";
+            }
+            return Response.success(result);
+        } catch (Exception e){
             return Response.failure(e.getMessage());
         }
     }
