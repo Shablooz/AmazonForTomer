@@ -822,7 +822,7 @@ public interface ISession {
      * @param storeId    the id of the store the new owner will own
      *                   as an owner/founder you can add other users as store owners in your store
      */
-    Response<VoidResponse> addOwner(int userId, int newOwnerId, int storeId);
+    Response<List<Integer>> addOwner(int userId, int newOwnerId, int storeId);
 
     /**
      *

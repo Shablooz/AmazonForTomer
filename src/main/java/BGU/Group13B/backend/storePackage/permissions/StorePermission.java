@@ -378,7 +378,7 @@ public class StorePermission {
         return users;
     }
 
-    public void newVoteOwnerPermission(int newOwnerId, int appointerId) throws ChangePermissionException {
+    public List<Integer> newVoteOwnerPermission(int newOwnerId, int appointerId) throws ChangePermissionException {
         //check if not already in that role
         StoreRole userRole = userToStoreRole.get(newOwnerId);
         if (userRole == StoreRole.FOUNDER || userRole == StoreRole.OWNER)
@@ -392,6 +392,7 @@ public class StorePermission {
             }
         }
         votes.put(newAndAppointerIds, idOfOwnersAndFounder);
+        return idOfOwnersAndFounder;
     }
 
     public boolean updateVote(Pair<Integer, Integer> newAndAppointerIds, int voterId, boolean accept) throws ChangePermissionException {

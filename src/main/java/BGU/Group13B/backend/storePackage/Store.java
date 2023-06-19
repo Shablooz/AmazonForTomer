@@ -113,12 +113,13 @@ public class Store {
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
     @StaffPermission
-    public void addOwner(int userId, int newOwnerId) throws NoPermissionException, ChangePermissionException {
+    public List<Integer> addOwner(int userId, int newOwnerId) throws NoPermissionException, ChangePermissionException {
         if (!this.storePermission.checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add an owner to store " + this.storeId);
-        storePermission.newVoteOwnerPermission(newOwnerId, userId);
+        List<Integer> list = storePermission.newVoteOwnerPermission(newOwnerId, userId);
         Pair<Integer, Integer> pair = new Pair<>(newOwnerId, userId);
         voteForOwner(pair, userId, true);
+        return list;
     }
 
     @DefaultFounderFunctionality

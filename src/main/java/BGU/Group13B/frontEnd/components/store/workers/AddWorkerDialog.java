@@ -1,6 +1,7 @@
 package BGU.Group13B.frontEnd.components.store.workers;
 
 import BGU.Group13B.frontEnd.ResponseHandler;
+import BGU.Group13B.service.Response;
 import BGU.Group13B.service.Session;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -10,6 +11,8 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+
+import java.util.List;
 
 public class AddWorkerDialog extends Dialog implements ResponseHandler {
 
@@ -45,8 +48,15 @@ public class AddWorkerDialog extends Dialog implements ResponseHandler {
                     Integer newUserId = handleResponse(session.getUserIdByUsername(workerName.getValue()));
                     if(newUserId == null)
                         return;
-                    if(handleResponse(session.addOwner(userId, newUserId, storeId)) == null){
+                    List<Integer> sendList = handleResponse(session.addOwner(userId, newUserId, storeId));
+                    if(sendList == null){
                         return;
+                    }
+                    String newownerUsername = handleResponse(session.getUserNameRes(newUserId));
+                    String storeName = handleResponse(session.getStoreName(storeId));
+                    for (int id: sendList){
+                        String reciveName = handleResponse(session.getUserNameRes(id));
+                        handleResponse(session.sendMassageVote(userId, reciveName, "New owner vote", "Hey there partner, I want to make " + newownerUsername + " a new owner in store " + storeName));
                     }
                     notifySuccess("Vote for worker created successfully");
                     storeWorkersLayout.updateWorkers();

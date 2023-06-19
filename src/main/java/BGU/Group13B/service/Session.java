@@ -1133,11 +1133,11 @@ public class Session implements ISession {
     }
 
     @Override
-    public Response<VoidResponse> addOwner(int userId, int newOwnerId, int storeId) {
+    public Response<List<Integer>> addOwner(int userId, int newOwnerId, int storeId) {
         try {
-            market.addOwner(userId, newOwnerId, storeId);
+            var result = market.addOwner(userId, newOwnerId, storeId);
             LOGGER_INFO.info("owner was added successfully");
-            return Response.success();
+            return Response.success(result);
         } catch (Exception e) {
             LOGGER_ERROR.severe("owner was not added successfully");
             return Response.exception(e);
@@ -2052,6 +2052,19 @@ public class Session implements ISession {
             return Response.success(result);
         } catch (Exception e){
             return Response.failure(e.getMessage());
+        }
+    }
+
+    public Response<VoidResponse> sendMassageVote(int userId, String receiverId, String header, String massage) {
+        try {
+            if (userRepository.checkIfUserExists(receiverId) == null)
+                throw new RuntimeException("receiver Id not found");
+            userRepositoryAsHashmap.getUser(userId).sendMassageVote(receiverId, header, massage);
+            LOGGER_INFO.info("message was sent successfully");
+            return Response.success();
+        } catch (Exception e) {
+            LOGGER_ERROR.severe("message was not sent successfully");
+            return Response.exception(e);
         }
     }
 

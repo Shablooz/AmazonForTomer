@@ -78,7 +78,7 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public Response<VoidResponse> addOwner(int userId, int newOwnerId, int storeId) {
+    public Response<List<Integer>> addOwner(int userId, int newOwnerId, int storeId) {
         if (realSession != null)
             return realSession.addOwner(userId, newOwnerId, storeId);
         return null;
