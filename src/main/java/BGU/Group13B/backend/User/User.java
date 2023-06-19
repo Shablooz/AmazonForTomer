@@ -5,10 +5,7 @@ import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.backend.storePackage.permissions.ChangePermissionException;
 import BGU.Group13B.service.*;
 import BGU.Group13B.service.entity.ServiceBasketProduct;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 import org.mindrot.jbcrypt.BCrypt;
 import BGU.Group13B.backend.Repositories.Interfaces.IMessageRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
@@ -35,25 +32,25 @@ import java.util.regex.Pattern;
 public class User {
 
     @Transient
-    private  IPurchaseHistoryRepository purchaseHistoryRepository;
+    private IPurchaseHistoryRepository purchaseHistoryRepository;
 
 
     @Id
-    private  int userId;
+    private int userId;
 
     @Transient
-    private  IMessageRepository messageRepository;
+    private IMessageRepository messageRepository;
 
     @Transient
-    private  IStoreRepository storeRepository;
+    private IStoreRepository storeRepository;
     @Transient
-    private  IUserPermissionRepository userPermissionRepository;// v
+    private IUserPermissionRepository userPermissionRepository;// v
     @Transient
-    private  UserPermissions userPermissions;// v
+    private UserPermissions userPermissions;// var v
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private Cart cart;
     @Transient
-    private  Cart cart;
-    @Transient
-    private  Market market;
+    private Market market;
 
     private int messageId;
     private String userName;
@@ -76,10 +73,11 @@ public class User {
     @Transient
     private static final String question3 = "What is your favorite book?";
     //eyal addition
+    @Transient
     private volatile boolean isLoggedIn;
 
     @Transient
-    private  String adminIdentifier = "Admin";
+    private String adminIdentifier = "Admin";
     private boolean messageNotification;
     private boolean reviewedStoreNotification;
 
@@ -109,6 +107,7 @@ public class User {
         this.messageNotification = false;
         this.reviewedStoreNotification = false;
     }
+
     public User() {
         this.purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
         this.userId = 0;
@@ -116,7 +115,7 @@ public class User {
         this.userPermissionRepository = SingletonCollection.getUserPermissionRepository();
 
         this.userPermissions = null; //need to map
-        this.cart = null; //need to map
+        this.cart = new Cart(userId); //need to map
         this.market = SingletonCollection.getMarket();
         this.userName = "";
         this.password = "";
@@ -440,10 +439,10 @@ public class User {
     }
 
     public synchronized double purchaseCart(String creditCardNumber, String creditCardMonth,
-                               String creditCardYear, String creditCardHolderFirstName,
-                               String creditCardCcv, String id,
-                               HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
-                               String/*store coupons*/ storeCoupon) throws PurchaseFailedException, NoPermissionException {
+                                            String creditCardYear, String creditCardHolderFirstName,
+                                            String creditCardCcv, String id,
+                                            HashMap<Integer/*productId*/, String/*productDiscountCode*/> productsCoupons,
+                                            String/*store coupons*/ storeCoupon) throws PurchaseFailedException, NoPermissionException {
         if (isRegistered() && !isLoggedIn)
             throw new NoPermissionException("Only logged in users can purchase cart");
         return cart.purchaseCart(creditCardNumber,
@@ -510,23 +509,26 @@ public class User {
 
 
     public Cart getCart() {
+        if (cart.getUserId() == 0)
+            cart.setUserId(this.userId);
         return cart;
     }
 
+
     public void addProductToCart(int productId, int storeId) throws Exception {
         market.isProductAvailable(productId, storeId);
-        cart.addProductToCart(productId, storeId);
+        getCart().addProductToCart(productId, storeId);
     }
 
 
     public void removeProductFromCart(int storeId, int productId) throws Exception {
-        cart.removeProduct(storeId, productId);
+        getCart().removeProduct(storeId, productId);
     }
 
     public void changeProductQuantityInCart(int storeId, int productId, int quantity) throws Exception {
         if (isRegistered() && !isLoggedIn)
             throw new NoPermissionException("Only logged in users can purchase cart");
-        cart.changeProductQuantity(storeId, productId, quantity);
+        getCart().changeProductQuantity(storeId, productId, quantity);
     }
 
     public void setPermissions(UserPermissions.UserPermissionStatus status) {
@@ -556,7 +558,7 @@ public class User {
 
 
     public void addToCart(int storeId, int productId, int amount, double newPrice) {
-        cart.addProductToCart(storeId, productId, amount, newPrice);
+        getCart().addProductToCart(storeId, productId, amount, newPrice);
     }
 
     public void addPermission(int storeId, UserPermissions.StoreRole storeRole) {
@@ -568,7 +570,7 @@ public class User {
     }
 
     public UserPermissions getUserPermissions() {
-        userPermissions= SingletonCollection.getUserPermissionRepository().getUserPermission(userId);
+        userPermissions = SingletonCollection.getUserPermissionRepository().getUserPermission(userId);
         return userPermissions;
     }
 
@@ -581,19 +583,18 @@ public class User {
     }
 
 
-
     public void removeAllIndividualPermissions(int storeId) {
         getUserPermissions().removeAllIndividualPermissions(storeId);
     }
 
 
     public void removeBasket(int basketId) {
-        cart.removeBasket(userId, basketId);
+        getCart().removeBasket(userId, basketId);
     }
 
 
     public List<Integer> getFailedProducts(int storeId) {
-        return cart.getFailedProducts(storeId, userId);
+        return getCart().getFailedProducts(storeId, userId);
     }
 
     public synchronized boolean getMessageNotification() {
@@ -626,29 +627,29 @@ public class User {
 
 
     public List<Product> getAllFailedProductsAfterPayment() {
-        return cart.getAllFailedProductsAfterPayment();
+        return getCart().getAllFailedProductsAfterPayment();
     }
 
     public double getTotalPriceOfCart() {
-        return cart.getTotalPriceOfCartBeforeDiscount();
+        return getCart().getTotalPriceOfCartBeforeDiscount();
     }
 
     public void cancelPurchase() {
-        cart.cancelPurchase();
+        getCart().cancelPurchase();
     }
 
     public List<PurchaseHistory> getPurchaseHistory() {
-        return purchaseHistoryRepository.getAllPurchases(userId);
+        return SingletonCollection.getPurchaseHistoryRepository().getAllPurchases(userId);
     }
 
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public UserCard getUserCard(){
+    public UserCard getUserCard() {
         List<Pair<Integer, String>> pairs = getUserPermissions().getStoresAndRoles();
         StringBuilder stringBuilder = new StringBuilder();
-        for(Pair<Integer, String> pair : pairs){
+        for (Pair<Integer, String> pair : pairs) {
             stringBuilder.append(" Store: ");
             stringBuilder.append(getStoreRepository().getStore(pair.getFirst()).getStoreName());
             stringBuilder.append(" Role: ");
@@ -657,7 +658,7 @@ public class User {
         return new UserCard(userId, userName, email, stringBuilder.toString());
     }
 
-    public UserPermissions.PopulationStatus getPopulationStatus(){
+    public UserPermissions.PopulationStatus getPopulationStatus() {
         return getUserPermissions().getPopulationStatus();
     }
 
@@ -665,27 +666,25 @@ public class User {
         market.removeMemberStores(adminId, userId);
     }
 
-    public void clearCart(){
-        cart.clearCart();
+    public void clearCart() {
+        getCart().clearCart();
     }
+
     public void removeBasketProducts(List<Pair<Integer, Integer>> productStoreList) {
-        cart.removeBasketProducts(productStoreList);
+        getCart().removeBasketProducts(productStoreList);
     }
 
     public void removeBasketProduct(int productId, int storeId) throws Exception {
-        cart.removeProduct(storeId, productId);
+        getCart().removeProduct(storeId, productId);
     }
 
-    public void clearUserStorePermissions(int storeId){
+    public void clearUserStorePermissions(int storeId) {
         getUserPermissions().clearUserStorePermissions(storeId);
     }
 
     public void clearPermissions(int adminId) throws NoPermissionException, ChangePermissionException {
         getUserPermissionRepository().deletePermissions(adminId, userId);
     }
-
-
-
 
 
     //getters and setters
@@ -701,6 +700,7 @@ public class User {
 
     public void setUserId(int userId) {
         this.userId = userId;
+        this.cart.setUserId(userId);
     }
 
     public IMessageRepository getMessageRepository() {
@@ -712,7 +712,7 @@ public class User {
     }
 
     public IUserPermissionRepository getUserPermissionRepository() {
-        userPermissionRepository= SingletonCollection.getUserPermissionRepository();
+        userPermissionRepository = SingletonCollection.getUserPermissionRepository();
         return userPermissionRepository;
     }
 
@@ -723,7 +723,6 @@ public class User {
     public void setUserPermissions(UserPermissions userPermissions) {
         this.userPermissions = userPermissions;
     }
-
 
 
     public void setCart(Cart cart) {
@@ -813,8 +812,8 @@ public class User {
     public boolean isReviewedStoreNotification() {
         return reviewedStoreNotification;
     }
-    public IStoreRepository getStoreRepository()
-    {
+
+    public IStoreRepository getStoreRepository() {
         this.storeRepository = SingletonCollection.getStoreRepository();
         return this.storeRepository;
     }

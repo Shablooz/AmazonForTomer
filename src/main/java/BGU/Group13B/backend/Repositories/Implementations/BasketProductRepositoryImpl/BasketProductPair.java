@@ -7,44 +7,49 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Entity
 public class BasketProductPair {
 
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Id
-        private int id;
+    @Id
+    private int id;
 
-        private Integer first;
-        private Integer second;
+    private Integer first;
+    private Integer second;
 
-        public BasketProductPair(Integer first, Integer second) {
-            this.first = first;
-            this.second = second;
-        }
+    public BasketProductPair(Integer first, Integer second) {
+        this.first = first;
+        this.second = second;
+        var v = 420;
+        this.id = v;
+    }
+
     public BasketProductPair() {
         this.first = 0;
         this.second = 0;
+        this.id = 420;
     }
-        public static BasketProductPair of(Integer first, Integer second) {
-            return new BasketProductPair(first, second);
-        }
 
-        public Integer getFirst() {
-            return first;
-        }
+    public static BasketProductPair of(Integer first, Integer second) {
+        return new BasketProductPair(first, second);
+    }
 
-        public Integer getSecond() {
-            return second;
-        }
+    public Integer getFirst() {
+        return first;
+    }
 
-        public void setFirst(Integer first) {
-            this.first = first;
-        }
+    public Integer getSecond() {
+        return second;
+    }
 
-        public void setSecond(Integer second) {
-            this.second = second;
-        }
+    public void setFirst(Integer first) {
+        this.first = first;
+    }
+
+    public void setSecond(Integer second) {
+        this.second = second;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -66,4 +71,5 @@ public class BasketProductPair {
     public void setId(int id) {
         this.id = id;
     }
+
 }

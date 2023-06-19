@@ -72,7 +72,6 @@ public class Session implements ISession {
         userRepositoryAsHashmap.addUser(id, new User(id));
         register(id, "kingOfTheSheep", "SheePLover420",
                 "mrsheep@gmail.com", "11", "11", "11", LocalDate.MIN);
-
     }
 
     @Override

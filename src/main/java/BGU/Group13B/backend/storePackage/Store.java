@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
+
 @Entity
 
 public class Store {
@@ -36,43 +37,43 @@ public class Store {
     @Transient
     private IConditionRepository conditionRepository;
     @Transient
-    private   DiscountPolicy discountPolicy;
+    private DiscountPolicy discountPolicy;
     @Transient
-    private   IProductRepository productRepository;
+    private IProductRepository productRepository;
     @Transient
-    private   DeliveryAdapter deliveryAdapter;
+    private DeliveryAdapter deliveryAdapter;
     @Transient
-    private   PaymentAdapter paymentAdapter;
+    private PaymentAdapter paymentAdapter;
     @Transient
-    private   AlertManager alertManager; // not needed
+    private AlertManager alertManager; // not needed
     @Transient
-    private   StorePermission storePermission; //v
+    private StorePermission storePermission; //v
     @Transient
-    private   IStoreMessagesRepository storeMessagesRepository;
+    private IStoreMessagesRepository storeMessagesRepository;
     @Transient
-    private   AddToUserCart addToUserCart;
+    private AddToUserCart addToUserCart;
     @Transient
-    private   IBIDRepository bidRepository;
+    private IBIDRepository bidRepository;
     @Transient
-    private   IUserRepository userRepository;// v
+    private IUserRepository userRepository;// v
     @Transient
-    private   IStorePermissionsRepository storePermissionsRepository; //v
+    private IStorePermissionsRepository storePermissionsRepository; //v
     @Id
-    private   int storeId;
+    private int storeId;
 
     @Transient
-    private   IPurchaseHistoryRepository purchaseHistoryRepository;
+    private IPurchaseHistoryRepository purchaseHistoryRepository;
 
-    private   String storeName;
-    private   String category;
+    private String storeName;
+    private String category;
     @Transient
-    private   IAuctionRepository auctionRepository;
+    private IAuctionRepository auctionRepository;
     @Transient
-    private   IStoreScore storeScore; //v
+    private IStoreScore storeScore; //v
 
     private boolean hidden = false;
-    @Transient
-    private   PurchasePolicy purchasePolicy;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private PurchasePolicy purchasePolicy;
 
     public Store(int storeId, int founderId, String storeName, String category) {
         this.auctionRepository = SingletonCollection.getAuctionRepository();
@@ -126,9 +127,10 @@ public class Store {
         this.userRepository = null;
         this.storePermissionsRepository = new StorePermissionsRepositoryAsHashmap(false); //added to trick the system
         this.conditionRepository = null;
-        this.discountPolicy = new DiscountPolicy(storeId);
         this.purchasePolicy = new PurchasePolicy(storeId);
+        this.discountPolicy = new DiscountPolicy(storeId);
     }
+
     public Store() { //maybe need to change nulls
         this.productRepository = null;
         this.deliveryAdapter = null;
@@ -136,7 +138,7 @@ public class Store {
         this.alertManager = null;
         this.storePermission = null;
         this.storeMessagesRepository = null;
-        this.addToUserCart =null;
+        this.addToUserCart = null;
         this.bidRepository = null;
         this.storeId = 0;
         this.purchaseHistoryRepository = null;
@@ -147,10 +149,9 @@ public class Store {
         this.userRepository = null;
         this.storePermissionsRepository = null;
         this.conditionRepository = null;
-        this.discountPolicy = null;
+        this.discountPolicy = new DiscountPolicy(storeId);
         this.purchasePolicy = null;
     }
-
 
 
     @DefaultFounderFunctionality
@@ -170,7 +171,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to remove an owner to store " + this.storeId);
         Set<Integer> removeUsersList = getStorePermission().removeOwnerPermission(removeOwnerId, userId, false);
-        for(Integer removeUserId: removeUsersList){
+        for (Integer removeUserId : removeUsersList) {
             getUserRepo().getUser(removeUserId).deletePermission(storeId);
         }
 
@@ -233,12 +234,12 @@ public class Store {
         return getStorePermission().getStoreOwners();
     }
 
-    public StoreInfo getGemeralStoreInfo()  {
+    public StoreInfo getGemeralStoreInfo() {
         return new StoreInfo(this);
     }
 
     public StorePermission getStorePermission() {
-        if(getStorePermissionsRepository().getSaveMode())
+        if (getStorePermissionsRepository().getSaveMode())
             storePermission = getStorePermissionsRepository().getStorePermission(storeId);
         return storePermission;
     }
@@ -288,7 +289,7 @@ public class Store {
 
     public void addReview(String review, int userId, int productId) throws NoPermissionException {
         this.getStorePermission().validateStoreVisibility(userId, hidden);
-        if (!purchaseHistoryRepository.isPurchase(userId, this.storeId, productId))
+        if (!SingletonCollection.getPurchaseHistoryRepository().isPurchase(userId, this.storeId, productId))
             throw new IllegalArgumentException("User with id: " + userId + " did not purchase product with id: " + productId + " from store: " + this.storeId);
         Product product = getProductRepository().getStoreProductById(productId, this.storeId);
         if (product == null)
@@ -296,14 +297,14 @@ public class Store {
         product.addReview(review, userId);
 
         var storeOwnerIds = getStorePermission().getStoreOwners();
-        for(int id: storeOwnerIds){
-            User receiver=SingletonCollection.getUserRepository().getUser(id);
-            if(!BroadCaster.broadcast(receiver.getUserId(),"New Review"))
+        for (int id : storeOwnerIds) {
+            User receiver = SingletonCollection.getUserRepository().getUser(id);
+            if (!BroadCaster.broadcast(receiver.getUserId(), "New Review"))
                 receiver.setReviewedStoreNotification(true);
         }
         var storeFounderId = getStorePermission().getStoreFounder();
-        User receiver=SingletonCollection.getUserRepository().getUser(storeFounderId);
-        if(!BroadCaster.broadcast(receiver.getUserId(),"New Review"))
+        User receiver = SingletonCollection.getUserRepository().getUser(storeFounderId);
+        if (!BroadCaster.broadcast(receiver.getUserId(), "New Review"))
             receiver.setReviewedStoreNotification(true);
     }
 
@@ -337,7 +338,8 @@ public class Store {
             throw new IllegalArgumentException("Product with id: " + productId + " does not exist in store: " + this.storeId);
         return product.getProductScore();
     }
-    public float getProductScoreUser(int productId,int userId) throws NoPermissionException {
+
+    public float getProductScoreUser(int productId, int userId) throws NoPermissionException {
         this.getStorePermission().validateStoreVisibility(userId, hidden);
         Product product = getProductRepository().getStoreProductById(productId, this.storeId);
         if (product == null)
@@ -350,7 +352,7 @@ public class Store {
         Product product = getProductRepository().getStoreProductById(productId, this.storeId);
         if (product == null)
             throw new IllegalArgumentException("Product with id: " + productId + " does not exist in store: " + this.storeName);
-        if (!purchaseHistoryRepository.isPurchase(userId, this.storeId, productId))
+        if (!SingletonCollection.getPurchaseHistoryRepository().isPurchase(userId, this.storeId, productId))
             throw new IllegalArgumentException("User" + " did not purchase product with name: " + product.getName() + " from store: " + this.storeName);
 
         product.addAndSetScore(userId, score);
@@ -366,7 +368,7 @@ public class Store {
 
     public void addStoreScore(int userId, int score) throws NoPermissionException {
         this.getStorePermission().validateStoreVisibility(userId, hidden);
-        if (purchaseHistoryRepository.isPurchaseFromStore(userId, this.storeId))
+        if (SingletonCollection.getPurchaseHistoryRepository().isPurchaseFromStore(userId, this.storeId))
             throw new IllegalArgumentException("User with id: " + userId + " did not purchase from store: " + storeId);
         getStoreScoreRepo().addStoreScore(userId, storeId, score);
     }
@@ -384,7 +386,6 @@ public class Store {
     public float getStoreScore() {
         return getStoreScoreRepo().getStoreScore(this.storeId);
     }
-
 
 
     @DefaultFounderFunctionality
@@ -446,8 +447,8 @@ public class Store {
             //alertManager.sendAlert(id, "User " + userId + " has submitted a purchase proposal for product " + productId + " in store " + this.storeId);
             double originalPrice = getProductRepository().getProductById(productId).getPrice();
             BroadCaster.broadcast(id,
-                    "BID["+storeId+","+productId+"]User has submitted a purchase proposal for product " + productId +
-                    "\n In store " + this.storeName +
+                    "BID[" + storeId + "," + productId + "]User has submitted a purchase proposal for product " + productId +
+                            "\n In store " + this.storeName +
                             "\nOriginal price: " + originalPrice +
                             "\nProposed price: " + proposedPrice +
                             "\nAmount: " + amount + "\n");
@@ -470,7 +471,7 @@ public class Store {
             BroadCaster.broadcast(managerId,
                     "The bid for product " + getProductRepository().getProductById(currentBid.getProductId()).getName()
                             + " has been rejected already");
-            //alertManager.sendAlert(managerId, "The bid for product " + currentBid.getProductId() + " in store " + this.storeId + " has been rejected already");
+        //alertManager.sendAlert(managerId, "The bid for product " + currentBid.getProductId() + " in store " + this.storeId + " has been rejected already");
         currentBid.approve(managerId);
         Set<Integer> managers = getStorePermission().getAllUsersWithPermission("purchaseProposalSubmit");
 
@@ -495,8 +496,8 @@ public class Store {
         BID currentBid = SingletonCollection.getBidRepository().getBID(bidId).orElseThrow(() -> new IllegalArgumentException("There is no such bid for store " + this.storeId));
         if (currentBid.isRejected())
             BroadCaster.broadcast(managerId,
-                "The bid for product " + getProductRepository().getProductById(currentBid.getProductId()).getName()
-                        + " has been rejected already");
+                    "The bid for product " + getProductRepository().getProductById(currentBid.getProductId()).getName()
+                            + " has been rejected already");
 
         currentBid.reject();//good for concurrency edge cases
         SingletonCollection.getBidRepository().removeBID(bidId);
@@ -645,6 +646,7 @@ public class Store {
         this.getStorePermission().validateStoreVisibility(userId, hidden);
         return new StoreInfo(this);
     }
+
     //TODO check
     public Product getStoreProduct(int userId, int productId) throws NoPermissionException {
         this.getStorePermission().validateStoreVisibility(userId, hidden);
@@ -723,7 +725,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to get the store purchase history: " + this.storeId);
 
-        return purchaseHistoryRepository.getStorePurchaseHistory(storeId);
+        return SingletonCollection.getPurchaseHistoryRepository().getStorePurchaseHistory(storeId);
     }
 
     private void deleteAllStoreScores() {
@@ -738,7 +740,7 @@ public class Store {
 
     private void deleteAllStorePermissions() {
         getStorePermissionsRepository().deleteStorePermissions(storeId);
-        for(WorkerCard workerCard : getStorePermission().getWorkersInfo())
+        for (WorkerCard workerCard : getStorePermission().getWorkersInfo())
             getUserRepo().getUser(workerCard.userId()).clearUserStorePermissions(storeId);
         getStorePermission().emptyMaps();
     }
@@ -759,7 +761,7 @@ public class Store {
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
     @PoliciesPermission
-    public void setPurchasePolicyCondition(int userId, int conditionId) throws NoPermissionException{
+    public void setPurchasePolicyCondition(int userId, int conditionId) throws NoPermissionException {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to set the purchase policy in the store : " + this.storeId);
 
@@ -773,7 +775,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add OR condition in the store: " + this.storeId);
 
-        return conditionRepository.addORCondition(condition1, condition2);
+        return SingletonCollection.getConditionRepository().addORCondition(condition1, condition2);
     }
 
     @DefaultFounderFunctionality
@@ -783,7 +785,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add AND condition in the store: " + this.storeId);
 
-        return conditionRepository.addANDCondition(condition1, condition2);
+        return SingletonCollection.getConditionRepository().addANDCondition(condition1, condition2);
     }
 
     @DefaultFounderFunctionality
@@ -793,7 +795,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add XOR condition in the store: " + this.storeId);
 
-        return conditionRepository.addXORCondition(condition1, condition2);
+        return SingletonCollection.getConditionRepository().addXORCondition(condition1, condition2);
     }
 
     @DefaultFounderFunctionality
@@ -803,48 +805,49 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add IMPLY condition in the store: " + this.storeId);
 
-        return conditionRepository.addIMPLYCondition(condition1, condition2);
+        return SingletonCollection.getConditionRepository().addIMPLYCondition(condition1, condition2);
     }
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
     @PoliciesPermission
-    public int addStorePriceCondition(int userId, double lowerBound, double upperBound) throws NoPermissionException{
+    public int addStorePriceCondition(int userId, double lowerBound, double upperBound) throws NoPermissionException {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add store price condition in the store: " + this.storeId);
 
-        return conditionRepository.addStorePriceCondition(lowerBound, upperBound);
+        return SingletonCollection.getConditionRepository().addStorePriceCondition(lowerBound, upperBound);
     }
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
     @PoliciesPermission
-    public int addStorePriceCondition(int userId, double lowerBound) throws NoPermissionException{
+    public int addStorePriceCondition(int userId, double lowerBound) throws NoPermissionException {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add store price condition in the store: " + this.storeId);
 
-        return conditionRepository.addStorePriceCondition(lowerBound);
+        return SingletonCollection.getConditionRepository().addStorePriceCondition(lowerBound);
     }
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
     @PoliciesPermission
-    public int addStoreQuantityCondition(int userId, int lowerBound, int upperBound) throws NoPermissionException{
+    public int addStoreQuantityCondition(int userId, int lowerBound, int upperBound) throws NoPermissionException {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add store quantity condition in the store: " + this.storeId);
 
-        return conditionRepository.addStoreQuantityCondition(lowerBound, upperBound);
+        return SingletonCollection.getConditionRepository().addStoreQuantityCondition(lowerBound, upperBound);
     }
 
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
     @PoliciesPermission
-    public int addStoreQuantityCondition(int userId, int lowerBound) throws NoPermissionException{
+    public int addStoreQuantityCondition(int userId, int lowerBound) throws NoPermissionException {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add store quantity condition in the store: " + this.storeId);
 
-        return conditionRepository.addStoreQuantityCondition(lowerBound);
+        return SingletonCollection.getConditionRepository().addStoreQuantityCondition(lowerBound);
     }
+
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
     @PoliciesPermission
@@ -852,7 +855,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add category price condition in the store: " + this.storeId);
 
-        return conditionRepository.addCategoryPriceCondition(category, lowerBound, upperBound);
+        return SingletonCollection.getConditionRepository().addCategoryPriceCondition(category, lowerBound, upperBound);
     }
 
     @DefaultFounderFunctionality
@@ -862,7 +865,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add category price condition in the store: " + this.storeId);
 
-        return conditionRepository.addCategoryPriceCondition(category, lowerBound);
+        return SingletonCollection.getConditionRepository().addCategoryPriceCondition(category, lowerBound);
     }
 
     @DefaultFounderFunctionality
@@ -872,7 +875,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add category quantity condition in the store: " + this.storeId);
 
-        return conditionRepository.addCategoryQuantityCondition(category, lowerBound, upperBound);
+        return SingletonCollection.getConditionRepository().addCategoryQuantityCondition(category, lowerBound, upperBound);
     }
 
     @DefaultFounderFunctionality
@@ -882,7 +885,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add category quantity condition in the store: " + this.storeId);
 
-        return conditionRepository.addCategoryQuantityCondition(category, lowerBound);
+        return SingletonCollection.getConditionRepository().addCategoryQuantityCondition(category, lowerBound);
     }
 
     @DefaultFounderFunctionality
@@ -892,7 +895,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add date condition in the store: " + this.storeId);
 
-        return conditionRepository.addDateCondition(lowerBound, upperBound);
+        return SingletonCollection.getConditionRepository().addDateCondition(lowerBound, upperBound);
     }
 
     @DefaultFounderFunctionality
@@ -902,7 +905,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add date condition in the store: " + this.storeId);
 
-        return conditionRepository.addDateCondition(lowerBound);
+        return SingletonCollection.getConditionRepository().addDateCondition(lowerBound);
     }
 
     @DefaultFounderFunctionality
@@ -912,7 +915,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add product price condition in the store: " + this.storeId);
 
-        return conditionRepository.addProductPriceCondition(productId, lowerBound, upperBound);
+        return SingletonCollection.getConditionRepository().addProductPriceCondition(productId, lowerBound, upperBound);
     }
 
     @DefaultFounderFunctionality
@@ -922,7 +925,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add product price condition in the store: " + this.storeId);
 
-        return conditionRepository.addProductPriceCondition(productId, lowerBound);
+        return SingletonCollection.getConditionRepository().addProductPriceCondition(productId, lowerBound);
     }
 
     @DefaultFounderFunctionality
@@ -932,7 +935,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add product quantity condition in the store: " + this.storeId);
 
-        return conditionRepository.addProductQuantityCondition(productId, lowerBound, upperBound);
+        return SingletonCollection.getConditionRepository().addProductQuantityCondition(productId, lowerBound, upperBound);
     }
 
     @DefaultFounderFunctionality
@@ -942,7 +945,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add product quantity condition in the store: " + this.storeId);
 
-        return conditionRepository.addProductQuantityCondition(productId, lowerBound);
+        return SingletonCollection.getConditionRepository().addProductQuantityCondition(productId, lowerBound);
     }
 
     @DefaultFounderFunctionality
@@ -952,7 +955,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to time condition in the store: " + this.storeId);
 
-        return conditionRepository.addTimeCondition(lowerBound, upperBound);
+        return SingletonCollection.getConditionRepository().addTimeCondition(lowerBound, upperBound);
     }
 
     @DefaultFounderFunctionality
@@ -962,7 +965,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " time condition in the store: " + this.storeId);
 
-        return conditionRepository.addTimeCondition(lowerBound);
+        return SingletonCollection.getConditionRepository().addTimeCondition(lowerBound);
     }
 
     @DefaultFounderFunctionality
@@ -972,7 +975,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " user age condition in the store: " + this.storeId);
 
-        return conditionRepository.addUserAgeCondition(lowerBound, upperBound);
+        return SingletonCollection.getConditionRepository().addUserAgeCondition(lowerBound, upperBound);
     }
 
     @DefaultFounderFunctionality
@@ -982,7 +985,7 @@ public class Store {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " user age condition in the store: " + this.storeId);
 
-        return conditionRepository.addUserAgeCondition(lowerBound);
+        return SingletonCollection.getConditionRepository().addUserAgeCondition(lowerBound);
     }
 
     /**
@@ -1184,7 +1187,7 @@ public class Store {
     @DefaultOwnerFunctionality
     @PoliciesPermission
     public DiscountAccumulationTreeInfo getDiscountAccumulationTree(int userId) throws NoPermissionException {
-        if(!this.getStorePermission().checkPermission(userId, hidden))
+        if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to get discount accumulation tree in the store: " + this.storeId);
         return discountPolicy.getDiscountAccumulationTree();
     }
@@ -1193,7 +1196,7 @@ public class Store {
     @DefaultOwnerFunctionality
     @PoliciesPermission
     public void deleteStoreAccumulationTree(int userId) throws NoPermissionException {
-        if(!this.getStorePermission().checkPermission(userId, hidden))
+        if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to delete discount accumulation tree in the store: " + this.storeId);
         discountPolicy.deleteStoreAccumulationTree();
     }
@@ -1202,7 +1205,7 @@ public class Store {
     @DefaultOwnerFunctionality
     @PoliciesPermission
     public Condition getPurchasePolicy(int userId) throws NoPermissionException {
-        if(!this.getStorePermission().checkPermission(userId, hidden))
+        if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to get the purchase policy in the store: " + this.storeId);
         return purchasePolicy.getRootCondition();
     }
@@ -1211,7 +1214,7 @@ public class Store {
     @DefaultOwnerFunctionality
     @PoliciesPermission
     public void resetPurchasePolicy(int userId) throws NoPermissionException {
-        if(!this.getStorePermission().checkPermission(userId, hidden))
+        if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to reset the purchase policy in the store: " + this.storeId);
         purchasePolicy.resetPurchasePolicy();
     }
@@ -1224,14 +1227,14 @@ public class Store {
     @DefaultOwnerFunctionality
     @StatsPermission
     public double[] getStoreHistoryIncome(int userId, LocalDate startDate, LocalDate endDate) throws NoPermissionException {
-        if(!this.getStorePermission().checkPermission(userId, hidden))
+        if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to get the store history income in the store: " + this.storeId);
 
-        double[] historyIncome = new double[(endDate.getYear() - startDate.getYear())*365 + (endDate.getDayOfYear() - startDate.getDayOfYear()) + 1];
-        for(PurchaseHistory purchase : getPurchaseHistoryRepository().getStorePurchaseHistory(this.storeId)){
+        double[] historyIncome = new double[(endDate.getYear() - startDate.getYear()) * 365 + (endDate.getDayOfYear() - startDate.getDayOfYear()) + 1];
+        for (PurchaseHistory purchase : getPurchaseHistoryRepository().getStorePurchaseHistory(this.storeId)) {
             LocalDate purchaseDate = purchase.getLocalDate();
-            if(!(purchaseDate.isBefore(startDate) || purchaseDate.isAfter(endDate)))
-                historyIncome[(endDate.getYear() - purchaseDate.getYear())*365 + purchaseDate.getDayOfYear() - startDate.getDayOfYear()] += purchase.getPrice();
+            if (!(purchaseDate.isBefore(startDate) || purchaseDate.isAfter(endDate)))
+                historyIncome[(endDate.getYear() - purchaseDate.getYear()) * 365 + purchaseDate.getDayOfYear() - startDate.getDayOfYear()] += purchase.getPrice();
         }
 
         return historyIncome;
@@ -1247,7 +1250,7 @@ public class Store {
     }
 
     public IProductRepository getProductRepository() {
-        if(productRepository == null || productRepository.getSaveMode()) //tomer check
+        if (productRepository == null || productRepository.getSaveMode()) //tomer check
             productRepository = SingletonCollection.getProductRepository();
         return productRepository;
     }
@@ -1281,14 +1284,16 @@ public class Store {
     }
 
     public IStorePermissionsRepository getStorePermissionsRepository() {
-        if(storePermissionsRepository == null || storePermissionsRepository.getSaveMode()) //tomer check
-            storePermissionsRepository= SingletonCollection.getStorePermissionRepository();
+        if (storePermissionsRepository == null || storePermissionsRepository.getSaveMode()) //tomer check
+            storePermissionsRepository = SingletonCollection.getStorePermissionRepository();
         return storePermissionsRepository;
     }
+
     public IStoreScore getStoreScoreRepo() {
         storeScore = SingletonCollection.getStoreScoreRepository(); // maybe need check
         return storeScore;
     }
+
     public IUserRepository getUserRepo() {
         userRepository = SingletonCollection.getUserRepository();
         return userRepository;
@@ -1309,5 +1314,81 @@ public class Store {
 
     public PurchasePolicy getPurchasePolicy() {
         return purchasePolicy;
+    }
+
+    public void setConditionRepository(IConditionRepository conditionRepository) {
+        this.conditionRepository = conditionRepository;
+    }
+
+    public void setDiscountPolicy(DiscountPolicy discountPolicy) {
+        this.discountPolicy = discountPolicy;
+    }
+
+    public void setProductRepository(IProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
+    public void setDeliveryAdapter(DeliveryAdapter deliveryAdapter) {
+        this.deliveryAdapter = deliveryAdapter;
+    }
+
+    public void setPaymentAdapter(PaymentAdapter paymentAdapter) {
+        this.paymentAdapter = paymentAdapter;
+    }
+
+    public void setAlertManager(AlertManager alertManager) {
+        this.alertManager = alertManager;
+    }
+
+    public void setStorePermission(StorePermission storePermission) {
+        this.storePermission = storePermission;
+    }
+
+    public void setStoreMessagesRepository(IStoreMessagesRepository storeMessagesRepository) {
+        this.storeMessagesRepository = storeMessagesRepository;
+    }
+
+    public void setAddToUserCart(AddToUserCart addToUserCart) {
+        this.addToUserCart = addToUserCart;
+    }
+
+    public void setBidRepository(IBIDRepository bidRepository) {
+        this.bidRepository = bidRepository;
+    }
+
+    public void setUserRepository(IUserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public void setStorePermissionsRepository(IStorePermissionsRepository storePermissionsRepository) {
+        this.storePermissionsRepository = storePermissionsRepository;
+    }
+
+    public void setStoreId(int storeId) {
+        this.storeId = storeId;
+    }
+
+    public void setPurchaseHistoryRepository(IPurchaseHistoryRepository purchaseHistoryRepository) {
+        this.purchaseHistoryRepository = purchaseHistoryRepository;
+    }
+
+    public void setStoreName(String storeName) {
+        this.storeName = storeName;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public void setAuctionRepository(IAuctionRepository auctionRepository) {
+        this.auctionRepository = auctionRepository;
+    }
+
+    public void setStoreScore(IStoreScore storeScore) {
+        this.storeScore = storeScore;
+    }
+
+    public void setPurchasePolicy(PurchasePolicy purchasePolicy) {
+        this.purchasePolicy = purchasePolicy;
     }
 }

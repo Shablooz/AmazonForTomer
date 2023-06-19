@@ -10,9 +10,9 @@ public class BasketProduct {
     @Id
     private int id;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id", referencedColumnName = "productId")
-    private  Product product;
+    private Product product;
     private int quantity;
     private double price;
 
@@ -21,6 +21,7 @@ public class BasketProduct {
         this.quantity = 1;
         this.price = product.getPrice();
     }
+
     public BasketProduct() {
         this.product = null;
         this.quantity = 1;
@@ -68,12 +69,13 @@ public class BasketProduct {
     public Product getProduct() {
         return product;
     }
+
     public double getSubtotal() {
         return getPrice() * quantity;
     }
 
     public void setPrice(double price) {
-    	this.price = price;
+        this.price = price;
     }
     //getters and setters
 

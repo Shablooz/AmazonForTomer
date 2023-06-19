@@ -20,12 +20,12 @@ public class PurchaseHistory {
     private int userId;
     private int storeId;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "product_id_to_quantity",
             joinColumns = {@JoinColumn(name = "PurchaseHistory_id", referencedColumnName = "id")})
     @MapKeyColumn(name = "product_id")
     @Column(name = "quantity")
-    private HashMap<Integer /*product id*/,Integer /*quantity*/> products;
+    private Map<Integer /*product id*/,Integer /*quantity*/> products;
     private double price;
     private Date date;
 
@@ -51,8 +51,7 @@ public class PurchaseHistory {
     }
     public String getDate() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String dateString = sdf.format(date);
-        return dateString;
+        return sdf.format(date);
     }
 
     public int getStoreId() {
@@ -119,11 +118,11 @@ public class PurchaseHistory {
         this.storeId = storeId;
     }
 
-    public HashMap<Integer, Integer> getProducts() {
+    public Map<Integer, Integer> getProducts() {
         return products;
     }
 
-    public void setProducts(HashMap<Integer, Integer> products) {
+    public void setProducts(Map<Integer, Integer> products) {
         this.products = products;
     }
 

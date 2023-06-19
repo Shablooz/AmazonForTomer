@@ -1,6 +1,5 @@
 package BGU.Group13B.backend.Repositories.Implementations.BasketReposistoryImpl;
 
-import BGU.Group13B.backend.Repositories.Implementations.UserPemissionRepositoryImpl.UserPermissionRepService;
 import BGU.Group13B.backend.Repositories.Interfaces.IBasketRepository;
 import BGU.Group13B.backend.User.Basket;
 import BGU.Group13B.backend.User.SetBasket;
@@ -12,9 +11,12 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Entity
 public class BasketRepositoryAsHashMap implements IBasketRepository {
+
+    private AtomicInteger idGenerator = new AtomicInteger(0);
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

@@ -27,25 +27,25 @@ import java.util.stream.Collectors;
 @IdClass(BasketId.class)
 public class Basket {
     @Id
-    private  int userId;
+    private int userId;
     @Id
-    private  int storeId;
+    private int storeId;
 
     @Transient
-    private  IBasketProductRepository basketProductRepository;
+    private IBasketProductRepository basketProductRepository;
     @Transient
-    private  IPurchaseHistoryRepository purchaseHistoryRepository;
+    private IPurchaseHistoryRepository purchaseHistoryRepository;
     @Transient
-    private  PaymentAdapter paymentAdapter;
+    private PaymentAdapter paymentAdapter;
     @Transient
-    private  DeliveryAdapter deliveryAdapter;
+    private DeliveryAdapter deliveryAdapter;
     @Transient
-    private  ConcurrentLinkedQueue<BasketProduct> successfulProducts;
+    private ConcurrentLinkedQueue<BasketProduct> successfulProducts;
     @Transient
-    private  ConcurrentLinkedQueue<BasketProduct> failedProducts;
+    private ConcurrentLinkedQueue<BasketProduct> failedProducts;
 
     @Transient
-    private  CalculatePriceOfBasket calculatePriceOfBasket;
+    private CalculatePriceOfBasket calculatePriceOfBasket;
     @Transient
     private ScheduledFuture<?> scheduledFuture;
     private int idealTime = 5;
@@ -66,6 +66,7 @@ public class Basket {
         this.purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
         deliveryAdapter = SingletonCollection.getDeliveryAdapter();
     }
+
     public Basket() {
         this.userId = 0;
         this.storeId = 0;
@@ -125,7 +126,7 @@ public class Basket {
         getSuccessfulProducts();
         //double totalAmount = getTotalAmount(productsCoupons);//fixme
         //calculate the total price of the products by the store discount policy
-        if(successfulProducts.isEmpty()) return Pair.of(-1.0, new LinkedList<>());
+        if (successfulProducts.isEmpty()) return Pair.of(-1.0, new LinkedList<>());
         finalPrice = calculateStoreDiscount(userInfo, coupons);
         return Pair.of(finalPrice, new LinkedList<>(successfulProducts));
     }
@@ -235,7 +236,7 @@ public class Basket {
 
         } else {
             getBasketProductRepository().addNewProductToBasket(productId, storeId, userId);
-            if(newPrice != -1)
+            if (newPrice != -1)
                 getBasketProductRepository().getBasketProduct(productId, storeId, userId).setPrice(newPrice);
             getBasketProductRepository().getBasketProduct(productId, storeId, userId).setQuantity(amount);
         }
@@ -250,7 +251,7 @@ public class Basket {
         return basketContent.toString();
     }
 
-    public void removeProduct(int productId){
+    public void removeProduct(int productId) {
         getBasketProductRepository().removeBasketProduct(productId, userId, storeId);
     }
 
@@ -309,8 +310,8 @@ public class Basket {
     }
 
     public void clearBasket() {
-        getBasketProductRepository().removeBasketProducts(storeId,userId);
-        getBasketProductRepository().dropBasket(storeId,userId);
+        getBasketProductRepository().removeBasketProducts(storeId, userId);
+        getBasketProductRepository().dropBasket(storeId, userId);
     }
 
 
@@ -326,7 +327,7 @@ public class Basket {
     }
 
     public IBasketProductRepository getBasketProductRepository() {
-        basketProductRepository =SingletonCollection.getBasketProductRepository();
+        basketProductRepository = SingletonCollection.getBasketProductRepository();
         return basketProductRepository;
     }
 
@@ -366,7 +367,6 @@ public class Basket {
     public void setFailedProducts(ConcurrentLinkedQueue<BasketProduct> failedProducts) {
         this.failedProducts = failedProducts;
     }
-
 
 
     public CalculatePriceOfBasket getCalculatePriceOfBasket() {

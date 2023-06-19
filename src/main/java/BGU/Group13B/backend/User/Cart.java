@@ -5,22 +5,35 @@ import BGU.Group13B.backend.Repositories.Interfaces.IBasketRepository;
 import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
 import BGU.Group13B.service.SingletonCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
 
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.*;
 
-
+@Entity
 public class Cart {
 
-    private  IBasketRepository basketRepository;
-    private final int userId;
-    private final CalculatePriceOfBasket calculatePriceOfBasket;
+    @Transient
+    private IBasketRepository basketRepository;
+    @Id
+    private int userId;
+
+    @Transient
+    private CalculatePriceOfBasket calculatePriceOfBasket;
 
     public Cart(int userId) {
         this.basketRepository = SingletonCollection.getBasketRepository();
         this.userId = userId;
+        this.calculatePriceOfBasket = SingletonCollection.getCalculatePriceOfBasket();
+    }
+
+    public Cart() {
+        this.userId = 42000;
+        this.basketRepository = SingletonCollection.getBasketRepository();
         this.calculatePriceOfBasket = SingletonCollection.getCalculatePriceOfBasket();
     }
 
@@ -53,7 +66,7 @@ public class Cart {
         double totalPrice = 0;
         for (var basket : userBaskets) {
             var transaction = basket.startPurchaseBasketTransactionWithSuccessful(userInfo, coupons);
-            if(transaction.getFirst() == -1) continue;//in case the store has been deleted
+            if (transaction.getFirst() == -1) continue;//in case the store has been deleted
             totalPrice += transaction.getFirst();
             successfulProducts.addAll(transaction.getSecond());
         }
@@ -101,7 +114,8 @@ public class Cart {
             getBasketRepository().addUserBasket(userId, storeId).addProduct(productId, amount, price);
         }
     }
-    public void addProductToCart(int productId, int storeId){
+
+    public void addProductToCart(int productId, int storeId) {
         addProductToCart(productId, storeId, 1, -1);
     }
 
@@ -182,20 +196,22 @@ public class Cart {
             basket.cancelPurchase();
         }
     }
+
     public IBasketRepository getBasketRepository() {
-        basketRepository= SingletonCollection.getBasketRepository();
+        basketRepository = SingletonCollection.getBasketRepository();
         return basketRepository;
     }
 
     public void clearCart() {
         getBasketRepository().clearUserBaskets(userId);
     }
+
     public void removeBasketProducts(List<Pair<Integer, Integer>> productStoreList) {
-        for(var productStore : productStoreList){
+        for (var productStore : productStoreList) {
             int storeId = productStore.getFirst();
             int productId = productStore.getSecond();
-            for(var basket : getBasketRepository().getUserBaskets(userId)){
-                if(basket.getStoreId() == storeId){
+            for (var basket : getBasketRepository().getUserBaskets(userId)) {
+                if (basket.getStoreId() == storeId) {
                     basket.removeProduct(productId);
                 }
             }
@@ -203,5 +219,23 @@ public class Cart {
     }
 
 
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
 
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setBasketRepository(IBasketRepository basketRepository) {
+        this.basketRepository = basketRepository;
+    }
+
+    public CalculatePriceOfBasket getCalculatePriceOfBasket() {
+        return calculatePriceOfBasket;
+    }
+
+    public void setCalculatePriceOfBasket(CalculatePriceOfBasket calculatePriceOfBasket) {
+        this.calculatePriceOfBasket = calculatePriceOfBasket;
+    }
 }

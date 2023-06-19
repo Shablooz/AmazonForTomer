@@ -24,22 +24,21 @@ import java.util.Timer;
 
 /**
  * The entry point of the Spring Boot application.
- *
+ * <p>
  * Use the @PWA annotation make the application installable on phones, tablets
  * and some desktop browsers.
- *
  */
 @SpringBootApplication
 @Theme(value = "trading-system", variant = Lumo.DARK)
 @ComponentScan(basePackages = "BGU.Group13B")
-@EnableJpaRepositories(basePackages = {"BGU.Group13B.frontEnd","BGU.Group13B.backend"})
+@EnableJpaRepositories(basePackages = {"BGU.Group13B.frontEnd", "BGU.Group13B.backend"})
 @Push
-@EntityScan(basePackages = {"BGU.Group13B.backend","BGU.Group13B.frontEnd","BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl"})
+@EntityScan(basePackages = {"BGU.Group13B.backend", "BGU.Group13B.frontEnd", "BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl"})
 public class Application implements AppShellConfigurator {
     public static void main(String[] args) {
         //timer for deleting idle sessions
         //running the ui
-        ConfigurableApplicationContext context =SpringApplication.run(Application.class, args);
+        ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);
 
         SingletonCollection.setContext(context);
         //TODO load all repositories from db to memory
@@ -50,14 +49,11 @@ public class Application implements AppShellConfigurator {
         SingletonCollection.setStoreRepository();
         SingletonCollection.setStorePermissionRepository();
         SingletonCollection.setStoreScoreRepository();
-        SingletonCollection.setUserRepository();
         SingletonCollection.setUserPermissionRepository();
         SingletonCollection.setBasketRepository();
-
-
-
-        if(SingletonCollection.getUserRepository().getUser(1)==null)
-        {
+        SingletonCollection.setBasketProductRepository();
+        SingletonCollection.setUserRepository();
+        if (SingletonCollection.getUserRepository().getUser(1) == null) {
             int id = 1;
             SingletonCollection.getUserRepository().addUser(id, new User(id));
             SingletonCollection.getSession().register(id, "kingOfTheSheep", "SheePLover420",
@@ -74,7 +70,6 @@ public class Application implements AppShellConfigurator {
 //        System.out.println(service.getNoder(1));
 
 
-
         SingletonCollection.setConditionRepository();
         SingletonCollection.setDiscountaccuRepository();
         SingletonCollection.setDiscountRepository();
@@ -84,7 +79,6 @@ public class Application implements AppShellConfigurator {
         SingletonCollection.setPurchaseHistoryRepository();
         ConfigurationFileParser.parse();
     }
-
 
 
 }

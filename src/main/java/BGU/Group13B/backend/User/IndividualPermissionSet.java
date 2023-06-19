@@ -12,7 +12,7 @@ public class IndividualPermissionSet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name ="IndividualPermission")
     private Set<UserPermissions.IndividualPermission> individualPermissions;
 

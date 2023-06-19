@@ -1,8 +1,5 @@
 package BGU.Group13B.backend.storePackage;
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.util.Objects;
 import java.util.Set;
@@ -16,7 +13,7 @@ public class BID implements Comparable<BID>{
     private double newProductPrice;
     private int amount;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name ="managerIds_collection")
         private Set<Integer/*managerIds*/> approvedBy;
     private volatile boolean rejected = false;

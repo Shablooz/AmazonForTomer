@@ -462,90 +462,90 @@ public class SingletonCollection {
         return messageRepository;
     }
 
-    public static IProductRepository getProductRepository() {
+    public synchronized static IProductRepository getProductRepository() {
         return productRepository;
     }
 
-    public static IPurchaseHistoryRepository getPurchaseHistoryRepository() {
+    public synchronized static IPurchaseHistoryRepository getPurchaseHistoryRepository() {
         return purchaseHistoryRepository;
     }
 
-    public static IRepositoryReview getReviewRepository() {
+    public synchronized static IRepositoryReview getReviewRepository() {
         return reviewRepository;
     }
 
-    public static IStoreMessagesRepository getStoreMessagesRepository() {
+    public synchronized static IStoreMessagesRepository getStoreMessagesRepository() {
         return storeMessagesRepository;
     }
 
-    public static IStoreRepository getStoreRepository() {
+    public synchronized static IStoreRepository getStoreRepository() {
         return storeRepository;
     }
 
-    public static IUserRepository getUserRepository() {
+    public synchronized static IUserRepository getUserRepository() {
         return userRepository;
     }
 
-    public static PaymentAdapter getPaymentAdapter() {
+    public synchronized static PaymentAdapter getPaymentAdapter() {
         return paymentAdapter;
     }
 
-    public static Searcher getSearcher() {
+    public synchronized static Searcher getSearcher() {
         return searcher;
     }
 
-    public static CalculatePriceOfBasket getCalculatePriceOfBasket() {
+    public synchronized static CalculatePriceOfBasket getCalculatePriceOfBasket() {
         return calculatePriceOfBasket;
     }
 
-    public static IBasketRepository getBasketRepository() {
+    public synchronized static IBasketRepository getBasketRepository() {
         return basketRepository;
     }
 
-    public static Market getMarket() {
+    public synchronized static Market getMarket() {
         return market;
     }
 
 
-    public static IAuctionRepository getAuctionRepository() {
+    public synchronized static IAuctionRepository getAuctionRepository() {
         return auctionRepository;
     }
 
-    public static IBasketProductRepository getBasketProductRepository() {
+    public synchronized static IBasketProductRepository getBasketProductRepository() {
         return basketProductRepository;
     }
 
-    public static IStoreScore getStoreScoreRepository() {
+    public synchronized static IStoreScore getStoreScoreRepository() {
         return storeScoreRepository;
     }
 
 
-    public static IStorePermissionsRepository getStorePermissionRepository() {
+    public synchronized static IStorePermissionsRepository getStorePermissionRepository() {
         return storePermissionRepository;
     }
 
-    public static IUserPermissionRepository getUserPermissionRepository() {
+    public synchronized static IUserPermissionRepository getUserPermissionRepository() {
         return userPermissionRepository;
     }
 
-    public static IDiscountRepository getDiscountRepository() {
+    public synchronized static IDiscountRepository getDiscountRepository() {
         return discountRepository;
     }
 
-    public static IDiscountAccumulationRepository getDiscountAccumulationRepository() {
+    public synchronized static IDiscountAccumulationRepository getDiscountAccumulationRepository() {
 
         return discountAccumulationRepository;
     }
 
-    public static IConditionRepository getConditionRepository() {
+    public synchronized static IConditionRepository getConditionRepository() {
         return conditionRepository;
     }
 
-    public static IStoreDiscountRootsRepository getStoreDiscountRootsRepository() {
+    public synchronized static IStoreDiscountRootsRepository getStoreDiscountRootsRepository() {
         return storeDiscountRootsRepository;
     }
 
-    public static IDailyUserTrafficRepository getDailyUserTrafficRepository() {
+    public synchronized static IDailyUserTrafficRepository getDailyUserTrafficRepository() {
         return dailyUserTrafficRepository;
     }
 
@@ -555,14 +555,14 @@ public class SingletonCollection {
         return session;
     }
 
-    public static IPurchasePolicyRootsRepository getPurchasePolicyRootsRepository() {
+    public synchronized static IPurchasePolicyRootsRepository getPurchasePolicyRootsRepository() {
         return purchasePolicyRootsRepository;
     }
 
     /**
      * <h1>setters (for callbacks)</h1>
      */
-    public static void setAddToUserCart(AddToUserCart addToUserCart) {
+    public  static void setAddToUserCart(AddToUserCart addToUserCart) {
         SingletonCollection.addToUserCart = addToUserCart;
     }
 

@@ -95,6 +95,7 @@ class BasketTest {
                 Mockito.anyString())).thenReturn(success);
     }
 
+
     private void initBasket() {
         basket = new Basket(userId, storeId, basketProductRepository, purchaseHistoryRepository, paymentAdapter,
                calculatePriceOfBasket, deliveryAdapter);
@@ -139,8 +140,12 @@ class BasketTest {
                     Thread.sleep(100);
                 payBehaviour(true);
                 deliveryBehaviour(true);
+
+                System.out.println("[DEBUG] thread1 is purchasing");
                 pricePayed3.set(basket3.purchaseBasket("", "", "",
                         "", "", "", new HashMap<>(), ""));
+                System.out.println("[DEBUG] thread1 finished purchasing");
+
             } catch (PurchaseFailedException e) {
                 Assertions.assertEquals("total price must be 2.0-100.0", e.getMessage());
             } catch (InterruptedException e) {
@@ -154,11 +159,14 @@ class BasketTest {
                 payBehaviour(true);
                 deliveryBehaviour(true);
 
+                System.out.println("[DEBUG] thread2 is purchasing");
                 pricePayed2.set(basket2.purchaseBasket("", "", "", "", "", "", new HashMap<>(), ""));
+                System.out.println("[DEBUG] thread2 finished purchasing");
+
             } catch (PurchaseFailedException e) {
                 Assertions.assertEquals("total price must be 2.0-100.0", e.getMessage());
 
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 Assertions.fail(e);
             }
         });

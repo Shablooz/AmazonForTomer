@@ -13,7 +13,7 @@ public class StoreScoreImplNotPer implements IStoreScore {
     @Id
     private int id;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "StoreScoreImplNotPer_scores",
             joinColumns = {@JoinColumn(name = "StoreScoreImplNotPer_id", referencedColumnName = "id")})
     @MapKeyColumn(name = "userId")
