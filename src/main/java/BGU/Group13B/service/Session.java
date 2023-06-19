@@ -131,7 +131,7 @@ public class Session implements ISession {
                             address, city, country, zip);
             LOGGER_INFO.info("User " + userId + " purchased cart successfully");
             return Response.success();
-        } catch (PurchaseFailedException | NoPermissionException e) {
+        } catch (Exception e) {
             LOGGER_ERROR.severe("User " + userId + " failed to purchase cart");
             return Response.exception(e);
         }

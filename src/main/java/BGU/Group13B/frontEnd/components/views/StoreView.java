@@ -309,20 +309,41 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
 
     private void getData(){
         //isAdmin
-        isAdmin = handleResponse(session.isAdmin(userId), "");
+        Boolean isAdmin = handleResponse(session.isAdmin(userId), "");
+        if(isAdmin == null){
+            terminate = true;
+            return;
+        }
+        this.isAdmin = isAdmin;
 
         //isHidden
-        isHidden = handleResponse(session.isStoreHidden(storeId), "");
+        Boolean isHidden = handleResponse(session.isStoreHidden(storeId), "");
+        if(isHidden == null){
+            terminate = true;
+            return;
+        }
+        this.isHidden = isHidden;
 
         //products
         products = handleResponse(session.getAllStoreProductsInfo(userId, storeId), "");
+        if(products == null){
+            terminate = true;
+            return;
+        }
 
         //workers
         workers = handleResponse(session.getStoreWorkersInfo(1 /*mafhhhiiddd*/, storeId), "");
+        if(workers == null){
+            terminate = true;
+            return;
+        }
 
         //userIdToUsername
         List<Integer> userIds = workers.stream().map(WorkerCard::userId).collect(Collectors.toList());
         userIdToUsername = handleResponse(session.getUserIdsToUsernamesMapper(userIds), "");
+        if(userIdToUsername == null){
+            terminate = true;
+        }
     }
 
     private double getRoundedScore(double score){
