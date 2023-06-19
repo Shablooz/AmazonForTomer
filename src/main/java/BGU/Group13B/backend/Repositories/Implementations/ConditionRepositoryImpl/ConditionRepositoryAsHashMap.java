@@ -250,7 +250,7 @@ public class ConditionRepositoryAsHashMap implements IConditionRepository {
     }
 
     private void save(){
-        if(saveMode)
+        if(saveMode && SingletonCollection.databaseExists())
             SingletonCollection.getContext().getBean(ConditionRepositoryAsHashMapService.class).save(this);
     }
 }

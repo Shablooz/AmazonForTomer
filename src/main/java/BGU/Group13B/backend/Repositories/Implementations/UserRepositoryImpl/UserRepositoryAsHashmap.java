@@ -143,7 +143,7 @@ public class UserRepositoryAsHashmap implements IUserRepository {
         return userCards;
     }
     public void save(){
-        if(saveMode)
+        if(saveMode && SingletonCollection.databaseExists())
             SingletonCollection.getContext().getBean(UserRepoService.class).save(this);
     }
 

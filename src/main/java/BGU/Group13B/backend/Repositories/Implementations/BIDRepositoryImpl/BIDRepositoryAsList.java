@@ -110,7 +110,7 @@ public class BIDRepositoryAsList implements IBIDRepository {
     }
 
     private void save(){
-        if(saveMode)
+        if(saveMode&& SingletonCollection.databaseExists())
             SingletonCollection.getContext().getBean(BIDRepositoryAsListService.class).save(this);
 
     }

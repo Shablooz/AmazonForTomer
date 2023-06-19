@@ -62,7 +62,7 @@ public class PurchasePolicyRootsRepositoryAsHashMap implements IPurchasePolicyRo
     }
 
     private void save(){
-        if(saveMode)
+        if(saveMode && SingletonCollection.databaseExists())
             SingletonCollection.getContext().getBean(PurchasePolicyRootsRepositoryAsHashMapService.class).save(this);
     }
 

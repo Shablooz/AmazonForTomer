@@ -61,7 +61,7 @@ public class StorePermissionsRepositoryAsHashmap implements IStorePermissionsRep
     }
 
     public void save(){
-        if(saveMode)
+        if(saveMode && SingletonCollection.databaseExists())
             SingletonCollection.getContext().getBean(StorePermissionsRepositoryAsHashmapService.class).save(this);
     }
 

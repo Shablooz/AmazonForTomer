@@ -606,7 +606,7 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void register(int userId, String username, String password, String email, String answer1, String answer2, String answer3, LocalDate dateOfBirth) {
+    public void register(int userId, String username, String password, String email, String answer1, String answer2, String answer3, LocalDateTime dateOfBirth) {
         if (realSession != null)
             realSession.register(userId, username, password, email, answer1, answer2, answer3, dateOfBirth);
     }

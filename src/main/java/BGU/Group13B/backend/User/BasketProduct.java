@@ -1,6 +1,7 @@
 package BGU.Group13B.backend.User;
 
 import BGU.Group13B.backend.storePackage.Product;
+import BGU.Group13B.service.SingletonCollection;
 import jakarta.persistence.*;
 
 @Entity
@@ -67,7 +68,7 @@ public class BasketProduct {
     }
 
     public Product getProduct() {
-        return product;
+        return SingletonCollection.getProductRepository().getProductById(product.getProductId());
     }
 
     public double getSubtotal() {
@@ -89,5 +90,6 @@ public class BasketProduct {
 
     public void setProduct(Product product) {
         this.product = product;
+
     }
 }

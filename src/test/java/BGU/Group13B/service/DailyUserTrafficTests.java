@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -60,7 +61,7 @@ public class DailyUserTrafficTests extends ProjectTest{
         int id = session.enterAsGuest();
         String username = "UserName12342";
         String password = "Password12342";
-        session.register(id, username, password, "test@gmail.com", "", "", "", LocalDate.now());
+        session.register(id, username, password, "test@gmail.com", "", "", "", LocalDateTime.now());
         session.login(id, username, password, "", "", "");
         var traffic = handleResponse(session.getUserTrafficOfRange(userIds[UsersIndex.ADMIN.ordinal()], LocalDate.now(), LocalDate.now()));
         assertEquals(baseGuests, traffic.numOfGuests());
@@ -77,7 +78,7 @@ public class DailyUserTrafficTests extends ProjectTest{
             int id = session.enterAsGuest();
             String username = "UserName12342" + id;
             String password = "Password12342" + id;
-            session.register(id, username, password, "test" + id + "@gmail.com", "", "", "", LocalDate.now());
+            session.register(id, username, password, "test" + id + "@gmail.com", "", "", "", LocalDateTime.now());
             session.login(id, username, password, "", "", "");
         }
         var traffic = handleResponse(session.getUserTrafficOfRange(userIds[UsersIndex.ADMIN.ordinal()], LocalDate.now(), LocalDate.now()));

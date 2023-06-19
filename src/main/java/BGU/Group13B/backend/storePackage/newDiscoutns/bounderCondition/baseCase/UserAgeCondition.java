@@ -39,7 +39,7 @@ public class UserAgeCondition extends Condition {
 
     @Override
     public void satisfied(BasketInfo basketInfo, UserInfo user) throws PurchaseExceedsPolicyException {
-        int userAge = user.dateOfBirth().until(LocalDate.now()).getYears();
+        int userAge = user.dateOfBirth().toLocalDate().until(LocalDate.now()).getYears();
         if(!ageBounder.inBounds(userAge))
             throw new PurchaseExceedsPolicyException("user age must be " + ageBounder);
     }

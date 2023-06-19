@@ -110,7 +110,7 @@ public class PurchaseHistoryRepositoryAsList implements IPurchaseHistoryReposito
     }
 
     private void save(){
-        if(saveMode)
+        if(saveMode && SingletonCollection.databaseExists())
             SingletonCollection.getContext().getBean(PurchaseHistoryRepositoryAsListService.class).save(this);
     }
 

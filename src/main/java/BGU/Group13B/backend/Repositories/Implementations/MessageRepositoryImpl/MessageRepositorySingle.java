@@ -118,7 +118,7 @@ public class MessageRepositorySingle implements IMessageRepository {
             readMessages.putIfAbsent(receiverId, new DequeMessage());
     }
     public void save(){
-        if(saveMode)
+        if(saveMode && SingletonCollection.databaseExists())
             SingletonCollection.getContext().getBean(MessageRepositorySingleService.class).save(this);
     }
     public void setSaveMode(boolean saved) {

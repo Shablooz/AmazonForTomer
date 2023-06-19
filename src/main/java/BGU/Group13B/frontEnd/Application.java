@@ -21,6 +21,7 @@ import static BGU.Group13B.service.SingletonCollection.setPurchaseHistoryReposit
 import static java.lang.Thread.sleep;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Timer;
 import java.util.logging.Logger;
 
@@ -44,11 +45,11 @@ public class Application implements AppShellConfigurator {
     }
 
     public static void main(String[] args) {
+        LOGGER_INFO.info(String.valueOf(SingletonCollection.databaseExists()));
 
         //timer for deleting idle sessions
         //running the ui
         ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);
-
         SingletonCollection.setContext(context);
         //TODO load all repositories from db to memory
         SingletonCollection.setSession();
@@ -62,13 +63,12 @@ public class Application implements AppShellConfigurator {
         SingletonCollection.setBasketRepository();
         SingletonCollection.setBasketProductRepository();
         SingletonCollection.setMessageRepository();
-        SingletonCollection.setStoreMessagesRepository();
-        SingletonCollection.setUserRepository();
+
         if (SingletonCollection.getUserRepository().getUser(1) == null) {
             int id = 1;
             SingletonCollection.getUserRepository().addUser(id, new User(id));
             SingletonCollection.getSession().register(id, "kingOfTheSheep", "SheePLover420",
-                    "mrsheep@gmail.com", "11", "11", "11", LocalDate.MIN);
+                    "mrsheep@gmail.com", "11", "11", "11", LocalDateTime.now().minusYears(100));
         }
 
 
@@ -88,13 +88,14 @@ public class Application implements AppShellConfigurator {
         SingletonCollection.setPurchasePolicyRootsRepository();
         SingletonCollection.setBidRepository();
         SingletonCollection.setPurchaseHistoryRepository();
-
+        SingletonCollection.setStoreMessagesRepository();
+        SingletonCollection.setUserRepository();
         SingletonCollection.getUserRepository().logoutAllUsers();
         ConfigurationFileParser.parse();
         SingletonCollection.getUserRepository().logoutAllUsers();
 
         LOGGER_INFO.info("Application finished loading up 🐑");
-
+        LOGGER_INFO.info(String.valueOf(SingletonCollection.databaseExists()));
 
     }
 
