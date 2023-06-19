@@ -94,6 +94,7 @@ public class UserPermissions {
 
     public void setUserPermissionStatus(UserPermissionStatus userPermissionStatus) {
         this.userPermissionStatus = userPermissionStatus;
+        save();
     }
     public Set<IndividualPermission> getIndividualPermissions(int storeId){
         return userIndividualPermission.get(storeId).getIndividualPermissions();
@@ -104,7 +105,6 @@ public class UserPermissions {
         if(id == 1) {
             this.setUserPermissionStatus(UserPermissionStatus.ADMIN);
         }
-        save(); //TODO: check if this is needed
     }
 
     public void updateRoleInStore(int storeId, StoreRole storeRole){

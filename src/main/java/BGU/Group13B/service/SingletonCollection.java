@@ -145,8 +145,12 @@ public class SingletonCollection {
 
 
         //adapters
-        deliveryAdapter = new PaymentAPI();
-        paymentAdapter = new PaymentAPI();
+        //deliveryAdapter = new PaymentAPI();
+        //paymentAdapter = new PaymentAPI();
+
+        paymentAdapter = (a,b,c,d,e,f) -> true;
+        deliveryAdapter = (a,b,c,d,e) -> true;
+
 
 
         //additional classes
