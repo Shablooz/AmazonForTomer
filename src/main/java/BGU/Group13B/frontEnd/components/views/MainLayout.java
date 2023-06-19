@@ -546,7 +546,7 @@ public class MainLayout extends AppLayout implements ResponseHandler {
         if (session.getUserStatus(USERID).equals("")){
             Notification errorNotification = Notification.show("you messed up big time");
             errorNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
-            navigate("deleted");
+            //navigate("deleted");
             VaadinSession.getCurrent().getSession().invalidate();
         }
         if (session.getUserStatus(USERID).equals(ADMIN)) {
