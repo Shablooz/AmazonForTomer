@@ -78,7 +78,7 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public Response<VoidResponse> addOwner(int userId, int newOwnerId, int storeId) {
+    public Response<List<Integer>> addOwner(int userId, int newOwnerId, int storeId) {
         if (realSession != null)
             return realSession.addOwner(userId, newOwnerId, storeId);
         return null;
@@ -525,7 +525,7 @@ public class ProxySession implements ISession {
             return realSession.removeMember(adminId, userId);
         return null;
     }
-  
+
     public Response<double[]> getStoreHistoryIncome(int storeId, int userId, LocalDate from, LocalDate to) {
         if(realSession != null)
             return realSession.getStoreHistoryIncome(storeId, userId, from, to);
@@ -548,15 +548,17 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void purchaseProposalApprove(int managerId, int storeId, int productId) throws NoPermissionException {
+    public Response<VoidResponse> purchaseProposalApprove(int managerId, int storeId, int productId) throws NoPermissionException {
         if (realSession != null)
             realSession.purchaseProposalApprove(managerId, storeId, productId);
+        return Response.success(new VoidResponse());
     }
 
     @Override
-    public void purchaseProposalReject(int storeId, int managerId, int bidId) throws NoPermissionException {
+    public Response<VoidResponse> purchaseProposalReject(int storeId, int managerId, int bidId) throws NoPermissionException {
         if (realSession != null)
             realSession.purchaseProposalReject(storeId, managerId, bidId);
+        return Response.success(new VoidResponse());
     }
 
     @Override
@@ -1093,10 +1095,10 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public int getStoreFounder(int storeId) {
+    public Response<Integer> getStoreFounder(int storeId) {
         if (realSession != null)
             return realSession.getStoreFounder(storeId);
-        return -1;
+        return null;
     }
 
     @Override
@@ -1142,6 +1144,20 @@ public class ProxySession implements ISession {
     public Response<String> getUserNameRes(int userId){
         if (realSession != null)
             return realSession.getUserNameRes(userId);
+        return null;
+    }
+
+    @Override
+    public Response<VoidResponse> voteForOwner(Pair<Integer, Integer> newAndAppointerIds, int voterId, boolean accept, int storeId) {
+        if (realSession != null)
+            return realSession.voteForOwner(newAndAppointerIds, voterId, accept, storeId);
+        return null;
+    }
+
+    @Override
+    public Response<List<Pair<Integer, Integer>>> getMyOpenVotes(int userId, int storeId){
+        if (realSession != null)
+            return realSession.getMyOpenVotes(userId, storeId);
         return null;
     }
 

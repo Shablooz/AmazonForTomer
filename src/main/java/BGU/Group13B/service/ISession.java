@@ -94,9 +94,9 @@ public interface ISession {
     Response<VoidResponse> purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount);
 
 
-    void purchaseProposalApprove(int managerId, int storeId, int productId) throws NoPermissionException;
+    Response<VoidResponse> purchaseProposalApprove(int managerId, int storeId, int productId) throws NoPermissionException;
 
-    void purchaseProposalReject(int storeId, int managerId, int bidId) throws NoPermissionException;
+    Response<VoidResponse> purchaseProposalReject(int storeId, int managerId, int bidId) throws NoPermissionException;
 
     /**
      * #51
@@ -799,7 +799,7 @@ public interface ISession {
 
     Response<VoidResponse> fetchMessages(int userId);
 
-    int getStoreFounder(int storeId);
+    Response<Integer> getStoreFounder(int storeId);
 
     Response<Pair<Double, List<ServiceBasketProduct>>> startPurchaseBasketTransaction(int userId, List<String> coupons) throws PurchaseFailedException;
 
@@ -822,8 +822,15 @@ public interface ISession {
      * @param storeId    the id of the store the new owner will own
      *                   as an owner/founder you can add other users as store owners in your store
      */
-    Response<VoidResponse> addOwner(int userId, int newOwnerId, int storeId);
+    Response<List<Integer>> addOwner(int userId, int newOwnerId, int storeId);
 
+    /**
+     *
+     */
+    Response<VoidResponse> voteForOwner(Pair<Integer, Integer> newAndAppointerIds, int voterId, boolean accept, int storeId);
+
+
+    Response<List<Pair<Integer, Integer>>> getMyOpenVotes(int userId, int storeId);
     /**
      * #XX
      * require XXX?

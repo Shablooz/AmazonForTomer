@@ -42,9 +42,9 @@ public class MainLayout extends AppLayout implements ResponseHandler {
     private final Session session;
     private int USERID = 0;
 
-    private final String MEMBER = "Member";
-    private final String ADMIN = "Admin";
-    private final String GUEST = "Guest";
+    private final String MEMBER = "MEMBER";
+    private final String ADMIN = "ADMIN";
+    private final String GUEST = "GUEST";
 
     private Button loginButton = null;
 
@@ -170,7 +170,7 @@ public class MainLayout extends AppLayout implements ResponseHandler {
         HorizontalLayout rightAlignment = new HorizontalLayout();
         Button messageButton = messageDialog();
 
-        if (session.isUserLogged(USERID))
+        if (handleResponseDeleted(session.isUserLoggedRES(USERID)))
             rightAlignment.add(messageButton);
 
         rightAlignment.setJustifyContentMode(FlexLayout.JustifyContentMode.END);
@@ -193,7 +193,7 @@ public class MainLayout extends AppLayout implements ResponseHandler {
         prepareLoginButton(flexLayout);
         prepareLogoutButton(flexLayout);
         prepareSignUpButton(flexLayout);
-        if (!session.isUserLogged(SessionToIdMapper.getInstance().getCurrentSessionId())) {
+        if (!handleResponseDeleted(session.isUserLoggedRES(SessionToIdMapper.getInstance().getCurrentSessionId()))) {
             logoutButton.setVisible(false);
         } else {
             loginButton.setVisible(false);
@@ -543,6 +543,12 @@ public class MainLayout extends AppLayout implements ResponseHandler {
         buttonsLayout.add(newMessagesButton, oldMessagesButton, openComplaintsButton);
         currentDialog.add(buttonsLayout);
 
+        if (session.getUserStatus(USERID).equals("")){
+            Notification errorNotification = Notification.show("you messed up big time");
+            errorNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+            navigate("deleted");
+            VaadinSession.getCurrent().getSession().invalidate();
+        }
         if (session.getUserStatus(USERID).equals(ADMIN)) {
             buttonsLayout.add(showComplaintsButton, sendMessageButton);
         }
@@ -570,7 +576,7 @@ public class MainLayout extends AppLayout implements ResponseHandler {
         nav.addItem(new AppNavItem("All Stores", AllStoresView.class, LineAwesomeIcon.STORE_ALT_SOLID.create()));
 
         //my stores
-        if (session.isUserLogged(SessionToIdMapper.getInstance().getCurrentSessionId())) {
+        if (handleResponseDeleted(session.isUserLoggedRES(SessionToIdMapper.getInstance().getCurrentSessionId()))) {
             nav.addItem(new AppNavItem("My Stores", MyStoresView.class, LineAwesomeIcon.STORE_SOLID.create()));
             nav.addItem(new AppNavItem("Purchase History", PurchaseHistoryView.class, LineAwesomeIcon.HISTORY_SOLID.create()));
         }
@@ -604,11 +610,21 @@ public class MainLayout extends AppLayout implements ResponseHandler {
     protected void afterNavigation() {
         super.afterNavigation();
         viewTitle.setText(getCurrentPageTitle());
-        if (session.isUserLogged(SessionToIdMapper.getInstance().getCurrentSessionId())) {
+        if (handleResponseDeleted(session.isUserLoggedRES(SessionToIdMapper.getInstance().getCurrentSessionId()))) {
             this.loginButton.setVisible(false);
             this.signUpButton.setVisible(false);
             this.logoutButton.setVisible(true);
         }
+    }
+
+    private <T> T handleResponseDeleted(Response<T> response) {
+        if (response.didntSucceed()) {
+            Notification errorNotification = Notification.show("Error: " + response.getMessage());
+            errorNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+            navigate("deleted");
+            VaadinSession.getCurrent().getSession().invalidate();
+        }
+        return response.getData();
     }
 
     private String getCurrentPageTitle() {
