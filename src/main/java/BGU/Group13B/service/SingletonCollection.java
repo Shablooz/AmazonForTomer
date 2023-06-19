@@ -217,6 +217,7 @@ public class SingletonCollection {
         conditionRepository = new ConditionRepositoryAsHashMap();
         storeDiscountRootsRepository = new StoreDiscountRootsRepositoryAsHashMap();
         purchasePolicyRootsRepository = new PurchasePolicyRootsRepositoryAsHashMap();
+        dailyUserTrafficRepository = new DailyUserTrafficRepositoryAsList();
         //adapters
 
         setSaveMode(saveMode);

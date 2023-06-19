@@ -1,6 +1,7 @@
 package BGU.Group13B.backend.storePackage;
 
 
+import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyImpl.StoreMessageRepositoryNonPersist;
 import BGU.Group13B.backend.Repositories.Implementations.StorePermissionsRepositoryImpl.StorePermissionsRepositoryAsHashmap;
 import BGU.Group13B.backend.Repositories.Interfaces.*;
@@ -157,11 +158,34 @@ public class Store {
     @DefaultFounderFunctionality
     @DefaultOwnerFunctionality
     @StaffPermission
-    public void addOwner(int userId, int newOwnerId) throws NoPermissionException, ChangePermissionException {
+    public List<Integer> addOwner(int userId, int newOwnerId) throws NoPermissionException, ChangePermissionException {
         if (!this.getStorePermission().checkPermission(userId, hidden))
             throw new NoPermissionException("User " + userId + " has no permission to add an owner to store " + this.storeId);
-        getStorePermission().addOwnerPermission(newOwnerId, userId);
-        getUserRepo().getUser(newOwnerId).addPermission(storeId, UserPermissions.StoreRole.OWNER);
+        List<Integer> list = getStorePermission().newVoteOwnerPermission(newOwnerId, userId);
+        Pair<Integer, Integer> pair = new Pair<>(newOwnerId, userId);
+        voteForOwner(pair, userId, true);
+        return list;
+    }
+
+    @DefaultFounderFunctionality
+    @DefaultOwnerFunctionality
+    @StaffPermission
+    public void voteForOwner(Pair<Integer, Integer> newAndAppointerIds, int voterId, boolean accept) throws NoPermissionException, ChangePermissionException {
+        if (!this.getStorePermission().checkPermission(voterId, hidden))
+            throw new NoPermissionException("User " + voterId + " has no permission to vote for an owner to store " + this.storeId);
+        if(getStorePermission().updateVote(newAndAppointerIds, voterId, accept)){
+            getStorePermission().addOwnerPermission(newAndAppointerIds.getFirst(), newAndAppointerIds.getSecond());
+            getUserRepo().getUser(newAndAppointerIds.getFirst()).addPermission(storeId, UserPermissions.StoreRole.OWNER);
+        }
+    }
+
+    @DefaultFounderFunctionality
+    @DefaultOwnerFunctionality
+    @StaffPermission
+    public List<Pair<Integer, Integer>> getMyOpenVotes(int userId) throws NoPermissionException {
+        if (!this.getStorePermission().checkPermission(userId, hidden))
+            throw new NoPermissionException("User " + userId + " has no permission to view votes in store " + this.storeId);
+        return getStorePermission().getMyOpenVotes(userId);
     }
 
     @DefaultFounderFunctionality

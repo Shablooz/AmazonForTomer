@@ -19,6 +19,8 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +31,7 @@ import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY_INLIN
 
 @PageTitle("All Stores")
 @Route(value = "allstores", layout = MainLayout.class)
-public class AllStoresView extends VerticalLayout{
+public class AllStoresView extends VerticalLayout implements BeforeEnterObserver {
 
     private final int userId = SessionToIdMapper.getInstance().getCurrentSessionId();
     private int selectedStoreId = -1;
@@ -45,6 +47,9 @@ public class AllStoresView extends VerticalLayout{
     public AllStoresView(Session session){
         super();
         this.session = session;
+    }
+
+    private void start(){
         enterStoreButton.setEnabled(false);
         add(new H1("All Stores"));
         List<StoreInfo> storeInfos = handleResponse(session.getAllStoresTheUserCanView(userId));
@@ -199,5 +204,16 @@ public class AllStoresView extends VerticalLayout{
 
     private void navigate(String nav) {
         UI.getCurrent().navigate(nav);
+    }
+
+    @Override
+    public void beforeEnter(BeforeEnterEvent event) {
+        /*if(!handleResponse(session.isUserLoggedRES(userId))){ //probably only crash because of main layout
+            event.rerouteTo("");
+            return;
+        }*/
+        start();
+
+
     }
 }

@@ -66,7 +66,10 @@ public class Cart {
         double totalPrice = 0;
         for (var basket : userBaskets) {
             var transaction = basket.startPurchaseBasketTransactionWithSuccessful(userInfo, coupons);
-            if (transaction.getFirst() == -1) continue;//in case the store has been deleted
+            if (transaction.getFirst() == -1){ //in case there were no successful products
+                basketRepository.removeUserBasket(userId, basket.getStoreId());
+                continue;
+            }
             totalPrice += transaction.getFirst();
             successfulProducts.addAll(transaction.getSecond());
         }
@@ -84,11 +87,18 @@ public class Cart {
         if (userBaskets.isEmpty()) {
             throw new NoSuchElementException("No baskets in cart");
         }
+        boolean purchasedBasket = false;
         for (var basket : userBaskets) {
+            if(basket.isEmpty())
+                continue;
             basket.purchaseBasket(creditCardNumber, creditCardMonth, creditCardYear,
                     creditCardHolderFirstName, creditCardCVV, id,
                     address, city, country, zip);
+            purchasedBasket = true;
         }
+
+        if(!purchasedBasket)
+            throw new PurchaseFailedException("all products in cart are out of stock or not available anymore");
     }
 
     private boolean isContainsBasket(int storeId, Set<Basket> userBaskets) {

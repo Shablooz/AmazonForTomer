@@ -1,5 +1,6 @@
 package BGU.Group13B.backend.storePackage.permissions;
 
+import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.Repositories.Interfaces.IUserPermissionRepository;
 import BGU.Group13B.backend.User.UserPermissions;
 import BGU.Group13B.backend.User.UserPermissions.StoreRole;
@@ -23,6 +24,9 @@ public class StorePermission {
     private int id;
 
     private int founderId;
+
+    @Transient //tomer please help
+    private HashMap<Pair<Integer,Integer>, List<Integer>> votes;
 
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
     @JoinTable(name = "StorePermission_userStoreFunctionPermissions",
@@ -72,6 +76,7 @@ public class StorePermission {
         userToStoreRole.put(founderId, StoreRole.FOUNDER);
         userToIndividualPermissions = new HashMap<>();
         SetEnum founderPermissions = new SetEnum();
+        votes = new HashMap<>();
         founderPermissions.add(UserPermissions.IndividualPermission.STOCK);
         founderPermissions.add(UserPermissions.IndividualPermission.MESSAGES);
         founderPermissions.add(UserPermissions.IndividualPermission.POLICIES);
@@ -298,11 +303,12 @@ public class StorePermission {
         if (!(removeOwnerRole == StoreRole.OWNER || (removeManager && removeOwnerRole == StoreRole.MANAGER))) {
             throw new ChangePermissionException("Cannot remove owner title from a user who is not an owner");
         } else if (appointedOwnersMap.getOrDefault(removerId, new SetInteger()).contains(removeOwnerId)) {
+            goodByeAll(removeOwnerId);
             SetInteger underlingsToRemove = appointedOwnersMap.get(removeOwnerId);
             if (underlingsToRemove != null) {
                 for (Integer underlingId : underlingsToRemove.getSet()) {
                     removeUsersId.add(underlingId);
-                    Set<Integer> recursiveFiringList = removeOwnerPermission(underlingId, removeOwnerId, true);
+                    Set<Integer> recursiveFiringList = removeOwnerPermissionHelper(underlingId, removeOwnerId, true);
                     removeUsersId.addAll(recursiveFiringList);
                 }
             }
@@ -434,6 +440,87 @@ public class StorePermission {
                 users.add(entry.getKey());
         }
         return users;
+    }
+
+    public List<Integer> newVoteOwnerPermission(int newOwnerId, int appointerId) throws ChangePermissionException {
+        //check if not already in that role
+        StoreRole userRole = userToStoreRole.get(newOwnerId);
+        if (userRole == StoreRole.FOUNDER || userRole == StoreRole.OWNER)
+            throw new ChangePermissionException("Cannot grant owner title to a user who is already an owner");
+        Pair<Integer, Integer> newAndAppointerIds = new Pair<>(newOwnerId, appointerId);
+        List<Integer> idOfOwnersAndFounder = new ArrayList<>();
+        for (Map.Entry<Integer, UserPermissions.StoreRole> entry : userToStoreRole.entrySet()) {
+            UserPermissions.StoreRole role = entry.getValue();
+            if (role == UserPermissions.StoreRole.FOUNDER || role == UserPermissions.StoreRole.OWNER) {
+                idOfOwnersAndFounder.add(entry.getKey());
+            }
+        }
+        votes.put(newAndAppointerIds, idOfOwnersAndFounder);
+        return idOfOwnersAndFounder;
+    }
+
+    public boolean updateVote(Pair<Integer, Integer> newAndAppointerIds, int voterId, boolean accept) throws ChangePermissionException {
+        if(accept){
+           return removeMeFromVote(newAndAppointerIds, voterId);
+        }
+        else {
+            cancelVote(newAndAppointerIds, voterId);
+        }
+        return false;
+    }
+
+    public List<Pair<Integer, Integer>> getMyOpenVotes(int userId){
+        List<Pair<Integer,Integer>> myVotes = new ArrayList<>();
+        for (Map.Entry<Pair<Integer,Integer>, List<Integer>> entry : votes.entrySet()) {
+            List<Integer> userList = entry.getValue();
+            if (userList.contains(userId)) {
+                myVotes.add(entry.getKey());
+            }
+        }
+        return myVotes;
+    }
+
+    public boolean removeMeFromVote(Pair<Integer, Integer> newAndAppointerIds, int voterId){
+        Integer xVoterId = voterId;
+        for (Map.Entry<Pair<Integer,Integer>, List<Integer>> entry : votes.entrySet()) {
+            if(Objects.equals(entry.getKey().getFirst(), newAndAppointerIds.getFirst()) && Objects.equals(entry.getKey().getSecond(), newAndAppointerIds.getSecond())){
+                if(entry.getValue().contains(voterId))
+                    entry.getValue().remove(xVoterId);
+                if(entry.getValue().isEmpty())
+                    return true;
+            }
+        }
+        save();
+        return false;
+    }
+
+    public void cancelVote(Pair<Integer, Integer> newAndAppointerIds, int voterId){
+        Pair<Integer, Integer> deleteMe = null;
+        for (Map.Entry<Pair<Integer,Integer>, List<Integer>> entry : votes.entrySet()) {
+            if(Objects.equals(entry.getKey().getFirst(), newAndAppointerIds.getFirst()) && Objects.equals(entry.getKey().getSecond(), newAndAppointerIds.getSecond())){
+                if(entry.getValue().contains(voterId))
+                    deleteMe = entry.getKey();
+            }
+        }
+        save();
+        votes.remove(deleteMe);
+    }
+
+    public void goodByeAll(int firedId) throws ChangePermissionException {
+        Integer xFiredId = firedId;
+        List<Pair<Integer, Integer>> deleteUs = new LinkedList<>();
+        for (Map.Entry<Pair<Integer,Integer>, List<Integer>> entry : votes.entrySet()) {
+            if(entry.getValue().contains(firedId)){
+                entry.getValue().remove(xFiredId);
+                if(entry.getValue().isEmpty())
+                    addOwnerPermission(entry.getKey().getFirst(), entry.getKey().getSecond());
+            }
+            if(entry.getKey().getSecond().equals(xFiredId))
+                deleteUs.add(entry.getKey());
+        }
+        for(Pair<Integer, Integer> pair : deleteUs){
+            votes.remove(pair);
+        }
     }
 
     public void emptyMaps(){

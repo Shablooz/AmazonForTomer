@@ -37,6 +37,8 @@ public class AdminView extends VerticalLayout implements BeforeEnterObserver, Af
     HorizontalLayout buttonsLayout = new HorizontalLayout();
     private final Button createStoreButton = new Button("Create Store"); //fixme remove?
     private final Button deleteUserButton = new Button("Delete User");
+    private final Button makeAdminButton = new Button("Make Admin");
+    private final Button makeMemberButton = new Button("Make Member");
     private final Button purchaseHistoryButton = new Button("Purchase History");
 
     private Grid<UserCard> grid;
@@ -73,6 +75,10 @@ public class AdminView extends VerticalLayout implements BeforeEnterObserver, Af
         deleteUserButton.getElement().getThemeList().add("primary");
         purchaseHistoryButton.setEnabled(false);
         purchaseHistoryButton.getElement().getThemeList().add("primary");
+        makeAdminButton.setEnabled(false);
+        makeAdminButton.getElement().getThemeList().add("primary");
+        makeMemberButton.setEnabled(false);
+        makeMemberButton.getElement().getThemeList().add("primary");
         add(new H2("All Users"));
         List<UserCard> userCards = handleResponse(session.getAllUserCards(userId));
         List<UserCard> validUserCards = userCards.stream()
@@ -85,6 +91,10 @@ public class AdminView extends VerticalLayout implements BeforeEnterObserver, Af
         grid.addColumn(UserCard::userName).setHeader("Username");
         grid.addColumn(UserCard::email).setHeader("Email");
         grid.addColumn(UserCard::userPermissions).setHeader("Permission");
+        grid.addColumn(userCard -> {
+            String userStatus = handleResponse(session.getUserStatusRES(userCard.userId()));
+            return userStatus != null ? userStatus : "Unknown";
+        }).setHeader("User Type");
         grid.setItemDetailsRenderer(new ComponentRenderer<>(userCard -> new Text(userCard.userPermissions())));
         grid.addItemClickListener(event -> {
             UserCard userCard = event.getItem();
@@ -107,12 +117,16 @@ public class AdminView extends VerticalLayout implements BeforeEnterObserver, Af
             selectedUserId = item.getItem().userId();
             deleteUserButton.setEnabled(true);
             purchaseHistoryButton.setEnabled(true);
+            makeMemberButton.setEnabled(true);
+            makeAdminButton.setEnabled(true);
         });
 
         grid.addItemDoubleClickListener(item -> {
             selectedUserId = item.getItem().userId();
             deleteUserButton.setEnabled(true);
             purchaseHistoryButton.setEnabled(true);
+            makeAdminButton.setEnabled(true);
+            makeMemberButton.setEnabled(true);
 
 
             //enter store page
@@ -136,12 +150,16 @@ public class AdminView extends VerticalLayout implements BeforeEnterObserver, Af
         //buttons actions
         deleteUserButton.addClickListener(e -> deleteUser());
         purchaseHistoryButton.addClickListener(e -> viewPurchase());
+        makeMemberButton.addClickListener(e -> makeMember());
+        makeAdminButton.addClickListener(e -> makeAdmin());
 
         add(grid);
 
         //add the buttons to the view in horizontal layout
         buttonsLayout.add(deleteUserButton);
         buttonsLayout.add(purchaseHistoryButton);
+        buttonsLayout.add(makeAdminButton);
+        buttonsLayout.add(makeMemberButton);
         add(buttonsLayout);
     }
 
@@ -151,6 +169,22 @@ public class AdminView extends VerticalLayout implements BeforeEnterObserver, Af
             return;
         }
         deleteUserDialog();
+    }
+
+    private void makeAdmin(){
+        if(selectedUserId == -1){
+            Notification.show("Please select a user first");
+            return;
+        }
+        makeAdminDialog();
+    }
+
+    private void makeMember(){
+        if(selectedUserId == -1){
+            Notification.show("Please select a user first");
+            return;
+        }
+        makeMemberDialog();
     }
 
     private void viewPurchase(){
@@ -174,9 +208,74 @@ public class AdminView extends VerticalLayout implements BeforeEnterObserver, Af
         Button confirmButton = new Button("Confirm");
         confirmButton.addClickListener(e2 -> {
 
-            handleResponseAndRefresh(session.removeUser(userId, selectedUserId));
             dialog.close();
-            Notification.show(username + "'s user got deleted");
+            boolean success = handleResponseDeleteUserFail(session.removeMember(userId, selectedUserId));
+            updateGrid();
+            if(success){
+                Notification.show(username + "'s user got deleted");
+            }
+        });
+
+
+        VerticalLayout dialogLayout = new VerticalLayout();
+        dialogLayout.add(dialogTitle, label, confirmButton);
+        dialogLayout.setSpacing(false);
+        dialogLayout.setAlignItems(Alignment.STRETCH);
+
+        dialog.add(dialogLayout);
+        dialog.open();
+    }
+
+    private void makeAdminDialog() {
+        Dialog dialog = new Dialog();
+        dialog.setWidth("350px");
+        dialog.setHeight("550px");
+        dialog.setCloseOnEsc(true);
+        dialog.setCloseOnOutsideClick(true);
+        H2 dialogTitle = new H2("Are you sure you want to make this user an admin?");
+        String username = handleResponse(session.getUserNameRes(selectedUserId));
+        Label label = new Label(username);
+
+        Button confirmButton = new Button("Confirm");
+        confirmButton.addClickListener(e2 -> {
+
+            dialog.close();
+            boolean success = handleResponseDeleteUserFail(session.setUserStatusRES(userId, selectedUserId, 1));
+            updateGrid();
+            if(success){
+                Notification.show(username + "'s user is now an admin");
+            }
+        });
+
+
+        VerticalLayout dialogLayout = new VerticalLayout();
+        dialogLayout.add(dialogTitle, label, confirmButton);
+        dialogLayout.setSpacing(false);
+        dialogLayout.setAlignItems(Alignment.STRETCH);
+
+        dialog.add(dialogLayout);
+        dialog.open();
+    }
+
+    private void makeMemberDialog() {
+        Dialog dialog = new Dialog();
+        dialog.setWidth("350px");
+        dialog.setHeight("550px");
+        dialog.setCloseOnEsc(true);
+        dialog.setCloseOnOutsideClick(true);
+        H2 dialogTitle = new H2("Are you sure you want to make this user a member?");
+        String username = handleResponse(session.getUserNameRes(selectedUserId));
+        Label label = new Label(username);
+
+        Button confirmButton = new Button("Confirm");
+        confirmButton.addClickListener(e2 -> {
+
+            dialog.close();
+            boolean success = handleResponseDeleteUserFail(session.setUserStatusRES(userId, selectedUserId, 2));
+            updateGrid();
+            if(success){
+                Notification.show(username + "'s user is now a member");
+            }
         });
 
 
@@ -219,6 +318,24 @@ public class AdminView extends VerticalLayout implements BeforeEnterObserver, Af
             Notification errorNotification = Notification.show("Error: " + response.getMessage());
             errorNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
             navigate("");
+        }
+        return response.getData();
+    }
+
+    private <T> T handleResponseDeleteUserFail(Response<T> response) {
+        if (response.didntSucceed()) {
+            Notification errorNotification = Notification.show("Error: " + response.getMessage());
+            errorNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+            navigate("admin");
+        }
+        return response.getData();
+    }
+
+    private <T> T handleResponseAdminMemberFail(Response<T> response) {
+        if (response.didntSucceed()) {
+            Notification errorNotification = Notification.show("Error: " + response.getMessage());
+            errorNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+            navigate("admin");
         }
         return response.getData();
     }
