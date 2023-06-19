@@ -466,6 +466,7 @@ public class Store {
         List<Integer> userIds = this.getStorePermission().getAllUsersWithIndividualPermission(UserPermissions.IndividualPermission.AUCTION);
         for (Integer id : userIds) {//wait for the interface in AlertManager.java to finish
             //alertManager.sendAlert(id, "User " + userId + " has submitted a purchase proposal for product " + productId + " in store " + this.storeId);
+            //TODO this bug
             double originalPrice = getProductRepository().getProductById(productId).getPrice();
             BroadCaster.broadcast(id,
                     "BID[" + storeId + "," + productId + "]User has submitted a purchase proposal for product " + productId +

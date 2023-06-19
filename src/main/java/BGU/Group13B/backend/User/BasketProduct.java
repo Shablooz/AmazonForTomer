@@ -14,6 +14,8 @@ public class BasketProduct {
     @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id", referencedColumnName = "productId")
     private Product product;
+
+
     private int quantity;
     private double price;
 
@@ -68,28 +70,32 @@ public class BasketProduct {
     }
 
     public Product getProduct() {
-        return SingletonCollection.getProductRepository().getProductById(product.getProductId());
+        try {
+            return SingletonCollection.getProductRepository().getProductById(product.getProductId());
+        } catch (Exception e) {
+            return product;
+        }
     }
 
-    public double getSubtotal() {
-        return getPrice() * quantity;
-    }
+        public double getSubtotal () {
+            return getPrice() * quantity;
+        }
 
-    public void setPrice(double price) {
-        this.price = price;
-    }
-    //getters and setters
+        public void setPrice ( double price){
+            this.price = price;
+        }
+        //getters and setters
 
-    public int getId() {
-        return id;
-    }
+        public int getId () {
+            return id;
+        }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+        public void setId ( int id){
+            this.id = id;
+        }
 
-    public void setProduct(Product product) {
-        this.product = product;
+        public void setProduct (Product product){
+            this.product = product;
 
+        }
     }
-}

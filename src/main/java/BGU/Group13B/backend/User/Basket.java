@@ -206,6 +206,7 @@ public class Basket {
 
         for (BasketProduct basketProduct : getBasketProductRepository().getBasketProducts(storeId, userId).orElseGet(LinkedList::new)) {
             //synchronize product
+
             synchronized (basketProduct.getProduct()) {
                 //try to decrease the quantity of the product in the store
                 //if succeeded, add the product to the successful products list
