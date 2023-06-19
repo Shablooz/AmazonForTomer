@@ -14,7 +14,7 @@ public class Vote {
     private int firstKey; // first integer in Pair THE CANDIDATE
     private int secondKey; // second integer in Pair THE APPOINTER
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<Integer> votes;
 
     public void setCandidateId(int candidateId) {

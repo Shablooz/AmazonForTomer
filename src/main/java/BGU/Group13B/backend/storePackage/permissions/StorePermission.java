@@ -492,15 +492,19 @@ public class StorePermission {
 
     public boolean removeMeFromVote(Pair<Integer, Integer> newAndAppointerIds, int voterId){
         boolean isEmpty = false;
+        Vote deleteMe = null;
         for (Vote vote : votes) {
             Integer candidateIdInt = vote.getCandidateId();
             Integer appoimterIdInt = vote.getAppinterId();
             Integer xVoterId = voterId;
             if (candidateIdInt.equals(newAndAppointerIds.getFirst()) && appoimterIdInt.equals(newAndAppointerIds.getSecond()))
                 vote.getVoteList().remove(xVoterId);
-            if (vote.getVoteList().isEmpty())
-                    isEmpty = true;
+            if (vote.getVoteList().isEmpty()){
+                isEmpty = true;
+                deleteMe = vote;
+            }
         }
+        votes.remove(deleteMe);
         save();
         return isEmpty;
     }
