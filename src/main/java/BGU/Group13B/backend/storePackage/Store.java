@@ -480,7 +480,7 @@ public class Store {
             BroadCaster.broadcast(currentBid.getUserId(),
                     "Your bid for product " + getProductRepository().getProductById(currentBid.getProductId()).getName()
                             + " in store " + this.storeName + " approved!, the item added to your cart");
-            addToUserCart.apply(currentBid.getUserId(), storeId, currentBid.getProductId(), currentBid.getAmount(), currentBid.getNewProductPrice());
+            SingletonCollection.getAddToUserCart().apply(currentBid.getUserId(), storeId, currentBid.getProductId(), currentBid.getAmount(), currentBid.getNewProductPrice());
             //todo send alert to the user that his bid has been approved
         }
     }

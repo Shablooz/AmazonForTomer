@@ -45,7 +45,6 @@ public class Session implements ISession {
     static {
         SingletonCollection.setFileHandler(LOGGER_INFO, true);
         SingletonCollection.setFileHandler(LOGGER_ERROR, false);
-
     }
 
     IUserRepository userRepositoryAsHashmap;
@@ -926,6 +925,7 @@ LOGGER_INFO.info("product description was set successfully");
             return Response.success(result);
         } catch (Exception e) {
             LOGGER_ERROR.severe("all store products info was not got successfully");
+            e.printStackTrace();
             return Response.exception(e);
         }
     }

@@ -21,4 +21,5 @@ public interface IStoreRepository {
     public void setSaveMode(boolean saved);
 
     void removeMemberStores(int adminId, int userId) throws NoPermissionException;
+
 }
