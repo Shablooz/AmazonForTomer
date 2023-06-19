@@ -219,8 +219,8 @@ public class StorePermission {
     }
 
     public boolean hasAccessWhileHidden(int userId) {
-        return userToStoreRole.containsKey(userId) &&
-                (userToStoreRole.get(userId) == StoreRole.FOUNDER || userToStoreRole.get(userId) == StoreRole.OWNER);
+        return hasAdminPermission(userId) || (userToStoreRole.containsKey(userId) &&
+                (userToStoreRole.get(userId) == StoreRole.FOUNDER || userToStoreRole.get(userId) == StoreRole.OWNER));
     }
 
     public Set<Integer/*userId*/> getAllUsersWithPermission(String storeFunctionName) {
@@ -282,9 +282,16 @@ public class StorePermission {
 
         // Add the newOwnerId to the set of appointees
         appointees.add(newOwnerId);
+        save();
     }
 
     public Set<Integer> removeOwnerPermission(int removeOwnerId, int removerId, boolean removeManager) throws ChangePermissionException {
+        Set<Integer> set = removeOwnerPermissionHelper(removeOwnerId, removerId, removeManager);
+        save();
+        return set;
+    }
+
+    public Set<Integer> removeOwnerPermissionHelper(int removeOwnerId, int removerId, boolean removeManager) throws ChangePermissionException {
         Set<Integer> removeUsersId = new HashSet<>();
         StoreRole removeOwnerRole = userToStoreRole.get(removeOwnerId);
 
@@ -337,6 +344,7 @@ public class StorePermission {
 
             // Add the newOwnerId to the set of appointees
             appointees.add(newManagerId);
+            save();
         }
     }
 
@@ -366,6 +374,7 @@ public class StorePermission {
             newSet.add(individualPermission);
             userToIndividualPermissions.put(userId, newSet);
         }
+        save();
     }
 
     public void removeIndividualPermission(int userId, UserPermissions.IndividualPermission individualPermission) throws ChangePermissionException {
@@ -374,6 +383,7 @@ public class StorePermission {
             throw new ChangePermissionException("Cannot grant an individual permission to a user who is no a manager");
         if(userToIndividualPermissions.containsKey(userId))
             userToIndividualPermissions.get(userId).remove(individualPermission);
+        save();
     }
 
     public List<WorkerCard> getWorkersInfo() {
@@ -431,13 +441,14 @@ public class StorePermission {
         appointedOwnersMap.clear();
         userStoreFunctionPermissions.clear();
         defaultStoreRoleFunctionalities.clear();
+        save();
     }
     public int getFounderId() {
         return this.founderId;
     }
 
-    //getters and setters
 
+    //getters and setters
 
     public int getId() {
         return id;
@@ -504,5 +515,9 @@ public class StorePermission {
 
     public void setUserPermissionRepository(IUserPermissionRepository userPermissionRepository) {
         this.userPermissionRepository = userPermissionRepository;
+    }
+
+    private void save(){
+        SingletonCollection.getStorePermissionRepository().save();
     }
 }

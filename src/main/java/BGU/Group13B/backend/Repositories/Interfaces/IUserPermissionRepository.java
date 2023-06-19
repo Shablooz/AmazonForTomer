@@ -11,6 +11,7 @@ public interface IUserPermissionRepository {
 
     void setSaveMode(boolean saveMode);
 
+    void save();
 
     boolean isUserPermissionsExists(int userId);
 

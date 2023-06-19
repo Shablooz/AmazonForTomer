@@ -40,6 +40,9 @@ public interface IUserRepository {
 
     void setSaveMode(boolean saveMode);
     void save();
+    boolean isSaveMode();
 
     void removeMember(int adminId, int userId) throws Exception;
+
+    void logoutAllUsers();
 }

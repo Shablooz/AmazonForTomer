@@ -190,4 +190,16 @@ public class UserRepositoryAsHashmap implements IUserRepository {
         }
     }
 
+    @Override
+    public void logoutAllUsers() {
+        for (User user : integerUserHashMap.values()){
+            if(user.isLoggedIn()){
+                System.out.println("user " + user.getUserName() + " is logged in, logging out");
+                user.logoutNoSave();
+            }
+        }
+        save();
+    }
+
+
 }

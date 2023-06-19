@@ -1838,21 +1838,10 @@ LOGGER_INFO.info("product description was set successfully");
         }
     }
 
-    public Response<StoreInfo> getGeneralStoreInfo(int storeId) {
-        try {
-            var result = market.getGeneralStoreInfo(storeId);
-            LOGGER_INFO.info("general store info was retrieved successfully");
-            return Response.success(result);
-        } catch (Exception e) {
-            LOGGER_ERROR.severe("general store info was not retrieved successfully");
-            return Response.exception(e);
-        }
-    }
-
     @Override
-    public Response<List<StoreInfo>> getAllStores() {
+    public Response<List<StoreInfo>> getAllStoresTheUserCanView(int userId) {
         try {
-            Set<StoreInfo> storesInfos = market.getAllGeneralStoreInfo();
+            List<StoreInfo> storesInfos = market.getAllStoresTheUserCanView(userId);
             List<StoreInfo> asList = storesInfos.stream().toList();
             LOGGER_INFO.info("all stores info was retrieved successfully");
             return Response.success(asList);

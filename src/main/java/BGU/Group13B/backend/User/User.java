@@ -73,7 +73,7 @@ public class User {
     @Transient
     private static final String question3 = "What is your favorite book?";
     //eyal addition
-    @Transient
+
     private volatile boolean isLoggedIn;
 
     @Transient
@@ -204,6 +204,7 @@ public class User {
             throw new IllegalArgumentException("User is already logged in!");
 
         this.isLoggedIn = true;
+        save();
 
 
     }
@@ -331,6 +332,11 @@ public class User {
 
     //27
     public void logout() {
+        logoutNoSave();
+        save();
+    }
+
+    public void logoutNoSave(){
         if (!isLoggedIn)
             throw new IllegalArgumentException("already logged out!");
         this.isLoggedIn = false;
@@ -820,5 +826,9 @@ public class User {
     public IStoreRepository getStoreRepository() {
         this.storeRepository = SingletonCollection.getStoreRepository();
         return this.storeRepository;
+    }
+
+    private void save(){
+        SingletonCollection.getUserRepository().save();
     }
 }

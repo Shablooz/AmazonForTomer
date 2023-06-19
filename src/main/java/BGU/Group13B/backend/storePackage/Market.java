@@ -1,7 +1,6 @@
 package BGU.Group13B.backend.storePackage;
 
 
-import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.Repositories.Interfaces.IPurchaseHistoryRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IUserRepository;
@@ -9,17 +8,13 @@ import BGU.Group13B.backend.System.Searcher;
 import BGU.Group13B.backend.User.*;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.StoreDiscount;
-import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.backend.User.PurchaseHistory;
 import BGU.Group13B.backend.User.UserCard;
 import BGU.Group13B.backend.User.UserPermissions;
 import BGU.Group13B.backend.storePackage.permissions.ChangePermissionException;
-import BGU.Group13B.backend.storePackage.permissions.DefaultFounderFunctionality;
-import BGU.Group13B.backend.storePackage.permissions.DefaultOwnerFunctionality;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
-import BGU.Group13B.service.Response;
 import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.callbacks.AddToUserCart;
 import BGU.Group13B.service.info.DiscountAccumulationTreeInfo;
@@ -29,9 +24,7 @@ import BGU.Group13B.service.info.StoreInfo;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Market {
     private IStoreRepository storeRepository;
@@ -252,17 +245,15 @@ public class Market {
         return getStoreRepository().getStore(storeId).getStoreInfo(userId);
     }
 
-    public StoreInfo getGeneralStoreInfo(int storeId) {
-        return getStoreRepository().getStore(storeId).getGemeralStoreInfo();
-    }
-
-    public Set<StoreInfo> getAllGeneralStoreInfo() {
-        Set<StoreInfo> storeInfos = new HashSet<>();
-        Set<Integer> storeIds = getStoreRepository().getAllStoresId();
-        for (Integer id : storeIds) {
-            storeInfos.add(getStoreRepository().getStore(id).getGemeralStoreInfo());
-        }
-        return storeInfos;
+    public List<StoreInfo> getAllStoresTheUserCanView(int userId){
+        return getStoreRepository().getAllStoresTheUserCanView(userId).
+                stream().map(store -> {
+                    try {
+                        return store.getStoreInfo(userId);
+                    } catch (NoPermissionException e) {
+                        throw new RuntimeException(e);
+                    }
+                }).toList();
     }
 
     public ProductInfo getStoreProductInfo(int userId, int storeId, int productId) throws NoPermissionException {
