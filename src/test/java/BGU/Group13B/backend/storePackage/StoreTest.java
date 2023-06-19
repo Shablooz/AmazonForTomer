@@ -1,5 +1,6 @@
 package BGU.Group13B.backend.storePackage;
 
+import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.Repositories.Implementations.BIDRepositoryImpl.BIDRepositoryAsList;
 import BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl.ProductRepositoryAsHashMap;
 import BGU.Group13B.backend.User.User;
@@ -289,6 +290,8 @@ class StoreTest {
         try {
             s1.addOwner(u1Id, u2Id);
             s1.addOwner(u2Id, u3Id);
+            Pair<Integer,Integer> pair = new Pair<>(u3Id, u2Id);
+            s1.voteForOwner(pair, u1Id, true);
             Assertions.assertThrows(ChangePermissionException.class, () -> s1.removeOwner(u3Id, u2Id));
             s1.removeOwner(u1Id, u2Id);
             assertNull(s1.getStorePermission().getUserRole(u2Id));
@@ -331,6 +334,20 @@ class StoreTest {
     }
 
 
+
+    @Test
+    void addOwnerSuccessNEW() {
+        customSetUp();
+        try {
+            omTestStore.addOwner(tUserOwnerId, tUserId);
+            Assertions.assertEquals(omTestStore.getStorePermission().getUserRole(tUserId), UserPermissions.StoreRole.OWNER);
+            Assertions.assertEquals(tUser.getUserPermissions().getStoreRole(omTestStore.getStoreId()), UserPermissions.StoreRole.OWNER);
+        } catch (NoPermissionException | ChangePermissionException e) {
+            fail(e);
+        } finally {
+            customTearDown();
+        }
+    }
     @Test
     void addOwnerSuccess() {
         customSetUp();
@@ -379,6 +396,8 @@ class StoreTest {
         try {
             omTestStore.addOwner(tUserOwnerId, tUserId);
             omTestStore.addOwner(tUserOwnerId, tUserId2);
+            Pair<Integer,Integer> pair = new Pair<>(tUserId2, tUserOwnerId);
+            omTestStore.voteForOwner(pair, tUserId, true);
             Assertions.assertThrows(ChangePermissionException.class, () -> omTestStore.removeOwner(tUserId2, tUserId));
         } catch (NoPermissionException | ChangePermissionException e) {
             fail(e);

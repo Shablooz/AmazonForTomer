@@ -59,6 +59,9 @@ public class MyStoresView extends VerticalLayout implements BeforeEnterObserver 
         enterStoreButton.setEnabled(false);
 
         List<Pair<StoreInfo, String>> userStoresAndRoles = handleResponse(session.getAllUserAssociatedStores(userId));
+        if(userStoresAndRoles == null){
+            userStoresAndRoles = new LinkedList<>();
+        }
         //List<Pair<StoreInfo, String>> userStoresAndRoles = getDemoStoresAndRoles();
 
         for (Pair<StoreInfo, String> pair : userStoresAndRoles) {

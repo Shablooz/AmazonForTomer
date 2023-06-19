@@ -695,6 +695,16 @@ public class User {
         getUserPermissionRepository().deletePermissions(adminId, userId);
     }
 
+    public void sendMassageVote(String receiverId, String header, String massage) throws NoPermissionException {
+        messageRepository.sendMassage(Message.constractMessage(this.userName, getAndIncrementMessageId(), header, massage, receiverId));
+        User receiverNext = SingletonCollection.getUserRepository().getUserByUsername(receiverId);
+        //if(!PushNotification.pushNotification("New Message",receiverNext.getUserId()))
+        if (!receiverNext.isLoggedIn() || !BroadCaster.broadcast(receiverNext.userId, "New Message"))
+            receiverNext.setMessageNotification(true);
+        System.out.println("ReceiverNext: " + receiverNext.userName + " LoggedIn: " + receiverNext.isLoggedIn());
+        System.out.println("Status: " + receiverNext.getMessageNotification());
+    }
+
 
     //getters and setters
 

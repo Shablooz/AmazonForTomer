@@ -181,6 +181,8 @@ public class UserRepositoryAsHashmap implements IUserRepository {
     public void removeMember(int adminId, int userId) throws Exception {
         if(!integerUserHashMap.containsKey(userId))
             throw new Exception("user " + userId + " does not exists");
+        if(adminId == userId)
+            throw new Exception("A user can't remover himself");
         User user = integerUserHashMap.get(userId);
         synchronized (user) {
             getUser(userId).deleteStores(adminId);
