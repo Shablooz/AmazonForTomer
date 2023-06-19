@@ -13,6 +13,7 @@ import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -459,7 +460,7 @@ class BasketTest {
         SingletonCollection.reset_system(false);
         SingletonCollection.setSaveMode(false);
         int userId = SingletonCollection.getSession().enterAsGuest();
-        SingletonCollection.getSession().register(userId, "userName", "Password1", "emao@gmail.com", "", "", "", LocalDate.now().minusYears(20));
+        SingletonCollection.getSession().register(userId, "userName", "Password1", "emao@gmail.com", "", "", "", LocalDateTime.now().minusYears(20));
         SingletonCollection.getSession().login(userId, "userName", "Password1", "", "", "");
         int storeId = SingletonCollection.getSession().addStore(userId, "store1", "category1").getData();
 
@@ -499,7 +500,7 @@ class BasketTest {
         SingletonCollection.reset_system(false);
         SingletonCollection.setSaveMode(false);
         int userId = SingletonCollection.getSession().enterAsGuest();
-        SingletonCollection.getSession().register(userId, "userName", "Password1", "emao@gmail.com", "", "", "", LocalDate.now().minusYears(20));
+        SingletonCollection.getSession().register(userId, "userName", "Password1", "emao@gmail.com", "", "", "", LocalDateTime.now().minusYears(20));
         SingletonCollection.getSession().login(userId, "userName", "Password1", "", "", "");
         int storeId = SingletonCollection.getSession().addStore(userId, "store1", "category1").getData();
 

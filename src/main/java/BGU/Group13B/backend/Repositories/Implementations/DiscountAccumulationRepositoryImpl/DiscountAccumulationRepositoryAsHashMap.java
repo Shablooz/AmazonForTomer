@@ -113,7 +113,7 @@ public class DiscountAccumulationRepositoryAsHashMap implements IDiscountAccumul
     }
 
     private void save(){
-        if(saveMode)
+        if(saveMode && SingletonCollection.databaseExists())
             SingletonCollection.getContext().getBean(DiscountAccumulationRepositoryAsHashMapService.class).save(this);
     }
 

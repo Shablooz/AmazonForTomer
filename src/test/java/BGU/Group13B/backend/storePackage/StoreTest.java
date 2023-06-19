@@ -52,7 +52,9 @@ class StoreTest {
     @BeforeEach
     void setUp() throws NoPermissionException {
         /*initializing data*/
+        SingletonCollection.reset_system(false);
         SingletonCollection.setSaveMode(false);
+
         var storePermission = Mockito.mock(StorePermission.class);
         //broadCaster = Mockito.mock(BroadCaster.class);
         bidRepository = new BIDRepositoryAsList();

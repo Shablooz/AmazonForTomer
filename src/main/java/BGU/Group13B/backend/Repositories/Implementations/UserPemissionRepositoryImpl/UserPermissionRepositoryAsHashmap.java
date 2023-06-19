@@ -76,7 +76,7 @@ public class UserPermissionRepositoryAsHashmap implements IUserPermissionReposit
     }
 
     public void save(){
-        if(saveMode)
+        if(saveMode && SingletonCollection.databaseExists())
             SingletonCollection.getContext().getBean(UserPermissionRepService.class).save(this);
     }
 

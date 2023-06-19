@@ -87,7 +87,7 @@ public class StoreRepositoryAsList implements IStoreRepository {
 
 
     public void save(){
-        if(saveMode)
+        if(saveMode && SingletonCollection.databaseExists())
             SingletonCollection.getContext().getBean(StoreRepoService.class).save(this);
     }
 

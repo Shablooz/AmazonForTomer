@@ -26,4 +26,6 @@ public interface IStoreRepository {
     void save();
 
     Set<Integer> getAllStoresId();
+
+    boolean getSaveMode();
 }

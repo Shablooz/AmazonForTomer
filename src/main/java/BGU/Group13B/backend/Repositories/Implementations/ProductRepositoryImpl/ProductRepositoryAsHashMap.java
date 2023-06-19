@@ -209,7 +209,7 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
     }
 
     private void save(){
-        if(saveMode)
+        if(saveMode && SingletonCollection.databaseExists())
             SingletonCollection.getContext().getBean(ProductRepositoryAsHashMapService.class).save(this);
     }
 

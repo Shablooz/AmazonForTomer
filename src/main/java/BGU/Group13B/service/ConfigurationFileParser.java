@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -158,6 +159,8 @@ public class ConfigurationFileParser {
             case "double" -> double.class;
             case "String" -> String.class;
             case "LocalDate" -> LocalDate.class;
+            case "LocalDateTime" -> LocalDateTime.class;
+
             case "UserPermissions.IndividualPermission" -> UserPermissions.IndividualPermission.class;
             // Add support for other types as needed
             default -> throw new IllegalArgumentException("Unsupported type: " + typeName);
@@ -170,6 +173,7 @@ public class ConfigurationFileParser {
             case "double" -> Double.parseDouble(value);
             case "String" -> value;
             case "LocalDate" -> parseDate(value);
+            case "LocalDateTime" -> parseDateTime(value);
             // Add support for other types as needed
             default -> {
                 if (value.startsWith("UserPermissions.IndividualPermission")) {
@@ -180,6 +184,19 @@ public class ConfigurationFileParser {
                 throw new IllegalArgumentException("Unsupported type: " + type);
             }
         };
+    }
+
+    private static Object parseDateTime(String value) {
+        try {
+            //format dd/MM/yyyy
+            String[] split = value.split("/");
+            int day = Integer.parseInt(split[0]);
+            int month = Integer.parseInt(split[1]);
+            int year = Integer.parseInt(split[2]);
+            return LocalDateTime.of(year, month, day, 0, 0);
+        } catch (Exception e) {
+            return value;
+        }
     }
 
     private static Object parseDate(String value) {

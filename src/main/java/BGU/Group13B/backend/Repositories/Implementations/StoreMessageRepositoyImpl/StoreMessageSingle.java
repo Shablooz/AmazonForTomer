@@ -81,7 +81,7 @@ public class StoreMessageSingle implements IStoreMessagesRepository {
     }
 
     public void save(){
-        if(saveMode)
+        if(saveMode && SingletonCollection.databaseExists())
             SingletonCollection.getContext().getBean(StoreMessageSingleService.class).save(this);
     }
     public void setSaveMode(boolean saved) {

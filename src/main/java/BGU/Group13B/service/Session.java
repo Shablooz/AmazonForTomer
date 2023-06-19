@@ -45,7 +45,6 @@ public class Session implements ISession {
     static {
         SingletonCollection.setFileHandler(LOGGER_INFO, true);
         SingletonCollection.setFileHandler(LOGGER_ERROR, false);
-
     }
 
     IUserRepository userRepositoryAsHashmap;
@@ -71,7 +70,7 @@ public class Session implements ISession {
         int id = 1;
         userRepositoryAsHashmap.addUser(id, new User(id));
         register(id, "kingOfTheSheep", "SheePLover420",
-                "mrsheep@gmail.com", "11", "11", "11", LocalDate.MIN);
+                "mrsheep@gmail.com", "11", "11", "11", LocalDateTime.now().minusYears(100));
     }
 
     @Override
@@ -242,7 +241,7 @@ public class Session implements ISession {
 
     @Override
     public synchronized void register(int userId, String username, String password,
-                                      String email, String answer1, String answer2, String answer3, LocalDate birthDate) {
+                                      String email, String answer1, String answer2, String answer3, LocalDateTime birthDate) {
         User user = getUserRepositoryAsHashmap().getUser(userId);
 
         //the first "if" might not be necessary when we will connect to web
@@ -928,6 +927,7 @@ LOGGER_INFO.info("product description was set successfully");
             return Response.success(result);
         } catch (Exception e) {
             LOGGER_ERROR.severe("all store products info was not got successfully");
+            e.printStackTrace();
             return Response.exception(e);
         }
     }

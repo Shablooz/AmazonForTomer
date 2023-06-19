@@ -74,7 +74,7 @@ public class StoreScoreSingle implements IStoreScore {
     }
 
     public void save(){
-        if(saveMode)
+        if(saveMode && SingletonCollection.databaseExists())
             SingletonCollection.getContext().getBean(StoreScoreRepoService.class).save(this);
     }
     public boolean getSaveMode(){

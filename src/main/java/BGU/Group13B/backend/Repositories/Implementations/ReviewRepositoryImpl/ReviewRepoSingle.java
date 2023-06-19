@@ -99,7 +99,7 @@ public class ReviewRepoSingle implements IRepositoryReview {
     }
 
     public void save(){
-        if(saveMode)
+        if(saveMode && SingletonCollection.databaseExists())
             SingletonCollection.getContext().getBean(ReviewRepoSingleService.class).save(this);
     }
 

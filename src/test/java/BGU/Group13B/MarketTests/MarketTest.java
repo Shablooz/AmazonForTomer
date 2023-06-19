@@ -9,6 +9,7 @@ import org.junit.jupiter.api.*;
 
 import java.lang.reflect.Array;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -244,7 +245,7 @@ public class MarketTest {
     @Test
     void removeMember_exists(){
         //setup
-        user.register(userName, password, "e@gmail.com", "", "yak", "", LocalDate.MIN);
+        user.register(userName, password, "e@gmail.com", "", "yak", "", LocalDateTime.MIN);
         user.login(userName, password, "", "yak", "");
         int storeId = SingletonCollection.getStoreRepository().addStore(user.getUserId(), "store", "media");
         int productId = SingletonCollection.getProductRepository().addProduct(storeId, "product", "media", 10.0, 10, "very nice product").getProductId();

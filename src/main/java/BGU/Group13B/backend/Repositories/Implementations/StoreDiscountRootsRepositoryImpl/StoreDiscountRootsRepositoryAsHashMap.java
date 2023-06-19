@@ -74,7 +74,7 @@ public class StoreDiscountRootsRepositoryAsHashMap implements IStoreDiscountRoot
     }
 
     private void save(){
-        if(saveMode)
+        if(saveMode && SingletonCollection.databaseExists())
             SingletonCollection.getContext().getBean(StoreDiscountRootRepositoryAsHashMapService.class).save(this);
     }
 

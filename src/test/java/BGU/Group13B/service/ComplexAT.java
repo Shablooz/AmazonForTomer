@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,7 +16,7 @@ public class ComplexAT{
 
     private Session session;
     private final int adminId = 1;
-    private final LocalDate today = LocalDate.now();
+    private final LocalDateTime today = LocalDateTime.now();
 
     private int guests;
     private int regularMembers;
@@ -51,7 +52,7 @@ public class ComplexAT{
     }
 
     private void checkTraffic(int addedGuests, int addedRegularMembers, int addedStoreManagersThatAreNotOwners, int addedStoreOwners, int addedAdmins){
-        var traffic = handleResponse(session.getUserTrafficOfRange(adminId, today, today));
+        var traffic = handleResponse(session.getUserTrafficOfRange(adminId, today.toLocalDate(), today.toLocalDate()));
         assertEquals(addedGuests, traffic.numOfGuests() - guests);
         assertEquals(addedRegularMembers, traffic.numOfRegularMembers() - regularMembers);
         assertEquals(addedStoreManagersThatAreNotOwners, traffic.numOfStoreManagersThatAreNotOwners() - storeManagersThatAreNotOwners);
@@ -65,13 +66,13 @@ public class ComplexAT{
     }
 
     private void checkSystemIncome(double income){
-        double[] historyIncome = handleResponse(session.getSystemHistoryIncome(adminId, today, today));
+        double[] historyIncome = handleResponse(session.getSystemHistoryIncome(adminId, today.toLocalDate(), today.toLocalDate()));
         assertEquals(1, historyIncome.length);
         assertEquals(income, historyIncome[0]);
     }
 
     private void checkStoreIncome(int storeId, double income){
-        double[] historyIncome = handleResponse(session.getStoreHistoryIncome(adminId, storeId, today, today));
+        double[] historyIncome = handleResponse(session.getStoreHistoryIncome(adminId, storeId, today.toLocalDate(), today.toLocalDate()));
         assertEquals(1, historyIncome.length);
         assertEquals(income, historyIncome[0]);
     }
@@ -342,7 +343,7 @@ public class ComplexAT{
         changeProductQuantityInCart(memberId, storeId, productId, 2);
 
         int conditionId = handleResponse(session.addStoreQuantityCondition(storeId, founderId, 2,2));
-        int discountId = handleResponse(session.addStoreDiscount(storeId, founderId, conditionId, 0.3, today.plusYears(1), "noder"));
+        int discountId = handleResponse(session.addStoreDiscount(storeId, founderId, conditionId, 0.3, today.plusYears(1).toLocalDate(), "noder"));
         handleResponse(session.addDiscountAsRoot(storeId, founderId, discountId));
 
         handleResponse(session.startPurchaseBasketTransaction(guestId, List.of("noder")));

@@ -466,6 +466,7 @@ public class Store {
         List<Integer> userIds = this.getStorePermission().getAllUsersWithIndividualPermission(UserPermissions.IndividualPermission.AUCTION);
         for (Integer id : userIds) {//wait for the interface in AlertManager.java to finish
             //alertManager.sendAlert(id, "User " + userId + " has submitted a purchase proposal for product " + productId + " in store " + this.storeId);
+            //TODO this bug
             double originalPrice = getProductRepository().getProductById(productId).getPrice();
             BroadCaster.broadcast(id,
                     "BID[" + storeId + "," + productId + "]User has submitted a purchase proposal for product " + productId +
@@ -500,7 +501,10 @@ public class Store {
             BroadCaster.broadcast(currentBid.getUserId(),
                     "Your bid for product " + getProductRepository().getProductById(currentBid.getProductId()).getName()
                             + " in store " + this.storeName + " approved!, the item added to your cart");
-            addToUserCart.apply(currentBid.getUserId(), storeId, currentBid.getProductId(), currentBid.getAmount(), currentBid.getNewProductPrice());
+            if(SingletonCollection.getStoreRepository().getSaveMode())
+                SingletonCollection.getAddToUserCart().apply(currentBid.getUserId(), storeId, currentBid.getProductId(), currentBid.getAmount(), currentBid.getNewProductPrice());
+            else
+                addToUserCart.apply(currentBid.getUserId(), storeId, currentBid.getProductId(), currentBid.getAmount(), currentBid.getNewProductPrice());
             //todo send alert to the user that his bid has been approved
         }
     }

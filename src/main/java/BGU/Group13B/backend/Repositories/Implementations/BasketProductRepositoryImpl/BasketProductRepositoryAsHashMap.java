@@ -73,10 +73,8 @@ public class BasketProductRepositoryAsHashMap implements IBasketProductRepositor
 
     private BasketProductPair getBasketProductPair(int storeId, int userId) {
         BasketProductPair basketProductPair = null;
-        for(BasketProductPair basketProductPair1 : basketProductPairs.values())
-        {
-            if(basketProductPair1.getFirst() == storeId && basketProductPair1.getSecond() == userId)
-            {
+        for (BasketProductPair basketProductPair1 : basketProductPairs.values()) {
+            if (basketProductPair1.getFirst() == storeId && basketProductPair1.getSecond() == userId) {
                 basketProductPair = basketProductPair1;
                 break;
             }
@@ -98,7 +96,7 @@ public class BasketProductRepositoryAsHashMap implements IBasketProductRepositor
         //***********************************************************************//
         Product product = getProductRepository().getStoreProductById(productId, storeId);
         var basketProductPair = getBasketProductPair(storeId, userId);
-        if(basketProductPair == null) {
+        if (basketProductPair == null) {
             basketProductPair = new BasketProductPair(storeId, userId);
             //add to maps
             int identifier = idGenerator.getAndIncrement();
@@ -157,7 +155,7 @@ public class BasketProductRepositoryAsHashMap implements IBasketProductRepositor
     }
 
     public void save() {
-        if (saveMode)
+        if (saveMode && SingletonCollection.databaseExists())
             SingletonCollection.getContext().getBean(BasketProductRepoService.class).save(this);
     }
 

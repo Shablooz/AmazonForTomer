@@ -31,13 +31,13 @@ public class DiscountRepositoryAsHashMap implements IDiscountRepository {
     @Column(name = "storeId")
     private Map<Integer/*discountId*/, Integer/*storeId*/> discountToStoreId;
 
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinTable(name = "DiscountRepositoryAsHashMap_storeDiscount",
             joinColumns = {@JoinColumn(name = "DiscountRepositoryAsHashMap_id", referencedColumnName = "id")},
             inverseJoinColumns = {
                     @JoinColumn(name = "StoreDiscount_id", referencedColumnName = "discountId")})
     @MapKeyJoinColumn(name = "discountId")
-    private Map<Integer/*discountId*/, StoreDiscount>  discountToStoreDiscount;
+    private Map<Integer/*discountId*/, StoreDiscount> discountToStoreDiscount;
     private AtomicInteger nextId;
 
     public DiscountRepositoryAsHashMap() {
@@ -181,8 +181,8 @@ public class DiscountRepositoryAsHashMap implements IDiscountRepository {
                 map(Map.Entry::getValue).
                 toList();*/
         List<StoreDiscount> storeDiscounts = new LinkedList<>();
-        for(var keyValue : discountToStoreId.entrySet()){
-            if(keyValue.getValue() == storeId){
+        for (var keyValue : discountToStoreId.entrySet()) {
+            if (keyValue.getValue() == storeId) {
                 storeDiscounts.add(discountToStoreDiscount.get(keyValue.getKey()));
             }
         }
@@ -195,9 +195,9 @@ public class DiscountRepositoryAsHashMap implements IDiscountRepository {
             throw new IllegalArgumentException("DiscountNode with id " + discountId + " does not exist");
 
         return discounts.get(new PairForDiscounts(discountId, storeId));*/
-        if(!discountToStoreId.containsKey(discountId))
+        if (!discountToStoreId.containsKey(discountId))
             throw new IllegalArgumentException("DiscountNode with id " + discountId + " does not exist");
-        if(discountToStoreId.get(discountId) != storeId)
+        if (discountToStoreId.get(discountId) != storeId)
             throw new IllegalArgumentException("DiscountNode with id " + discountId + " does not exist");
         return discountToStoreDiscount.get(discountId);
 
@@ -223,8 +223,8 @@ public class DiscountRepositoryAsHashMap implements IDiscountRepository {
         List<Integer> keysToRemove = new ArrayList<>();
 
         for (var discount_store : discountToStoreId.entrySet()) {
-            if(discount_store.getValue() == storeId && discountToStoreDiscount.get(discount_store.getKey()) instanceof ProductDiscount productDiscount){
-                if(productDiscount.getProductId() == productId)
+            if (discount_store.getValue() == storeId && discountToStoreDiscount.get(discount_store.getKey()) instanceof ProductDiscount productDiscount) {
+                if (productDiscount.getProductId() == productId)
                     keysToRemove.add(discount_store.getKey());
             }
         }
@@ -292,7 +292,7 @@ public class DiscountRepositoryAsHashMap implements IDiscountRepository {
     }
 
     private void save() {
-        if (saveMode)
+        if (saveMode && SingletonCollection.databaseExists())
             SingletonCollection.getContext().getBean(DiscountRepositoryService.class).save(this);
     }
 

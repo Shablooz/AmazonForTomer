@@ -50,7 +50,10 @@ import BGU.Group13B.service.callbacks.AddToUserCart;
 import BGU.Group13B.service.callbacks.CalculatePriceOfBasket;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.sql.*;
+import java.util.Properties;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
@@ -81,15 +84,16 @@ public class SingletonCollection {
     private static IStoreDiscountRootsRepository storeDiscountRootsRepository;
     private static IPurchasePolicyRootsRepository purchasePolicyRootsRepository;
     private static ConfigurableApplicationContext context;
+
     // set context
-    public static void setContext(ConfigurableApplicationContext updated)
-    {
-        context=updated;
+    public static void setContext(ConfigurableApplicationContext updated) {
+        context = updated;
     }
-    public static ConfigurableApplicationContext getContext()
-    {
+
+    public static ConfigurableApplicationContext getContext() {
         return context;
     }
+
     private static IDailyUserTrafficRepository dailyUserTrafficRepository;
 
 
@@ -148,9 +152,8 @@ public class SingletonCollection {
         //deliveryAdapter = new PaymentAPI();
         //paymentAdapter = new PaymentAPI();
 
-        paymentAdapter = (a,b,c,d,e,f) -> true;
-        deliveryAdapter = (a,b,c,d,e) -> true;
-
+        paymentAdapter = (a, b, c, d, e, f) -> true;
+        deliveryAdapter = (a, b, c, d, e) -> true;
 
 
         //additional classes
@@ -191,8 +194,9 @@ public class SingletonCollection {
         market = new Market();
         session = new Session(market);
     }
+
     //reset with flag
-    public static void reset_system(boolean saveMode ) {
+    public static void reset_system(boolean saveMode) {
         //repositories
         bidRepository = new BIDRepositoryAsList();
         productRepository = new ProductRepositoryAsHashMap();
@@ -230,10 +234,10 @@ public class SingletonCollection {
 
     public static void setProductRepository() {
         ProductRepositoryAsHashMap productRepositoryAsHashMap = SingletonCollection.getContext().getBean(ProductRepositoryAsHashMapService.class).getProductRepositoryAsHashMapJPA();
-        if(productRepositoryAsHashMap == null){
-            ProductRepositoryAsHashMap repo=(ProductRepositoryAsHashMap) SingletonCollection.getProductRepository();
+        if (productRepositoryAsHashMap == null) {
+            ProductRepositoryAsHashMap repo = (ProductRepositoryAsHashMap) SingletonCollection.getProductRepository();
             SingletonCollection.getContext().getBean(ProductRepositoryAsHashMapService.class).save(repo);
-        }else{
+        } else {
             SingletonCollection.productRepository = SingletonCollection.getContext().getBean(ProductRepositoryAsHashMapService.class).getProductRepositoryAsHashMapJPA();
         }
     }
@@ -244,99 +248,108 @@ public class SingletonCollection {
         if (reviewRepoSingle == null) {
             ReviewRepoSingle repo = (ReviewRepoSingle) SingletonCollection.getReviewRepository();
             SingletonCollection.getContext().getBean(ReviewRepoSingleService.class).save(repo);
-        }else {
+        } else {
             SingletonCollection.reviewRepository = SingletonCollection.getContext().getBean(ReviewRepoSingleService.class).getReviewRepoSingleJPA();
         }
     }
+
     public static void setStoreRepository() {
-        StoreRepositoryAsList storeRepositoryAsList  = SingletonCollection.getContext().getBean(StoreRepoService.class).getStoreRepoJPA();
-        if(storeRepositoryAsList == null){
-            StoreRepositoryAsList repo=(StoreRepositoryAsList) SingletonCollection.getStoreRepository();
+        StoreRepositoryAsList storeRepositoryAsList = SingletonCollection.getContext().getBean(StoreRepoService.class).getStoreRepoJPA();
+        if (storeRepositoryAsList == null) {
+            StoreRepositoryAsList repo = (StoreRepositoryAsList) SingletonCollection.getStoreRepository();
             SingletonCollection.getContext().getBean(StoreRepoService.class).save(repo);
-        }else {
+        } else {
             SingletonCollection.storeRepository = SingletonCollection.getContext().getBean(StoreRepoService.class).getStoreRepoJPA();
         }
     }
+
     public static void setStorePermissionRepository() {
-        StorePermissionsRepositoryAsHashmap storePermissionsRepositoryAsHashmap  = SingletonCollection.getContext().getBean(StorePermissionsRepositoryAsHashmapService.class).getStorePermissionsRepositoryAsHashmap();
-        if(storePermissionsRepositoryAsHashmap == null){
-            StorePermissionsRepositoryAsHashmap repo=(StorePermissionsRepositoryAsHashmap) SingletonCollection.getStorePermissionRepository();
+        StorePermissionsRepositoryAsHashmap storePermissionsRepositoryAsHashmap = SingletonCollection.getContext().getBean(StorePermissionsRepositoryAsHashmapService.class).getStorePermissionsRepositoryAsHashmap();
+        if (storePermissionsRepositoryAsHashmap == null) {
+            StorePermissionsRepositoryAsHashmap repo = (StorePermissionsRepositoryAsHashmap) SingletonCollection.getStorePermissionRepository();
             SingletonCollection.getContext().getBean(StorePermissionsRepositoryAsHashmapService.class).save(repo);
-        }else {
+        } else {
             SingletonCollection.storePermissionRepository = SingletonCollection.getContext().getBean(StorePermissionsRepositoryAsHashmapService.class).getStorePermissionsRepositoryAsHashmap();
         }
     }
+
     public static void setStoreScoreRepository() {
-        StoreScoreSingle storeScoreSingle  = SingletonCollection.getContext().getBean(StoreScoreRepoService.class).getStoreScoreSingle();
-        if(storeScoreSingle == null){
-            StoreScoreSingle repo=(StoreScoreSingle) SingletonCollection.getStoreScoreRepository();
+        StoreScoreSingle storeScoreSingle = SingletonCollection.getContext().getBean(StoreScoreRepoService.class).getStoreScoreSingle();
+        if (storeScoreSingle == null) {
+            StoreScoreSingle repo = (StoreScoreSingle) SingletonCollection.getStoreScoreRepository();
             SingletonCollection.getContext().getBean(StoreScoreRepoService.class).save(repo);
-        }else {
+        } else {
             SingletonCollection.storeScoreRepository = SingletonCollection.getContext().getBean(StoreScoreRepoService.class).getStoreScoreSingle();
         }
     }
+
     public static void setUserRepository() {
-        UserRepositoryAsHashmap userRepositoryAsHashmap  = SingletonCollection.getContext().getBean(UserRepoService.class).getUserRepositoryAsHashmap();
-        if(userRepositoryAsHashmap == null){
-            UserRepositoryAsHashmap repo=(UserRepositoryAsHashmap) SingletonCollection.getUserRepository();
+        UserRepositoryAsHashmap userRepositoryAsHashmap = SingletonCollection.getContext().getBean(UserRepoService.class).getUserRepositoryAsHashmap();
+        if (userRepositoryAsHashmap == null) {
+            UserRepositoryAsHashmap repo = (UserRepositoryAsHashmap) SingletonCollection.getUserRepository();
             SingletonCollection.getContext().getBean(UserRepoService.class).save(repo);
-        }else {
+        } else {
             SingletonCollection.userRepository = SingletonCollection.getContext().getBean(UserRepoService.class).getUserRepositoryAsHashmap();
         }
         SingletonCollection.getUserRepository().setSaveMode(true);
     }
+
     public static void setUserPermissionRepository() {
-        UserPermissionRepositoryAsHashmap userPermissionRepositoryAsHashmap  = SingletonCollection.getContext().getBean(UserPermissionRepService.class).getUserPermissionRepositoryAsHashmap();
-        if(userPermissionRepositoryAsHashmap == null){
-            UserPermissionRepositoryAsHashmap repo=(UserPermissionRepositoryAsHashmap) SingletonCollection.getUserPermissionRepository();
+        UserPermissionRepositoryAsHashmap userPermissionRepositoryAsHashmap = SingletonCollection.getContext().getBean(UserPermissionRepService.class).getUserPermissionRepositoryAsHashmap();
+        if (userPermissionRepositoryAsHashmap == null) {
+            UserPermissionRepositoryAsHashmap repo = (UserPermissionRepositoryAsHashmap) SingletonCollection.getUserPermissionRepository();
             SingletonCollection.getContext().getBean(UserPermissionRepService.class).save(repo);
-        }else {
+        } else {
             SingletonCollection.userPermissionRepository = SingletonCollection.getContext().getBean(UserPermissionRepService.class).getUserPermissionRepositoryAsHashmap();
         }
         SingletonCollection.getUserPermissionRepository().setSaveMode(true);
     }
+
     public static void setBasketRepository() {
-        BasketRepositoryAsHashMap basketRepositoryAsHashMap  = SingletonCollection.getContext().getBean(BasketRepositoryService.class).getBasketRepository();
-        if(basketRepositoryAsHashMap == null){
-            BasketRepositoryAsHashMap repo=(BasketRepositoryAsHashMap) SingletonCollection.getBasketRepository();
+        BasketRepositoryAsHashMap basketRepositoryAsHashMap = SingletonCollection.getContext().getBean(BasketRepositoryService.class).getBasketRepository();
+        if (basketRepositoryAsHashMap == null) {
+            BasketRepositoryAsHashMap repo = (BasketRepositoryAsHashMap) SingletonCollection.getBasketRepository();
             SingletonCollection.getContext().getBean(BasketRepositoryService.class).save(repo);
-        }else {
+        } else {
             SingletonCollection.basketRepository = SingletonCollection.getContext().getBean(BasketRepositoryService.class).getBasketRepository();
         }
 
     }
+
     public static void setBasketProductRepository() {
-        BasketProductRepositoryAsHashMap basketProductRepositoryAsHashMap  = SingletonCollection.getContext().getBean(BasketProductRepoService.class).getBasketProductRepository();
-        if(basketProductRepositoryAsHashMap == null){
-            BasketProductRepositoryAsHashMap repo=(BasketProductRepositoryAsHashMap) SingletonCollection.getBasketProductRepository();
+        BasketProductRepositoryAsHashMap basketProductRepositoryAsHashMap = SingletonCollection.getContext().getBean(BasketProductRepoService.class).getBasketProductRepository();
+        if (basketProductRepositoryAsHashMap == null) {
+            BasketProductRepositoryAsHashMap repo = (BasketProductRepositoryAsHashMap) SingletonCollection.getBasketProductRepository();
             SingletonCollection.getContext().getBean(BasketProductRepoService.class).save(repo);
-        }else {
+        } else {
             SingletonCollection.basketProductRepository = SingletonCollection.getContext().getBean(BasketProductRepoService.class).getBasketProductRepository();
         }
 
     }
+
     public static void setMessageRepository() {
-        MessageRepositorySingle messageRepositorySingle  = SingletonCollection.getContext().getBean(MessageRepositorySingleService.class).getMessageRepository();
-        if(messageRepositorySingle == null){
-            MessageRepositorySingle repo=(MessageRepositorySingle) SingletonCollection.getMessageRepository();
+        MessageRepositorySingle messageRepositorySingle = SingletonCollection.getContext().getBean(MessageRepositorySingleService.class).getMessageRepository();
+        if (messageRepositorySingle == null) {
+            MessageRepositorySingle repo = (MessageRepositorySingle) SingletonCollection.getMessageRepository();
             SingletonCollection.getContext().getBean(MessageRepositorySingleService.class).save(repo);
-        }else {
+        } else {
             SingletonCollection.messageRepository = SingletonCollection.getContext().getBean(MessageRepositorySingleService.class).getMessageRepository();
         }
 
     }
 
     public static void setStoreMessagesRepository() {
-        StoreMessageSingle storeMessageSingle  = SingletonCollection.getContext().getBean(StoreMessageSingleService.class).getStoreMessageSingle();
-        if(storeMessageSingle == null){
-            StoreMessageSingle repo=(StoreMessageSingle) SingletonCollection.getStoreMessagesRepository();
+        StoreMessageSingle storeMessageSingle = SingletonCollection.getContext().getBean(StoreMessageSingleService.class).getStoreMessageSingle();
+        if (storeMessageSingle == null) {
+            StoreMessageSingle repo = (StoreMessageSingle) SingletonCollection.getStoreMessagesRepository();
             SingletonCollection.getContext().getBean(StoreMessageSingleService.class).save(repo);
-        }else {
+        } else {
             SingletonCollection.storeMessagesRepository = SingletonCollection.getContext().getBean(StoreMessageSingleService.class).getStoreMessageSingle();
         }
 
 
     }
+
     public static void setStoreMessagesRepository(StoreMessageSingle storeMessageSingle) {
         SingletonCollection.storeMessagesRepository = storeMessageSingle;
     }
@@ -360,48 +373,53 @@ public class SingletonCollection {
     public static void setReviewRepository(ReviewRepoSingle reviewRepository) {
         SingletonCollection.reviewRepository = reviewRepository;
     }
+
     public static void setUserRepository(UserRepositoryAsHashmap userRepositoryAsHashmap) {
         SingletonCollection.userRepository = userRepositoryAsHashmap;
     }
+
     public static void setStoreRepository(StoreRepositoryAsList storeRepositoryAsList) {
         SingletonCollection.storeRepository = storeRepositoryAsList;
     }
+
     public static void setStorePermissionRepository(StorePermissionsRepositoryAsHashmap storePermissionsRepositoryAsHashmap) {
         SingletonCollection.storePermissionRepository = storePermissionsRepositoryAsHashmap;
     }
+
     public static void setStoreScoreRepository(StoreScoreSingle storeScoreSingle) {
         SingletonCollection.storeScoreRepository = storeScoreSingle;
     }
+
     public static void setProductRepository(ProductRepositoryAsHashMap productRepository) {
         SingletonCollection.productRepository = productRepository;
     }
 
     public static void setConditionRepository() {
         ConditionRepositoryAsHashMap conditionRepositoryAsHashMap = SingletonCollection.getContext().getBean(ConditionRepositoryAsHashMapService.class).getConditionRepositoryAsHashMap();
-        if(conditionRepositoryAsHashMap == null){
-            ConditionRepositoryAsHashMap repo=(ConditionRepositoryAsHashMap) SingletonCollection.getConditionRepository();
+        if (conditionRepositoryAsHashMap == null) {
+            ConditionRepositoryAsHashMap repo = (ConditionRepositoryAsHashMap) SingletonCollection.getConditionRepository();
             SingletonCollection.getContext().getBean(ConditionRepositoryAsHashMapService.class).save(repo);
-        }else{
+        } else {
             SingletonCollection.conditionRepository = SingletonCollection.getContext().getBean(ConditionRepositoryAsHashMapService.class).getConditionRepositoryAsHashMap();
         }
     }
 
     public static void setDiscountaccuRepository() {
         DiscountAccumulationRepositoryAsHashMap discountAccumulationRepositoryAsHashMap = SingletonCollection.getContext().getBean(DiscountAccumulationRepositoryAsHashMapService.class).getDiscountAccumulationAsHashMap();
-        if(discountAccumulationRepositoryAsHashMap == null){
-            DiscountAccumulationRepositoryAsHashMap repo=(DiscountAccumulationRepositoryAsHashMap) SingletonCollection.getDiscountAccumulationRepository();
+        if (discountAccumulationRepositoryAsHashMap == null) {
+            DiscountAccumulationRepositoryAsHashMap repo = (DiscountAccumulationRepositoryAsHashMap) SingletonCollection.getDiscountAccumulationRepository();
             SingletonCollection.getContext().getBean(DiscountAccumulationRepositoryAsHashMapService.class).save(repo);
-        }else{
+        } else {
             SingletonCollection.discountAccumulationRepository = SingletonCollection.getContext().getBean(DiscountAccumulationRepositoryAsHashMapService.class).getDiscountAccumulationAsHashMap();
         }
     }
 
     public static void setDiscountRepository() {
         DiscountRepositoryAsHashMap discountRepositoryAsHashMap = SingletonCollection.getContext().getBean(DiscountRepositoryService.class).getDiscountRepositoryAsHashmap();
-        if(discountRepositoryAsHashMap == null){
-            DiscountRepositoryAsHashMap repo=(DiscountRepositoryAsHashMap) SingletonCollection.getDiscountRepository();
+        if (discountRepositoryAsHashMap == null) {
+            DiscountRepositoryAsHashMap repo = (DiscountRepositoryAsHashMap) SingletonCollection.getDiscountRepository();
             SingletonCollection.getContext().getBean(DiscountRepositoryService.class).save(repo);
-        }else{
+        } else {
             SingletonCollection.discountRepository = SingletonCollection.getContext().getBean(DiscountRepositoryService.class).getDiscountRepositoryAsHashmap();
         }
     }
@@ -409,50 +427,50 @@ public class SingletonCollection {
 
     public static void setStoreDiscountRootsRepository() {
         StoreDiscountRootsRepositoryAsHashMap storeDiscountRootsRepositoryAsHashMap = SingletonCollection.getContext().getBean(StoreDiscountRootRepositoryAsHashMapService.class).getStoreDiscountRepository();
-        if(storeDiscountRootsRepositoryAsHashMap == null){
-            StoreDiscountRootsRepositoryAsHashMap repo=(StoreDiscountRootsRepositoryAsHashMap) SingletonCollection.getStoreDiscountRootsRepository();
+        if (storeDiscountRootsRepositoryAsHashMap == null) {
+            StoreDiscountRootsRepositoryAsHashMap repo = (StoreDiscountRootsRepositoryAsHashMap) SingletonCollection.getStoreDiscountRootsRepository();
             SingletonCollection.getContext().getBean(StoreDiscountRootRepositoryAsHashMapService.class).save(repo);
-        }else{
+        } else {
             SingletonCollection.storeDiscountRootsRepository = SingletonCollection.getContext().getBean(StoreDiscountRootRepositoryAsHashMapService.class).getStoreDiscountRepository();
         }
     }
 
     public static void setPurchasePolicyRootsRepository() {
         PurchasePolicyRootsRepositoryAsHashMap purchasePolicyRootsRepositoryAsHashMap = SingletonCollection.getContext().getBean(PurchasePolicyRootsRepositoryAsHashMapService.class).getPurchesPolicyHashMap();
-        if(purchasePolicyRootsRepositoryAsHashMap == null){
-            PurchasePolicyRootsRepositoryAsHashMap repo=(PurchasePolicyRootsRepositoryAsHashMap) SingletonCollection.getPurchasePolicyRootsRepository();
+        if (purchasePolicyRootsRepositoryAsHashMap == null) {
+            PurchasePolicyRootsRepositoryAsHashMap repo = (PurchasePolicyRootsRepositoryAsHashMap) SingletonCollection.getPurchasePolicyRootsRepository();
             SingletonCollection.getContext().getBean(PurchasePolicyRootsRepositoryAsHashMapService.class).save(repo);
-        }else{
+        } else {
             SingletonCollection.purchasePolicyRootsRepository = SingletonCollection.getContext().getBean(PurchasePolicyRootsRepositoryAsHashMapService.class).getPurchesPolicyHashMap();
         }
     }
 
     public static void setDailyUserTrafficRepository() {
         DailyUserTrafficRepositoryAsList dailyUserTrafficRepositoryAsList = SingletonCollection.getContext().getBean(DailyUserTrafficRepositoryAsListService.class).getDailyUserTrafficRepository();
-        if(dailyUserTrafficRepositoryAsList == null){
-            DailyUserTrafficRepositoryAsList repo=(DailyUserTrafficRepositoryAsList) SingletonCollection.getDailyUserTrafficRepository();
+        if (dailyUserTrafficRepositoryAsList == null) {
+            DailyUserTrafficRepositoryAsList repo = (DailyUserTrafficRepositoryAsList) SingletonCollection.getDailyUserTrafficRepository();
             SingletonCollection.getContext().getBean(DailyUserTrafficRepositoryAsListService.class).save(repo);
-        }else{
+        } else {
             SingletonCollection.dailyUserTrafficRepository = SingletonCollection.getContext().getBean(DailyUserTrafficRepositoryAsListService.class).getDailyUserTrafficRepository();
         }
     }
 
     public static void setBidRepository() {
         BIDRepositoryAsList bIDRepositoryAsList = SingletonCollection.getContext().getBean(BIDRepositoryAsListService.class).getBIDRepository();
-        if(bIDRepositoryAsList == null){
-            BIDRepositoryAsList repo=(BIDRepositoryAsList) SingletonCollection.getBidRepository();
+        if (bIDRepositoryAsList == null) {
+            BIDRepositoryAsList repo = (BIDRepositoryAsList) SingletonCollection.getBidRepository();
             SingletonCollection.getContext().getBean(BIDRepositoryAsListService.class).save(repo);
-        }else{
+        } else {
             SingletonCollection.bidRepository = SingletonCollection.getContext().getBean(BIDRepositoryAsListService.class).getBIDRepository();
         }
     }
 
     public static void setPurchaseHistoryRepository() {
         PurchaseHistoryRepositoryAsList purchaseHistoryRepositoryAsList = SingletonCollection.getContext().getBean(PurchaseHistoryRepositoryAsListService.class).getPurchaseHistoryRepository();
-        if(purchaseHistoryRepositoryAsList == null){
-            PurchaseHistoryRepositoryAsList repo=(PurchaseHistoryRepositoryAsList) SingletonCollection.getPurchaseHistoryRepository();
+        if (purchaseHistoryRepositoryAsList == null) {
+            PurchaseHistoryRepositoryAsList repo = (PurchaseHistoryRepositoryAsList) SingletonCollection.getPurchaseHistoryRepository();
             SingletonCollection.getContext().getBean(PurchaseHistoryRepositoryAsListService.class).save(repo);
-        }else{
+        } else {
             SingletonCollection.purchaseHistoryRepository = SingletonCollection.getContext().getBean(PurchaseHistoryRepositoryAsListService.class).getPurchaseHistoryRepository();
         }
     }
@@ -460,6 +478,7 @@ public class SingletonCollection {
     public static void setDailyUserTrafficRepository(DailyUserTrafficRepositoryAsList dailyUserTrafficRepositoryAsList) {
         SingletonCollection.dailyUserTrafficRepository = dailyUserTrafficRepositoryAsList;
     }
+
     //lines below might need to be replaced with a field
     public static ProductRepositoryAsHashMapService getProductRepositoryAsHashMapService() {
         return SingletonCollection.getContext().getBean(ProductRepositoryAsHashMapService.class);
@@ -598,7 +617,7 @@ public class SingletonCollection {
     /**
      * <h1>setters (for callbacks)</h1>
      */
-    public  static void setAddToUserCart(AddToUserCart addToUserCart) {
+    public static void setAddToUserCart(AddToUserCart addToUserCart) {
         SingletonCollection.addToUserCart = addToUserCart;
     }
 
@@ -645,7 +664,7 @@ public class SingletonCollection {
         storePermissionRepository.reset();*/
     }
 
-    public static void setSaveMode(boolean saveMode){
+    public static void setSaveMode(boolean saveMode) {
         storeScoreRepository.setSaveMode(saveMode);
         productRepository.setSaveMode(saveMode);
         storeRepository.setSaveMode(saveMode);
@@ -666,17 +685,47 @@ public class SingletonCollection {
         bidRepository.setSaveMode(saveMode);
         purchaseHistoryRepository.setSaveMode(saveMode);
     }
+
     public static void setPaymentFail() {
         paymentAdapter = null;
     }
 
-    public static void setDiscountRepository(DiscountRepositoryAsHashMap discountRepositoryAsHashMap){
+    public static void setDiscountRepository(DiscountRepositoryAsHashMap discountRepositoryAsHashMap) {
         SingletonCollection.discountRepository = discountRepositoryAsHashMap;
     }
 
 
     public static void setSession() {
         SingletonCollection.session = SingletonCollection.getContext().getBean(Session.class);
+    }
+
+    public static boolean databaseExists() {
+        Properties properties = new Properties();
+        try {
+            FileInputStream fileInputStream = new FileInputStream("src/main/resources/application.properties");
+            properties.load(fileInputStream);
+            fileInputStream.close();
+
+        }catch (Exception e){
+            return false;
+        }
+        String jdbcUrl = properties.getProperty("spring.datasource.url");
+        String username = properties.getProperty("spring.datasource.username");
+        String password = properties.getProperty("spring.datasource.password");
+
+        try (Connection connection = DriverManager.getConnection(jdbcUrl, username, password)) {
+            // Attempt a database operation
+            try (Statement statement = connection.createStatement()) {
+                ResultSet resultSet = statement.executeQuery("SELECT 1");
+                // If the query executes successfully, the database is active and accessible
+                return resultSet.next();
+            } catch (SQLException e) {
+                // Connection failed
+                return false;
+            }
+        } catch (SQLException e) {
+            return false;
+        }
     }
 }
 

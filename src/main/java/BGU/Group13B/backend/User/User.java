@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import org.mindrot.jbcrypt.BCrypt;
 
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -57,8 +58,8 @@ public class User {
     @Transient
     private Message regularMessageToReply; //need to map
     private String password;
-    @Transient
-    private LocalDate dateOfBirth;
+
+    private LocalDateTime dateOfBirth;
     private String email;
 
     private String answer1;
@@ -146,7 +147,7 @@ public class User {
 
     //#15
     //returns User on success (for future functionalities)
-    public User register(String userName, String password, String email, String answer1, String answer2, String answer3, LocalDate birthdate) {
+    public User register(String userName, String password, String email, String answer1, String answer2, String answer3, LocalDateTime birthdate) {
         checkRegisterInfo(userName, password, email, birthdate);
         //updates the user info upon registration - no longer a guest
         updateUserDetail(userName, password, email, answer1, answer2, answer3, birthdate);
@@ -154,7 +155,7 @@ public class User {
         return this;
     }
 
-    private void checkRegisterInfo(String userName, String password, String email, LocalDate birthdate) {
+    private void checkRegisterInfo(String userName, String password, String email, LocalDateTime birthdate) {
         String usernameRegex = "^[a-zA-Z0-9_-]{4,16}$"; // 4-16 characters, letters/numbers/underscore/hyphen
         String passwordRegex = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)[A-Za-z\\d]{8,}$"; // need at least 8 characters, 1 uppercase, 1 lowercase, 1 number)
         String emailRegex = "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$"; // checks email validation
@@ -175,7 +176,7 @@ public class User {
     //function that currently only used in register, but is cna function as a setter
     //TODO change following fields in the database
     private void updateUserDetail(String userName, String password, String email, String answer1, String answer2, String answer3,
-                                  LocalDate birthdate) {
+                                  LocalDateTime birthdate) {
         this.answer1 = answer1;
         this.answer2 = answer2;
         this.answer3 = answer3;
@@ -651,9 +652,10 @@ public class User {
         return SingletonCollection.getPurchaseHistoryRepository().getAllPurchases(userId);
     }
 
-    public LocalDate getDateOfBirth() {
+    public LocalDateTime getDateOfBirth() {
         return dateOfBirth;
     }
+
 
     public UserCard getUserCard() {
         List<Pair<Integer, String>> pairs = getUserPermissions().getStoresAndRoles();
@@ -781,7 +783,7 @@ public class User {
         this.password = password;
     }
 
-    public void setDateOfBirth(LocalDate dateOfBirth) {
+    public void setDateOfBirth(LocalDateTime dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
