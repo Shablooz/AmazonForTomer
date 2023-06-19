@@ -1305,7 +1305,7 @@ public class Store {
 
 
     public IPurchaseHistoryRepository getPurchaseHistoryRepository() {
-        return purchaseHistoryRepository;
+        return SingletonCollection.getPurchaseHistoryRepository();
     }
 
     public IAuctionRepository getAuctionRepository() {

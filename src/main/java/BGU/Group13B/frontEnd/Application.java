@@ -3,6 +3,7 @@ package BGU.Group13B.frontEnd;
 import BGU.Group13B.backend.Repositories.Implementations.DiscountRepositoryImpl.PairForDiscountService;
 import BGU.Group13B.backend.Repositories.Implementations.DiscountRepositoryImpl.PairForDiscounts;
 import BGU.Group13B.backend.User.User;
+import BGU.Group13B.service.Session;
 import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.ConfigurationFileParser;
 import com.vaadin.flow.component.page.AppShellConfigurator;
@@ -21,6 +22,7 @@ import static java.lang.Thread.sleep;
 
 import java.time.LocalDate;
 import java.util.Timer;
+import java.util.logging.Logger;
 
 /**
  * The entry point of the Spring Boot application.
@@ -35,13 +37,13 @@ import java.util.Timer;
 @Push
 @EntityScan(basePackages = {"BGU.Group13B.backend", "BGU.Group13B.frontEnd", "BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl"})
 public class Application implements AppShellConfigurator {
+    private static final Logger LOGGER_INFO = Logger.getLogger(Session.class.getName());
+
+    static {
+        SingletonCollection.setFileHandler(LOGGER_INFO, true);
+    }
+
     public static void main(String[] args) {
-
-        //logging out all users on shutdown
-
-
-
-
 
         //timer for deleting idle sessions
         //running the ui
@@ -91,9 +93,7 @@ public class Application implements AppShellConfigurator {
         ConfigurationFileParser.parse();
         SingletonCollection.getUserRepository().logoutAllUsers();
 
-
-
-
+        LOGGER_INFO.info("Application finished loading up 🐑");
 
 
     }
