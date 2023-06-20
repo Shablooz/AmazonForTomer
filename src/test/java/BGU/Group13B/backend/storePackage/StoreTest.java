@@ -95,7 +95,7 @@ class StoreTest {
         bidRepository = (BIDRepositoryAsList) SingletonCollection.getBidRepository();
     }
 
-    /*@Test
+    @Test
     void purchaseProposalSubmitWithPermissions() {
         try {
             store.purchaseProposalSubmit(managerWithPermission, productId, proposedPrice, amount);
@@ -153,7 +153,7 @@ class StoreTest {
             try {
                 if (Math.random() > 0.5)//adding randomness to the order of the threads
                     Thread.sleep(10);
-                store.purchaseProposalApprove(managerWithPermission, 0);
+                store.purchaseProposalApprove(managerWithPermission, productId, managerWithPermission);
                 synchronized (firstThreadToFinish) {
                     if (firstThreadToFinish.get() == -1)
                         firstThreadToFinish.set(1);
@@ -172,7 +172,7 @@ class StoreTest {
             try {
                 if (Math.random() > 0.5)
                     Thread.sleep(10);
-                store.purchaseProposalReject(managerWithPermission, 0);
+                store.purchaseProposalReject(managerWithPermission, productId, managerWithPermission);
 
                 synchronized (firstThreadToFinish) {
                     if (firstThreadToFinish.get() == -1)
@@ -195,8 +195,9 @@ class StoreTest {
                         Mockito.times(1)).apply(managerWithPermission, storeId, productId, amount, proposedPrice);
             else if (firstThreadToFinish.get() == 2)
                 Assertions.assertTrue(true);
-                        *//*Mockito.verify(broadCaster,
-                                Mockito.times(1)).broadcast(managerWithPermission, msg);*//*
+//                Assertions.assertTrue(true);
+//                        Mockito.verify(broadCaster,
+//                                Mockito.times(1)).broadcast(managerWithPermission, msg);
             else
                 fail("No thread finished QA's fault");
         } catch (InterruptedException ignore) {
@@ -223,7 +224,7 @@ class StoreTest {
             store.purchaseProposalApprove(managerWithPermission, productId, managerWithPermission);
             Mockito.verify(addToUserCart,
                     Mockito.times(1)).apply(managerWithPermission, storeId, productId, amount, proposedPrice);
-            Assertions.assertFalse(bidRepository.getBID(0).orElseThrow().isRejected());
+            Assertions.assertFalse(bidRepository.getBID(managerWithPermission, productId).orElseThrow().isRejected());
 
         } catch (NoPermissionException | NoSuchElementException e) {
             fail();
@@ -236,16 +237,16 @@ class StoreTest {
         try {
             store.purchaseProposalSubmit(managerWithPermission, productId, proposedPrice, amount);
 
-            store.purchaseProposalReject(managerWithPermission, 0);
+            store.purchaseProposalReject(managerWithPermission, productId, managerWithPermission);
             Mockito.verify(addToUserCart,
                     Mockito.times(0)).apply(managerWithPermission, storeId, productId, amount, proposedPrice);
 
-            Assertions.assertEquals(bidRepository.getBID(0), Optional.empty());
+            Assertions.assertEquals(bidRepository.getBID(managerWithPermission, productId), Optional.empty());
 
         } catch (NoPermissionException e) {
             throw new RuntimeException(e);
         }
-    }*/
+    }
 
     public void customSetUp() {
         SingletonCollection.setSaveMode(false);
