@@ -6,10 +6,7 @@ import BGU.Group13B.backend.storePackage.BID;
 import BGU.Group13B.service.SingletonCollection;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicInteger;
 @Entity
@@ -46,20 +43,20 @@ public class BIDRepositoryAsList implements IBIDRepository {
         /*int maxUserBid = bids.stream().filter(bid -> bid.getUserId() == userId).
                 map(BID::getBidId).max(Integer::compareTo).orElse(-1);*/
 
-        this.bids.add(new BID(maxBidId.getAndIncrement(), userId, productId, newProductPrice, amount));
+        this.bids.add(new BID(Objects.hash(userId, productId), userId, productId, newProductPrice, amount));
         save();
     }
 
     @Override
-    public void removeBID(int bidId) {
-        this.bids.removeIf(bid -> bid.getBidId() == bidId);
+    public void removeBID(int userId, int productId) {
+        this.bids.removeIf(bid -> bid.getBidId() == Objects.hash(bid.getUserId(), productId));
         save();
     }
 
     @Override
-    public synchronized Optional<BID> getBID(int bidId) {
+    public synchronized Optional<BID> getBID(int userId, int productId) {
         var _bid = this.bids.stream().
-                filter(bid -> bid.getBidId() == bidId).toList();
+                filter(bid -> bid.getBidId() == Objects.hash(bid.getUserId(), productId)).toList();
         if (_bid.isEmpty()) return Optional.empty();
         return Optional.ofNullable(_bid.get(0));
     }

@@ -15,6 +15,7 @@ import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -98,9 +99,9 @@ class StoreTest {
     void purchaseProposalSubmitWithPermissions() {
         try {
             store.purchaseProposalSubmit(managerWithPermission, productId, proposedPrice, amount);
-            Assertions.assertEquals(bidRepository.getBID(0),
-                    Optional.of(new BID(0, managerWithPermission, productId, proposedPrice, amount)));
-            assertFalse(bidRepository.getBID(0).orElseThrow(() ->
+            Assertions.assertEquals(bidRepository.getBID(managerWithPermission, productId),
+                    Optional.of(new BID(Objects.hash(managerWithPermission, productId), managerWithPermission, productId, proposedPrice, amount)));
+            assertFalse(bidRepository.getBID(managerWithPermission, productId).orElseThrow(() ->
                     new NoSuchElementException("No such bid with id 0")).isRejected());
         } catch (Exception e) {
             fail("Exception was thrown");
@@ -152,7 +153,7 @@ class StoreTest {
             try {
                 if (Math.random() > 0.5)//adding randomness to the order of the threads
                     Thread.sleep(10);
-                store.purchaseProposalApprove(managerWithPermission, 0);
+                store.purchaseProposalApprove(managerWithPermission, productId, managerWithPermission);
                 synchronized (firstThreadToFinish) {
                     if (firstThreadToFinish.get() == -1)
                         firstThreadToFinish.set(1);
@@ -171,7 +172,7 @@ class StoreTest {
             try {
                 if (Math.random() > 0.5)
                     Thread.sleep(10);
-                store.purchaseProposalReject(managerWithPermission, 0);
+                store.purchaseProposalReject(managerWithPermission, productId, managerWithPermission);
 
                 synchronized (firstThreadToFinish) {
                     if (firstThreadToFinish.get() == -1)
@@ -194,8 +195,9 @@ class StoreTest {
                         Mockito.times(1)).apply(managerWithPermission, storeId, productId, amount, proposedPrice);
             else if (firstThreadToFinish.get() == 2)
                 Assertions.assertTrue(true);
-                        /*Mockito.verify(broadCaster,
-                                Mockito.times(1)).broadcast(managerWithPermission, msg);*/
+//                Assertions.assertTrue(true);
+//                        Mockito.verify(broadCaster,
+//                                Mockito.times(1)).broadcast(managerWithPermission, msg);
             else
                 fail("No thread finished QA's fault");
         } catch (InterruptedException ignore) {
@@ -219,10 +221,10 @@ class StoreTest {
         try {
             store.purchaseProposalSubmit(managerWithPermission, productId, proposedPrice, amount);
 
-            store.purchaseProposalApprove(managerWithPermission, 0);
+            store.purchaseProposalApprove(managerWithPermission, productId, managerWithPermission);
             Mockito.verify(addToUserCart,
                     Mockito.times(1)).apply(managerWithPermission, storeId, productId, amount, proposedPrice);
-            Assertions.assertFalse(bidRepository.getBID(0).orElseThrow().isRejected());
+            Assertions.assertFalse(bidRepository.getBID(managerWithPermission, productId).orElseThrow().isRejected());
 
         } catch (NoPermissionException | NoSuchElementException e) {
             fail();
@@ -235,11 +237,11 @@ class StoreTest {
         try {
             store.purchaseProposalSubmit(managerWithPermission, productId, proposedPrice, amount);
 
-            store.purchaseProposalReject(managerWithPermission, 0);
+            store.purchaseProposalReject(managerWithPermission, productId, managerWithPermission);
             Mockito.verify(addToUserCart,
                     Mockito.times(0)).apply(managerWithPermission, storeId, productId, amount, proposedPrice);
 
-            Assertions.assertEquals(bidRepository.getBID(0), Optional.empty());
+            Assertions.assertEquals(bidRepository.getBID(managerWithPermission, productId), Optional.empty());
 
         } catch (NoPermissionException e) {
             throw new RuntimeException(e);

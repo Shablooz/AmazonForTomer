@@ -94,9 +94,18 @@ public interface ISession {
     Response<VoidResponse> purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount);
 
 
-    Response<VoidResponse> purchaseProposalApprove(int managerId, int storeId, int productId) throws NoPermissionException;
+    /**
+     * #50
+     * require 2.5.1
+     *
+     * @param managerId the manager id
+     * @param storeId   the store id
+     * @param productId the product id
+     * @param userId    the user id
+     */
+    Response<VoidResponse> purchaseProposalApprove(int managerId, int storeId, int productId, int userId);
 
-    Response<VoidResponse> purchaseProposalReject(int storeId, int managerId, int bidId) throws NoPermissionException;
+    Response<VoidResponse> purchaseProposalReject(int storeId, int managerId, int bidId, int userId) throws NoPermissionException;
 
     /**
      * #51
