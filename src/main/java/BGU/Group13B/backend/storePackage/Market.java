@@ -137,12 +137,12 @@ public class Market {
         getStoreRepository().getStore(storeId).purchaseProposalSubmit(userId, productId, proposedPrice, amount);
     }
 
-    public void purchaseProposalApprove(int managerId, int storeId, int productId) throws NoPermissionException {
-        getStoreRepository().getStore(storeId).purchaseProposalApprove(managerId, productId);
+    public void purchaseProposalApprove(int managerId, int storeId, int productId, int userId) throws NoPermissionException {
+        getStoreRepository().getStore(storeId).purchaseProposalApprove(managerId, productId, userId);
     }
 
-    public void purchaseProposalReject(int storeId, int managerId, int bidId) throws NoPermissionException {
-        getStoreRepository().getStore(storeId).purchaseProposalReject(managerId, bidId);
+    public void purchaseProposalReject(int storeId, int managerId, int productId, int userId) throws NoPermissionException {
+        getStoreRepository().getStore(storeId).purchaseProposalReject(managerId, productId, userId);
     }
 
     public void auctionPurchase(int userId, int storeId, int productId, double newPrice) throws NoPermissionException {

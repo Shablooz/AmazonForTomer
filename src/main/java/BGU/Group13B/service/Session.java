@@ -180,9 +180,9 @@ public class Session implements ISession {
     }
 
     @Override
-    public Response<VoidResponse> purchaseProposalApprove(int managerId, int storeId, int productId) {
+    public Response<VoidResponse> purchaseProposalApprove(int managerId, int storeId, int productId, int userId) {
         try {
-            market.purchaseProposalApprove(managerId, storeId, productId);
+            market.purchaseProposalApprove(managerId, storeId, productId, userId);
             LOGGER_INFO.info("Manager " + managerId + " approved purchase proposal successfully");
             return Response.success();
         } catch (NoPermissionException e) {
@@ -191,9 +191,9 @@ public class Session implements ISession {
     }
 
     @Override
-    public Response<VoidResponse> purchaseProposalReject(int storeId, int managerId, int bidId) {
+    public Response<VoidResponse> purchaseProposalReject(int storeId, int managerId, int productId, int userId) {
         try {
-            market.purchaseProposalReject(managerId, storeId, bidId);
+            market.purchaseProposalReject(managerId, storeId, productId, userId);
             LOGGER_INFO.info("Manager " + managerId + " rejected purchase proposal successfully");
             return Response.success();
         } catch (NoPermissionException e) {

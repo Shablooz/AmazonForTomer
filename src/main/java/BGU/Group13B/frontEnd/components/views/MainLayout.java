@@ -6,10 +6,7 @@ import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
 import BGU.Group13B.frontEnd.components.appnav.AppNav;
 import BGU.Group13B.frontEnd.components.appnav.AppNavItem;
-import BGU.Group13B.service.BroadCaster;
-import BGU.Group13B.service.Response;
-import BGU.Group13B.service.Session;
-import BGU.Group13B.service.VoidResponse;
+import BGU.Group13B.service.*;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
@@ -99,15 +96,16 @@ public class MainLayout extends AppLayout implements ResponseHandler {
         String[] storeProduct = message.substring(message.indexOf("[") + 1, message.indexOf("]")).split(",");
         int storeId = Integer.parseInt(storeProduct[0]);
         int productId = Integer.parseInt(storeProduct[1]);
+        int userId = SessionToIdMapper.getInstance().getCurrentSessionId();
         //accept button
         Button accept = new Button(VaadinIcon.CHECK_CIRCLE.create(), event -> {
-            session.purchaseProposalApprove(managerId, storeId, productId);
+            session.purchaseProposalApprove(managerId, storeId, productId, userId);
             notification.close();
         });
         accept.addThemeVariants(LUMO_TERTIARY_INLINE);
         //reject button
         Button reject = new Button(VaadinIcon.CLOSE_SMALL.create(), event -> {
-            session.purchaseProposalReject(managerId, storeId, productId);
+            session.purchaseProposalReject(managerId, storeId, productId, userId);
             notification.close();
         });
         accept.setVisible(true);

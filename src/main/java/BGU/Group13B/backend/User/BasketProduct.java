@@ -73,6 +73,7 @@ public class BasketProduct {
         try {
             return SingletonCollection.getProductRepository().getProductById(product.getProductId());
         } catch (Exception e) {
+            product.setDeleted(true);
             return product;
         }
     }

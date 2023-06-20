@@ -568,7 +568,7 @@ public class User {
 
 
     public void addToCart(int storeId, int productId, int amount, double newPrice) {
-        getCart().addProductToCart(storeId, productId, amount, newPrice);
+        getCart().addProductToCart(productId, storeId, amount, newPrice);
     }
 
     public void addPermission(int storeId, UserPermissions.StoreRole storeRole) {

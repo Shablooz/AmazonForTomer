@@ -24,11 +24,7 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 @Entity
@@ -173,7 +169,7 @@ public class Store {
     public void voteForOwner(Pair<Integer, Integer> newAndAppointerIds, int voterId, boolean accept) throws NoPermissionException, ChangePermissionException {
         if (!this.getStorePermission().checkPermission(voterId, hidden))
             throw new NoPermissionException("User " + voterId + " has no permission to vote for an owner to store " + this.storeId);
-        if(getStorePermission().updateVote(newAndAppointerIds, voterId, accept)){
+        if (getStorePermission().updateVote(newAndAppointerIds, voterId, accept)) {
             getStorePermission().addOwnerPermission(newAndAppointerIds.getFirst(), newAndAppointerIds.getSecond());
             getUserRepo().getUser(newAndAppointerIds.getFirst()).addPermission(storeId, UserPermissions.StoreRole.OWNER);
         }
@@ -305,7 +301,6 @@ public class Store {
             throw new NoPermissionException("User " + userId + " has no permission to handle message of store " + this.storeId);
         getStoreMessagesRepository().refreshOldMassage(this.storeId, userId);
     }
-
 
 
     public void addReview(String review, int userId, int productId) throws NoPermissionException {
@@ -446,7 +441,9 @@ public class Store {
                 Thread.currentThread().getStackTrace()[2].getMethodName());
     }
 
-
+    @DefaultFounderFunctionality
+    @AuctionPermission
+    @DefaultOwnerFunctionality
     public void purchaseProposalSubmit(int userId, int productId, double proposedPrice, int amount) throws NoPermissionException {
         /*
          * check if the user has permission to purchase proposal
@@ -480,13 +477,13 @@ public class Store {
     @DefaultFounderFunctionality
     @AuctionPermission
     @DefaultOwnerFunctionality
-    public void purchaseProposalApprove(int managerId, int bidId) throws NoPermissionException {
+    public void purchaseProposalApprove(int managerId, int productId, int userId) throws NoPermissionException {
         /*
          * check if the user has permission to purchase proposal
          * */
         if (!this.getStorePermission().checkPermission(managerId, hidden))//the user should be loggedIn with permissions
             throw new NoPermissionException("User " + managerId + " has no permission to add product to store " + this.storeId);
-        BID currentBid = SingletonCollection.getBidRepository().getBID(bidId).
+        BID currentBid = SingletonCollection.getBidRepository().getBID(userId, productId).
                 orElseThrow(() -> new IllegalArgumentException("There is no such bid for store " + this.storeId));
 
         if (currentBid.isRejected())//fixme, use BroadCaster.broadcast
@@ -495,13 +492,13 @@ public class Store {
                             + " has been rejected already");
         //alertManager.sendAlert(managerId, "The bid for product " + currentBid.getProductId() + " in store " + this.storeId + " has been rejected already");
         currentBid.approve(managerId);
-        Set<Integer> managers = getStorePermission().getAllUsersWithPermission("purchaseProposalSubmit");
+        List<Integer> managers = this.getStorePermission().getAllUsersWithIndividualPermission(UserPermissions.IndividualPermission.AUCTION);
 
-        if (currentBid.approvedByAll(managers)) {
+        if (currentBid.approvedByAll(new HashSet<>(managers))) {
             BroadCaster.broadcast(currentBid.getUserId(),
                     "Your bid for product " + getProductRepository().getProductById(currentBid.getProductId()).getName()
                             + " in store " + this.storeName + " approved!, the item added to your cart");
-            if(SingletonCollection.getStoreRepository().getSaveMode())
+            if (SingletonCollection.getStoreRepository().getSaveMode())
                 SingletonCollection.getAddToUserCart().apply(currentBid.getUserId(), storeId, currentBid.getProductId(), currentBid.getAmount(), currentBid.getNewProductPrice());
             else
                 addToUserCart.apply(currentBid.getUserId(), storeId, currentBid.getProductId(), currentBid.getAmount(), currentBid.getNewProductPrice());
@@ -512,20 +509,20 @@ public class Store {
     @DefaultFounderFunctionality
     @AuctionPermission
     @DefaultOwnerFunctionality
-    public void purchaseProposalReject(int managerId, int bidId) throws NoPermissionException {
+    public void purchaseProposalReject(int managerId, int productId, int userId) throws NoPermissionException {
         /*
          * check if the user has permission to purchase proposal
          * */
         if (!this.getStorePermission().checkPermission(managerId, hidden))//the user should be loggedIn with permissions
             throw new NoPermissionException("User " + managerId + " has no permission to reject a purchase proposal in the store: " + this.storeId);
-        BID currentBid = SingletonCollection.getBidRepository().getBID(bidId).orElseThrow(() -> new IllegalArgumentException("There is no such bid for store " + this.storeId));
+        BID currentBid = SingletonCollection.getBidRepository().getBID(userId, productId).orElseThrow(() -> new IllegalArgumentException("There is no such bid for store " + this.storeId));
         if (currentBid.isRejected())
             BroadCaster.broadcast(managerId,
                     "The bid for product " + getProductRepository().getProductById(currentBid.getProductId()).getName()
                             + " has been rejected already");
 
         currentBid.reject();//good for concurrency edge cases
-        SingletonCollection.getBidRepository().removeBID(bidId);
+        SingletonCollection.getBidRepository().removeBID(userId, productId);
         //todo send alert to the user that his bid has been rejected
     }
 
@@ -1424,7 +1421,7 @@ public class Store {
         this.purchasePolicy = purchasePolicy;
     }
 
-    private void save(){
+    private void save() {
         SingletonCollection.getStoreRepository().save();
     }
 
