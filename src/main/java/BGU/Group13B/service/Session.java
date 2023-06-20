@@ -85,7 +85,9 @@ public class Session implements ISession {
     /*good for development no need check if the item exists*/
     public Response<VoidResponse> addToCart(int userId, int storeId, int productId, int amount, double newPrice) {
         try {
+            LOGGER_INFO.info("user " + userId + " is trying to add a product" + productId + " in store " + storeId + " to cart");
             userRepository.getUser(userId).addToCart(storeId, productId, amount, newPrice);
+            LOGGER_INFO.info("user " + userId + " added the product to cart");
             return Response.success();
         } catch (Exception e) {
             return Response.exception(e);
@@ -123,13 +125,14 @@ public class Session implements ISession {
                                                       String address, String city, String country,
                                                       String zip) {
         try {
+            LOGGER_INFO.info("user " + userId + " is trying to purchase his cart");
             userRepository.getUser(userId).
                     purchaseCart(
                             creditCardNumber, creditCardMonth,
                             creditCardYear, creditCardHolderFirstName,
                             creditCardCVV, id,
                             address, city, country, zip);
-            LOGGER_INFO.info("User " + userId + " purchased cart successfully");
+            LOGGER_INFO.info("user " + userId + " purchased his cart");
             return Response.success();
         } catch (Exception e) {
             LOGGER_ERROR.severe("User " + userId + " failed to purchase cart");
@@ -257,11 +260,11 @@ public class Session implements ISession {
     @Override
     public Response<List<ProductInfo>> search(String searchWords) {
         try {
-            var result = market.search(searchWords);
-            LOGGER_INFO.info("Search for " + searchWords + " was successful");
-            return Response.success(result);
-        } catch (Exception e) {
-            LOGGER_ERROR.severe("Search for " + searchWords + " failed");
+            LOGGER_INFO.info("user is searching for: " + searchWords);
+            return Response.success(market.search(searchWords));
+        }
+        catch (Exception e){
+            LOGGER_INFO.info("search failed");
             return Response.exception(e);
         }
     }
@@ -269,8 +272,10 @@ public class Session implements ISession {
     @Override
     public Response<List<ProductInfo>> filterByPriceRange(double minPrice, double maxPrice) {
         try {
+            LOGGER_INFO.info("user filtered by price range: " + minPrice + " - " + maxPrice + "");
             return Response.success(market.filterByPriceRange(minPrice, maxPrice));
         } catch (Exception e) {
+            LOGGER_INFO.info("filter by price range failed");
             return Response.exception(e);
         }
     }
@@ -278,8 +283,10 @@ public class Session implements ISession {
     @Override
     public Response<List<ProductInfo>> filterByProductRank(double minRating, double maxRating) {
         try {
+            LOGGER_INFO.info("user filtered by product rank: " + minRating + " - " + maxRating );
             return Response.success(market.filterByProductRank(minRating, maxRating));
         } catch (Exception e) {
+            LOGGER_INFO.info("filter by product rank failed");
             return Response.exception(e);
         }
     }
@@ -287,8 +294,10 @@ public class Session implements ISession {
     @Override
     public Response<List<ProductInfo>> filterByCategory(String category) {
         try {
+            LOGGER_INFO.info("user filtered by category: " + category );
             return Response.success(market.filterByCategory(category));
         } catch (Exception e) {
+            LOGGER_INFO.info("filter by category failed");
             return Response.exception(e);
         }
     }
@@ -296,8 +305,10 @@ public class Session implements ISession {
     @Override
     public Response<List<ProductInfo>> filterByStoreRank(double minRating, double maxRating) {
         try {
+            LOGGER_INFO.info("user filtered by store rank: " + minRating + " - " + maxRating + "");
             return Response.success(market.filterByStoreRank(minRating, maxRating));
         } catch (Exception e) {
+            LOGGER_INFO.info("filter by store rank failed");
             return Response.exception(e);
         }
     }
@@ -363,11 +374,12 @@ public class Session implements ISession {
     @Override
     public Response<VoidResponse> addProductToCart(int userId, int productId, int storeId) {
         try {
+            LOGGER_INFO.info("user " + userId + " is trying to add product " + productId + " to cart from store " + storeId);
             userRepositoryAsHashmap.getUser(userId).addProductToCart(productId, storeId);
-            LOGGER_INFO.info("product " + productId + " was added to cart successfully");
-            return Response.success();
+            LOGGER_INFO.info("user " + userId + " added product " + productId + " to cart from store " + storeId);
+            return Response.success(new VoidResponse());
         } catch (Exception e) {
-            LOGGER_ERROR.severe("product " + productId + " was not added to cart successfully");
+            LOGGER_INFO.info("user " + userId + " failed to add product " + productId + " to cart from store " + storeId);
             return Response.exception(e);
         }
     }
@@ -712,8 +724,10 @@ public class Session implements ISession {
     @Override
     public Response<String> getCartDescription(int userId) {
         try {
+            LOGGER_INFO.info("Getting cart description for user " + userId );
             return Response.success(userRepositoryAsHashmap.getUser(userId).getCartDescription());
         } catch (NoPermissionException e) {
+            LOGGER_INFO.info("Getting cart description for user " + userId + " failed");
             throw new RuntimeException(e);
         }
     }
@@ -733,8 +747,11 @@ public class Session implements ISession {
     @Override
     public void removeProductFromCart(int userId, int storeId, int productId) {
         try {
+            LOGGER_INFO.info("user " + userId + " is trying to remove product " + productId + " from cart");
             userRepositoryAsHashmap.getUser(userId).removeProductFromCart(storeId, productId);
+            LOGGER_INFO.info("user " + userId + " removed product " + productId + " from cart");
         } catch (Exception e) {
+            LOGGER_INFO.info("user " + userId + " remove product " + productId + " from cart");
             throw new RuntimeException(e);
         }
     }
@@ -905,8 +922,11 @@ public class Session implements ISession {
     @Override
     public void changeProductQuantityInCart(int userId, int storeId, int productId, int quantity) {
         try {
+            LOGGER_INFO.info("user " + userId + " is trying to change product quantity in cart");
             userRepositoryAsHashmap.getUser(userId).changeProductQuantityInCart(storeId, productId, quantity);
+            LOGGER_INFO.info("user " + userId + " changed product " + productId + " quantity in cart to " + quantity);
         } catch (Exception e) {
+            LOGGER_INFO.info("user " + userId + " failed to change product " + productId + " quantity in cart");
             throw new RuntimeException(e);
         }
     }
@@ -1006,9 +1026,8 @@ public class Session implements ISession {
     public Response<List<PurchaseHistory>> getUserPurchaseHistory(int userId) {
         try {
             isUserLogged(userId);
-            var result = userRepositoryAsHashmap.getUser(userId).getPurchaseHistory();
-            LOGGER_INFO.info("user purchase history was got successfully");
-            return Response.success(result);
+            LOGGER_INFO.info("getting user " + userId + " purchase history");
+            return Response.success(userRepositoryAsHashmap.getUser(userId).getPurchaseHistory());
         } catch (Exception e) {
             LOGGER_ERROR.severe("user purchase history was not got successfully");
             return Response.exception(e);
@@ -1107,7 +1126,9 @@ public class Session implements ISession {
     @Override
     public Response<List<PurchaseHistory>> getUserPurchaseHistoryAsAdmin(int userId, int adminId) {
         try {
-            if (!getUserStatus(adminId).equals("ADMIN") || !isUserLogged(adminId)) {
+            LOGGER_INFO.info("getting user " + userId + " purchase history as admin");
+            if (!getUserStatus(adminId).equals("Admin") || !isUserLogged(adminId)) {
+                LOGGER_INFO.info("The user is not an admin or is not logged in");
                 throw new NoPermissionException("The user is not an admin or is not logged in");
             }
             User user = userRepositoryAsHashmap.getUser(userId);
@@ -1123,7 +1144,9 @@ public class Session implements ISession {
     @Override
     public Response<List<PurchaseHistory>> getStorePurchaseHistoryAsAdmin(int storeId, int adminId) {
         try {
-            if (!getUserStatus(adminId).equals("ADMIN") || !isUserLogged(adminId)) {
+            LOGGER_INFO.info("getting store " + storeId + " purchase history as admin");
+            if (!getUserStatus(adminId).equals("Admin") || !isUserLogged(adminId)) {
+                LOGGER_INFO.info("The user is not an admin or is not logged in");
                 throw new NoPermissionException("The user is not an admin or is not logged in");
             }
             return Response.success(market.getStorePurchaseHistoryAsAdmin(storeId, adminId));

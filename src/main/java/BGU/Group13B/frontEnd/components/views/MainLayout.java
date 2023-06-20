@@ -566,7 +566,6 @@ public class MainLayout extends AppLayout implements ResponseHandler {
         return messageButton;
     }
 
-
     private AppNav createNavigation() {
         // AppNav is not yet an official component.
         // For documentation, visit https://github.com/vaadin/vcf-nav#readme
