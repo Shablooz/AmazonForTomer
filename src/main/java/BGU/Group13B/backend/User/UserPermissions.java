@@ -8,6 +8,7 @@ import BGU.Group13B.backend.storePackage.permissions.ChangePermissionException;
 import BGU.Group13B.backend.storePackage.permissions.NoPermissionException;
 import BGU.Group13B.service.SingletonCollection;
 import jakarta.persistence.*;
+import jakartac.Cache.Cache;
 
 import java.util.*;
 
@@ -61,6 +62,8 @@ public class UserPermissions {
 
 
     private UserPermissionStatus userPermissionStatus;
+
+    @Cache(policy = Cache.PolicyType.LRU)
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "UserPermissions_StoreRole",
             joinColumns = {@JoinColumn(name = "UserPermissions_id", referencedColumnName = "userId")})
@@ -68,6 +71,7 @@ public class UserPermissions {
     @Column(name = "storeRole")
     private Map<Integer/*storeId*/, StoreRole> userStoreRole;
 
+    @Cache(policy = Cache.PolicyType.LRU)
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
     @JoinTable(name = "UserPermissions_IndividualPermissionSet",
             joinColumns = {@JoinColumn(name = "UserPermissions_id", referencedColumnName = "userId")},

@@ -2,10 +2,10 @@ package BGU.Group13B.backend.Repositories.Implementations.IStoreScoreRepository;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreScore;
 import jakarta.persistence.*;
+import jakartac.Cache.Cache;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Entity
 public class StoreScoreImplNotPer implements IStoreScore {
@@ -14,6 +14,7 @@ public class StoreScoreImplNotPer implements IStoreScore {
     @Id
     private int id;
 
+    @Cache(policy = Cache.PolicyType.LRU)
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "StoreScoreImplNotPer_scores",
             joinColumns = {@JoinColumn(name = "StoreScoreImplNotPer_id", referencedColumnName = "id")})

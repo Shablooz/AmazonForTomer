@@ -7,6 +7,7 @@ import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.ProductDis
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.StoreDiscount;
 import BGU.Group13B.service.SingletonCollection;
 import jakarta.persistence.*;
+import jakartac.Cache.Cache;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class DiscountRepositoryAsHashMap implements IDiscountRepository {
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private int id;
 
+    @Cache(policy = Cache.PolicyType.LRU)
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "DiscountRepositoryAsHashMap_storeId",
             joinColumns = {@JoinColumn(name = "DiscountRepositoryAsHashMap_id", referencedColumnName = "id")})

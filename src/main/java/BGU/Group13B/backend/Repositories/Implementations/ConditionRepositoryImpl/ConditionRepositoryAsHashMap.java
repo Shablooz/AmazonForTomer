@@ -10,6 +10,7 @@ import BGU.Group13B.backend.storePackage.newDiscoutns.bounderCondition.baseCase.
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.service.SingletonCollection;
 import jakarta.persistence.*;
+import jakartac.Cache.Cache;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -26,6 +27,7 @@ public class ConditionRepositoryAsHashMap implements IConditionRepository {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Cache(policy = Cache.PolicyType.LRU)
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
     @JoinTable(name = "ConditionRepositoryAsHashMap_Condition",
             joinColumns = {@JoinColumn(name = "ConditionRepositoryAsHashMap_id", referencedColumnName = "id")},

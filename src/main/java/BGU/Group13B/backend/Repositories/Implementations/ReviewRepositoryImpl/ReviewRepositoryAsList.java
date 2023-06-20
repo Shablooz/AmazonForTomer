@@ -3,6 +3,7 @@ package BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl;
 import BGU.Group13B.backend.Repositories.Interfaces.IRepositoryReview;
 import BGU.Group13B.backend.storePackage.Review;
 import jakarta.persistence.*;
+import jakartac.Cache.Cache;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +18,7 @@ public class ReviewRepositoryAsList implements IRepositoryReview {
     @Id
     private int id;
 
-
+    @Cache(policy = Cache.PolicyType.LRU)
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
     @JoinTable(name = "ReviewRepositoryAsList_review",
             joinColumns = {@JoinColumn(name = "ReviewRepositoryAsList_id", referencedColumnName = "id")},
@@ -28,6 +29,7 @@ public class ReviewRepositoryAsList implements IRepositoryReview {
     @MapKeyJoinColumn(name = "userId")
     Map<Integer, Review> reviews;
 
+    @Cache(policy = Cache.PolicyType.LRU)
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "ReviewRepositoryAsList_scores",
             joinColumns = {@JoinColumn(name = "ReviewRepositoryAsList_id", referencedColumnName = "id")})

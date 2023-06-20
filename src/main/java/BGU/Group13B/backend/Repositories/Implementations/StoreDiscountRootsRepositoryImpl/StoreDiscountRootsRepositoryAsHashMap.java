@@ -4,6 +4,7 @@ import BGU.Group13B.backend.Repositories.Implementations.ProductRepositoryImpl.P
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreDiscountRootsRepository;
 import BGU.Group13B.service.SingletonCollection;
 import jakarta.persistence.*;
+import jakartac.Cache.Cache;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,6 +17,7 @@ public class StoreDiscountRootsRepositoryAsHashMap implements IStoreDiscountRoot
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Cache(policy = Cache.PolicyType.LRU)
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "StoreDiscountRootsRepositoryAsHashMap_roots",
             joinColumns = {@JoinColumn(name = "StoreDiscountRootsRepositoryAsHashMap_id", referencedColumnName = "id")})

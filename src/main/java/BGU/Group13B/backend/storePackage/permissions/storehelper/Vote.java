@@ -1,6 +1,7 @@
 package BGU.Group13B.backend.storePackage.permissions.storehelper;
 
 import jakarta.persistence.*;
+import jakartac.Cache.Cache;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ public class Vote {
     private int firstKey; // first integer in Pair THE CANDIDATE
     private int secondKey; // second integer in Pair THE APPOINTER
 
+    @Cache(policy = Cache.PolicyType.LRU)
     @ElementCollection(fetch = FetchType.EAGER)
     private List<Integer> votes;
 

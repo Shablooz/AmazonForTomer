@@ -12,6 +12,7 @@ import BGU.Group13B.backend.storePackage.permissions.storehelper.SetString;
 import BGU.Group13B.backend.storePackage.permissions.storehelper.Vote;
 import BGU.Group13B.service.SingletonCollection;
 import jakarta.persistence.*;
+import jakartac.Cache.Cache;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -33,7 +34,7 @@ public class StorePermission {
     @JoinColumn(name = "store_permission_id")
     private List<Vote> votes;
 
-
+    @Cache(policy = Cache.PolicyType.LRU)
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
     @JoinTable(name = "StorePermission_userStoreFunctionPermissions",
             joinColumns = {@JoinColumn(name = "StorePermission_id", referencedColumnName = "id")},
@@ -41,6 +42,7 @@ public class StorePermission {
     @MapKeyColumn(name = "permissionNumber")
     private Map<Integer/*permissionNumber*/, SetString> userStoreFunctionPermissions;//THIS ONE INCLUDE WHAT EACH ADDITIONAL ROLE INCLUDES
 
+    @Cache(policy = Cache.PolicyType.LRU)
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
     @JoinTable(name = "StorePermission_defaultStoreRoleFunctionalities",
             joinColumns = {@JoinColumn(name = "StorePermission_id", referencedColumnName = "id")},
@@ -48,6 +50,7 @@ public class StorePermission {
     @MapKeyColumn(name = "storeRole_id")
     private  Map<StoreRole, SetString> defaultStoreRoleFunctionalities;
 
+    @Cache(policy = Cache.PolicyType.LRU)
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "StorePermission_StoreRole",
             joinColumns = {@JoinColumn(name = "StorePermission_id", referencedColumnName = "id")})
@@ -55,6 +58,7 @@ public class StorePermission {
     @Column(name = "storeRole")
     private  Map<Integer/*userId*/, StoreRole> userToStoreRole;
 
+    @Cache(policy = Cache.PolicyType.LRU)
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
     @JoinTable(name = "StorePermission_appointedOwnersMap",
             joinColumns = {@JoinColumn(name = "StorePermission_id", referencedColumnName = "id")},
@@ -62,6 +66,7 @@ public class StorePermission {
     @MapKeyColumn(name = "appointed_by_id")
     private  Map<Integer/*got appointed by*/, SetInteger/*appointee*/> appointedOwnersMap;
 
+    @Cache(policy = Cache.PolicyType.LRU)
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
     @JoinTable(name = "StorePermission_userToIndividualPermissions",
             joinColumns = {@JoinColumn(name = "StorePermission_id", referencedColumnName = "id")},

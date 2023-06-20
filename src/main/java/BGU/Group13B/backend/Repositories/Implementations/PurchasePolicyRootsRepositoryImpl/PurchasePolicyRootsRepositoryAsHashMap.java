@@ -4,6 +4,7 @@ import BGU.Group13B.backend.Repositories.Implementations.StoreDiscountRootsRepos
 import BGU.Group13B.backend.Repositories.Interfaces.IPurchasePolicyRootsRepository;
 import BGU.Group13B.service.SingletonCollection;
 import jakarta.persistence.*;
+import jakartac.Cache.Cache;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +18,7 @@ public class PurchasePolicyRootsRepositoryAsHashMap implements IPurchasePolicyRo
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Cache(policy = Cache.PolicyType.LRU)
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "PurchasePolicyRootsRepositoryAsHashMap_conditionRootId",
             joinColumns = {@JoinColumn(name = "PurchasePolicyRootsRepositoryAsHashMap_id", referencedColumnName = "id")})

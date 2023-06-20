@@ -2,6 +2,7 @@ package BGU.Group13B.backend.storePackage.permissions.storehelper;
 
 import BGU.Group13B.backend.User.UserPermissions;
 import jakarta.persistence.*;
+import jakartac.Cache.Cache;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,6 +13,7 @@ public class SetEnum {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Cache(policy = Cache.PolicyType.LRU)
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name ="set_IndividualPermission")
     private Set<UserPermissions.IndividualPermission> set;

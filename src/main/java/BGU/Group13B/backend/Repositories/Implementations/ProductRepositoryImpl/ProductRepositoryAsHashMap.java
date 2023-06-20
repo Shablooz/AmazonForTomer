@@ -5,6 +5,7 @@ import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
 import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.service.SingletonCollection;
 import jakarta.persistence.*;
+import jakartac.Cache.Cache;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,6 +19,8 @@ public class ProductRepositoryAsHashMap implements IProductRepository {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Cache(policy = Cache.PolicyType.LRU)
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
     @JoinTable(name = "ProductRepositoryAsHashMap_SkipListHolderClickbate",
             joinColumns = {@JoinColumn(name = "ProductRepositoryAsHashMap_id", referencedColumnName = "id")},

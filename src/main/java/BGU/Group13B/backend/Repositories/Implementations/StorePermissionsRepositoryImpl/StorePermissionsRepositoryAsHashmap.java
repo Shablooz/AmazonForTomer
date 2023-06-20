@@ -5,6 +5,7 @@ import BGU.Group13B.backend.Repositories.Interfaces.IStorePermissionsRepository;
 import BGU.Group13B.backend.storePackage.permissions.StorePermission;
 import BGU.Group13B.service.SingletonCollection;
 import jakarta.persistence.*;
+import jakartac.Cache.Cache;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,7 +18,7 @@ public class StorePermissionsRepositoryAsHashmap implements IStorePermissionsRep
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-
+    @Cache(policy = Cache.PolicyType.LRU)
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
     @JoinTable(name = "StorePermissionsRepositoryAsHashmap_StorePermission",
             joinColumns = {@JoinColumn(name = "StorePermissionsRepositoryAsHashmap_id", referencedColumnName = "id")},

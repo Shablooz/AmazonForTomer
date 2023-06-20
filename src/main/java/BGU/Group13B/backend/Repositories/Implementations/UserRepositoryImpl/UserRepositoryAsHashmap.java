@@ -6,6 +6,7 @@ import BGU.Group13B.backend.User.User;
 import BGU.Group13B.backend.User.UserCard;
 import BGU.Group13B.service.SingletonCollection;
 import jakarta.persistence.*;
+import jakartac.Cache.Cache;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ public class UserRepositoryAsHashmap implements IUserRepository {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Cache(policy = Cache.PolicyType.LRU)
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
     @JoinTable(name = "UserRepositoryAsHashmap_integerUserHashMap",
             joinColumns = {@JoinColumn(name = "UserRepositoryAsHashmap_id", referencedColumnName = "id")},

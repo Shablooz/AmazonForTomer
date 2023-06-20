@@ -4,6 +4,7 @@ import BGU.Group13B.backend.Repositories.Interfaces.IRepositoryReview;
 import BGU.Group13B.backend.storePackage.Review;
 import BGU.Group13B.service.SingletonCollection;
 import jakarta.persistence.*;
+import jakartac.Cache.Cache;
 
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,7 @@ public class ReviewRepoSingle implements IRepositoryReview {
     private int id;
 
     private boolean saveMode;
-
+    @Cache(policy = Cache.PolicyType.LRU)
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
     @JoinTable(name = "SingleReviewRepo_ReviewRepositoryAsList",
             joinColumns = {@JoinColumn(name = "ReviewRepoSingle_id", referencedColumnName = "id")},

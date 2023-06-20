@@ -2,6 +2,7 @@ package BGU.Group13B.backend.Repositories.Implementations.StoreMessageRepositoyI
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreMessagesRepository;
 import BGU.Group13B.backend.User.Message;
 import jakarta.persistence.*;
+import jakartac.Cache.Cache;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -13,13 +14,15 @@ public class StoreMessageRepositoryNonPersist implements IStoreMessagesRepositor
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private int id;
-
+    @Cache(policy = Cache.PolicyType.LRU)
     @OneToMany(cascade = jakarta.persistence.CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
     @JoinTable(name = "StoreMessageRepositoryNonPersist_unreadMessages",
             joinColumns = {@JoinColumn(name = "StoreMessageRepositoryNonPersist_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "senderId", referencedColumnName = "senderId"),
                     @JoinColumn(name = "massageId", referencedColumnName = "massageId")})
     List<Message> unreadMessages;
+
+    @Cache(policy = Cache.PolicyType.LRU)
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
     @JoinTable(name = "StoreMessageRepositoryNonPersist_oldMessages",
             joinColumns = {@JoinColumn(name = "StoreMessageRepositoryNonPersist_id", referencedColumnName = "id")},
@@ -28,6 +31,7 @@ public class StoreMessageRepositoryNonPersist implements IStoreMessagesRepositor
     @MapKeyJoinColumn(name = "userId")
     Map<Integer,Message> oldMessages;
 
+    @Cache(policy = Cache.PolicyType.LRU)
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "StoreMessageRepositoryNonPersist_placeInOldMessages",
             joinColumns = {@JoinColumn(name = "StoreMessageRepositoryNonPersist_id", referencedColumnName = "id")})

@@ -1,6 +1,7 @@
 package BGU.Group13B.backend.User;
 
 import jakarta.persistence.*;
+import jakartac.Cache.Cache;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,6 +13,7 @@ public class IndividualPermissionSet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Cache(policy = Cache.PolicyType.LRU)
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name ="IndividualPermission")
     private Set<UserPermissions.IndividualPermission> individualPermissions;

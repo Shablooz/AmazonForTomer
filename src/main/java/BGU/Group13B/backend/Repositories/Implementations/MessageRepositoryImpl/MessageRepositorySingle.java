@@ -5,6 +5,7 @@ import BGU.Group13B.backend.Repositories.Interfaces.IMessageRepository;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.service.SingletonCollection;
 import jakarta.persistence.*;
+import jakartac.Cache.Cache;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -22,12 +23,15 @@ public class MessageRepositorySingle implements IMessageRepository {
     private int messageId;
     @Transient
     private boolean saveMode;
+    @Cache(policy = Cache.PolicyType.LRU)
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
     @JoinTable(name = "MessageRepositorySingle_unreadMessages",
             joinColumns = {@JoinColumn(name = "MessageRepositorySingle_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "DequeMessage_id", referencedColumnName = "id")})
     @MapKeyColumn(name = "userName")
     Map<String, DequeMessage> unreadMessages;
+
+    @Cache(policy = Cache.PolicyType.LRU)
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
     @JoinTable(name = "MessageRepositorySingle_readMessages",
             joinColumns = {@JoinColumn(name = "MessageRepositorySingle_id", referencedColumnName = "id")},
@@ -44,14 +48,14 @@ public class MessageRepositorySingle implements IMessageRepository {
         readMessages = new ConcurrentHashMap<>();
         readMessagesIterator = new ConcurrentHashMap<>();
         this.saveMode= true;
-        this.messageId= 0;
+        this.messageId= 1;
     }
     public MessageRepositorySingle(boolean saveMode) {
         unreadMessages = new ConcurrentHashMap<>();
         readMessages = new ConcurrentHashMap<>();
         readMessagesIterator = new ConcurrentHashMap<>();
         this.saveMode= saveMode;
-        this.messageId= 0;
+        this.messageId= 1;
     }
 
     @Override

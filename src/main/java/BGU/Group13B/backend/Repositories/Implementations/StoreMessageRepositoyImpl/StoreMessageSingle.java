@@ -5,6 +5,7 @@ import BGU.Group13B.backend.Repositories.Interfaces.IStoreMessagesRepository;
 import BGU.Group13B.backend.User.Message;
 import BGU.Group13B.service.SingletonCollection;
 import jakarta.persistence.*;
+import jakartac.Cache.Cache;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,6 +17,7 @@ public class StoreMessageSingle implements IStoreMessagesRepository {
     @Id
     private int id;
 
+    @Cache(policy = Cache.PolicyType.LRU)
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
     @JoinTable(name = "StoreMessageSingle_implementations",
             joinColumns = {@JoinColumn(name = "StoreMessageSingle_id", referencedColumnName = "id")},

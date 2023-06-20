@@ -4,6 +4,7 @@ import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.Re
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreScore;
 import BGU.Group13B.service.SingletonCollection;
 import jakarta.persistence.*;
+import jakartac.Cache.Cache;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,6 +18,7 @@ public class StoreScoreSingle implements IStoreScore {
     @Transient
     private boolean saveMode;
 
+    @Cache(policy = Cache.PolicyType.LRU)
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
     @JoinTable(name = "StoreScoreSingle_StoreScoreImplNotPer",
             joinColumns = {@JoinColumn(name = "StoreScoreSingle_id", referencedColumnName = "id")},

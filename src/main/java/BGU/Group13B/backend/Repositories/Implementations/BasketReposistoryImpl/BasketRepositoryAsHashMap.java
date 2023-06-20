@@ -5,6 +5,7 @@ import BGU.Group13B.backend.User.Basket;
 import BGU.Group13B.backend.User.SetBasket;
 import BGU.Group13B.service.SingletonCollection;
 import jakarta.persistence.*;
+import jakartac.Cache.Cache;
 
 
 import java.util.Map;
@@ -25,6 +26,7 @@ public class BasketRepositoryAsHashMap implements IBasketRepository {
     @Transient
     private boolean saveMode;
 
+    @Cache(policy = Cache.PolicyType.LRU)
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
     @JoinTable(name = "BasketRepositoryAsHashMap_Baskets",
             joinColumns = {@JoinColumn(name = "BasketRepositoryAsHashMap_id", referencedColumnName = "id")},

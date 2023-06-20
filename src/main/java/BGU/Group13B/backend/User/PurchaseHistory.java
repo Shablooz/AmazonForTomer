@@ -2,6 +2,7 @@ package BGU.Group13B.backend.User;
 
 import BGU.Group13B.service.SingletonCollection;
 import jakarta.persistence.*;
+import jakartac.Cache.Cache;
 import org.springframework.scheduling.support.SimpleTriggerContext;
 
 import javax.xml.crypto.Data;
@@ -20,6 +21,7 @@ public class PurchaseHistory {
     private int userId;
     private int storeId;
 
+    @Cache(policy = Cache.PolicyType.LRU)
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "product_id_to_quantity",
             joinColumns = {@JoinColumn(name = "PurchaseHistory_id", referencedColumnName = "id")})

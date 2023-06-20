@@ -1,5 +1,6 @@
 package BGU.Group13B.backend.storePackage;
 import jakarta.persistence.*;
+import jakartac.Cache.Cache;
 
 import java.util.Objects;
 import java.util.Set;
@@ -13,6 +14,7 @@ public class BID implements Comparable<BID>{
     private double newProductPrice;
     private int amount;
 
+    @Cache(policy = Cache.PolicyType.LRU)
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name ="managerIds_collection")
         private Set<Integer/*managerIds*/> approvedBy;
