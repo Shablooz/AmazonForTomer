@@ -32,7 +32,8 @@ public class CartTest {
     void setUp() {
 
         try {
-            SingletonCollection.reset_system();
+            SingletonCollection.reset_system(false);
+            SingletonCollection.setSaveMode(false);
             session = SingletonCollection.getSession();
             //session = new Session(new Market());
             productRepository = SingletonCollection.getProductRepository();
@@ -66,7 +67,7 @@ public class CartTest {
         productRepository.removeStoreProduct(productId3, storeId2);
         storeRepository.removeStore(storeId1);
         storeRepository.removeStore(storeId2);*/
-        SingletonCollection.reset_system();
+        SingletonCollection.reset_system(false);
         //user1.removeBasket(storeId1);
         //user2.removeBasket(storeId2);
         //userRepository.removeUser(user2.getUserId());

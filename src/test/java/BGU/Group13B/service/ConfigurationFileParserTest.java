@@ -4,12 +4,38 @@ import BGU.Group13B.backend.User.UserPermissions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Properties;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ConfigurationFileParserTest {
     @BeforeEach
     void setUp() {
         SingletonCollection.reset_system();
+        SingletonCollection.setSaveMode(false);
+        getConfigurationFileName();
+    }
+    private  void getConfigurationFileName() {
+        Properties properties = new Properties();
+        String filePath = "src/main/resources/application.properties";
+        try {
+            FileInputStream fileInputStream = new FileInputStream(filePath);
+            properties.load(fileInputStream);
+            fileInputStream.close();
+
+
+
+            properties.setProperty("load_configuration", "true");
+            FileOutputStream fileOutputStream = new FileOutputStream(filePath);
+            properties.store(fileOutputStream, null);
+            fileOutputStream.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test

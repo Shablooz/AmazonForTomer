@@ -2,21 +2,16 @@ package BGU.Group13B.frontEnd.components.views;
 
 import BGU.Group13B.backend.Pair;
 import BGU.Group13B.frontEnd.components.SessionToIdMapper;
-import BGU.Group13B.frontEnd.components.views.LoginView;
-import BGU.Group13B.frontEnd.components.views.MainLayout;
 import BGU.Group13B.service.Response;
 import BGU.Group13B.service.Session;
 import BGU.Group13B.service.info.StoreInfo;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
@@ -24,8 +19,6 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
@@ -38,7 +31,7 @@ import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY_INLIN
 
 @PageTitle("All Stores")
 @Route(value = "allstores", layout = MainLayout.class)
-public class AllStoresView extends VerticalLayout implements BeforeEnterObserver{
+public class AllStoresView extends VerticalLayout implements BeforeEnterObserver {
 
     private final int userId = SessionToIdMapper.getInstance().getCurrentSessionId();
     private int selectedStoreId = -1;
@@ -59,7 +52,10 @@ public class AllStoresView extends VerticalLayout implements BeforeEnterObserver
     private void start(){
         enterStoreButton.setEnabled(false);
         add(new H1("All Stores"));
-        List<StoreInfo> storeInfos = handleResponse(session.getAllStores());
+        List<StoreInfo> storeInfos = handleResponse(session.getAllStoresTheUserCanView(userId));
+        if(storeInfos == null){
+            storeInfos = new LinkedList<>();
+        }
 
         grid = new Grid<StoreInfo>();
         grid.setItems(storeInfos);
@@ -119,7 +115,7 @@ public class AllStoresView extends VerticalLayout implements BeforeEnterObserver
 
     private void updateGrid() {
         this.removeAll();
-        var storeInfoList = handleResponse(session.getAllStores());
+        var storeInfoList = handleResponse(session.getAllStoresTheUserCanView(userId));
         //grid.setItems((DataProvider<StoreInfo, Void>) storeInfoList);
         grid.setItems(storeInfoList);
         buttonsLayout.add(enterStoreButton);

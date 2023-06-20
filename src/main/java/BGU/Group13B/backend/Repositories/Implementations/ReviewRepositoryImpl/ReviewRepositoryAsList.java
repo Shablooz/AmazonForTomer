@@ -2,31 +2,55 @@ package BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl;
 
 import BGU.Group13B.backend.Repositories.Interfaces.IRepositoryReview;
 import BGU.Group13B.backend.storePackage.Review;
+import jakarta.persistence.*;
+import jakartac.Cache.Cache;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
+@Entity
 public class ReviewRepositoryAsList implements IRepositoryReview {
 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    private int id;
 
+    @Cache(policy = Cache.PolicyType.LRU)
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
+    @JoinTable(name = "ReviewRepositoryAsList_review",
+            joinColumns = {@JoinColumn(name = "ReviewRepositoryAsList_id", referencedColumnName = "id")},
+            inverseJoinColumns = {
+                    @JoinColumn(name = "store_id", referencedColumnName = "storeId"),
+                    @JoinColumn(name = "product_id", referencedColumnName = "productId"),
+                    @JoinColumn(name = "user_id", referencedColumnName = "userId")})
+    @MapKeyJoinColumn(name = "userId")
+    Map<Integer, Review> reviews;
 
-    ConcurrentHashMap<Integer, Review> reviews;
-    ConcurrentHashMap<Integer, Integer> scores;
+    @Cache(policy = Cache.PolicyType.LRU)
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "ReviewRepositoryAsList_scores",
+            joinColumns = {@JoinColumn(name = "ReviewRepositoryAsList_id", referencedColumnName = "id")})
+    @MapKeyColumn(name = "user_Id")
+    @Column(name = "score")
+    Map<Integer, Integer> scores;
 
 
     public ReviewRepositoryAsList() {
-        reviews = new ConcurrentHashMap<>();
-        scores = new ConcurrentHashMap<>();
+        reviews = new HashMap<>();
+        scores = new HashMap<>();
     }
 
     @Override
-    public void addReview(String review, int storeId, int productId, int userId) {
+    public synchronized void addReview(String review, int storeId, int productId, int userId) {
         if (reviews.putIfAbsent(userId, new Review(review, storeId, productId, userId))!=null)
             throw new IllegalArgumentException("User already reviewed this product");
     }
 
     @Override
-    public void removeReview(int storeId, int productId, int userId) {
+    public synchronized void removeReview(int storeId, int productId, int userId) {
         if (!reviews.containsKey(userId))
             throw new IllegalArgumentException("User didn't review this product");
         reviews.remove(userId);
@@ -34,33 +58,35 @@ public class ReviewRepositoryAsList implements IRepositoryReview {
     }
 
     @Override
-    public Review getReview(int storeId, int productId, int userId) {
+    public synchronized Review getReview(int storeId, int productId, int userId) {
         if (!reviews.containsKey(userId))
             throw new IllegalArgumentException("User didn't review this product");
         return reviews.get(userId);
     }
 
     @Override
-    public List<Review> getAllReviews(int storeId, int productId) {
+    public synchronized List<Review> getAllReviews(int storeId, int productId) {
         return reviews.values().stream().toList();
     }
 
     @Override
-    public float getProductScore(int storeId, int productId) {
-        Integer sum = scores.reduceValues(0, Integer::sum);
-        if(sum!=null)
+    public synchronized float getProductScore(int storeId, int productId) {
+        Integer sum =  0;
+        for (var score : scores.values())
+            sum += score;
+        if(scores.size()!=0)
             return (float) sum /scores.size();
         return 0;
     }
     @Override
-    public float getProductScoreUser(int storeId, int productId, int userId) {
+    public synchronized float getProductScoreUser(int storeId, int productId, int userId) {
         if (!scores.containsKey(userId))
             throw new IllegalArgumentException("User didn't score this product");
         return scores.get(userId);
     }
 
     @Override
-    public void addAndSetProductScore(int storeId, int productId, int userId, int score) {
+    public synchronized void addAndSetProductScore(int storeId, int productId, int userId, int score) {
         if (scores.containsKey(userId))
             throw new IllegalArgumentException("User already scored this product");
         if (score < 0 || score > 5)
@@ -70,7 +96,7 @@ public class ReviewRepositoryAsList implements IRepositoryReview {
     }
 
     @Override
-    public void removeProductScore(int storeId, int productId, int userId) {
+    public synchronized void removeProductScore(int storeId, int productId, int userId) {
         if (!scores.containsKey(userId))
             throw new IllegalArgumentException("User didn't score this product");
         scores.remove(userId);
@@ -79,8 +105,10 @@ public class ReviewRepositoryAsList implements IRepositoryReview {
 
 
     @Override
-    public void removeProductData(int storeId, int productId) {
+    public synchronized void removeProductData(int storeId, int productId) {
         reviews.clear();
         scores.clear();
     }
+
+
 }

@@ -9,6 +9,10 @@ public interface IUserPermissionRepository {
 
     void addUserPermission(int userId, UserPermissions userPermissions);
 
+    void setSaveMode(boolean saveMode);
+
+    void save();
+
     boolean isUserPermissionsExists(int userId);
 
     void deletePermissions(int adminId, int userId) throws NoPermissionException, ChangePermissionException;

@@ -1,12 +1,18 @@
 package BGU.Group13B.backend.storePackage.newDiscoutns;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 
 import BGU.Group13B.backend.storePackage.newDiscoutns.bounderCondition.time.Time;
 
+@Deprecated
 public class Bounder<T extends Comparable<T>> {
 
+    private int id;
 
     private final T upperBound; //if upperBound == null then there is no upper bound
+
     private final T lowerBound;
 
 
@@ -22,6 +28,12 @@ public class Bounder<T extends Comparable<T>> {
     public Bounder(T lowerBound) {
         this.upperBound = null;
         this.lowerBound = lowerBound;
+    }
+
+    //i just added this constructor for the sake of hibernate
+    public Bounder() {
+        this.upperBound = null;
+        this.lowerBound = null;
     }
 
 

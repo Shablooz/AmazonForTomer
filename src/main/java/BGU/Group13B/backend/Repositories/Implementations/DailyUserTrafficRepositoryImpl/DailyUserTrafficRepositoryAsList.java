@@ -1,23 +1,41 @@
 package BGU.Group13B.backend.Repositories.Implementations.DailyUserTrafficRepositoryImpl;
 
+import BGU.Group13B.backend.Repositories.Implementations.ConditionRepositoryImpl.ConditionRepositoryAsHashMapService;
 import BGU.Group13B.backend.Repositories.Interfaces.IDailyUserTrafficRepository;
 import BGU.Group13B.backend.System.DailyUserTraffic;
 import BGU.Group13B.backend.System.UserTrafficRecord;
+import BGU.Group13B.service.SingletonCollection;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
-
+@Entity
 public class DailyUserTrafficRepositoryAsList implements IDailyUserTrafficRepository {
 
+    @Transient
+    private boolean saveMode;
+
     //this list is sorted by date and will contain all the dates from the first day the system was created until today
-    private final List<DailyUserTraffic> dailyUserTrafficList = new LinkedList<>();
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @OneToMany(cascade = jakarta.persistence.CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
+    @JoinTable(name = "DailyUserTrafficRepositoryAsList_DailyUserTraffic",
+            joinColumns = {@JoinColumn(name = "DailyUserTrafficRepositoryAsList_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "date_for_daily", referencedColumnName = "date")})
+    private List<DailyUserTraffic> dailyUserTrafficList;
 
     public DailyUserTrafficRepositoryAsList(){
-        dailyUserTrafficList.add(new DailyUserTraffic(LocalDate.now()));
+        dailyUserTrafficList = new LinkedList<>();
+        this.saveMode = true;
     }
 
     private synchronized void fillUpToToday(){
+        dailyUserTrafficList.sort((o1, o2) -> o2.getDate().compareTo(o1.getDate()));
+        if(dailyUserTrafficList.isEmpty())
+            dailyUserTrafficList.add(new DailyUserTraffic(LocalDate.now()));
         LocalDate today = LocalDate.now();
         LocalDate lastDate = dailyUserTrafficList.get(0).getDate();
         while(lastDate.isBefore(today)){
@@ -26,42 +44,50 @@ public class DailyUserTrafficRepositoryAsList implements IDailyUserTrafficReposi
         }
     }
 
+
+
+
     @Override
     public synchronized void addGuest() {
         fillUpToToday();
         dailyUserTrafficList.get(0).addGuest();
+        save();
     }
 
     @Override
     public synchronized void addRegularMember() {
         fillUpToToday();
-        var v = dailyUserTrafficList.get(0);
-        v.addRegularUser();
-        v.removeGuest();
+        DailyUserTraffic dailyUserTraffic = dailyUserTrafficList.get(0);
+        dailyUserTraffic.addRegularUser();
+        dailyUserTraffic.removeGuest();
+        save();
     }
 
     @Override
     public synchronized void addStoreManagerThatIsNotOwner() {
         fillUpToToday();
-        var v = dailyUserTrafficList.get(0);
-        v.addStoreManagerThatIsNotOwner();
-        v.removeGuest();
+        DailyUserTraffic dailyUserTraffic = dailyUserTrafficList.get(0);
+        dailyUserTraffic.addStoreManagerThatIsNotOwner();
+        dailyUserTraffic.removeGuest();
+        save();
     }
 
     @Override
     public synchronized void addStoreOwner() {
         fillUpToToday();
-        var v = dailyUserTrafficList.get(0);
-        v.addStoreOwner();
-        v.removeGuest();
+        DailyUserTraffic dailyUserTraffic = dailyUserTrafficList.get(0);
+        dailyUserTraffic.addStoreOwner();
+        dailyUserTraffic.removeGuest();
+        save();
     }
 
     @Override
     public synchronized void addAdmin() {
         fillUpToToday();
-        var v = dailyUserTrafficList.get(0);
-        v.addAdmin();
-        v.removeGuest();
+        DailyUserTraffic dailyUserTraffic = dailyUserTrafficList.get(0);
+        dailyUserTraffic.addAdmin();
+        dailyUserTraffic.removeGuest();
+        save();
     }
 
     @Override
@@ -96,5 +122,37 @@ public class DailyUserTrafficRepositoryAsList implements IDailyUserTrafficReposi
     public synchronized void reset() {
         dailyUserTrafficList.clear();
         dailyUserTrafficList.add(new DailyUserTraffic(LocalDate.now()));
+        save();
+    }
+
+    @Override
+    public void setSaveMode(boolean saveMode) {
+        this.saveMode = saveMode;
+    }
+
+
+    private void save(){
+        if(saveMode && SingletonCollection.databaseExists())
+            SingletonCollection.getContext().getBean(DailyUserTrafficRepositoryAsListService.class).save(this);
+    }
+
+    public boolean isSaveMode() {
+        return saveMode;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public List<DailyUserTraffic> getDailyUserTrafficList() {
+        return dailyUserTrafficList;
+    }
+
+    public void setDailyUserTrafficList(List<DailyUserTraffic> dailyUserTrafficList) {
+        this.dailyUserTrafficList = dailyUserTrafficList;
     }
 }

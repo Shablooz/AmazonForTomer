@@ -11,4 +11,8 @@ public interface IStorePermissionsRepository {
 
     void deleteStorePermissions(int storeId);
 
+    public void setSaveMode(boolean saved);
+    public boolean getSaveMode();
+
+    void save();
 }

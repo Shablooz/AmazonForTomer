@@ -16,6 +16,8 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDateTime;
+
 @PageTitle("Register")
 @Route(value = "register", layout = MainLayout.class)
 public class RegisterView extends VerticalLayout {
@@ -48,7 +50,7 @@ public class RegisterView extends VerticalLayout {
             }
             try {
                 session.register(SessionToIdMapper.getInstance().getCurrentSessionId()/*temp*/, username.getValue(), password.getValue(), email.getValue(),
-                        answer1.getValue(), answer2.getValue(), answer3.getValue(), birthPicker.getValue());
+                        answer1.getValue(), answer2.getValue(), answer3.getValue(), LocalDateTime.of(birthPicker.getValue(), LocalDateTime.now().toLocalTime()));
                 Notification.show("Registered successfully");
                 UI.getCurrent().navigate(LoginView.class);
             }catch (Exception exp){

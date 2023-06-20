@@ -4,6 +4,7 @@ import BGU.Group13B.backend.Repositories.Interfaces.IProductRepository;
 import BGU.Group13B.backend.Repositories.Interfaces.IStoreRepository;
 import BGU.Group13B.backend.storePackage.Product;
 import BGU.Group13B.service.Response;
+import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.info.ProductInfo;
 
 import java.util.Collection;
@@ -14,10 +15,21 @@ import java.util.List;
 
 //a class that searches product by its name, category and keywords
 public class Searcher {
-    private final IProductRepository productRepository;
+    private IProductRepository productRepository;
     private IStoreRepository storeRepository;
 
     private List<Product> products;
+
+
+    public IProductRepository getProductRepository() {
+        this.productRepository = SingletonCollection.getProductRepository();
+        return productRepository;
+    }
+
+    public IStoreRepository getStoreRepository() {
+        this.storeRepository = SingletonCollection.getStoreRepository();
+        return storeRepository;
+    }
 
     public Searcher(IProductRepository productRepository, IStoreRepository storeRepository) {
         this.productRepository = productRepository;
@@ -25,20 +37,20 @@ public class Searcher {
         products = new LinkedList<>();
     }
     public List<ProductInfo> searchByName(String name) {
-        products = productRepository.getProductByName(name);
+        products = getProductRepository().getProductByName(name);
         filterHiddenProducts();
         return wrapAsProductInfo(products);
 
     }
     public List<ProductInfo> searchByCategory(String category) {
-        products = productRepository.getProductByCategory(category);
+        products = getProductRepository().getProductByCategory(category);
         filterHiddenProducts();
         return wrapAsProductInfo(products);
     }
 
     public List<ProductInfo> searchByKeywords(String Keywords) {
         String[] keywords = Keywords.split(" ");
-        products = productRepository.getProductByKeywords(Arrays.asList(keywords));
+        products = getProductRepository().getProductByKeywords(Arrays.asList(keywords));
         filterHiddenProducts();
         return wrapAsProductInfo(products);
     }
@@ -89,8 +101,8 @@ public class Searcher {
         filterHiddenProducts();
         List<Product> newProducts = new LinkedList<>();
         for (Product product : products) {
-            if (storeRepository.getStore(product.getStoreId()).getStoreScore() >= minRating &&
-                    storeRepository.getStore(product.getStoreId()).getStoreScore() <= maxRating) {
+            if (getStoreRepository().getStore(product.getStoreId()).getStoreScore() >= minRating &&
+                    getStoreRepository().getStore(product.getStoreId()).getStoreScore() <= maxRating) {
                 newProducts.add(product);
             }
         }

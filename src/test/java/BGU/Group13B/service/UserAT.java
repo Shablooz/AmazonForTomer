@@ -5,14 +5,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class UserAT extends ProjectTest {
 
 
-    @BeforeEach
-    void userATsetUp() {
-        SingletonCollection.reset_system();
-    }
+//    @BeforeEach
+//    void userATsetUp() {
+//        SingletonCollection.reset_system();
+//        SingletonCollection.setSaveMode(false);
+//    }
     @Test
     void joinAsGuest(){
         //we check that the id counter advances and that the user exists in the repository
@@ -31,7 +33,7 @@ public class UserAT extends ProjectTest {
     @Test
     void loginTest(){
         int id = this.session.enterAsGuest();
-        session.register(id,"TetTesting","verySecurePass123","goodmall@gmail.com","ans1","","", LocalDate.MIN);
+        session.register(id,"TetTesting","verySecurePass123","goodmall@gmail.com","ans1","","", LocalDateTime.MIN);
         session.login(id,"TetTesting","verySecurePass123","ans1","","");
         Assertions.assertTrue(session.isUserLogged(id));
     }
@@ -39,7 +41,7 @@ public class UserAT extends ProjectTest {
     @Test
     void logoutTest(){
         int id = this.session.enterAsGuest();
-        session.register(id,"testingname","verySecurePass123","goodmall@gmail.com","ans1","","", LocalDate.MIN);
+        session.register(id,"testingname","verySecurePass123","goodmall@gmail.com","ans1","","", LocalDateTime.MIN);
         session.login(id,"testingname","verySecurePass123","ans1","","");
         session.logout(id);
         Assertions.assertFalse(session.isUserLogged(id));
@@ -49,14 +51,14 @@ public class UserAT extends ProjectTest {
     void registerTest() {
         int id = this.session.enterAsGuest();
         try {
-            session.register(id, "testingname", "verySecurePass123", "goodmall@gmail.com", "ans1", "", "", LocalDate.MIN);
+            session.register(id, "testingname", "verySecurePass123", "goodmall@gmail.com", "ans1", "", "", LocalDateTime.MIN);
         } catch (Exception e) {
             Assertions.fail();
         }
 
         int id2 = this.session.enterAsGuest();
         try {
-            session.register(id2, "seconduser", "verySecurePass123", "goo1dma2ll@gmail.com", "ans31", "", "", LocalDate.MIN);
+            session.register(id2, "seconduser", "verySecurePass123", "goo1dma2ll@gmail.com", "ans31", "", "", LocalDateTime.MIN);
         } catch (Exception e) {
             Assertions.fail();
         }

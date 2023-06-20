@@ -505,9 +505,9 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public Response<List<StoreInfo>> getAllStores() {
+    public Response<List<StoreInfo>> getAllStoresTheUserCanView(int userId) {
         if (realSession != null)
-            return realSession.getAllStores();
+            return realSession.getAllStoresTheUserCanView(userId);
 
         return null;
     }
@@ -548,16 +548,16 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public Response<VoidResponse> purchaseProposalApprove(int managerId, int storeId, int productId) throws NoPermissionException {
+    public Response<VoidResponse> purchaseProposalApprove(int managerId, int storeId, int productId, int userId) {
         if (realSession != null)
-            realSession.purchaseProposalApprove(managerId, storeId, productId);
+            realSession.purchaseProposalApprove(managerId, storeId, productId, userId);
         return Response.success(new VoidResponse());
     }
 
     @Override
-    public Response<VoidResponse> purchaseProposalReject(int storeId, int managerId, int bidId) throws NoPermissionException {
+    public Response<VoidResponse> purchaseProposalReject(int storeId, int managerId, int bidId, int userId) throws NoPermissionException {
         if (realSession != null)
-            realSession.purchaseProposalReject(storeId, managerId, bidId);
+            realSession.purchaseProposalReject(storeId, managerId, bidId, userId);
         return Response.success(new VoidResponse());
     }
 
@@ -606,7 +606,7 @@ public class ProxySession implements ISession {
     }
 
     @Override
-    public void register(int userId, String username, String password, String email, String answer1, String answer2, String answer3, LocalDate dateOfBirth) {
+    public void register(int userId, String username, String password, String email, String answer1, String answer2, String answer3, LocalDateTime dateOfBirth) {
         if (realSession != null)
             realSession.register(userId, username, password, email, answer1, answer2, answer3, dateOfBirth);
     }

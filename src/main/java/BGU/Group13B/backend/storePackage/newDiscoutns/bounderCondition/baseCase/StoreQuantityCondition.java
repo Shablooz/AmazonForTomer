@@ -4,20 +4,25 @@ import BGU.Group13B.backend.User.BasketInfo;
 import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.Bounder;
+import BGU.Group13B.backend.storePackage.newDiscoutns.bounders.IntBounder;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.LogicalConditions.LogicalConditionEntity;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.leaves.StoreQuantityConditionEntity;
 
+@Entity
 public class StoreQuantityCondition extends Condition {
-
-    private final Bounder<Integer> quantityBounder;
+    @OneToOne(cascade = CascadeType.ALL)
+    private IntBounder quantityBounder;
 
 
     public StoreQuantityCondition(int conditionId, int lowerBound, int upperBound) {
         super(conditionId);
-        this.quantityBounder = new Bounder<>(lowerBound, upperBound);
+        this.quantityBounder = new IntBounder(lowerBound, upperBound);
     }
 
     /**
@@ -25,7 +30,12 @@ public class StoreQuantityCondition extends Condition {
      */
     public StoreQuantityCondition(int conditionId, int lowerBound) {
         super(conditionId);
-        this.quantityBounder = new Bounder<>(lowerBound);
+        this.quantityBounder = new IntBounder(lowerBound);
+    }
+    //added for hibernate
+    public StoreQuantityCondition() {
+        super(0);
+        this.quantityBounder = null;
     }
 
     @Override
@@ -49,5 +59,13 @@ public class StoreQuantityCondition extends Condition {
     @Override
     public String toString() {
         return "total quantity: " + quantityBounder;
+    }
+
+    public IntBounder getQuantityBounder() {
+        return quantityBounder;
+    }
+
+    public void setQuantityBounder(IntBounder quantityBounder) {
+        this.quantityBounder = quantityBounder;
     }
 }

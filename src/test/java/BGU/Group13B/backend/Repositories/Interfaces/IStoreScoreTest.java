@@ -45,7 +45,7 @@ class IStoreScoreTest {
 
     @BeforeEach
     void setUp() {
-        storeScore = new StoreScoreSingle();
+        storeScore = new StoreScoreSingle(false);
     }
 
     @AfterEach

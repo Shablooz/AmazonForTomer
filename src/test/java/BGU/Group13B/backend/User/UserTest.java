@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -66,6 +66,7 @@ class UserTest {
 
     @BeforeEach
     void setUp() {
+        SingletonCollection.setSaveMode(false);
         user1 = new User(1);
         user2 = new User(2);
         user3 = new User(3);
@@ -94,32 +95,32 @@ class UserTest {
     void testRegister() {
         //user1
         try {
-            user1.register(goodUsername1, goodPassword1, goodEmail1, "", "", "", LocalDate.MIN);
+            user1.register(goodUsername1, goodPassword1, goodEmail1, "", "", "", LocalDateTime.MIN);
         } catch (Exception e) {
             Assertions.fail(e.getMessage());
         }
 
         try {
-            user2.register(goodUsername2, goodPassword2, goodEmail2, "", "", "",LocalDate.MIN);
+            user2.register(goodUsername2, goodPassword2, goodEmail2, "", "", "",LocalDateTime.MIN);
         } catch (Exception e) {
             Assertions.fail(e.getMessage());
         }
 
         try {
-            user3.register(goodUsername3, goodPassword3, goodEmail3, "", "", "",LocalDate.MIN);
+            user3.register(goodUsername3, goodPassword3, goodEmail3, "", "", "",LocalDateTime.MIN);
         } catch (Exception e) {
             Assertions.fail(e.getMessage());
         }
 
         try {
-            user4.register(badUsername1, badPassword1, badEmail1, "", "", "",LocalDate.MIN);
+            user4.register(badUsername1, badPassword1, badEmail1, "", "", "",LocalDateTime.MIN);
             Assertions.fail();
         } catch (Exception e) {
 
         }
 
         try {
-            user5.register(badUsername2, badPassword2, badEmail2, "", "", "",LocalDate.MIN);
+            user5.register(badUsername2, badPassword2, badEmail2, "", "", "",LocalDateTime.MIN);
             Assertions.fail();
         } catch (Exception e) {
 
@@ -127,7 +128,7 @@ class UserTest {
 
         //now lets check that we cant register twice!
         try {
-            user1.register(goodUsername1, goodPassword1, goodEmail1, "", "", "",LocalDate.MIN);
+            user1.register(goodUsername1, goodPassword1, goodEmail1, "", "", "",LocalDateTime.MIN);
         } catch (Exception e) {
             Assertions.fail();
         }
@@ -135,11 +136,11 @@ class UserTest {
 
     @Test
     void testLogin() {
-        user1.register(goodUsername1, goodPassword1, goodEmail1, "yellow", "", "",LocalDate.MIN);
-        user2.register(goodUsername2, goodPassword2, goodEmail2, "", "yak", "",LocalDate.MIN);
-        user3.register(goodUsername3, goodPassword3, goodEmail3, "", "", "",LocalDate.MIN);
+        user1.register(goodUsername1, goodPassword1, goodEmail1, "yellow", "", "",LocalDateTime.MIN);
+        user2.register(goodUsername2, goodPassword2, goodEmail2, "", "yak", "",LocalDateTime.MIN);
+        user3.register(goodUsername3, goodPassword3, goodEmail3, "", "", "",LocalDateTime.MIN);
 
-        user4.register("orangesLove", goodPassword1, "orangeslover@gmail.com", "yellow", "", "",LocalDate.MIN);
+        user4.register("orangesLove", goodPassword1, "orangeslover@gmail.com", "yellow", "", "",LocalDateTime.MIN);
 
         try {
             user1.login(goodUsername1, goodPassword1, "yellow", "", "");
@@ -169,9 +170,9 @@ class UserTest {
 
     @Test
     void testLogout() {
-        user1.register(goodUsername1, goodPassword1, goodEmail1, "yellow", "", "",LocalDate.MIN);
-        user2.register(goodUsername2, goodPassword2, goodEmail2, "", "yak", "",LocalDate.MIN);
-        user3.register(goodUsername3, goodPassword3, goodEmail3, "", "", "",LocalDate.MIN);
+        user1.register(goodUsername1, goodPassword1, goodEmail1, "yellow", "", "",LocalDateTime.MIN);
+        user2.register(goodUsername2, goodPassword2, goodEmail2, "", "yak", "",LocalDateTime.MIN);
+        user3.register(goodUsername3, goodPassword3, goodEmail3, "", "", "",LocalDateTime.MIN);
 
         user1.login(goodUsername1, goodPassword1, "yellow", "", "");
         user2.login(goodUsername2, goodPassword2, "", "yak", "");
@@ -199,8 +200,8 @@ class UserTest {
 
     @Test
     void passwordEncryption() {
-        user1.register(goodUsername1, goodPassword1, goodEmail1, "yellow", "", "",LocalDate.MIN);
-        user2.register(goodUsername2, goodPassword1, goodEmail2, "", "yak", "",LocalDate.MIN);
+        user1.register(goodUsername1, goodPassword1, goodEmail1, "yellow", "", "",LocalDateTime.MIN);
+        user2.register(goodUsername2, goodPassword1, goodEmail2, "", "yak", "",LocalDateTime.MIN);
         Assertions.assertTrue(user1.SecurityAnswer1Exists());
         Assertions.assertFalse(user1.SecurityAnswer2Exists());
         Assertions.assertFalse(user1.SecurityAnswer3Exists());
@@ -213,10 +214,11 @@ class UserTest {
     @Test
     void purchaseCartLoginLogoutSuccess() {
         //setup
-        SingletonCollection.reset_system();
+        SingletonCollection.reset_system(false);
+        SingletonCollection.setSaveMode(false);
         int newUserId = SingletonCollection.getUserRepository().getNewUserId();
         User user = new User(newUserId);
-        user.register(goodUsername1, goodPassword1, "email@gmail.com", "yellow", "", "",LocalDate.MIN);
+        user.register(goodUsername1, goodPassword1, "email@gmail.com", "yellow", "", "",LocalDateTime.MIN);
         user.login(goodUsername1, goodPassword1, "yellow", "", "");
         SingletonCollection.getUserRepository().addUser(newUserId, user);
         int storeId = SingletonCollection.getStoreRepository().addStore(newUserId, "store1", "media");
@@ -235,7 +237,7 @@ class UserTest {
 
     @Test
     void purchaseUserHistory(){
-        user1.register(goodUsername1, goodPassword1, goodEmail1, "yellow", "", "",LocalDate.MIN);
+        user1.register(goodUsername1, goodPassword1, goodEmail1, "yellow", "", "",LocalDateTime.MIN);
         user1.login(goodUsername1, goodPassword1, "yellow", "", "");
         int storeId1 = SingletonCollection.getStoreRepository().addStore(user2.getUserId(), "Electronics store", "electronics");
         Product product1 = SingletonCollection.getProductRepository().addProduct(storeId1, "Dell computer", "electronics", 1000, 50, "Good and stable laptop.");
@@ -259,7 +261,7 @@ class UserTest {
 
     @Test
     void purchaseUserHistory_Empty() {
-        user1.register(goodUsername1, goodPassword1, goodEmail1, "yellow", "", "",LocalDate.MIN);
+        user1.register(goodUsername1, goodPassword1, goodEmail1, "yellow", "", "",LocalDateTime.MIN);
         user1.login(goodUsername1, goodPassword1, "yellow", "", "");
         Assertions.assertEquals("", getStringPurchase(user1.getPurchaseHistory()));
     }
@@ -299,7 +301,7 @@ class UserTest {
    /* @Test
     void purchaseStoreHistoryAsAdmin(){ //storeHistory
         Session session = SingletonCollection.getSession();
-        user2.register(goodUsername2, goodPassword2, goodEmail2, "", "yak", "",LocalDate.MIN);
+        user2.register(goodUsername2, goodPassword2, goodEmail2, "", "yak", "",LocalDateTime.MIN);
         user2.login(goodUsername2, goodPassword2, "", "yak", "");
         int storeId1 = SingletonCollection.getStoreRepository().addStore(user2.getUserId(), "Electronics store", "electronics");
         Product product1 = SingletonCollection.getProductRepository().addProduct(storeId1, "Dell computer", "electronics", 1000, 50, "Good and stable laptop.");
@@ -326,10 +328,11 @@ class UserTest {
     @Test
     void purchaseCartLoginLogoutFail() {
         //setup
-        SingletonCollection.reset_system();
+        SingletonCollection.reset_system(false);
+        SingletonCollection.setSaveMode(false);
         int newUserId = SingletonCollection.getUserRepository().getNewUserId();
         user = new User(newUserId);
-        user.register(goodUsername1, goodPassword1, "email@gmail.com", "yellow", "", "",LocalDate.MIN);
+        user.register(goodUsername1, goodPassword1, "email@gmail.com", "yellow", "", "",LocalDateTime.MIN);
         user.login(goodUsername1, goodPassword1, "yellow", "", "");
         SingletonCollection.getUserRepository().addUser(newUserId, user);
         int storeId = SingletonCollection.getStoreRepository().addStore(newUserId, "store1", "media");

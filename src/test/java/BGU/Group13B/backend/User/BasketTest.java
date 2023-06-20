@@ -13,6 +13,7 @@ import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -46,13 +47,15 @@ class BasketTest {
         /*Mockito.when(SingletonCollection.getProductRepository()).
                 thenReturn(Mockito.mock(IProductRepository.class));*/ //remember
         //eyal was here
-        SingletonCollection.reset_system();
+        SingletonCollection.reset_system(false);
+        SingletonCollection.setSaveMode(false);
         productRepository = SingletonCollection.getProductRepository();
         basketProductRepository = SingletonCollection.getBasketProductRepository();
         purchaseHistoryRepository = SingletonCollection.getPurchaseHistoryRepository();
         calculatePriceOfBasket = SingletonCollection.getCalculatePriceOfBasket();
         //initCalculatePriceOfBasket(market);
         userId = SingletonCollection.getUserRepository().getNewUserId();
+
         SingletonCollection.getUserRepository().addUser(userId, new User(userId));
         storeId = SingletonCollection.getStoreRepository().addStore(userId, "store1", "category1");
         store = SingletonCollection.getStoreRepository().getStore(storeId);
@@ -93,6 +96,7 @@ class BasketTest {
                 Mockito.anyString())).thenReturn(success);
     }
 
+
     private void initBasket() {
         basket = new Basket(userId, storeId, basketProductRepository, purchaseHistoryRepository, paymentAdapter,
                calculatePriceOfBasket, deliveryAdapter);
@@ -104,6 +108,7 @@ class BasketTest {
         productId2 = productRepository.addProduct(storeId, "product2", "category2", 15.0, 1, "eyal was here").getProductId();
         productId3 = productRepository.addProduct(storeId, "product3", "category3", 1.0, 1000, "description3").getProductId();
         productId4 = productRepository.addProduct(storeId, "product4", "category4", 15, 1000, "description4").getProductId();
+
         basketProductRepository.addNewProductToBasket(productId1, storeId, userId);//adding product 0 to basket
         basketProductRepository.addNewProductToBasket(productId2, storeId, userId);//adding product 1 to basket
     }
@@ -136,8 +141,12 @@ class BasketTest {
                     Thread.sleep(100);
                 payBehaviour(true);
                 deliveryBehaviour(true);
+
+                System.out.println("[DEBUG] thread1 is purchasing");
                 pricePayed3.set(basket3.purchaseBasket("", "", "",
                         "", "", "", new HashMap<>(), ""));
+                System.out.println("[DEBUG] thread1 finished purchasing");
+
             } catch (PurchaseFailedException e) {
                 Assertions.assertEquals("total price must be 2.0-100.0", e.getMessage());
             } catch (InterruptedException e) {
@@ -151,11 +160,14 @@ class BasketTest {
                 payBehaviour(true);
                 deliveryBehaviour(true);
 
+                System.out.println("[DEBUG] thread2 is purchasing");
                 pricePayed2.set(basket2.purchaseBasket("", "", "", "", "", "", new HashMap<>(), ""));
+                System.out.println("[DEBUG] thread2 finished purchasing");
+
             } catch (PurchaseFailedException e) {
                 Assertions.assertEquals("total price must be 2.0-100.0", e.getMessage());
 
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 Assertions.fail(e);
             }
         });
@@ -445,9 +457,10 @@ class BasketTest {
 
     @Test
     void purchaseBasketSimpleComplexDiscountTestSuccess1() {
-        SingletonCollection.reset_system();
+        SingletonCollection.reset_system(false);
+        SingletonCollection.setSaveMode(false);
         int userId = SingletonCollection.getSession().enterAsGuest();
-        SingletonCollection.getSession().register(userId, "userName", "Password1", "emao@gmail.com", "", "", "", LocalDate.now().minusYears(20));
+        SingletonCollection.getSession().register(userId, "userName", "Password1", "emao@gmail.com", "", "", "", LocalDateTime.now().minusYears(20));
         SingletonCollection.getSession().login(userId, "userName", "Password1", "", "", "");
         int storeId = SingletonCollection.getSession().addStore(userId, "store1", "category1").getData();
 
@@ -484,9 +497,10 @@ class BasketTest {
     }
     @Test
     void purchaseBasketSimpleComplexDiscountTestSuccess2() {
-        SingletonCollection.reset_system();
+        SingletonCollection.reset_system(false);
+        SingletonCollection.setSaveMode(false);
         int userId = SingletonCollection.getSession().enterAsGuest();
-        SingletonCollection.getSession().register(userId, "userName", "Password1", "emao@gmail.com", "", "", "", LocalDate.now().minusYears(20));
+        SingletonCollection.getSession().register(userId, "userName", "Password1", "emao@gmail.com", "", "", "", LocalDateTime.now().minusYears(20));
         SingletonCollection.getSession().login(userId, "userName", "Password1", "", "", "");
         int storeId = SingletonCollection.getSession().addStore(userId, "store1", "category1").getData();
 

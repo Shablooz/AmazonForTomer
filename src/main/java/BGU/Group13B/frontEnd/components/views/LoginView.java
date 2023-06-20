@@ -97,7 +97,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver{
                 SessionToIdMapper.getInstance().updateCurrentSession(newId);
                 // SessionToIdMapper.getInstance().setRefreshRequired(true);
                 UI.getCurrent().navigate(HomeView.class);
-
+                UI.getCurrent().getPage().reload();
                 var ui = UI.getCurrent();
                 //Tomer section
                 BroadCaster.register(newId, newMessage -> {
@@ -180,15 +180,16 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver{
         String[] storeProduct = message.substring(message.indexOf("[") + 1, message.indexOf("]")).split(",");
         int storeId = Integer.parseInt(storeProduct[0]);
         int productId = Integer.parseInt(storeProduct[1]);
+        int userId = SessionToIdMapper.getInstance().getCurrentSessionId();
         //accept button
         Button accept = new Button(VaadinIcon.CHECK_CIRCLE.create(), event -> {
-            session.purchaseProposalApprove(managerId, storeId, productId);
+            session.purchaseProposalApprove(managerId, storeId, productId, userId);
             notification.close();
         });
         accept.addThemeVariants(LUMO_TERTIARY_INLINE);
         //reject button
         Button reject = new Button(VaadinIcon.CLOSE_SMALL.create(), event -> {
-            session.purchaseProposalReject(managerId, storeId, productId);
+            session.purchaseProposalReject(managerId, storeId, productId, userId);
             notification.close();
         });
         accept.setVisible(true);

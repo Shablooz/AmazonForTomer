@@ -1,11 +1,14 @@
 package BGU.Group13B.service;
 
+import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.User.UserPermissions;
 import com.nimbusds.jose.shaded.gson.*;
 
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +20,8 @@ public class ConfigurationFileParser {
     private static final HashMap<String/*functionName*/, List<Object>> results = new HashMap<>();
 
     private static String CONFIGURATION_FILE_NAME = null;
+    private static boolean load_configuration;
+
     public static void main(String[] args) {
         // Read the configuration file
         //parse();
@@ -27,17 +32,19 @@ public class ConfigurationFileParser {
 
         JsonObject config = loadJsonObject();
         if (config == null) return;
-
+        if (!load_configuration) {
+            return;
+        }
         // Get the "functions" array from the configuration
         JsonArray functions = config.getAsJsonArray("functions");
-        boolean persist = config.get("persist").getAsBoolean();
+        /*boolean persist = config.get("persist").getAsBoolean();
         boolean reset = config.get("reset").getAsBoolean();
         if(reset){
             SingletonCollection.reset_system();//ask tomer or zloof
         }
         if(!persist){
             return;
-        }
+        }*/
         for (int i = 0; i < functions.size(); i++) {
             parseFunction(functions.get(i).getAsJsonObject());
         }
@@ -45,22 +52,29 @@ public class ConfigurationFileParser {
 
     private static String getConfigurationFileName() {
         Properties properties = new Properties();
-
+        String filePath = "src/main/resources/application.properties";
         try {
-            FileInputStream fileInputStream = new FileInputStream("src/main/resources/application.properties");
+            FileInputStream fileInputStream = new FileInputStream(filePath);
             properties.load(fileInputStream);
             fileInputStream.close();
+
+            load_configuration = Boolean.parseBoolean(properties.getProperty("load_configuration"));
+            if (load_configuration) {
+                properties.setProperty("load_configuration", "false");
+                FileOutputStream fileOutputStream = new FileOutputStream(filePath);
+                properties.store(fileOutputStream, null);
+                fileOutputStream.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return properties.getProperty("configurationFile");
     }
 
     private static JsonObject loadJsonObject() {
         String configFile = CONFIGURATION_FILE_NAME == null ? getConfigurationFileName() : CONFIGURATION_FILE_NAME;
         JsonObject config;
-        try (FileReader reader = new FileReader("src/main/resources/configurationFiles/"+configFile)) {
+        try (FileReader reader = new FileReader("src/main/resources/configurationFiles/" + configFile)) {
             Gson gson = new Gson();
             JsonElement element = gson.fromJson(reader, JsonElement.class);
             config = element.getAsJsonObject();
@@ -108,12 +122,24 @@ public class ConfigurationFileParser {
         Object[] argumentValues = new Object[arguments.size()];
         for (int j = 0; j < arguments.size(); j++) {
             String argument = arguments.get(j).getAsString();
-            if (argument.startsWith("{{") && argument.endsWith("}}")) {
+            if (argument.startsWith("{{Pair,") && argument.endsWith("}}")) {
+                // Argument is a Pair object
+                String[] split = argument.substring(2, argument.length() - 2).split(",");
+                String function1 = split[1];
+                int index1 = Integer.parseInt(split[2]);
+                String function2 = split[3];
+                int index2 = Integer.parseInt(split[4]);
+                argumentValues[j] = new Pair<>(index1, index2);
+            } else if (argument.startsWith("{{") && argument.endsWith("}}")) {
                 // Argument is a reference to a previous result
                 String[] split = argument.substring(2, argument.length() - 2).split(",");
                 String argumentFunctionName = split[0];
                 int index = Integer.parseInt(split[1]);
-                argumentValues[j] = results.get(argumentFunctionName).get(index);
+                List<Object> functionResults = results.get(argumentFunctionName);
+                if (functionResults.size() <= index) {
+                    throw new IllegalArgumentException("Not enough results for function: " + argumentFunctionName);
+                }
+                argumentValues[j] = functionResults.get(index);
             } else {
                 // Argument is a literal value
                 argumentValues[j] = parseValue(argument, types.get(j).getAsString());
@@ -121,6 +147,7 @@ public class ConfigurationFileParser {
         }
         return argumentValues;
     }
+
 
     private static Class<?>[] getArgumentTypes(JsonArray types) {
         Class<?>[] argumentTypes = new Class<?>[types.size()];
@@ -146,6 +173,10 @@ public class ConfigurationFileParser {
             case "double" -> double.class;
             case "String" -> String.class;
             case "LocalDate" -> LocalDate.class;
+            case "LocalDateTime" -> LocalDateTime.class;
+            case "Pair" -> Pair.class;
+            case "boolean" -> boolean.class;
+
             case "UserPermissions.IndividualPermission" -> UserPermissions.IndividualPermission.class;
             // Add support for other types as needed
             default -> throw new IllegalArgumentException("Unsupported type: " + typeName);
@@ -158,6 +189,9 @@ public class ConfigurationFileParser {
             case "double" -> Double.parseDouble(value);
             case "String" -> value;
             case "LocalDate" -> parseDate(value);
+            case "LocalDateTime" -> parseDateTime(value);
+            case "Pair" -> parsePair(value);
+            case "boolean" -> Boolean.parseBoolean(value);
             // Add support for other types as needed
             default -> {
                 if (value.startsWith("UserPermissions.IndividualPermission")) {
@@ -168,6 +202,19 @@ public class ConfigurationFileParser {
                 throw new IllegalArgumentException("Unsupported type: " + type);
             }
         };
+    }
+
+    private static Object parseDateTime(String value) {
+        try {
+            //format dd/MM/yyyy
+            String[] split = value.split("/");
+            int day = Integer.parseInt(split[0]);
+            int month = Integer.parseInt(split[1]);
+            int year = Integer.parseInt(split[2]);
+            return LocalDateTime.of(year, month, day, 0, 0);
+        } catch (Exception e) {
+            return value;
+        }
     }
 
     private static Object parseDate(String value) {
@@ -182,7 +229,23 @@ public class ConfigurationFileParser {
             return value;
         }
     }
+
+    private static Object parsePair(String value) {
+        // The input value should be in the form "{{new Pair,value1,value2}}"
+        // Remove the "{{new Pair," and "}}" parts
+        String strippedValue = value.substring("{{new Pair,".length(), value.length() - "}}".length());
+        // Split the remaining string into two parts
+        String[] components = strippedValue.split(",");
+        // Parse the two components - this might need to be extended if the components can be of different types
+        int first = Integer.parseInt(components[0]);
+        int second = Integer.parseInt(components[1]);
+        // Create a new Pair object
+        return new Pair<>(first, second);
+    }
+
+
     public static void setConfigurationFileName(String configurationFileName) {
         CONFIGURATION_FILE_NAME = configurationFileName;
+        load_configuration = true;
     }
 }

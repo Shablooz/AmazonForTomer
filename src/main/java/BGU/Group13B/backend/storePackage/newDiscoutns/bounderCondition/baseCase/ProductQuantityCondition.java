@@ -4,22 +4,28 @@ import BGU.Group13B.backend.User.BasketInfo;
 import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.Bounder;
+import BGU.Group13B.backend.storePackage.newDiscoutns.bounders.IntBounder;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.LogicalConditions.LogicalConditionEntity;
 import BGU.Group13B.service.SingletonCollection;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.leaves.ProductQuantityConditionEntity;
 
+@Entity
 public class ProductQuantityCondition extends Condition {
-    private final int productId;
-    private final Bounder<Integer> quantityBounder;
+    private int productId;
+    @OneToOne(cascade = CascadeType.ALL)
+    private final IntBounder quantityBounder;
 
 
     public ProductQuantityCondition(int conditionId, int productId, int lowerBound, int upperBound){
         super(conditionId);
         this.productId = productId;
-        this.quantityBounder = new Bounder<>(lowerBound, upperBound);
+        this.quantityBounder = new IntBounder(lowerBound, upperBound);
     }
 
     /**
@@ -29,7 +35,13 @@ public class ProductQuantityCondition extends Condition {
     public ProductQuantityCondition(int conditionId, int productId, int lowerBound){
         super(conditionId);
         this.productId = productId;
-        this.quantityBounder = new Bounder<>(lowerBound);
+        this.quantityBounder = new IntBounder(lowerBound);
+    }
+    //added for hibernate
+    public ProductQuantityCondition() {
+        super(0);
+        this.productId = 0;
+        this.quantityBounder = null;
     }
 
     @Override

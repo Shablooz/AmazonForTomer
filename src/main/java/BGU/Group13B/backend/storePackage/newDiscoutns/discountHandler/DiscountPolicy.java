@@ -14,18 +14,23 @@ import BGU.Group13B.frontEnd.components.views.ManageDiscountsView;
 import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.info.DiscountAccumulationTreeInfo;
 
+
 import java.time.LocalDate;
 import java.util.*;
 
-
+//NO NEED TO PERSIST UWU
 public class DiscountPolicy {
 
-    private final int storeId;
+
+    private int id;
+
+    private int storeId;
+
     private DiscountAccumulationNode discountAccumulationTree;
-    private final IStoreDiscountRootsRepository discountRootsRepository;
-    private final IDiscountAccumulationRepository discountAccumulationRepository;
-    private final IDiscountRepository discountRepository;
-    private final IConditionRepository conditionRepository;
+    private IStoreDiscountRootsRepository discountRootsRepository;
+    private IDiscountAccumulationRepository discountAccumulationRepository;
+    private IDiscountRepository discountRepository;
+    private IConditionRepository conditionRepository;
 
     public DiscountPolicy(int storeId) {
         this.storeId = storeId;
@@ -35,7 +40,7 @@ public class DiscountPolicy {
         conditionRepository = SingletonCollection.getConditionRepository();
         discountRootsRepository = SingletonCollection.getStoreDiscountRootsRepository();
         int discountRoot = discountRootsRepository.getStoreDiscountRoot(storeId);
-        if(discountRoot != -1){
+        if (discountRoot != -1) {
             discountAccumulationTree = discountAccumulationRepository.getDiscountAccumulationNode(discountRoot);
         }
 
@@ -43,73 +48,91 @@ public class DiscountPolicy {
     }
 
 
+    public IDiscountRepository getDiscountRepository() {
+        return SingletonCollection.getDiscountRepository();
+    }
+
     /**
      * <h1>Discount crud</h1>
      */
     public int addStoreDiscount(int conditionId, double discountPercentage, LocalDate expirationDate, String coupon) {
-        Condition condition = conditionRepository.getCondition(conditionId);
-        return discountRepository.addStoreDiscount(storeId, condition, discountPercentage, expirationDate, coupon);
+        Condition condition = SingletonCollection.getConditionRepository().getCondition(conditionId);
+        return getDiscountRepository().addStoreDiscount(storeId, condition, discountPercentage, expirationDate, coupon);
+
     }
 
     public int addStoreDiscount(double discountPercentage, LocalDate expirationDate, String coupon) {
-        return discountRepository.addStoreDiscount(storeId, discountPercentage, expirationDate, coupon);
+        var v = getDiscountRepository().addStoreDiscount(storeId, discountPercentage, expirationDate, coupon);
+        return v;
     }
 
     public int addStoreDiscount(int conditionId, double discountPercentage, LocalDate expirationDate) {
-        Condition condition = conditionRepository.getCondition(conditionId);
-        return discountRepository.addStoreDiscount(storeId, condition, discountPercentage, expirationDate);
+        Condition condition = SingletonCollection.getConditionRepository().
+                getCondition(conditionId);
+        var v = getDiscountRepository().addStoreDiscount(storeId, condition, discountPercentage, expirationDate);
+        return v;
     }
 
     public int addStoreDiscount(double discountPercentage, LocalDate expirationDate) {
-        return discountRepository.addStoreDiscount(storeId, discountPercentage, expirationDate);
+        var v = getDiscountRepository().addStoreDiscount(storeId, discountPercentage, expirationDate);
+        return v;
     }
 
     public int addCategoryDiscount(int conditionId, double discountPercentage, LocalDate expirationDate, String category, String coupon) {
-        Condition condition = conditionRepository.getCondition(conditionId);
-        return discountRepository.addCategoryDiscount(storeId, condition, discountPercentage, expirationDate, category, coupon);
+        Condition condition = SingletonCollection.getConditionRepository().getCondition(conditionId);
+        var v = getDiscountRepository().addCategoryDiscount(storeId, condition, discountPercentage, expirationDate, category, coupon);
+        return v;
     }
 
     public int addCategoryDiscount(double discountPercentage, LocalDate expirationDate, String category, String coupon) {
-        return discountRepository.addCategoryDiscount(storeId, discountPercentage, expirationDate, category, coupon);
+        var v = getDiscountRepository().addCategoryDiscount(storeId, discountPercentage, expirationDate, category, coupon);
+        return v;
     }
 
+
     public int addCategoryDiscount(int conditionId, double discountPercentage, LocalDate expirationDate, String category) {
-        Condition condition = conditionRepository.getCondition(conditionId);
-        return discountRepository.addCategoryDiscount(storeId, condition, discountPercentage, expirationDate, category);
+        Condition condition = SingletonCollection.getConditionRepository().getCondition(conditionId);
+        var v = getDiscountRepository().addCategoryDiscount(storeId, condition, discountPercentage, expirationDate, category);
+        return v;
     }
 
     public int addCategoryDiscount(double discountPercentage, LocalDate expirationDate, String category) {
-        return discountRepository.addCategoryDiscount(storeId, discountPercentage, expirationDate, category);
+        var v = getDiscountRepository().addCategoryDiscount(storeId, discountPercentage, expirationDate, category);
+        return v;
     }
 
     public int addProductDiscount(int conditionId, double discountPercentage, LocalDate expirationDate, int productId, String coupon) {
-        Condition condition = conditionRepository.getCondition(conditionId);
-        return discountRepository.addProductDiscount(storeId, condition, discountPercentage, expirationDate, productId, coupon);
+        Condition condition = SingletonCollection.getConditionRepository().getCondition(conditionId);
+        var v = getDiscountRepository().addProductDiscount(storeId, condition, discountPercentage, expirationDate, productId, coupon);
+        return v;
     }
 
     public int addProductDiscount(double discountPercentage, LocalDate expirationDate, int productId, String coupon) {
-        return discountRepository.addProductDiscount(storeId, discountPercentage, expirationDate, productId, coupon);
+        var v = getDiscountRepository().addProductDiscount(storeId, discountPercentage, expirationDate, productId, coupon);
+        return v;
     }
 
     public int addProductDiscount(int conditionId, double discountPercentage, LocalDate expirationDate, int productId) {
-        Condition condition = conditionRepository.getCondition(conditionId);
-        return discountRepository.addProductDiscount(storeId, condition, discountPercentage, expirationDate, productId);
+        Condition condition = SingletonCollection.getConditionRepository().getCondition(conditionId);
+        var v = getDiscountRepository().addProductDiscount(storeId, condition, discountPercentage, expirationDate, productId);
+        return v;
     }
 
     public int addProductDiscount(double discountPercentage, LocalDate expirationDate, int productId) {
-        return discountRepository.addProductDiscount(storeId, discountPercentage, expirationDate, productId);
+        var v = getDiscountRepository().addProductDiscount(storeId, discountPercentage, expirationDate, productId);
+        return v;
     }
 
     public List<StoreDiscount> getStoreDiscounts() {
-        return discountRepository.getStoreDiscounts(storeId);
+        return getDiscountRepository().getStoreDiscounts(storeId);
     }
 
     public StoreDiscount getDiscount(int discountId) {
-        return discountRepository.getDiscount(discountId, storeId);
+        return getDiscountRepository().getDiscount(discountId, storeId);
     }
 
     public void removeDiscount(int discountId) {
-        discountRepository.removeDiscount(discountId, storeId);
+        getDiscountRepository().removeDiscount(discountId, storeId);
     }
 
 
@@ -119,7 +142,7 @@ public class DiscountPolicy {
 
     public void addDiscountAsRoot(int discountId) {
         StoreDiscount discount = getDiscount(discountId);
-        discountAccumulationTree = discountAccumulationRepository.addDiscountAsRoot(discount);
+        discountAccumulationTree = SingletonCollection.getDiscountAccumulationRepository().addDiscountAsRoot(discount);
         updateStoreDiscountRoot();
     }
 
@@ -129,10 +152,10 @@ public class DiscountPolicy {
             throw new IllegalArgumentException("root is empty");
         }
 
-        discountAccumulationTree = discountAccumulationRepository.
+
+        discountAccumulationTree = SingletonCollection.getDiscountAccumulationRepository().
                 addDiscountToXORRoot(discountAccumulationTree.getDiscountNodeId(), discount);
         updateStoreDiscountRoot();
-
     }
 
     public void addDiscountToMAXRoot(int discountId) {
@@ -141,7 +164,7 @@ public class DiscountPolicy {
             throw new IllegalArgumentException("root is empty");
         }
 
-        discountAccumulationTree = discountAccumulationRepository.
+        discountAccumulationTree = SingletonCollection.getDiscountAccumulationRepository().
                 addDiscountToMAXRoot(discountAccumulationTree.getDiscountNodeId(), discount);
         updateStoreDiscountRoot();
 
@@ -153,7 +176,7 @@ public class DiscountPolicy {
             throw new IllegalArgumentException("root is empty");
         }
 
-        discountAccumulationTree = discountAccumulationRepository.
+        discountAccumulationTree = SingletonCollection.getDiscountAccumulationRepository().
                 addDiscountToADDRoot(discountAccumulationTree.getDiscountNodeId(), discount);
         updateStoreDiscountRoot();
 
@@ -163,8 +186,8 @@ public class DiscountPolicy {
      * <h1>Store Discount Root</h1>
      */
 
-    private void updateStoreDiscountRoot(){
-        discountRootsRepository.setStoreDiscountRoot(storeId, discountAccumulationTree.getDiscountNodeId());
+    private void updateStoreDiscountRoot() {
+        SingletonCollection.getStoreDiscountRootsRepository().setStoreDiscountRoot(storeId, discountAccumulationTree.getDiscountNodeId());
     }
 
     /**
@@ -187,25 +210,75 @@ public class DiscountPolicy {
                         }).
                 sum();
     }
+
     public void removeAllDiscounts() {
-        discountRepository.removeAllStoreDiscounts(storeId);
+        getDiscountRepository().removeAllStoreDiscounts(storeId);
     }
 
-    public void removeProductDiscount(int productId){
-        discountRepository.removeStoreProductDiscounts(storeId, productId);
+    public void removeProductDiscount(int productId) {
+        getDiscountRepository().removeStoreProductDiscounts(storeId, productId);
     }
 
     public DiscountAccumulationTreeInfo getDiscountAccumulationTree() {
-        if(discountAccumulationTree == null)
+        if (discountAccumulationTree == null)
             return new DiscountAccumulationTreeInfo(List.of(), List.of());
         return discountAccumulationTree.getInfo();
     }
 
     public void deleteStoreAccumulationTree() {
-        if(discountAccumulationTree == null)
+        if (discountAccumulationTree == null)
             return;
 
-        discountRootsRepository.removeStoreDiscountRoot(storeId);
+        SingletonCollection.getStoreDiscountRootsRepository().removeStoreDiscountRoot(storeId);
         discountAccumulationTree = null;
+    }
+
+    public int getId() {
+        return id;
+
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(int storeId) {
+        this.storeId = storeId;
+    }
+
+    public void setDiscountAccumulationTree(DiscountAccumulationNode discountAccumulationTree) {
+        this.discountAccumulationTree = discountAccumulationTree;
+    }
+
+    public IStoreDiscountRootsRepository getDiscountRootsRepository() {
+        return discountRootsRepository;
+    }
+
+    public void setDiscountRootsRepository(IStoreDiscountRootsRepository discountRootsRepository) {
+        this.discountRootsRepository = discountRootsRepository;
+    }
+
+    public IDiscountAccumulationRepository getDiscountAccumulationRepository() {
+        return discountAccumulationRepository;
+    }
+
+    public void setDiscountAccumulationRepository(IDiscountAccumulationRepository discountAccumulationRepository) {
+        this.discountAccumulationRepository = discountAccumulationRepository;
+    }
+
+    public void setDiscountRepository(IDiscountRepository discountRepository) {
+        this.discountRepository = discountRepository;
+    }
+
+    public IConditionRepository getConditionRepository() {
+        return conditionRepository;
+    }
+
+    public void setConditionRepository(IConditionRepository conditionRepository) {
+        this.conditionRepository = conditionRepository;
     }
 }

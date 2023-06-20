@@ -29,4 +29,5 @@ public interface IDiscountRepository {
 
     void removeStoreProductDiscounts(int storeId, int productId);
     void removeAllStoreDiscounts(int storeId);
+    void setSaveMode(boolean saveMode);
 }

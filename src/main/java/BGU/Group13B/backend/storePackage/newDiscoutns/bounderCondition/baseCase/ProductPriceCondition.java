@@ -4,22 +4,29 @@ import BGU.Group13B.backend.User.BasketInfo;
 import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.Bounder;
+import BGU.Group13B.backend.storePackage.newDiscoutns.bounders.DoubleBounder;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.Condition;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.LogicalConditions.LogicalConditionEntity;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.leaves.ProductPriceConditionEntity;
 import BGU.Group13B.service.SingletonCollection;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
 
+@Entity
 public class ProductPriceCondition extends Condition {
-    private final int productId;
-    private final Bounder<Double> priceBounder;
+
+    private int productId;
+    @OneToOne(cascade = CascadeType.ALL)
+    private final DoubleBounder priceBounder;
 
 
     public ProductPriceCondition(int conditionId, int productId, double lowerBound, double upperBound){
         super(conditionId);
         this.productId = productId;
-        this.priceBounder = new Bounder<>(lowerBound, upperBound);
+        this.priceBounder = new DoubleBounder(lowerBound, upperBound);
     }
 
     /**
@@ -29,7 +36,14 @@ public class ProductPriceCondition extends Condition {
     public ProductPriceCondition(int conditionId, int productId, double lowerBound){
         super(conditionId);
         this.productId = productId;
-        this.priceBounder = new Bounder<>(lowerBound);
+        this.priceBounder = new DoubleBounder(lowerBound);
+    }
+
+    //added for hibernate
+    public ProductPriceCondition() {
+        super(0);
+        this.productId = 0;
+        this.priceBounder = null;
     }
 
     @Override
@@ -56,5 +70,17 @@ public class ProductPriceCondition extends Condition {
     public String toString(){
         //mafhhhhhheeeeid
         return "product: " + SingletonCollection.getProductRepository().getProductById(productId).getName() + ", price: " + priceBounder.toString();
+    }
+
+    public int getProductId() {
+        return productId;
+    }
+
+    public void setProductId(int productId) {
+        this.productId = productId;
+    }
+
+    public DoubleBounder getPriceBounder() {
+        return priceBounder;
     }
 }

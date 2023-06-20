@@ -1,11 +1,21 @@
 package BGU.Group13B.backend.storePackage.newDiscoutns.bounderCondition.time;
 
+import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDateTime;
-
+@Entity
 public class Date implements Comparable<Date>{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
+    @Column(updatable = false)
     private final LocalDateTime date;
 
+    public Date() {
+        this.date = null;
+    }
 
 
     public LocalDateTime getDate() {
@@ -27,5 +37,13 @@ public class Date implements Comparable<Date>{
     }
     public String toString(){
         return date.getDayOfMonth() + "/" + date.getMonth().getValue();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

@@ -1,23 +1,41 @@
 package BGU.Group13B.backend.Repositories.Implementations.BIDRepositoryImpl;
 
+import BGU.Group13B.backend.Repositories.Implementations.DailyUserTrafficRepositoryImpl.DailyUserTrafficRepositoryAsListService;
 import BGU.Group13B.backend.Repositories.Interfaces.IBIDRepository;
 import BGU.Group13B.backend.storePackage.BID;
+import BGU.Group13B.service.SingletonCollection;
+import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicInteger;
-
+@Entity
 public class BIDRepositoryAsList implements IBIDRepository {
-    private final Set<BID> bids;
+    @Transient
+    private boolean saveMode;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @OneToMany(cascade = jakarta.persistence.CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
+    @JoinTable(name = "BIDRepositoryAsList_BIDS",
+            joinColumns = {@JoinColumn(name = "BIDRepositoryAsList_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "BDI_id", referencedColumnName = "bidId")})
+
+    private Set<BID> bids;
     private AtomicInteger maxBidId;
 
     public BIDRepositoryAsList() {
-
         this.bids = new ConcurrentSkipListSet<>();
         this.maxBidId = new AtomicInteger(0);
+        this.saveMode = true;
+    }
+
+    public BIDRepositoryAsList(boolean saveMode) {
+        this.bids = new ConcurrentSkipListSet<>();
+        this.maxBidId = new AtomicInteger(0);
+        this.saveMode = saveMode;
     }
 
     @Override
@@ -25,18 +43,20 @@ public class BIDRepositoryAsList implements IBIDRepository {
         /*int maxUserBid = bids.stream().filter(bid -> bid.getUserId() == userId).
                 map(BID::getBidId).max(Integer::compareTo).orElse(-1);*/
 
-        this.bids.add(new BID(maxBidId.getAndIncrement(), userId, productId, newProductPrice, amount));
+        this.bids.add(new BID(Objects.hash(userId, productId), userId, productId, newProductPrice, amount));
+        save();
     }
 
     @Override
-    public void removeBID(int bidId) {
-        this.bids.removeIf(bid -> bid.getBidId() == bidId);
+    public void removeBID(int userId, int productId) {
+        this.bids.removeIf(bid -> bid.getBidId() == Objects.hash(bid.getUserId(), productId));
+        save();
     }
 
     @Override
-    public synchronized Optional<BID> getBID(int bidId) {
+    public synchronized Optional<BID> getBID(int userId, int productId) {
         var _bid = this.bids.stream().
-                filter(bid -> bid.getBidId() == bidId).toList();
+                filter(bid -> bid.getBidId() == Objects.hash(bid.getUserId(), productId)).toList();
         if (_bid.isEmpty()) return Optional.empty();
         return Optional.ofNullable(_bid.get(0));
     }
@@ -47,9 +67,48 @@ public class BIDRepositoryAsList implements IBIDRepository {
     }
 
     @Override
+    public void setSaveMode(boolean saveMode) {
+        this.saveMode = saveMode;
+    }
+
+    @Override
     public void reset() {
         this.bids.clear();
         this.maxBidId = new AtomicInteger(0);
+        save();
     }
 
+    public Set<BID> getBids() {
+        return bids;
+    }
+
+    public void setBids(Set<BID> bids) {
+        this.bids = bids;
+    }
+
+    public AtomicInteger getMaxBidId() {
+        return maxBidId;
+    }
+
+    public void setMaxBidId(AtomicInteger maxBidId) {
+        this.maxBidId = maxBidId;
+    }
+
+    public boolean isSaveMode() {
+        return saveMode;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    private void save(){
+        if(saveMode&& SingletonCollection.databaseExists())
+            SingletonCollection.getContext().getBean(BIDRepositoryAsListService.class).save(this);
+
+    }
 }

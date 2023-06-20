@@ -6,16 +6,34 @@ import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.purchaseBounders.PurchaseExceedsPolicyException;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.ConditionEntity;
 import BGU.Group13B.frontEnd.components.policyComponent.conditionEntities.LogicalConditions.LogicalConditionEntity;
-
+import jakarta.persistence.*;
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Condition {
-    private final int conditionId;
+    @Id
+    @GeneratedValue(strategy =  GenerationType.IDENTITY)
+    private int conditionId;
 
     protected Condition(int conditionId){
         this.conditionId = conditionId;
     }
 
+    //added for hibernate shouldnt use this!
+    public Condition() {
+        this.conditionId = -1;
+    }
+
     public abstract void satisfied(BasketInfo basketInfo, UserInfo user) throws PurchaseExceedsPolicyException;
 
     public abstract ConditionEntity convertToUiEntity(LogicalConditionEntity parent);
+
+    public void setConditionId(int conditionId) {
+        this.conditionId = conditionId;
+    }
+
+    public int getConditionId() {
+        return conditionId;
+    }
+
 
 }

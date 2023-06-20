@@ -1,19 +1,23 @@
 package BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.productDisountTree;
 
+import jakarta.persistence.*;
 
-public abstract class DiscountAccumulationTree implements DiscountAccumulationNode {
-    private int nodeId;
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class DiscountAccumulationTree extends DiscountAccumulationNode {
+    @OneToOne(cascade = CascadeType.ALL)
     protected DiscountAccumulationNode left;
+    @OneToOne(cascade = CascadeType.ALL)
     protected DiscountAccumulationNode right;
 
     public DiscountAccumulationTree(int nodeId, DiscountAccumulationNode left, DiscountAccumulationNode right) {
-        this.nodeId = nodeId;
+        super(nodeId);
         this.left = left;
         this.right = right;
     }
 
-    @Override
-    public int getDiscountNodeId() {
-        return nodeId;
+    public DiscountAccumulationTree() {
+        this.left = null;
+        this.right = null;
     }
 }

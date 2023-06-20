@@ -15,6 +15,7 @@ import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -52,6 +53,8 @@ class StoreTest {
     @BeforeEach
     void setUp() throws NoPermissionException {
         /*initializing data*/
+        SingletonCollection.reset_system(false);
+        SingletonCollection.setSaveMode(false);
 
         var storePermission = Mockito.mock(StorePermission.class);
         //broadCaster = Mockito.mock(BroadCaster.class);
@@ -81,20 +84,24 @@ class StoreTest {
         store = new Store(storeId, "store name", "category",productRepository , null, null,
                 null, storePermission, addToUserCart, bidRepository, null,
                 null, null, null);
-
+        SingletonCollection.setSaveMode(false);
+        bidRepository = (BIDRepositoryAsList) SingletonCollection.getBidRepository();
     }
 
     @AfterEach
     void tearDown() {
+        SingletonCollection.setSaveMode(false);
+        SingletonCollection.reset_system();
+        bidRepository = (BIDRepositoryAsList) SingletonCollection.getBidRepository();
     }
 
     @Test
     void purchaseProposalSubmitWithPermissions() {
         try {
             store.purchaseProposalSubmit(managerWithPermission, productId, proposedPrice, amount);
-            Assertions.assertEquals(bidRepository.getBID(0),
-                    Optional.of(new BID(0, managerWithPermission, productId, proposedPrice, amount)));
-            assertFalse(bidRepository.getBID(0).orElseThrow(() ->
+            Assertions.assertEquals(bidRepository.getBID(managerWithPermission, productId),
+                    Optional.of(new BID(Objects.hash(managerWithPermission, productId), managerWithPermission, productId, proposedPrice, amount)));
+            assertFalse(bidRepository.getBID(managerWithPermission, productId).orElseThrow(() ->
                     new NoSuchElementException("No such bid with id 0")).isRejected());
         } catch (Exception e) {
             fail("Exception was thrown");
@@ -137,6 +144,7 @@ class StoreTest {
 
     @RepeatedTest(25)
     void purchaseProposalSubmitOneRejectOneAccept() {
+        SingletonCollection.setSaveMode(false);
         //with threads, where ane thread tries to accept and the other to reject
         AtomicInteger firstThreadToFinish = new AtomicInteger(-1);
         setupForTheConcurrentTest();
@@ -145,7 +153,7 @@ class StoreTest {
             try {
                 if (Math.random() > 0.5)//adding randomness to the order of the threads
                     Thread.sleep(10);
-                store.purchaseProposalApprove(managerWithPermission, 0);
+                store.purchaseProposalApprove(managerWithPermission, productId, managerWithPermission);
                 synchronized (firstThreadToFinish) {
                     if (firstThreadToFinish.get() == -1)
                         firstThreadToFinish.set(1);
@@ -164,7 +172,7 @@ class StoreTest {
             try {
                 if (Math.random() > 0.5)
                     Thread.sleep(10);
-                store.purchaseProposalReject(managerWithPermission, 0);
+                store.purchaseProposalReject(managerWithPermission, productId, managerWithPermission);
 
                 synchronized (firstThreadToFinish) {
                     if (firstThreadToFinish.get() == -1)
@@ -187,8 +195,9 @@ class StoreTest {
                         Mockito.times(1)).apply(managerWithPermission, storeId, productId, amount, proposedPrice);
             else if (firstThreadToFinish.get() == 2)
                 Assertions.assertTrue(true);
-                        /*Mockito.verify(broadCaster,
-                                Mockito.times(1)).broadcast(managerWithPermission, msg);*/
+//                Assertions.assertTrue(true);
+//                        Mockito.verify(broadCaster,
+//                                Mockito.times(1)).broadcast(managerWithPermission, msg);
             else
                 fail("No thread finished QA's fault");
         } catch (InterruptedException ignore) {
@@ -212,10 +221,10 @@ class StoreTest {
         try {
             store.purchaseProposalSubmit(managerWithPermission, productId, proposedPrice, amount);
 
-            store.purchaseProposalApprove(managerWithPermission, 0);
+            store.purchaseProposalApprove(managerWithPermission, productId, managerWithPermission);
             Mockito.verify(addToUserCart,
                     Mockito.times(1)).apply(managerWithPermission, storeId, productId, amount, proposedPrice);
-            Assertions.assertFalse(bidRepository.getBID(0).orElseThrow().isRejected());
+            Assertions.assertFalse(bidRepository.getBID(managerWithPermission, productId).orElseThrow().isRejected());
 
         } catch (NoPermissionException | NoSuchElementException e) {
             fail();
@@ -224,14 +233,15 @@ class StoreTest {
 
     @Test
     void purchaseProposalReject() {
+        SingletonCollection.setSaveMode(false);
         try {
             store.purchaseProposalSubmit(managerWithPermission, productId, proposedPrice, amount);
 
-            store.purchaseProposalReject(managerWithPermission, 0);
+            store.purchaseProposalReject(managerWithPermission, productId, managerWithPermission);
             Mockito.verify(addToUserCart,
                     Mockito.times(0)).apply(managerWithPermission, storeId, productId, amount, proposedPrice);
 
-            Assertions.assertEquals(bidRepository.getBID(0), Optional.empty());
+            Assertions.assertEquals(bidRepository.getBID(managerWithPermission, productId), Optional.empty());
 
         } catch (NoPermissionException e) {
             throw new RuntimeException(e);
@@ -239,6 +249,7 @@ class StoreTest {
     }
 
     public void customSetUp() {
+        SingletonCollection.setSaveMode(false);
         tUserOwnerId = SingletonCollection.getUserRepository().getNewUserId();
         SingletonCollection.getUserRepository().addUser(tUserOwnerId, new User(tUserOwnerId));
 
@@ -258,6 +269,7 @@ class StoreTest {
     }
 
     public void RecursiveFireTestSetUp(){
+        SingletonCollection.setSaveMode(false);
         u1Id = SingletonCollection.getUserRepository().getNewUserId();
         SingletonCollection.getUserRepository().addUser(u1Id, new User(u1Id));
 
@@ -306,7 +318,8 @@ class StoreTest {
     private int s1Id;
 
     public void customTearDown() {
-        SingletonCollection.reset_system();
+        SingletonCollection.reset_system(false);
+        SingletonCollection.setSaveMode(false);
         /*
         omTestStore.getStorePermission().clearForTest();
         tUser.getUserPermissions().clearForTest();

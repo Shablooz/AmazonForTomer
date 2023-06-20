@@ -17,4 +17,6 @@ public interface IBasketProductRepository {
     boolean isUserBasketsExists(int userId);
 
     void dropBasket(int storeId, int userId);
+
+    void setSaveMode(boolean saveMode);
 }

@@ -12,4 +12,5 @@ public interface IDailyUserTrafficRepository {
     void addAdmin();
     UserTrafficRecord getUserTrafficOfRage(LocalDate start, LocalDate end);
     void reset();
+    void setSaveMode(boolean saveMode);
 }

@@ -6,12 +6,13 @@ import BGU.Group13B.backend.User.BasketProduct;
 import BGU.Group13B.backend.User.UserInfo;
 import BGU.Group13B.backend.storePackage.newDiscoutns.discountHandler.productDisountTree.DiscountAccumulationNode;
 import BGU.Group13B.service.SingletonCollection;
+import jakarta.persistence.Entity;
 
 import java.time.LocalDate;
 import java.util.List;
-
+@Entity
 public class ProductDiscount extends StoreDiscount {
-    private final int productId;
+    private int productId;
 
     public ProductDiscount(int discountId, int storeId, Condition condition, double discountPercentage, LocalDate expirationDate, int productId, String coupon) {
         super(discountId, storeId, condition, discountPercentage, expirationDate, coupon);
@@ -28,6 +29,11 @@ public class ProductDiscount extends StoreDiscount {
 
     public ProductDiscount(int discountId, int storeId, double discountPercentage, LocalDate expirationDate, int productId) {
         this(discountId, storeId, null, discountPercentage, expirationDate, productId, null);
+    }
+
+    public ProductDiscount() {
+        super();
+        productId = 420;
     }
 
     public double getProductDiscountPercentage(BasketInfo basketInfo, UserInfo userInfo, int productId, List<String> coupons) {
@@ -56,5 +62,9 @@ public class ProductDiscount extends StoreDiscount {
         //lo naim ma shekore' po
         String productName = SingletonCollection.getProductRepository().getProductById(productId).getName();
         return super.toString() + " for product " + productName;
+    }
+
+    public void setProductId(int productId) {
+        this.productId = productId;
     }
 }

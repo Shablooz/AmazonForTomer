@@ -94,9 +94,18 @@ public interface ISession {
     Response<VoidResponse> purchaseProposalSubmit(int userId, int storeId, int productId, double proposedPrice, int amount);
 
 
-    Response<VoidResponse> purchaseProposalApprove(int managerId, int storeId, int productId) throws NoPermissionException;
+    /**
+     * #50
+     * require 2.5.1
+     *
+     * @param managerId the manager id
+     * @param storeId   the store id
+     * @param productId the product id
+     * @param userId    the user id
+     */
+    Response<VoidResponse> purchaseProposalApprove(int managerId, int storeId, int productId, int userId);
 
-    Response<VoidResponse> purchaseProposalReject(int storeId, int managerId, int bidId) throws NoPermissionException;
+    Response<VoidResponse> purchaseProposalReject(int storeId, int managerId, int bidId, int userId) throws NoPermissionException;
 
     /**
      * #51
@@ -168,19 +177,9 @@ public interface ISession {
     SystemInfo getSystemInformation(int adminId);
 
 
-    /**
-     * #15
-     * require 2.1.3
-     *
-     * @param userId
-     * @param username
-     * @param password
-     * @param email
-     * @param answer1  - optional for security question number 1 can put empty String
-     * @param answer2  - optional for security question number 2 can put empty String
-     * @param answer1  - optional for security question number 3 can put empty String
-     */
-    void register(int userId, String username, String password, String email, String answer1, String answer2, String answer3, LocalDate birthDate);
+
+    void register(int userId, String username, String password,
+                  String email, String answer1, String answer2, String answer3, LocalDateTime birthDate);
 
     /**
      * #18
@@ -1017,7 +1016,7 @@ public interface ISession {
 
     Response<VoidResponse> resetStorePurchasePolicy(int storeId, int userId);
 
-    Response<List<StoreInfo>> getAllStores();
+    Response<List<StoreInfo>> getAllStoresTheUserCanView(int userId);
 
     Response<UserTrafficRecord> getUserTrafficOfRange(int userId, LocalDate from, LocalDate to);
 
@@ -1027,11 +1026,11 @@ public interface ISession {
      */
 
     Response<Boolean> removeMember(int adminId, int userId);
-  
+
     Response<double[]> getStoreHistoryIncome(int storeId, int userId, LocalDate from, LocalDate to);
 
     Response<double[]> getSystemHistoryIncome(int userId, LocalDate from, LocalDate to);
 
-
     Response<String> getUserNameRes(int userId);
+
 }

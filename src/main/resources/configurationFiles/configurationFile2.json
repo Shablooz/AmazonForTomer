@@ -12,8 +12,8 @@
     {
       "name": "register",
       "arguments": ["{{enterAsGuest,0}}", "shaun", "Shaun1234", "shaun@gmail.com", "answer1", "answer2", "answer3", "28/04/2002"],
-      "types": ["int", "String", "String", "String", "String", "String", "String", "LocalDate"],
-      "comment": "(int userId, String username, String password, String email, String answer1, String answer2, String answer3, LocalDate birthDate);"
+      "types": ["int", "String", "String", "String", "String", "String", "String", "LocalDateTime"],
+      "comment": "(int userId, String username, String password, String email, String answer1, String answer2, String answer3, LocalDateTime birthDate);"
 
     },
 
@@ -26,8 +26,8 @@
     {
       "name": "register",
       "arguments": ["{{enterAsGuest,1}}", "tomer", "Tomer1234", "tomer@gmail.com", "answer1", "answer2", "answer3", "28/04/1998"],
-      "types": ["int", "String", "String", "String", "String", "String", "String", "LocalDate"],
-      "comment": "(int userId, String username, String password, String email, String answer1, String answer2, String answer3, LocalDate birthDate);"
+      "types": ["int", "String", "String", "String", "String", "String", "String", "LocalDateTime"],
+      "comment": "(int userId, String username, String password, String email, String answer1, String answer2, String answer3, LocalDateTime birthDate);"
     },
     {
       "name": "enterAsGuest",
@@ -38,8 +38,8 @@
     {
       "name": "register",
       "arguments": ["{{enterAsGuest,2}}", "lior", "Lior1234", "lior@gmail.com", "answer1", "answer2", "answer3", "28/04/2001"],
-      "types": ["int", "String", "String", "String", "String", "String", "String", "LocalDate"],
-      "comment": "(int userId, String username, String password, String email, String answer1, String answer2, String answer3, LocalDate birthDate);"
+      "types": ["int", "String", "String", "String", "String", "String", "String", "LocalDateTime"],
+      "comment": "(int userId, String username, String password, String email, String answer1, String answer2, String answer3, LocalDateTime birthDate);"
     },
 
     {
@@ -51,8 +51,8 @@
     {
       "name": "register",
       "arguments": ["{{enterAsGuest,3}}", "eden", "Eden1234", "eden@gmail.com", "answer1", "answer2", "answer3", "28/04/2001"],
-      "types": ["int", "String", "String", "String", "String", "String", "String", "LocalDate"],
-      "comment": "(int userId, String username, String password, String email, String answer1, String answer2, String answer3, LocalDate birthDate);"
+      "types": ["int", "String", "String", "String", "String", "String", "String", "LocalDateTime"],
+      "comment": "(int userId, String username, String password, String email, String answer1, String answer2, String answer3, LocalDateTime birthDate);"
     },
 
     {
@@ -64,8 +64,8 @@
     {
       "name": "register",
       "arguments": ["{{enterAsGuest,4}}", "eyal", "Eyal1234", "eyal@gmail.com", "answer1", "answer2", "answer3", "28/04/2001"],
-      "types": ["int", "String", "String", "String", "String", "String", "String", "LocalDate"],
-      "comment": "(int userId, String username, String password, String email, String answer1, String answer2, String answer3, LocalDate birthDate);"
+      "types": ["int", "String", "String", "String", "String", "String", "String", "LocalDateTime"],
+      "comment": "(int userId, String username, String password, String email, String answer1, String answer2, String answer3, LocalDateTime birthDate);"
     },
 
     {
@@ -77,8 +77,8 @@
     {
       "name": "register",
       "arguments": ["{{enterAsGuest,5}}", "yoav", "Yoav1234", "yoav@gmail.com", "answer1", "answer2", "answer3", "28/04/2001"],
-      "types": ["int", "String", "String", "String", "String", "String", "String", "LocalDate"],
-      "comment": "(int userId, String username, String password, String email, String answer1, String answer2, String answer3, LocalDate birthDate);"
+      "types": ["int", "String", "String", "String", "String", "String", "String", "LocalDateTime"],
+      "comment": "(int userId, String username, String password, String email, String answer1, String answer2, String answer3, LocalDateTime birthDate);"
     },
 
     {
@@ -122,6 +122,12 @@
       "arguments": ["{{enterAsGuest,0}}", "{{enterAsGuest,3}}", "{{addStore,0}}"],
       "types": ["int", "int", "int"],
       "comment": "addManager(int userID, int storeID, int managerID);"
+    },
+    {
+      "name": "voteForOwner",
+      "arguments": ["{{Pair, login,5, login,2}}", "{{enterAsGuest,2}}", "true", "{{addStore,0}}"],
+      "types": ["Pair", "int", "boolean", "int"],
+      "comment": "voteForOwner(Pair<Integer, Integer> newAndAppointerIds, int voterId, boolean accept, int storeId)"
     },
     {
       "name": "logout",

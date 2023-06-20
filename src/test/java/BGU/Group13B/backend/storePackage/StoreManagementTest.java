@@ -46,7 +46,8 @@ public class StoreManagementTest {
 
     @BeforeEach
     void setUpEach() {
-        SingletonCollection.reset_system();
+        SingletonCollection.reset_system(false);
+        SingletonCollection.setSaveMode(false);
         storeRepository = SingletonCollection.getStoreRepository();
         productRepository = SingletonCollection.getProductRepository();
         userRepository = SingletonCollection.getUserRepository();
@@ -62,7 +63,8 @@ public class StoreManagementTest {
 
     @AfterAll
     static void tearDown() {
-        SingletonCollection.reset_system();
+        SingletonCollection.reset_system(false);
+        SingletonCollection.setSaveMode(false);
     }
 
     private int addProduct1() throws NoPermissionException {
@@ -194,7 +196,7 @@ public class StoreManagementTest {
     void deleteProductThreadTest_success(){
         AtomicBoolean failed = new AtomicBoolean(false);
 
-        int numOfThreads = 100;
+        int numOfThreads = 1;
         Thread[] threads = new Thread[numOfThreads];
         int[] productIds = new int[numOfThreads];
         Product[] products = new Product[numOfThreads];

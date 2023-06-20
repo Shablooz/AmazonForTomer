@@ -20,7 +20,10 @@ public interface IPurchaseHistoryRepository {
     void reset();
 
     List<PurchaseHistory> getStorePurchaseHistory(int storeId);
+
     void removePurchase(PurchaseHistory purchaseHistory);
+
+    void setSaveMode(boolean saveMode);
 
     double[] getSystemHistoryIncome(LocalDate startDate, LocalDate endDate);
 }

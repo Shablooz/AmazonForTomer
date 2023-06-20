@@ -1,24 +1,37 @@
 package BGU.Group13B.backend.storePackage;
 
+import java.io.Serializable;
 import java.util.List;
 
+import BGU.Group13B.backend.Repositories.Implementations.ReviewRepositoryImpl.ReviewRepoSingle;
 import BGU.Group13B.backend.Repositories.Interfaces.IRepositoryReview;
 import BGU.Group13B.service.SingletonCollection;
 import BGU.Group13B.service.info.ProductInfo;
+import com.vaadin.flow.function.SerializableEventListener;
+import jakarta.persistence.*;
 
-public class Product {
+@Entity
+public class Product implements Serializable {
 
     private String name;
-    private final int productId;
-    private final int storeId;
-    private double price;
-    private String category;
-    private String description;
-    private int stockQuantity;
-    private final IRepositoryReview repositoryReview;
+    @Id
+    private int productId;
 
-    private boolean deleted = false;
-    private boolean hidden = false;
+    private int storeId;
+
+    private double price;
+
+    private String category;
+
+    private String description;
+
+    private int stockQuantity;
+
+    @Transient
+    private IRepositoryReview repositoryReview;
+
+    public boolean deleted = false;
+    public boolean hidden = false;
 
 
     public Product(int productId, int storeId, String name, String category, double price, int stockQuantity, String description) {
@@ -29,13 +42,23 @@ public class Product {
         this.setPrice(price);
         this.setStockQuantity(stockQuantity);
         this.description = description;
-        this.repositoryReview = SingletonCollection.getReviewRepository();
-
+        repositoryReview = SingletonCollection.getReviewRepository();
     }
 
     public Product(int productId, int storeId, String name, String category, double price, int stockQuantity, String description, boolean hidden){
         this(productId, storeId, name, category, price, stockQuantity, description);
         this.hidden = hidden;
+    }
+    //shouldnt acualy have those values
+    public Product() {
+        this.productId = 50;
+        this.storeId = 50;
+        this.name = "gk";
+        this.category = "gk";
+        this.setPrice(50);
+        this.setStockQuantity(50);
+        this.description = "gk";
+        repositoryReview = SingletonCollection.getReviewRepository();
     }
 
     public String getName() {
@@ -154,4 +177,22 @@ public class Product {
     public void unhide() {
         this.hidden = false;
     }
+
+    public IRepositoryReview getRepositoryReview() {
+        return repositoryReview;
+    }
+
+    public void setProductId(int productId) {
+        this.productId = productId;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
+    }
+
+
 }
