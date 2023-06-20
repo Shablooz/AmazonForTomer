@@ -146,6 +146,12 @@
 
     },
     {
+      "name": "voteForOwner",
+      "arguments": ["{{Pair, login,4, login,2}}", "{{login,1}}", "true", "{{addStore,0}}"],
+      "types": ["Pair", "int", "boolean", "int"],
+      "comment": "voteForOwner(Pair<Integer, Integer> newAndAppointerIds, int voterId, boolean accept, int storeId)"
+    },
+    {
       "name": "logout",
       "arguments": ["{{login,0}}"],
       "types": ["int"],
