@@ -294,8 +294,16 @@ public class Market {
         return getStorePurchaseHistory(adminId, storeId);
     }
 
-    public void addOwner(int userId, int newOwnerId, int storeId) throws NoPermissionException, ChangePermissionException {
-        storeRepository.getStore(storeId).addOwner(userId, newOwnerId);
+    public List<Integer> addOwner(int userId, int newOwnerId, int storeId) throws NoPermissionException, ChangePermissionException {
+        return storeRepository.getStore(storeId).addOwner(userId, newOwnerId);
+    }
+
+    public void voteForOwner(Pair<Integer, Integer> newAndAppointerIds, int voterId, boolean accept, int storeId) throws NoPermissionException, ChangePermissionException {
+        storeRepository.getStore(storeId).voteForOwner(newAndAppointerIds, voterId, accept);
+    }
+
+    public List<Pair<Integer, Integer>> getMyOpenVotes(int userId, int storeId) throws NoPermissionException {
+        return storeRepository.getStore(storeId).getMyOpenVotes(userId);
     }
 
     public void removeOwner(int userId, int removeOwnerId, int storeId) throws NoPermissionException, ChangePermissionException {

@@ -134,8 +134,8 @@ public class Session implements ISession {
                             address, city, country, zip);
             LOGGER_INFO.info("user " + userId + " purchased his cart");
             return Response.success();
-        } catch (PurchaseFailedException | NoPermissionException e) {
-            LOGGER_INFO.info("purchase failed for user " + userId);
+        } catch (Exception e) {
+            LOGGER_ERROR.severe("User " + userId + " failed to purchase cart");
             return Response.exception(e);
         }
     }
@@ -862,7 +862,7 @@ public class Session implements ISession {
 
     @Override
     public void setUserStatus(int admin_id, int userId, int newStatus) {
-        if (!getUserStatus(admin_id).equals("Admin")) {
+        if (!getUserStatus(admin_id).equals("ADMIN")) {
             //should throw an exception
             throw new IllegalArgumentException("isn't an admin");
         }
@@ -875,12 +875,14 @@ public class Session implements ISession {
 
     @Override
     public String getUserStatus(int userId) {
-        if (userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.MEMBER)
-            return "Member";
+        if (userRepositoryAsHashmap.getUser(userId) == null)
+            return "";
+        else if (userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.MEMBER)
+            return "MEMBER";
         else if (userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.ADMIN)
-            return "Admin";
+            return "ADMIN";
         else
-            return "Guest";
+            return "GUEST";
     }
 
     @Override
@@ -1154,13 +1156,32 @@ public class Session implements ISession {
     }
 
     @Override
-    public Response<VoidResponse> addOwner(int userId, int newOwnerId, int storeId) {
+    public Response<List<Integer>> addOwner(int userId, int newOwnerId, int storeId) {
         try {
-            market.addOwner(userId, newOwnerId, storeId);
+            var result = market.addOwner(userId, newOwnerId, storeId);
             LOGGER_INFO.info("owner was added successfully");
-            return Response.success();
+            return Response.success(result);
         } catch (Exception e) {
             LOGGER_ERROR.severe("owner was not added successfully");
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<VoidResponse> voteForOwner(Pair<Integer, Integer> newAndAppointerIds, int voterId, boolean accept, int storeId){
+        try {
+            market.voteForOwner(newAndAppointerIds, voterId, accept, storeId);
+            return Response.success(new VoidResponse());
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+    }
+
+    @Override
+    public Response<List<Pair<Integer, Integer>>> getMyOpenVotes(int userId, int storeId){
+        try {
+            return Response.success(market.getMyOpenVotes(userId, storeId));
+        } catch (Exception e) {
             return Response.exception(e);
         }
     }
@@ -1817,7 +1838,7 @@ public class Session implements ISession {
     @Override
     public Response<Boolean> isAdmin(int userId) {
         try {
-            var result = getUserStatus(userId).equals("Admin");
+            var result = getUserStatus(userId).equals("ADMIN");
             LOGGER_INFO.info("user admin status was retrieved successfully");
             return Response.success(result);
         } catch (Exception e) {
@@ -2001,4 +2022,73 @@ public class Session implements ISession {
             return Response.failure(e.getMessage());
         }
     }
+
+    public Response<Boolean> isUserLoggedRES(int userId) {
+        try {
+            if(userRepositoryAsHashmap.getUser(userId) == null){
+                //boolean res = false;
+                return Response.partialSuccess(false, "User does not exist");
+            }
+            var result = userRepositoryAsHashmap.getUser(userId).isLoggedIn();
+            return Response.success(result);
+        } catch (Exception e) {
+            return Response.exception(e);
+        }
+
+    }
+
+    public Response<Boolean> setUserStatusRES(int admin_id, int userId, int newStatus) {
+        try {
+            if (!getUserStatus(admin_id).equals("ADMIN")) {
+                //should throw an exception
+                throw new IllegalArgumentException("isn't an admin");
+            }
+            if(admin_id == userId){
+                throw new IllegalArgumentException("can't change your own status");
+            }
+            if (newStatus == 1 && userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.MEMBER)
+                userRepositoryAsHashmap.getUser(userId).setPermissions(UserPermissions.UserPermissionStatus.ADMIN);
+
+            if (newStatus == 2 && userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.ADMIN)
+                userRepositoryAsHashmap.getUser(userId).setPermissions(UserPermissions.UserPermissionStatus.MEMBER);
+            return Response.success(true);
+        } catch (Exception e) {
+            return Response.failure(e.getMessage());
+        }
+    }
+
+    public Response<String> getUserStatusRES(int userId) {
+        try {
+            String result;
+            if (userRepositoryAsHashmap.getUser(userId) == null){
+                result = "";
+            }
+            else if (userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.MEMBER){
+                result = "MEMBER";
+            }
+            else if (userRepositoryAsHashmap.getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.ADMIN){
+                result = "ADMIN";
+            }
+            else{
+                result = "ADMIN";
+            }
+            return Response.success(result);
+        } catch (Exception e){
+            return Response.failure(e.getMessage());
+        }
+    }
+
+    public Response<VoidResponse> sendMassageVote(int userId, String receiverId, String header, String massage) {
+        try {
+            if (userRepository.checkIfUserExists(receiverId) == null)
+                throw new RuntimeException("receiver Id not found");
+            userRepositoryAsHashmap.getUser(userId).sendMassageVote(receiverId, header, massage);
+            LOGGER_INFO.info("message was sent successfully");
+            return Response.success();
+        } catch (Exception e) {
+            LOGGER_ERROR.severe("message was not sent successfully");
+            return Response.exception(e);
+        }
+    }
+
 }

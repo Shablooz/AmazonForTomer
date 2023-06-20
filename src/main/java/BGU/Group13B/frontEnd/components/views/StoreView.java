@@ -65,6 +65,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
     private Button unhideStoreButton;
     private Button deleteStoreButton;
     private Button storePurchaseHistoryButton;
+    private Button myVotesButton;
     private Button manageDiscountsButton;
     private Button managePurchasePolicyButton;
     private HorizontalLayout bottomButtonsLayout;
@@ -105,6 +106,10 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
             storePurchaseHistoryButton.setVisible(false);
         }
 
+        if(!currentWorker.userPermissions().contains(UserPermissions.IndividualPermission.STAFF)){
+            myVotesButton.setVisible(false);
+        }
+
         if(!currentWorker.userPermissions().contains(UserPermissions.IndividualPermission.POLICIES)){
             managePurchasePolicyButton.setVisible(false);
             manageDiscountsButton.setVisible(false);
@@ -143,6 +148,7 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
         unhideStoreButton = new Button("Reopen Store");
         deleteStoreButton = new Button("Delete Store");
         storePurchaseHistoryButton = new Button("Store Purchase History");
+        myVotesButton = new Button("Owner Vote");
         manageDiscountsButton = new Button("Manage Discounts");
         managePurchasePolicyButton = new Button("Manage Purchase Policy");
         storeIncomeButton = new Button("Store Income");
@@ -249,6 +255,15 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
             }
         });
 
+        myVotesButton.addClickListener(e-> {
+            if(currentWorker.userPermissions().contains(UserPermissions.IndividualPermission.STAFF)){
+                navigate("myvotes/" + storeId);
+            }
+            else{
+                notifyWarning("You don't have permission to view owner votes");
+            }
+        });
+
         hideStoreButton.addClickListener(e -> {
             if(isHidden){
                 notifyWarning("Store is already hidden");
@@ -287,27 +302,48 @@ public class StoreView extends VerticalLayout implements HasUrlParameter<Integer
         });
         deleteStoreButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
 
-        bottomButtonsLayout.add(storeIncomeButton, manageDiscountsButton, managePurchasePolicyButton, storePurchaseHistoryButton, hideStoreButton, unhideStoreButton, deleteStoreButton);
+        bottomButtonsLayout.add(storeIncomeButton, manageDiscountsButton, managePurchasePolicyButton, storePurchaseHistoryButton, hideStoreButton, unhideStoreButton, deleteStoreButton, myVotesButton);
         bottomButtonsLayout.getStyle().set("margin-top", "auto");
         add(bottomButtonsLayout);
     }
 
     private void getData(){
         //isAdmin
-        isAdmin = handleResponse(session.isAdmin(userId), "");
+        Boolean isAdmin = handleResponse(session.isAdmin(userId), "");
+        if(isAdmin == null){
+            terminate = true;
+            return;
+        }
+        this.isAdmin = isAdmin;
 
         //isHidden
-        isHidden = handleResponse(session.isStoreHidden(storeId), "");
+        Boolean isHidden = handleResponse(session.isStoreHidden(storeId), "");
+        if(isHidden == null){
+            terminate = true;
+            return;
+        }
+        this.isHidden = isHidden;
 
         //products
         products = handleResponse(session.getAllStoreProductsInfo(userId, storeId), "");
+        if(products == null){
+            terminate = true;
+            return;
+        }
 
         //workers
         workers = handleResponse(session.getStoreWorkersInfo(1 /*mafhhhiiddd*/, storeId), "");
+        if(workers == null){
+            terminate = true;
+            return;
+        }
 
         //userIdToUsername
         List<Integer> userIds = workers.stream().map(WorkerCard::userId).collect(Collectors.toList());
         userIdToUsername = handleResponse(session.getUserIdsToUsernamesMapper(userIds), "");
+        if(userIdToUsername == null){
+            terminate = true;
+        }
     }
 
     private double getRoundedScore(double score){

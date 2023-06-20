@@ -166,7 +166,8 @@ public class Basket {
 
 
     private void getSuccessfulProducts() {
-
+        successfulProducts.clear();
+        failedProducts.clear();
         //for every product in the basket
 
         for (BasketProduct basketProduct : basketProductRepository.getBasketProducts(storeId, userId).orElseGet(LinkedList::new)) {
@@ -260,6 +261,11 @@ public class Basket {
 
     public double getTotalPriceOfBasketBeforeDiscount() {
         return basketProductRepository.getBasketProducts(storeId, userId).orElseGet(LinkedList::new).stream().mapToDouble(BasketProduct::getSubtotal).sum();
+    }
+
+    public boolean isEmpty() {
+        getSuccessfulProducts();
+        return successfulProducts.isEmpty();
     }
 
     @Override
