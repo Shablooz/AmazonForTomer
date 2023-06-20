@@ -124,6 +124,12 @@
       "comment": "addManager(int userID, int storeID, int managerID);"
     },
     {
+      "name": "voteForOwner",
+      "arguments": ["{{Pair, login,5, login,2}}", "{{enterAsGuest,2}}", "true", "{{addStore,0}}"],
+      "types": ["Pair", "int", "boolean", "int"],
+      "comment": "voteForOwner(Pair<Integer, Integer> newAndAppointerIds, int voterId, boolean accept, int storeId)"
+    },
+    {
       "name": "logout",
       "arguments": ["{{login,0}}"],
       "types": ["int"],

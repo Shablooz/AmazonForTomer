@@ -1,5 +1,6 @@
 package BGU.Group13B.service;
 
+import BGU.Group13B.backend.Pair;
 import BGU.Group13B.backend.User.UserPermissions;
 import com.nimbusds.jose.shaded.gson.*;
 
@@ -121,12 +122,24 @@ public class ConfigurationFileParser {
         Object[] argumentValues = new Object[arguments.size()];
         for (int j = 0; j < arguments.size(); j++) {
             String argument = arguments.get(j).getAsString();
-            if (argument.startsWith("{{") && argument.endsWith("}}")) {
+            if (argument.startsWith("{{Pair,") && argument.endsWith("}}")) {
+                // Argument is a Pair object
+                String[] split = argument.substring(2, argument.length() - 2).split(",");
+                String function1 = split[1];
+                int index1 = Integer.parseInt(split[2]);
+                String function2 = split[3];
+                int index2 = Integer.parseInt(split[4]);
+                argumentValues[j] = new Pair<>(index1, index2);
+            } else if (argument.startsWith("{{") && argument.endsWith("}}")) {
                 // Argument is a reference to a previous result
                 String[] split = argument.substring(2, argument.length() - 2).split(",");
                 String argumentFunctionName = split[0];
                 int index = Integer.parseInt(split[1]);
-                argumentValues[j] = results.get(argumentFunctionName).get(index);
+                List<Object> functionResults = results.get(argumentFunctionName);
+                if (functionResults.size() <= index) {
+                    throw new IllegalArgumentException("Not enough results for function: " + argumentFunctionName);
+                }
+                argumentValues[j] = functionResults.get(index);
             } else {
                 // Argument is a literal value
                 argumentValues[j] = parseValue(argument, types.get(j).getAsString());
@@ -134,6 +147,7 @@ public class ConfigurationFileParser {
         }
         return argumentValues;
     }
+
 
     private static Class<?>[] getArgumentTypes(JsonArray types) {
         Class<?>[] argumentTypes = new Class<?>[types.size()];
@@ -160,6 +174,8 @@ public class ConfigurationFileParser {
             case "String" -> String.class;
             case "LocalDate" -> LocalDate.class;
             case "LocalDateTime" -> LocalDateTime.class;
+            case "Pair" -> Pair.class;
+            case "boolean" -> boolean.class;
 
             case "UserPermissions.IndividualPermission" -> UserPermissions.IndividualPermission.class;
             // Add support for other types as needed
@@ -174,6 +190,8 @@ public class ConfigurationFileParser {
             case "String" -> value;
             case "LocalDate" -> parseDate(value);
             case "LocalDateTime" -> parseDateTime(value);
+            case "Pair" -> parsePair(value);
+            case "boolean" -> Boolean.parseBoolean(value);
             // Add support for other types as needed
             default -> {
                 if (value.startsWith("UserPermissions.IndividualPermission")) {
@@ -211,6 +229,20 @@ public class ConfigurationFileParser {
             return value;
         }
     }
+
+    private static Object parsePair(String value) {
+        // The input value should be in the form "{{new Pair,value1,value2}}"
+        // Remove the "{{new Pair," and "}}" parts
+        String strippedValue = value.substring("{{new Pair,".length(), value.length() - "}}".length());
+        // Split the remaining string into two parts
+        String[] components = strippedValue.split(",");
+        // Parse the two components - this might need to be extended if the components can be of different types
+        int first = Integer.parseInt(components[0]);
+        int second = Integer.parseInt(components[1]);
+        // Create a new Pair object
+        return new Pair<>(first, second);
+    }
+
 
     public static void setConfigurationFileName(String configurationFileName) {
         CONFIGURATION_FILE_NAME = configurationFileName;

@@ -97,7 +97,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver{
                 SessionToIdMapper.getInstance().updateCurrentSession(newId);
                 // SessionToIdMapper.getInstance().setRefreshRequired(true);
                 UI.getCurrent().navigate(HomeView.class);
-
+                UI.getCurrent().getPage().reload();
                 var ui = UI.getCurrent();
                 //Tomer section
                 BroadCaster.register(newId, newMessage -> {

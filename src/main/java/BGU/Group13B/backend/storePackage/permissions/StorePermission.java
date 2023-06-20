@@ -9,6 +9,7 @@ import BGU.Group13B.backend.storePackage.WorkerCard;
 import BGU.Group13B.backend.storePackage.permissions.storehelper.SetEnum;
 import BGU.Group13B.backend.storePackage.permissions.storehelper.SetInteger;
 import BGU.Group13B.backend.storePackage.permissions.storehelper.SetString;
+import BGU.Group13B.backend.storePackage.permissions.storehelper.Vote;
 import BGU.Group13B.service.SingletonCollection;
 import jakarta.persistence.*;
 
@@ -25,8 +26,13 @@ public class StorePermission {
 
     private int founderId;
 
-    @Transient //tomer please help
+    /*@Transient //chatGPT please help
     private HashMap<Pair<Integer,Integer>, List<Integer>> votes;
+     */
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn(name = "store_permission_id")
+    private List<Vote> votes;
+
 
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
     @JoinTable(name = "StorePermission_userStoreFunctionPermissions",
@@ -76,7 +82,7 @@ public class StorePermission {
         userToStoreRole.put(founderId, StoreRole.FOUNDER);
         userToIndividualPermissions = new HashMap<>();
         SetEnum founderPermissions = new SetEnum();
-        votes = new HashMap<>();
+        votes = new ArrayList<>();
         founderPermissions.add(UserPermissions.IndividualPermission.STOCK);
         founderPermissions.add(UserPermissions.IndividualPermission.MESSAGES);
         founderPermissions.add(UserPermissions.IndividualPermission.POLICIES);
@@ -455,7 +461,12 @@ public class StorePermission {
                 idOfOwnersAndFounder.add(entry.getKey());
             }
         }
-        votes.put(newAndAppointerIds, idOfOwnersAndFounder);
+        Vote newVote = new Vote();
+        newVote.setCandidateId(newOwnerId);
+        newVote.setAppointerId(appointerId);
+        newVote.setVoteList(idOfOwnersAndFounder);
+        votes.add(newVote);
+        save(); //maybe not
         return idOfOwnersAndFounder;
     }
 
@@ -471,57 +482,53 @@ public class StorePermission {
 
     public List<Pair<Integer, Integer>> getMyOpenVotes(int userId){
         List<Pair<Integer,Integer>> myVotes = new ArrayList<>();
-        for (Map.Entry<Pair<Integer,Integer>, List<Integer>> entry : votes.entrySet()) {
-            List<Integer> userList = entry.getValue();
-            if (userList.contains(userId)) {
-                myVotes.add(entry.getKey());
+        for (Vote vote : votes) {
+            if (vote.getVoteList().contains(userId)) {
+                myVotes.add(new Pair<>(vote.getCandidateId(), vote.getAppinterId()));
             }
         }
         return myVotes;
     }
 
     public boolean removeMeFromVote(Pair<Integer, Integer> newAndAppointerIds, int voterId){
-        Integer xVoterId = voterId;
-        for (Map.Entry<Pair<Integer,Integer>, List<Integer>> entry : votes.entrySet()) {
-            if(Objects.equals(entry.getKey().getFirst(), newAndAppointerIds.getFirst()) && Objects.equals(entry.getKey().getSecond(), newAndAppointerIds.getSecond())){
-                if(entry.getValue().contains(voterId))
-                    entry.getValue().remove(xVoterId);
-                if(entry.getValue().isEmpty())
-                    return true;
+        boolean isEmpty = false;
+        Vote deleteMe = null;
+        for (Vote vote : votes) {
+            Integer candidateIdInt = vote.getCandidateId();
+            Integer appoimterIdInt = vote.getAppinterId();
+            Integer xVoterId = voterId;
+            if (candidateIdInt.equals(newAndAppointerIds.getFirst()) && appoimterIdInt.equals(newAndAppointerIds.getSecond()))
+                vote.getVoteList().remove(xVoterId);
+            if (vote.getVoteList().isEmpty()){
+                isEmpty = true;
+                deleteMe = vote;
             }
         }
+        votes.remove(deleteMe);
         save();
-        return false;
+        return isEmpty;
     }
 
     public void cancelVote(Pair<Integer, Integer> newAndAppointerIds, int voterId){
-        Pair<Integer, Integer> deleteMe = null;
-        for (Map.Entry<Pair<Integer,Integer>, List<Integer>> entry : votes.entrySet()) {
-            if(Objects.equals(entry.getKey().getFirst(), newAndAppointerIds.getFirst()) && Objects.equals(entry.getKey().getSecond(), newAndAppointerIds.getSecond())){
-                if(entry.getValue().contains(voterId))
-                    deleteMe = entry.getKey();
-            }
-        }
+        votes.removeIf(vote -> Integer.valueOf(vote.getCandidateId()).equals(newAndAppointerIds.getFirst()) && Integer.valueOf(vote.getAppinterId()).equals(newAndAppointerIds.getSecond()) && vote.getVoteList().contains(voterId));
         save();
-        votes.remove(deleteMe);
     }
 
     public void goodByeAll(int firedId) throws ChangePermissionException {
         Integer xFiredId = firedId;
-        List<Pair<Integer, Integer>> deleteUs = new LinkedList<>();
-        for (Map.Entry<Pair<Integer,Integer>, List<Integer>> entry : votes.entrySet()) {
-            if(entry.getValue().contains(firedId)){
-                entry.getValue().remove(xFiredId);
-                if(entry.getValue().isEmpty())
-                    addOwnerPermission(entry.getKey().getFirst(), entry.getKey().getSecond());
+        List<Vote> deleteUs = new LinkedList<>();
+        for (Vote vote : votes) {
+            if (vote.getVoteList().contains(firedId)) {
+                vote.getVoteList().remove(xFiredId);
+                if (vote.getVoteList().isEmpty())
+                    addOwnerPermission(vote.getCandidateId(), vote.getAppinterId());
             }
-            if(entry.getKey().getSecond().equals(xFiredId))
-                deleteUs.add(entry.getKey());
+            if (Integer.valueOf(vote.getAppinterId()).equals(xFiredId))
+                deleteUs.add(vote);
         }
-        for(Pair<Integer, Integer> pair : deleteUs){
-            votes.remove(pair);
-        }
+        votes.removeAll(deleteUs);
     }
+
 
     public void emptyMaps(){
         userToStoreRole.clear();
