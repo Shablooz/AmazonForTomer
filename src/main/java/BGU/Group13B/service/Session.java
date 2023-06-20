@@ -1158,8 +1158,10 @@ LOGGER_INFO.info("product description was set successfully");
     public Response<VoidResponse> voteForOwner(Pair<Integer, Integer> newAndAppointerIds, int voterId, boolean accept, int storeId){
         try {
             market.voteForOwner(newAndAppointerIds, voterId, accept, storeId);
+            LOGGER_INFO.info("vote for owner success");
             return Response.success(new VoidResponse());
         } catch (Exception e) {
+            LOGGER_ERROR.severe("vote for owner fail");
             return Response.exception(e);
         }
     }
@@ -2030,8 +2032,10 @@ LOGGER_INFO.info("product description was set successfully");
 
             if (newStatus == 2 && getUserRepository().getUser(userId).getStatus() == UserPermissions.UserPermissionStatus.ADMIN)
                 getUserRepository().getUser(userId).setPermissions(UserPermissions.UserPermissionStatus.MEMBER);
+            LOGGER_INFO.info("user status changed successfully");
             return Response.success(true);
         } catch (Exception e) {
+            LOGGER_ERROR.severe("user status change failed");
             return Response.failure(e.getMessage());
         }
     }
