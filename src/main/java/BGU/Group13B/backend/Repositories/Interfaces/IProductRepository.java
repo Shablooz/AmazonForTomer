@@ -40,4 +40,6 @@ public interface IProductRepository {//deeded because it contains the product qu
     boolean getSaveMode();
 
     boolean isStoreProductsExists(int storeId);
+
+    void save();
 }

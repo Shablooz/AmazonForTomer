@@ -148,13 +148,15 @@ public class Basket {
         scheduledFuture.cancel(true);
         scheduledFuture = null;
         scheduler.shutdown();
-        getPurchaseHistoryRepository().addPurchase(userId, storeId, successfulProducts, finalPrice);
-        getBasketProductRepository().removeBasketProducts(storeId, userId);
-        successfulProducts.clear();
+        if(!successfulProducts.isEmpty()) {
+            getPurchaseHistoryRepository().addPurchase(userId, storeId, successfulProducts, finalPrice);
+            getBasketProductRepository().removeBasketProducts(storeId, userId);
+            successfulProducts.clear();
+        }
 
         //refresh income view
         BroadCaster.broadcastIncome();
-
+        SingletonCollection.getProductRepository().save();
     }
 
     /*used for testing done both operations at once*/
